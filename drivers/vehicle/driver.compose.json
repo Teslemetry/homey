@@ -47,9 +47,9 @@
     "electricCar": true
   },
   "images": {
-    "small": "{{driverAssetsPath}}/images/small.png",
-    "large": "{{driverAssetsPath}}/images/large.png",
-    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
+    "small": "{{driverAssetsPath}}/images/ModelY/small.png",
+    "large": "{{driverAssetsPath}}/images/ModelY/large.png",
+    "xlarge": "{{driverAssetsPath}}/images/ModelY/xlarge.png"
   },
   "platforms": ["local", "cloud"],
   "pair": [

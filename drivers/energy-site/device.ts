@@ -1,5 +1,6 @@
 import { EnergyDetails } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+import { getCapabilities } from "./capabilities.js";
 
 export default class PowerwallDevice extends TeslemetryDevice {
   site!: EnergyDetails;
@@ -23,6 +24,8 @@ export default class PowerwallDevice extends TeslemetryDevice {
 
     this.site.api.on("liveStatus", ({ response: data }) => {
       if (!data) return;
+
+      this.addCapability;
 
       // Map Live Status fields
       this.setCapabilityValue("measure_battery", data.percentage_charged).catch(
@@ -74,57 +77,61 @@ export default class PowerwallDevice extends TeslemetryDevice {
       }
     });
 
-    this.site.api.on("siteInfo", ({ response }) => {
-      if (!response) return;
-      const data = response;
+    this.site.api.on("siteInfo", ({ response: data }) => {
+      if (!data) return;
 
-      this.setCapabilityValue(
-        "backup_reserve",
-        data.backup_reserve_percent,
-      ).catch(this.error);
-      this.setCapabilityValue("measure_version", data.version).catch(
-        this.error,
-      );
-      this.setCapabilityValue("operation_mode", data.default_real_mode).catch(
-        this.error,
-      );
+      // Ensure class and capabilities are correct
+      const { capabilities } = getCapabilities(data);
+      const currentCapabilities = this.getCapabilities();
 
-      // Complex/Nested fields
-      if (data.components) {
-        this.setCapabilityValue(
-          "allow_export",
-          (data.components.customer_preferred_export_rule ??
-            data.components.non_export_configured)
-            ? "never"
-            : "battery_ok",
-        ).catch(this.error);
-
-        this.setCapabilityValue(
-          "charge_from_grid",
-          !data.components.disallow_charge_from_grid_with_solar_installed,
-        ).catch(this.error);
+      // Add new capabilities
+      for (const capability of capabilities) {
+        if (!currentCapabilities.includes(capability)) {
+          this.addCapability(capability);
+        }
       }
 
-      if (data.user_settings) {
-        this.setCapabilityValue(
-          "storm_watch",
-          data.user_settings.storm_mode_enabled,
-        ).catch(this.error);
+      // Remove old capabilities
+      for (const capability of currentCapabilities) {
+        if (!capabilities.includes(capability)) {
+          this.removeCapability(capability);
+        }
       }
 
-      this.setCapabilityValue(
+      // Update capabilities
+
+      this.update("backup_reserve", data.backup_reserve_percent);
+
+      this.update("operation_mode", data.default_real_mode);
+
+      this.update(
+        "allow_export",
+        (data.components.customer_preferred_export_rule ??
+          data.components.non_export_configured)
+          ? "never"
+          : "battery_ok",
+      );
+
+      this.update(
+        "charge_from_grid",
+        !data.components.disallow_charge_from_grid_with_solar_installed,
+      );
+
+      this.update("storm_watch", data.user_settings.storm_mode_enabled);
+
+      this.update(
         "off_grid_reserve",
         data.off_grid_vehicle_charging_reserve_percent,
-      ).catch(this.error);
+      );
 
-      this.setCapabilityValue(
+      this.update(
         "grid_services_enabled",
         data.components.grid_services_enabled,
-      ).catch(this.error);
-      this.setCapabilityValue(
+      );
+      this.update(
         "measure_vpp_backup_reserve",
         data.vpp_backup_reserve_percent,
-      ).catch(this.error);
+      );
     });
 
     // Register capability listeners

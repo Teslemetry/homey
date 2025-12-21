@@ -37,9 +37,9 @@
       "capabilities": [],
       "class": "battery",
       "images": {
-        "small": "/drivers/energy-site/assets/images/small.png",
-        "large": "/drivers/energy-site/assets/images/large.png",
-        "xlarge": "/drivers/energy-site/assets/images/xlarge.png"
+        "small": "/drivers/energy-site/assets/images/powerwall/small.png",
+        "large": "/drivers/energy-site/assets/images/powerwall/large.png",
+        "xlarge": "/drivers/energy-site/assets/images/powerwall/xlarge.png"
       },
       "platforms": [
         "local",
@@ -119,9 +119,9 @@
         "electricCar": true
       },
       "images": {
-        "small": "https://static-assets.tesla.com/configurator/compositor?context=design_studio_2?&bkba_opt=1&view=STUD_3QTR&model=m3&size=800&crop=1150,550,400,250&options=$APF2,$APBS,$IPW1,$PPSB,$W40B,$MT328,$CW03,$SC04",
-        "large": "https://static-assets.tesla.com/configurator/compositor?context=design_studio_2?&bkba_opt=1&view=STUD_3QTR&model=m3&size=800&crop=1150,550,400,250&options=$APF2,$APBS,$IPW1,$PPSB,$W40B,$MT328,$CW03,$SC04",
-        "xlarge": "https://static-assets.tesla.com/configurator/compositor?context=design_studio_2?&bkba_opt=1&view=STUD_3QTR&model=m3&size=800&crop=1150,550,400,250&options=$APF2,$APBS,$IPW1,$PPSB,$W40B,$MT328,$CW03,$SC04"
+        "small": "/drivers/vehicle/assets/images/ModelY/small.png",
+        "large": "/drivers/vehicle/assets/images/ModelY/large.png",
+        "xlarge": "/drivers/vehicle/assets/images/ModelY/xlarge.png"
       },
       "platforms": [
         "local",
@@ -160,8 +160,11 @@
       "capabilities": [
         "evcharger_charging_state",
         "measure_power",
-        "vehicle"
+        "connected_vehicle"
       ],
+      "energy": {
+        "evCharger": true
+      },
       "platforms": [
         "local",
         "cloud"
@@ -411,6 +414,16 @@
       "getable": true,
       "setable": true,
       "uiComponent": "toggle"
+    },
+    "connected_vehicle": {
+      "type": "string",
+      "title": {
+        "en": "Connected Vehicle"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icon.svg"
     },
     "defrost_mode": {
       "id": "defrost_mode",
@@ -845,16 +858,6 @@
       "getable": true,
       "setable": true,
       "uiComponent": "toggle"
-    },
-    "vehicle": {
-      "type": "string",
-      "title": {
-        "en": "Connected Vehicle"
-      },
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor",
-      "icon": "/assets/icon.svg"
     }
   }
 }

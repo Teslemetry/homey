@@ -1,50 +1,12 @@
 import type TeslemetryApp from "../../app.js";
 import TeslemetryDriver from "../../lib/TeslemetryDriver.js";
 
-const graphics: Record<
-  string,
-  { icon: string; images: { small: string; large: string; xlarge: string } }
-> = {
-  "3": {
-    icon: "model3.svg",
-    images: {
-      small: "{{driverAssetsPath}}/images/model3/small.png",
-      large: "{{driverAssetsPath}}/images/model3/large.png",
-      xlarge: "{{driverAssetsPath}}/images/model3/xlarge.png",
-    },
-  },
-  Y: {
-    icon: "modelY.svg",
-    images: {
-      small: "{{driverAssetsPath}}/images/modelY/small.png",
-      large: "{{driverAssetsPath}}/images/modelY/large.png",
-      xlarge: "{{driverAssetsPath}}/images/modelY/xlarge.png",
-    },
-  },
-  S: {
-    icon: "modelS.svg",
-    images: {
-      small: "{{driverAssetsPath}}/images/modelS/small.png",
-      large: "{{driverAssetsPath}}/images/modelS/large.png",
-      xlarge: "{{driverAssetsPath}}/images/modelS/xlarge.png",
-    },
-  },
-  X: {
-    icon: "modelX.svg",
-    images: {
-      small: "{{driverAssetsPath}}/images/modelX/small.png",
-      large: "{{driverAssetsPath}}/images/modelX/large.png",
-      xlarge: "{{driverAssetsPath}}/images/modelX/xlarge.png",
-    },
-  },
-  C: {
-    icon: "cybertruck.svg",
-    images: {
-      small: "{{driverAssetsPath}}/images/cybertruck/small.png",
-      large: "{{driverAssetsPath}}/images/cybertruck/large.png",
-      xlarge: "{{driverAssetsPath}}/images/cybertruck/xlarge.png",
-    },
-  },
+const icon: Record<string, { icon: string }> = {
+  "3": { icon: "model3.svg" },
+  Y: { icon: "modelY.svg" },
+  S: { icon: "modelS.svg" },
+  X: { icon: "modelX.svg" },
+  C: { icon: "cybertruck.svg" },
 };
 
 export default class VehicleDriver extends TeslemetryDriver {
@@ -72,7 +34,7 @@ export default class VehicleDriver extends TeslemetryDriver {
           data: {
             vin: data.vin,
           },
-          ...graphics?.[data.vin[3]],
+          ...icon?.[data.vin[3]],
         }));
     } catch (error) {
       this.homey.error("Failed to list vehicles:", error);

@@ -43,9 +43,10 @@ export default class WallConnecter extends TeslemetryDevice {
       ).catch(this.error);
 
       // Connected Vehicle
-      this.setCapabilityValue("vehicle", this.findVin(data.vin)).catch(
-        this.error,
-      );
+      this.setCapabilityValue(
+        "connected_vehicle",
+        this.findVin(data.vin),
+      ).catch(this.error);
     });
   }
 

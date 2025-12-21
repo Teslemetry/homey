@@ -5,4 +5,20 @@ export default class TeslemetryDevice extends Homey.Device {
   declare homey: Homey.Device["homey"] & {
     app: TeslemetryApp;
   };
+
+  /**
+   * Safely updates a capability value if its supported.
+   * @param capability The capability to update.
+   * @param value The value from the API
+   */
+  private async update(capability: string, value: any): Promise<void> {
+    // Check if capability is supported
+    if (!this.getCapabilities().includes(capability)) return;
+    // Evaluate value if required
+    if (typeof value === "function") value = value();
+    // Check if value is undefined
+    if (value === undefined) return;
+    // Set the capability value
+    return this.setCapabilityValue(capability, value).catch(this.error);
+  }
 }

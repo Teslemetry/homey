@@ -3,7 +3,14 @@
     "en": "Tesla Wall Connector"
   },
   "class": "evcharger",
-  "capabilities": ["evcharger_charging_state", "measure_power", "vehicle"],
+  "capabilities": [
+    "evcharger_charging_state",
+    "measure_power",
+    "connected_vehicle"
+  ],
+  "energy": {
+    "evCharger": true
+  },
   "platforms": ["local", "cloud"],
   "connectivity": ["cloud"],
   "images": {
