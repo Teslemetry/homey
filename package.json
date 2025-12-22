@@ -11,7 +11,8 @@
     "dev": "homey app run",
     "app:run": "homey app run",
     "app:install": "homey app install",
-    "app:validate": "homey app validate --level verified"
+    "app:validate": "homey app validate --level verified",
+    "app:publish": "homey app publish"
   },
   "dependencies": {
     "@teslemetry/api": "^0.5.2"
