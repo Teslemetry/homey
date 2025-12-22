@@ -11,14 +11,21 @@ export default class TeslemetryDevice extends Homey.Device {
    * @param capability The capability to update.
    * @param value The value from the API
    */
-  private async update(capability: string, value: any): Promise<void> {
+  public async update(capability: string, value: any): Promise<void> {
     // Check if capability is supported
-    if (!this.getCapabilities().includes(capability)) return;
+    if (!this.getCapabilities().includes(capability)) {
+      this.log(`Capability ${capability} is not supported`);
+      return;
+    }
     // Evaluate value if required
     if (typeof value === "function") value = value();
     // Check if value is undefined
-    if (value === undefined) return;
+    if (value === undefined) {
+      this.log(`Capability ${capability} value is undefined`);
+      return;
+    }
     // Set the capability value
+    //this.log(`Setting capability ${capability} to ${value}`);
     return this.setCapabilityValue(capability, value).catch(this.error);
   }
 }

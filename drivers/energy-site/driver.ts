@@ -31,8 +31,6 @@ export default class PowerwallDriver extends TeslemetryDriver {
           const { response: siteInfo } = await site.api.getSiteInfo();
           const { deviceClass, capabilities } = getCapabilities(siteInfo);
 
-          this.log(Array.from(capabilities));
-
           return {
             name: site.name,
             data: {

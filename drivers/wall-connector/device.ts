@@ -32,21 +32,16 @@ export default class WallConnecter extends TeslemetryDevice {
       if (!data) return;
 
       // Power
-      this.setCapabilityValue("measure_power", data.wall_connector_power).catch(
-        this.error,
-      );
+      this.update("measure_power", data.wall_connector_power);
 
       // State
-      this.setCapabilityValue(
+      this.update(
         "evcharger_charging_state",
         this.mapWallConnectorState(data.wall_connector_state),
-      ).catch(this.error);
+      );
 
       // Connected Vehicle
-      this.setCapabilityValue(
-        "connected_vehicle",
-        this.findVin(data.vin),
-      ).catch(this.error);
+      this.update("connected_vehicle", this.findVin(data.vin));
     });
   }
 

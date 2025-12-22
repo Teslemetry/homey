@@ -10,13 +10,13 @@
     {
       "id": "battery_ok",
       "title": {
-        "en": "Battery OK"
+        "en": "Battery and Solar"
       }
     },
     {
       "id": "pv_only",
       "title": {
-        "en": "PV Only"
+        "en": "Solar Only"
       }
     },
     {

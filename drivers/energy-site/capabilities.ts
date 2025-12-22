@@ -2,31 +2,27 @@ import { TeslemetryEnergyApi } from "@teslemetry/api";
 
 const batteryCapabilities = [
   "measure_battery",
-  "measure_power.battery",
+  "measure_power_battery",
   "charge_from_grid",
   "allow_export",
   "operation_mode",
 ];
-const stormModeCapabilities = [
-  "alarm_generic.storm_watch",
-  "storm_watch_active",
-];
+const stormModeCapabilities = ["storm_watch", "alarm_storm_watch_active"];
 const backupCapabilities = ["backup_reserve"];
 const solarCapabilities = [
   //"measure_solar_generated",
-  "measure_power.solar",
+  "measure_power_solar",
   //"measure_generator_exported",
   "allow_export",
 ];
 const gridCapabilities = [
-  "grid_status",
+  "alarm_off_grid",
   //"measure_grid_exported",
-  "measure_power.grid",
-  "grid_status",
-  "island_status",
+  "measure_power_grid",
+  "alarm_island_status",
 ];
 const loadMeterCapabilities = [
-  "measure_power.load",
+  "measure_power_load",
   //"measure_home_usage",
 ];
 
@@ -42,6 +38,7 @@ export const getCapabilities = (
   }
   if (siteInfo.components.battery) {
     deviceClass = "battery";
+    batteryCapabilities.forEach((c) => capabilities.add(c));
   }
   if (siteInfo.components.storm_mode_capable) {
     stormModeCapabilities.forEach((c) => capabilities.add(c));

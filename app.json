@@ -284,6 +284,45 @@
       "setable": false,
       "uiComponent": "sensor"
     },
+    "alarm_island_status": {
+      "type": "boolean",
+      "title": {
+        "en": "Island Status"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "titleTrue": {
+        "en": "Disconnected"
+      },
+      "titleFalse": {
+        "en": "Connected"
+      }
+    },
+    "alarm_off_grid": {
+      "type": "boolean",
+      "title": {
+        "en": "Grid Status"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "titleTrue": {
+        "en": "On Grid"
+      },
+      "titleFalse": {
+        "en": "Off Grid"
+      }
+    },
+    "alarm_storm_watch_active": {
+      "type": "boolean",
+      "title": {
+        "en": "Storm Watch Active"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
     "allow_export": {
       "type": "enum",
       "title": {
@@ -296,13 +335,13 @@
         {
           "id": "battery_ok",
           "title": {
-            "en": "Battery OK"
+            "en": "Battery and Solar"
           }
         },
         {
           "id": "pv_only",
           "title": {
-            "en": "PV Only"
+            "en": "Solar Only"
           }
         },
         {
@@ -334,7 +373,9 @@
         "en": "%"
       },
       "min": 0,
-      "max": 100
+      "max": 1,
+      "decimals": 2,
+      "step": 0.01
     },
     "button_flash_lights": {
       "id": "button_flash_lights",
@@ -463,39 +504,6 @@
       "setable": false,
       "uiComponent": "sensor"
     },
-    "grid_status": {
-      "type": "boolean",
-      "title": {
-        "en": "Grid Status"
-      },
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor"
-    },
-    "measure_energy_left": {
-      "type": "number",
-      "title": {
-        "en": "Energy Left"
-      },
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor",
-      "units": {
-        "en": "Wh"
-      }
-    },
-    "measure_generator_exported": {
-      "type": "number",
-      "title": {
-        "en": "Generator Exported"
-      },
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor",
-      "units": {
-        "en": "W"
-      }
-    },
     "measure_grid_exported": {
       "type": "number",
       "title": {
@@ -532,19 +540,10 @@
         "en": "W"
       }
     },
-    "measure_island_status": {
-      "type": "string",
-      "title": {
-        "en": "Island Status"
-      },
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor"
-    },
-    "measure_load_power": {
+    "measure_power_battery": {
       "type": "number",
       "title": {
-        "en": "Load Power"
+        "en": "Battery Power"
       },
       "getable": true,
       "setable": false,
@@ -557,6 +556,18 @@
       "type": "number",
       "title": {
         "en": "Grid Power"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "W"
+      }
+    },
+    "measure_power_load": {
+      "type": "number",
+      "title": {
+        "en": "Load Power"
       },
       "getable": true,
       "setable": false,
@@ -829,15 +840,6 @@
       "getable": true,
       "setable": true,
       "uiComponent": "toggle"
-    },
-    "storm_watch_active": {
-      "type": "boolean",
-      "title": {
-        "en": "Storm Watch Active"
-      },
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor"
     },
     "trunk": {
       "id": "trunk",
