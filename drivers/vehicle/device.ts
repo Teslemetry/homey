@@ -42,7 +42,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     // Charging
     this.vehicle.sse.onSignal("ChargeState", (value) =>
       this.setCapabilityValue(
-        "onoff.charge",
+        "charge_state",
         value === "ChargeStateStarting" || value === "ChargeStateCharging",
       ).catch(this.error),
     );
@@ -109,17 +109,17 @@ export default class VehicleDevice extends TeslemetryDevice {
         ? "HvacRightTemperatureRequest"
         : "HvacLeftTemperatureRequest",
       (value) =>
-        this.setCapabilityValue("target_temperature.inside", value).catch(
+        this.setCapabilityValue("target_temperature", value).catch(
           this.error,
         ),
     );
     this.vehicle.sse.onSignal("InsideTemp", (value) =>
-      this.setCapabilityValue("measure_temperature.inside", value).catch(
+      this.setCapabilityValue("measure_temperature", value).catch(
         this.error,
       ),
     );
     this.vehicle.sse.onSignal("OutsideTemp", (value) =>
-      this.setCapabilityValue("measure_temperature.outside", value).catch(
+      this.setCapabilityValue("measure_temperature_outside", value).catch(
         this.error,
       ),
     );
@@ -215,7 +215,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     // Add rear heaters if API supports and IDs are known
 
     // Charge
-    this.registerCapabilityListener("onoff.charge", async (value) => {
+    this.registerCapabilityListener("charge_state", async (value) => {
       value
         ? this.vehicle.api.startCharging()
         : this.vehicle.api.stopCharging();
