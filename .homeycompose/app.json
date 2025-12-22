@@ -1,10 +1,10 @@
 {
   "id": "com.teslemetry",
   "brandColor": "#3D6DB5",
-  "version": "1.0.0",
+  "version": "0.0.3",
   "compatibility": ">=12.4.5",
   "sdk": 3,
-  "platforms": ["local", "cloud"],
+  "platforms": ["local"],
   "name": {
     "en": "Teslemetry"
   },
