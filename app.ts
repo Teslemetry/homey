@@ -24,27 +24,6 @@ export default class TeslemetryApp extends Homey.App {
 
     this.oauth = new TeslemetryOAuth2Client(this);
 
-    // Register API routes for testing (if needed for settings page)
-    this.homey.api.on(
-      "test_oauth",
-      async (
-        args: { sessionId?: string },
-        callback: (err: Error | null, result?: boolean) => void,
-      ) => {
-        this.log("test_oauth");
-        try {
-          if (this.oauth.hasValidToken()) {
-            await this.initializeTeslemetry();
-            callback(null, true);
-          } else {
-            callback(null, false);
-          }
-        } catch (error) {
-          callback(null, false);
-        }
-      },
-    );
-
     // Listen for token updates
     this.on("oauth2:token_saved", () => {
       this.log("Token saved, re-initializing Teslemetry...");

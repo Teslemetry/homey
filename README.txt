@@ -32,7 +32,7 @@ This app integrates Tesla vehicles and energy products (Powerwall, Solar, Wall C
 
 2. **Configuration**:
    - Install the app on your Homey.
-   - Go to App Settings and enter your Teslemetry Access Token.
+   - Add a device to initiate the OAuth authentication flow.
 
 3. **Pairing**:
    - Add a new Device in Homey.

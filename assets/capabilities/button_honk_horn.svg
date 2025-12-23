@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960">
-  <path d="M135 400v160" fill="none" stroke="black" stroke-width="40" stroke-linecap="round"/>
-  <path d="M135 440h200l250-160v400L335 520H135" fill="none" stroke="black" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M685 360a200 200 0 0 1 0 240" fill="none" stroke="black" stroke-width="40" stroke-linecap="round"/>
-  <path d="M805 280a350 350 0 0 1 0 400" fill="none" stroke="black" stroke-width="40" stroke-linecap="round"/>
-  <path d="M335 440v80" fill="none" stroke="black" stroke-width="20" stroke-linecap="round"/>
-  <path d="M135 480h200" fill="none" stroke="black" stroke-width="10" stroke-linecap="round"/>
-</svg>

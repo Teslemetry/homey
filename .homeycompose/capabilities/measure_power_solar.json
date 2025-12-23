@@ -8,5 +8,6 @@
   "uiComponent": "sensor",
   "units": {
     "en": "W"
-  }
+  },
+  "icon": "/assets/capabilities/solar.svg"
 }

@@ -15,10 +15,9 @@
     "app:publish": "homey app publish"
   },
   "dependencies": {
-    "@teslemetry/api": "^0.5.2"
+    "@teslemetry/api": "^0.5.5"
   },
   "devDependencies": {
-    "homey": "^3.10.0",
     "@google/genai": "^1.33.0",
     "@google/generative-ai": "^0.24.1",
     "@tsconfig/node16": "^16.1.8",
@@ -27,6 +26,7 @@
     "@types/sharp": "^0.31.1",
     "eslint": "^7.32.0",
     "eslint-config-athom": "^3.1.5",
+    "homey": "^3.10.0",
     "sharp": "^0.34.5",
     "typescript": "^5.9.3"
   }

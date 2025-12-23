@@ -15,6 +15,12 @@ const defrostModeMap = new Map<any, boolean>([
   ["DefrostModeOff", false],
 ]);
 
+const windowMap = new Map<any, boolean>([
+  ["WindowStateOpened", true],
+  ["WindowStatePartiallyOpen", true],
+  ["WindowStateClosed", false],
+]);
+
 export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
 
@@ -33,144 +39,118 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Battery & Range
     this.vehicle.sse.onSignal("BatteryLevel", (value) =>
-      this.setCapabilityValue("measure_battery", value).catch(this.error),
+      this.update("measure_battery", value),
     );
     this.vehicle.sse.onSignal("EstBatteryRange", (value) =>
-      this.setCapabilityValue("measure_range", value).catch(this.error),
+      this.update("measure_range", value),
     );
 
     // Charging
-    this.vehicle.sse.onSignal("ChargeState", (value) =>
-      this.setCapabilityValue(
+    this.vehicle.sse.onSignal("DetailedChargeState", (value) =>
+      this.update(
         "charge_state",
-        value === "ChargeStateStarting" || value === "ChargeStateCharging",
-      ).catch(this.error),
+        value === "DetailedChargeStateStarting" ||
+          value === "DetailedChargeStateCharging",
+      ),
     );
     this.vehicle.sse.onSignal("ChargerVoltage", (value) =>
-      this.setCapabilityValue("measure_voltage", value).catch(this.error),
+      this.update("measure_voltage", value),
     );
     this.vehicle.sse.onSignal("ChargeCurrentRequest", (value) =>
-      this.setCapabilityValue("measure_current", value).catch(this.error),
+      this.update("measure_current", value),
     );
 
     // AC Charging
     this.vehicle.sse.onSignal("ACChargingEnergyIn", (value) =>
-      this.setCapabilityValue("meter_power", value).catch(this.error),
+      this.update("meter_power", value),
     );
     this.vehicle.sse.onSignal("ACChargingPower", (value) =>
-      this.setCapabilityValue(
-        "measure_power",
-        value ? value * 1000 : value,
-      ).catch(this.error),
+      this.update("measure_power", value ? value * 1000 : value),
     );
 
     // DC Charging
     this.vehicle.sse.onSignal("DCChargingEnergyIn", (value) =>
-      this.setCapabilityValue("meter_power", value).catch(this.error),
+      this.update("meter_power", value),
     );
     this.vehicle.sse.onSignal("DCChargingPower", (value) =>
-      this.setCapabilityValue(
-        "measure_power",
-        value ? value * 1000 : value,
-      ).catch(this.error),
+      this.update("measure_power", value ? value * 1000 : value),
     );
 
     // Lock & Sentry & Security
     this.vehicle.sse.onSignal("Locked", (value) =>
-      this.setCapabilityValue("locked", value).catch(this.error),
+      this.update("locked", value),
     );
     this.vehicle.sse.onSignal("SentryMode", (value) => {
-      this.setCapabilityValue(
-        "sentry_mode",
-        value !== "SentryModeStateOff",
-      ).catch(this.error);
-      this.setCapabilityValue("alarm_motion", value === "SentryModeStatePanic");
+      this.update("sentry_mode", value !== "SentryModeStateOff");
+      this.update("alarm_motion", value === "SentryModeStatePanic");
     });
 
     this.vehicle.sse.onSignal("ChargePortLatch", (value) =>
       // 'Engaged' -> Locked?
-      this.setCapabilityValue(
-        "charge_port_latch",
-        chargePortLatchMap.get(value),
-      ).catch(this.error),
+      this.update("charge_port_latch", chargePortLatchMap.get(value)),
     );
     this.vehicle.sse.onSignal("ChargePortDoorOpen", (value) =>
-      this.setCapabilityValue("charge_port_door", value).catch(this.error),
+      this.update("charge_port_door", value),
     );
 
     // Climate
     this.vehicle.sse.onSignal("HvacACEnabled", (value) =>
-      this.setCapabilityValue("thermostat_mode", value ? "auto" : "off").catch(
-        this.error,
-      ),
+      this.update("thermostat_mode", value ? "auto" : "off"),
     );
     this.vehicle.sse.onSignal(
       this.vehicle.metadata.config!.rhd
         ? "HvacRightTemperatureRequest"
         : "HvacLeftTemperatureRequest",
-      (value) =>
-        this.setCapabilityValue("target_temperature", value).catch(
-          this.error,
-        ),
+      (value) => this.update("target_temperature", value),
     );
     this.vehicle.sse.onSignal("InsideTemp", (value) =>
-      this.setCapabilityValue("measure_temperature", value).catch(
-        this.error,
-      ),
+      this.update("measure_temperature", value),
     );
     this.vehicle.sse.onSignal("OutsideTemp", (value) =>
-      this.setCapabilityValue("measure_temperature_outside", value).catch(
-        this.error,
-      ),
+      this.update("measure_temperature_outside", value),
     );
     this.vehicle.sse.onSignal("DefrostMode", (value) =>
-      this.setCapabilityValue("defrost_mode", defrostModeMap.get(value)).catch(
-        this.error,
-      ),
+      this.update("defrost_mode", defrostModeMap.get(value)),
     );
     this.vehicle.sse.onSignal("HvacSteeringWheelHeatLevel", (value) =>
-      this.setCapabilityValue("steering_wheel_heater", String(value)).catch(
-        this.error,
-      ),
+      this.update("steering_wheel_heater", String(value)),
     );
     this.vehicle.sse.onSignal("SeatHeaterLeft", (value) =>
-      this.setCapabilityValue("seat_heater_front_left", String(value)).catch(
-        this.error,
-      ),
+      this.update("seat_heater_front_left", String(value)),
     );
     this.vehicle.sse.onSignal("SeatHeaterRight", (value) =>
-      this.setCapabilityValue("seat_heater_front_right", String(value)).catch(
-        this.error,
-      ),
+      this.update("seat_heater_front_right", String(value)),
     );
 
     // Doors & Windows (Assuming Signal names)
     this.vehicle.sse.onSignal("DoorState", (value) => {
       if (isBool(value?.DriverFront))
-        this.setCapabilityValue(
-          "alarm_contact_door_front_left",
-          value.DriverFront,
-        ).catch(this.error);
+        this.update("alarm_contact_door_front_left", value.DriverFront);
       if (isBool(value?.PassengerFront))
-        this.setCapabilityValue(
-          "alarm_contact_door_front_right",
-          value.PassengerFront,
-        ).catch(this.error);
+        this.update("alarm_contact_door_front_right", value.PassengerFront);
       if (isBool(value?.DriverRear))
-        this.setCapabilityValue(
-          "alarm_contact_door_rear_left",
-          value.DriverRear,
-        ).catch(this.error);
+        this.update("alarm_contact_door_rear_left", value.DriverRear);
       if (isBool(value?.PassengerRear))
-        this.setCapabilityValue(
-          "alarm_contact_door_rear_right",
-          value.PassengerRear,
-        ).catch(this.error);
-      if (isBool(value?.TrunkFront))
-        this.setCapabilityValue("frunk", value.TrunkFront).catch(this.error);
-      if (isBool(value?.TrunkRear))
-        this.setCapabilityValue("trunk", value.TrunkRear).catch(this.error);
+        this.update("alarm_contact_door_rear_right", value.PassengerRear);
+      if (isBool(value?.TrunkFront)) this.update("frunk", value.TrunkFront);
+      if (isBool(value?.TrunkRear)) this.update("trunk", value.TrunkRear);
     });
+
+    const handleWindow = () => {
+      const { FdWindow, FpWindow, RdWindow, RpWindow } =
+        this.vehicle.sse.cache?.data ?? {};
+      const anyOpen =
+        windowMap.get(FdWindow) ||
+        windowMap.get(FpWindow) ||
+        windowMap.get(RdWindow) ||
+        windowMap.get(RpWindow);
+      this.update("window_open", anyOpen);
+    };
+
+    this.vehicle.sse.onSignal("FdWindow", handleWindow);
+    this.vehicle.sse.onSignal("FpWindow", handleWindow);
+    this.vehicle.sse.onSignal("RdWindow", handleWindow);
+    this.vehicle.sse.onSignal("RpWindow", handleWindow);
 
     // --- Capability Listeners (Actions) ---
 
@@ -184,6 +164,9 @@ export default class VehicleDevice extends TeslemetryDevice {
       value === "auto"
         ? this.vehicle.api.startAutoConditioning()
         : this.vehicle.api.stopAutoConditioning();
+    });
+    this.registerCapabilityListener("target_temperature", async (value) => {
+      this.vehicle.api.setTemps(value, value);
     });
     this.registerCapabilityListener("defrost_mode", async (value) => {
       this.vehicle.api.setPreconditioningMax(value, true);

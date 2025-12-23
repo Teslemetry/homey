@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960">
-  <path d="M 160 800 H 800 Q 840 800 840 740 V 520 H 120 V 740 Q 120 800 160 800 Z" fill="none" stroke="#000000" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M 120 520 L 200 200 H 760 L 840 520" fill="none" stroke="#000000" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M 220 520 V 680 H 740 V 520" fill="none" stroke="#000000" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M 280 260 H 680 L 740 460 H 220 Z" fill="none" stroke="#000000" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M 120 580 H 220 M 740 580 H 840" fill="none" stroke="#000000" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M 420 740 H 540" fill="none" stroke="#000000" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>

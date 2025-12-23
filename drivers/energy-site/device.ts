@@ -33,7 +33,8 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.site.api.requestPolling("liveStatus"),
     ];
 
-    this.site.api.on("liveStatus", ({ response: data }) => {
+    this.site.api.on("liveStatus", (liveStatus) => {
+      const data = liveStatus?.response;
       if (!data) return;
 
       // Map Live Status fields
@@ -53,7 +54,8 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.update("alarm_storm_watch_active", data.storm_mode_active);
     });
 
-    this.site.api.on("siteInfo", async ({ response: data }) => {
+    this.site.api.on("siteInfo", async (siteInfo) => {
+      const data = siteInfo?.response;
       if (!data) return;
 
       // Ensure class and capabilities are correct

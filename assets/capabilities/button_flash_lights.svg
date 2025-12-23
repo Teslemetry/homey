@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960">
-  <path d="M280 280 L280 680 C560 680 600 600 600 480 C600 360 560 280 280 280 Z" fill="none" stroke="black" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="680" y1="480" x2="880" y2="480" stroke="black" stroke-width="20" stroke-linecap="round"/>
-  <line x1="640" y1="300" x2="800" y2="140" stroke="black" stroke-width="20" stroke-linecap="round"/>
-  <line x1="640" y1="660" x2="800" y2="820" stroke="black" stroke-width="20" stroke-linecap="round"/>
-  <line x1="280" y1="410" x2="420" y2="410" stroke="black" stroke-width="10" stroke-linecap="round"/>
-  <line x1="280" y1="550" x2="420" y2="550" stroke="black" stroke-width="10" stroke-linecap="round"/>
-</svg>

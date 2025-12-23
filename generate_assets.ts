@@ -51,7 +51,7 @@ const tasks: ImageTask[] = [
   {
     name: "App Store Images (Scene)",
     prompt:
-      "A bright, modern, and clean smart home energy scene. A white electric vehicle charging in a minimalist garage with a home battery unit on the wall. Soft daylight lighting, photorealistic, 3D render style. No text, no logos, no people. Visualizes energy flow and connectivity.",
+      "A bright, modern, and clean smart home energy scene. A white Tesla Model 3 charging with a Tesla Wall Connector in a minimalist garage with a Tesla Powerwall 3 unit on the wall. Soft daylight lighting, photorealistic, 3D render style. No people. Ensure the Tesla products are realistic and depict the latest versions of those products",
     outputDir: ASSETS_DIR,
     sizes: [
       { name: "small.png", width: 250, height: 175 },
