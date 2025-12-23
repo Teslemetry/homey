@@ -4,5 +4,8 @@
   },
   "0.0.3": {
     "en": "Setup for Homey Pro testing"
+  },
+  "0.0.4": {
+    "en": "Added flow cards, removed settings, and fixed windows."
   }
 }
