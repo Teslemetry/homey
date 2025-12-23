@@ -25,7 +25,7 @@
     "frunk",
     "trunk",
     "target_temperature",
-    "windowcoverings_state",
+    "windowcoverings_closed",
     "alarm_motion",
     "alarm_contact_door_front_left",
     "alarm_contact_door_front_right",

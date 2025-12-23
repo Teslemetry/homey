@@ -25,6 +25,14 @@ export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
 
   async onInit() {
+    // Migrations
+    if (this.hasCapability("windowcoverings_state")) {
+      this.removeCapability("windowcoverings_state");
+    }
+    if (!this.hasCapability("windowcoverings_closed")) {
+      this.addCapability("windowcoverings_closed");
+    }
+
     try {
       const vehicle = this.homey.app.products?.vehicles?.[this.getData().vin];
       if (!vehicle) throw new Error("No vehicle found");
@@ -144,7 +152,7 @@ export default class VehicleDevice extends TeslemetryDevice {
         windowMap.get(FpWindow) ||
         windowMap.get(RdWindow) ||
         windowMap.get(RpWindow);
-      this.update("window_open", anyOpen);
+      this.update("windowcoverings_closed", !anyOpen);
     };
 
     this.vehicle.sse.onSignal("FdWindow", handleWindow);
@@ -221,12 +229,12 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.registerCapabilityListener("trunk", async (value) => {
       this.vehicle.api.actuateTrunk("rear");
     });
-    this.registerCapabilityListener("windowcoverings_state", async (value) => {
-      // value is 'up', 'down', 'idle'
-      const lat = 0; // Replace with actual location if available
-      const lon = 0;
-      if (value === "up") this.vehicle.api.windowControl("close", lat, lon);
-      if (value === "down") this.vehicle.api.windowControl("vent", lat, lon);
+    this.registerCapabilityListener("windowcoverings_closed", async (value) => {
+      const { latitude, longitude } = this.vehicle.sse.cache?.data
+        ?.Location || { latitude: 0, longitude: 0 }; // Replace with actual location if available
+      value
+        ? this.vehicle.api.windowControl("close", latitude, longitude)
+        : this.vehicle.api.windowControl("vent", latitude, longitude);
     });
 
     // Buttons
