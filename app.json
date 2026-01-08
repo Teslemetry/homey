@@ -468,7 +468,9 @@
         "en": "Powerwall"
       },
       "class": "battery",
-      "uiQuickAction": false,
+      "ui": {
+        "quickAction": false
+      },
       "capabilities": [
         "measure_battery",
         "measure_power",
@@ -568,7 +570,9 @@
         "en": "Energy Gateway"
       },
       "class": "sensor",
-      "uiQuickAction": false,
+      "ui": {
+        "quickAction": false
+      },
       "capabilities": [
         "measure_power.grid",
         "measure_power.load",
@@ -675,7 +679,9 @@
         "en": "Solar Panel"
       },
       "class": "solarpanel",
-      "uiQuickAction": false,
+      "ui": {
+        "quickAction": false
+      },
       "capabilities": [
         "measure_power",
         "meter_power"
@@ -738,7 +744,9 @@
         "en": "Tesla Vehicle"
       },
       "class": "car",
-      "uiQuickAction": false,
+      "ui": {
+        "quickAction": false
+      },
       "energy": {
         "electricCar": true
       },
@@ -983,7 +991,9 @@
         "en": "Tesla Wall Connector"
       },
       "class": "evcharger",
-      "uiQuickAction": false,
+      "ui": {
+        "quickAction": false
+      },
       "capabilities": [
         "evcharger_charging_state",
         "measure_power",
