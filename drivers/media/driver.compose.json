@@ -1,0 +1,30 @@
+{
+  "name": {
+    "en": "Tesla Media Player"
+  },
+  "class": "speaker",
+  "$extends": ["teslemetry"],
+  "capabilities": [
+    "speaker_playing",
+    "speaker_next",
+    "speaker_prev",
+    "speaker_track",
+    "speaker_artist",
+    "speaker_album",
+    "speaker_duration",
+    "speaker_position",
+    "volume_set",
+    "volume_mute"
+  ],
+  "capabilitiesOptions": {
+    "speaker_track": {
+      "title": { "en": "Track" }
+    },
+    "speaker_artist": {
+      "title": { "en": "Artist" }
+    },
+    "speaker_album": {
+      "title": { "en": "Album" }
+    }
+  }
+}
