@@ -108,15 +108,15 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Climate
     const handleThermostatMode = (
-      key: "HvacACEnabled" | "DefrostMode" | "ClimateKeeperMode",
+      key: "HvacPower" | "DefrostMode" | "ClimateKeeperMode",
       value: SseData["data"][typeof key],
     ) => {
       // Figure out the latest states of the vehicle
       const signals = {
-        HvacACEnabled:
-          key === "HvacACEnabled"
-            ? (value as SseData["data"]["HvacACEnabled"])
-            : this.vehicle.sse.cache.data?.HvacACEnabled,
+        HvacPower:
+          key === "HvacPower"
+            ? (value as SseData["data"]["HvacPower"])
+            : this.vehicle.sse.cache.data?.HvacPower,
         DefrostMode: defrostModeMap.get(
           key === "DefrostMode"
             ? (value as SseData["data"]["DefrostMode"])
@@ -140,14 +140,14 @@ export default class VehicleDevice extends TeslemetryDevice {
       if (signals.ClimateKeeperMode === "ClimateKeeperModeStateParty") {
         return this.update("thermostat_mode", "camp_mode");
       }
-      if (signals.HvacACEnabled) {
+      if (signals.HvacPower == "HvacPowerStateOn") {
         return this.update("thermostat_mode", "auto");
       }
       return this.update("thermostat_mode", "off");
     };
 
-    this.vehicle.sse.onSignal("HvacACEnabled", (value) =>
-      handleThermostatMode("HvacACEnabled", value),
+    this.vehicle.sse.onSignal("HvacPower", (value) =>
+      handleThermostatMode("HvacPower", value),
     );
     this.vehicle.sse.onSignal("DefrostMode", (value) =>
       handleThermostatMode("DefrostMode", value),
@@ -221,7 +221,8 @@ export default class VehicleDevice extends TeslemetryDevice {
     // Climate
     this.registerCapabilityListener("thermostat_mode", async (value) => {
       // Handle Climate
-      const climateState = this.vehicle.sse.cache.data?.HvacACEnabled;
+      const climateState =
+        this.vehicle.sse.cache.data?.HvacPower === "HvacPowerStateOn";
       if (value === "off") {
         this.vehicle.api
           .stopAutoConditioning()
