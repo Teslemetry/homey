@@ -1,21 +1,23 @@
 import type TeslemetryApp from "../../app.js";
-import { Teslemetry, VehicleDetails } from "@teslemetry/api";
+import { SseData, Teslemetry, VehicleDetails } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 
 const isBool = (x: any) => typeof x === "boolean";
 
-const chargePortLatchMap = new Map<any, boolean>([
-  ["ChargePortLatchEngaged", true],
-  ["ChargePortLatchDisengaged", false],
-]);
+const chargePortLatchMap = new Map<SseData["data"]["ChargePortLatch"], boolean>(
+  [
+    ["ChargePortLatchEngaged", true],
+    ["ChargePortLatchDisengaged", false],
+  ],
+);
 
-const defrostModeMap = new Map<any, boolean>([
-  ["DefrostModeOn", true],
+const defrostModeMap = new Map<SseData["data"]["DefrostMode"], boolean>([
+  ["DefrostModeStateNormal", true],
   ["DefrostModeStateMax", true],
-  ["DefrostModeOff", false],
+  ["DefrostModeStateOff", false],
 ]);
 
-const windowMap = new Map<any, boolean>([
+const windowMap = new Map<SseData["data"]["FdWindow"], boolean>([
   ["WindowStateOpened", true],
   ["WindowStatePartiallyOpen", true],
   ["WindowStateClosed", false],
@@ -105,9 +107,55 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
 
     // Climate
+    const handleThermostatMode = (
+      key: "HvacACEnabled" | "DefrostMode" | "ClimateKeeperMode",
+      value: SseData["data"][typeof key],
+    ) => {
+      // Figure out the latest states of the vehicle
+      const signals = {
+        HvacACEnabled:
+          key === "HvacACEnabled"
+            ? (value as SseData["data"]["HvacACEnabled"])
+            : this.vehicle.sse.cache.data?.HvacACEnabled,
+        DefrostMode: defrostModeMap.get(
+          key === "DefrostMode"
+            ? (value as SseData["data"]["DefrostMode"])
+            : this.vehicle.sse.cache.data?.DefrostMode,
+        ),
+        ClimateKeeperMode:
+          key === "ClimateKeeperMode"
+            ? (value as SseData["data"]["ClimateKeeperMode"])
+            : this.vehicle.sse.cache.data?.ClimateKeeperMode,
+      };
+
+      if (signals.DefrostMode) {
+        return this.update("thermostat_mode", "defrost");
+      }
+      if (signals.ClimateKeeperMode === "ClimateKeeperModeStateOn") {
+        return this.update("thermostat_mode", "keep_mode");
+      }
+      if (signals.ClimateKeeperMode === "ClimateKeeperModeStateDog") {
+        return this.update("thermostat_mode", "dog_mode");
+      }
+      if (signals.ClimateKeeperMode === "ClimateKeeperModeStateParty") {
+        return this.update("thermostat_mode", "camp_mode");
+      }
+      if (signals.HvacACEnabled) {
+        return this.update("thermostat_mode", "auto");
+      }
+      return this.update("thermostat_mode", "off");
+    };
+
     this.vehicle.sse.onSignal("HvacACEnabled", (value) =>
-      this.update("thermostat_mode", value ? "auto" : "off"),
+      handleThermostatMode("HvacACEnabled", value),
     );
+    this.vehicle.sse.onSignal("DefrostMode", (value) =>
+      handleThermostatMode("DefrostMode", value),
+    );
+    this.vehicle.sse.onSignal("ClimateKeeperMode", (value) =>
+      handleThermostatMode("ClimateKeeperMode", value),
+    );
+
     this.vehicle.sse.onSignal(
       this.vehicle.metadata.config!.rhd
         ? "HvacRightTemperatureRequest"
@@ -119,9 +167,6 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
     this.vehicle.sse.onSignal("OutsideTemp", (value) =>
       this.update("measure_temperature.outside", value),
-    );
-    this.vehicle.sse.onSignal("DefrostMode", (value) =>
-      this.update("onoff.defrost", defrostModeMap.get(value)),
     );
     this.vehicle.sse.onSignal("HvacSteeringWheelHeatLevel", (value) =>
       this.update("steering_wheel_heater", String(value)),
@@ -175,18 +220,87 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Climate
     this.registerCapabilityListener("thermostat_mode", async (value) => {
-      value === "auto"
-        ? this.vehicle.api.startAutoConditioning().catch(this.handleApiError)
-        : this.vehicle.api.stopAutoConditioning().catch(this.handleApiError);
+      // Handle Climate
+      const climateState = this.vehicle.sse.cache.data?.HvacACEnabled;
+      if (value === "off") {
+        this.vehicle.api
+          .stopAutoConditioning()
+          .then(this.handleApiResponse)
+          .catch(this.handleApiError);
+        return;
+      } else if (value === "auto" && !climateState) {
+        this.vehicle.api
+          .startAutoConditioning()
+          .then(this.handleApiResponse)
+          .catch(this.handleApiError);
+        return;
+      } // else climates on, so we need to check which other state to turn off
+
+      // Handle Defrost
+      const defrostValue = defrostModeMap.get(
+        this.vehicle.sse.cache.data?.DefrostMode,
+      );
+      if (value === "defrost") {
+        if (!defrostValue) {
+          this.vehicle.api
+            .setPreconditioningMax(true, true)
+            .then(this.handleApiResponse)
+            .catch(this.handleApiError);
+        }
+        return;
+      } else {
+        if (defrostValue) {
+          this.vehicle.api
+            .setPreconditioningMax(false, false)
+            .then(this.handleApiResponse)
+            .catch(this.handleApiError);
+        }
+      }
+
+      // Handle Keeper
+      const climateKeep = this.vehicle.sse.cache.data?.ClimateKeeperMode;
+      switch (value) {
+        case "keep_mode":
+          if (climateKeep !== "ClimateKeeperModeStateOn") {
+            this.vehicle.api
+              .setClimateKeeperMode(1)
+              .then(this.handleApiResponse)
+              .catch(this.handleApiError);
+          }
+          return;
+        case "dog_mode":
+          if (climateKeep !== "ClimateKeeperModeStateDog") {
+            this.vehicle.api
+              .setClimateKeeperMode(2)
+              .then(this.handleApiResponse)
+              .catch(this.handleApiError);
+          }
+          return;
+        case "camp_mode":
+          if (climateKeep !== "ClimateKeeperModeStateParty") {
+            this.vehicle.api
+              .setClimateKeeperMode(3)
+              .then(this.handleApiResponse)
+              .catch(this.handleApiError);
+          }
+          return;
+        default:
+          if (climateKeep !== "ClimateKeeperModeStateOff") {
+            this.vehicle.api
+              .setClimateKeeperMode(0)
+              .then(this.handleApiResponse)
+              .catch(this.handleApiError);
+          }
+      }
     });
+
     this.registerCapabilityListener("target_temperature", async (value) => {
-      this.vehicle.api.setTemps(value, value).catch(this.handleApiError);
-    });
-    this.registerCapabilityListener("onoff.defrost", async (value) => {
       this.vehicle.api
-        .setPreconditioningMax(value, true)
+        .setTemps(value, value)
+        .then(this.handleApiResponse)
         .catch(this.handleApiError);
     });
+
     this.registerCapabilityListener("steering_wheel_heater", async (value) => {
       switch (value) {
         case "0":
@@ -213,6 +327,7 @@ export default class VehicleDevice extends TeslemetryDevice {
         .setSeatHeater("front_left", Number(value))
         .catch(this.handleApiError);
     });
+
     this.registerCapabilityListener(
       "seat_heater.front_right",
       async (value) => {
@@ -229,11 +344,13 @@ export default class VehicleDevice extends TeslemetryDevice {
         ? this.vehicle.api.startCharging().catch(this.handleApiError)
         : this.vehicle.api.stopCharging().catch(this.handleApiError);
     });
+
     this.registerCapabilityListener("onoff.charge_port", async (value) => {
       value
         ? this.vehicle.api.openChargePort().catch(this.handleApiError)
         : this.vehicle.api.closeChargePort().catch(this.handleApiError);
     });
+
     // Sentry & Valet
     this.registerCapabilityListener("onoff.sentry", async (value) => {
       this.vehicle.api.setSentryMode(value).catch(this.handleApiError);
@@ -245,12 +362,14 @@ export default class VehicleDevice extends TeslemetryDevice {
         this.vehicle.api.actuateTrunk("front").catch(this.handleApiError);
       // Cannot be closed
     });
+
     this.registerCapabilityListener("onoff.trunk", async (value) => {
       this.vehicle.api.actuateTrunk("rear").catch(this.handleApiError);
     });
+
     this.registerCapabilityListener("windowcoverings_closed", async (value) => {
       const { latitude, longitude } = this.vehicle.sse.cache?.data
-        ?.Location || { latitude: 0, longitude: 0 }; // Replace with actual location if available
+        ?.Location || { latitude: 0, longitude: 0 };
       value
         ? this.vehicle.api
             .windowControl("close", latitude, longitude)
@@ -264,18 +383,23 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.registerCapabilityListener("button.flash", async () => {
       this.vehicle.api.flashLights().catch(this.handleApiError);
     });
+
     this.registerCapabilityListener("button.honk", async () => {
       this.vehicle.api.honkHorn().catch(this.handleApiError);
     });
+
     this.registerCapabilityListener("button.keyless", async () => {
       this.vehicle.api.remoteStart().catch(this.handleApiError);
     });
+
     this.registerCapabilityListener("button.homelink", async () => {
-      // Needs lat/lon usually
-      const lat = 0;
-      const lon = 0;
-      this.vehicle.api.triggerHomelink(lat, lon).catch(this.handleApiError);
+      const { latitude, longitude } = this.vehicle.sse.cache?.data
+        ?.Location || { latitude: 0, longitude: 0 };
+      this.vehicle.api
+        .triggerHomelink(latitude, longitude)
+        .catch(this.handleApiError);
     });
+
     this.registerCapabilityListener("button.wakeup", async () => {
       this.vehicle.api.wakeUp().catch(this.handleApiError);
     });

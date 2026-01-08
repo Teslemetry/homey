@@ -72,6 +72,16 @@ export default class TeslemetryDevice extends Homey.Device {
     return this.setCapabilityValue(capability, value).catch(this.error);
   }
 
+  protected handleApiResponse = ({ response }: { response: any }): void => {
+    if (response.result === false) {
+      throw {
+        response: null,
+        error: "command_failed",
+        error_description: response.reason,
+      };
+    }
+  };
+
   protected handleApiError = ({
     error,
     error_description,

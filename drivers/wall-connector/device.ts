@@ -23,7 +23,10 @@ export default class WallConnecter extends TeslemetryDevice {
     }
     this.din = this.getData().din;
 
-    this.pollingCleanup = [this.site.api.requestPolling("liveStatus")];
+    this.pollingCleanup = [
+      this.site.api.requestPolling("liveStatus"),
+      this.site.api.requestPolling("chargeHistory"),
+    ];
 
     this.site.api.on("liveStatus", ({ response }) => {
       // Get specific Wall Connector
@@ -47,11 +50,13 @@ export default class WallConnecter extends TeslemetryDevice {
     });
 
     this.site.api.on("chargeHistory", async (energyHistory) => {
+      this.log(energyHistory);
       if (!energyHistory.response?.time_series?.length) return;
 
       let charged: number | null = null;
 
       for (const event of energyHistory.response.time_series) {
+        this.log(event);
         if (
           event.energy_added_wh !== undefined &&
           event.energy_added_wh !== null
@@ -60,6 +65,8 @@ export default class WallConnecter extends TeslemetryDevice {
           charged += event.energy_added_wh;
         }
       }
+
+      this.log(charged);
 
       if (charged !== null) this.update("meter_power", charged / 1000);
     });

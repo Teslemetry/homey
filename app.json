@@ -447,13 +447,28 @@
       "repair": [
         {
           "id": "login_oauth2",
-          "template": "login_oauth2"
+          "template": "login_oauth2",
+          "navigation": {
+            "next": "list_devices"
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
         }
       ],
       "name": {
         "en": "Powerwall"
       },
       "class": "battery",
+      "uiQuickAction": false,
       "capabilities": [
         "measure_battery",
         "measure_power",
@@ -532,7 +547,21 @@
       "repair": [
         {
           "id": "login_oauth2",
-          "template": "login_oauth2"
+          "template": "login_oauth2",
+          "navigation": {
+            "next": "list_devices"
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
         }
       ],
       "name": {
@@ -625,7 +654,21 @@
       "repair": [
         {
           "id": "login_oauth2",
-          "template": "login_oauth2"
+          "template": "login_oauth2",
+          "navigation": {
+            "next": "list_devices"
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
         }
       ],
       "name": {
@@ -674,7 +717,21 @@
       "repair": [
         {
           "id": "login_oauth2",
-          "template": "login_oauth2"
+          "template": "login_oauth2",
+          "navigation": {
+            "next": "list_devices"
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
         }
       ],
       "name": {
@@ -699,7 +756,6 @@
         "measure_voltage",
         "measure_current",
         "onoff.sentry",
-        "onoff.defrost",
         "steering_wheel_heater",
         "seat_heater.front_left",
         "seat_heater.front_right",
@@ -827,6 +883,49 @@
           "title": {
             "en": "Windows"
           }
+        },
+        "thermostat_mode": {
+          "title": {
+            "en": "Climate"
+          },
+          "values": [
+            {
+              "id": "off",
+              "title": {
+                "en": "Off"
+              }
+            },
+            {
+              "id": "auto",
+              "title": {
+                "en": "Automatic"
+              }
+            },
+            {
+              "id": "defrost",
+              "title": {
+                "en": "Defrost"
+              }
+            },
+            {
+              "id": "keep_mode",
+              "title": {
+                "en": "Keep Mode"
+              }
+            },
+            {
+              "id": "dog_mode",
+              "title": {
+                "en": "Dog Mode"
+              }
+            },
+            {
+              "id": "camp_mode",
+              "title": {
+                "en": "Camp Mode"
+              }
+            }
+          ]
         }
       },
       "id": "vehicle"
@@ -863,7 +962,21 @@
       "repair": [
         {
           "id": "login_oauth2",
-          "template": "login_oauth2"
+          "template": "login_oauth2",
+          "navigation": {
+            "next": "list_devices"
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
         }
       ],
       "name": {

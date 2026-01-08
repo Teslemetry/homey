@@ -12,14 +12,15 @@
     "app:install": "homey app install",
     "app:validate": "homey app validate --level verified",
     "app:publish": "homey app publish",
-    "homey": "homey"
+    "homey": "homey",
+    "size": "du -sh .homeybuild"
   },
   "dependencies": {
     "@teslemetry/api": "^0.6.7",
-    "homey": "^3.12.0",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
+    "homey": "^3.12.0",
     "@tsconfig/node16": "^16.1.8",
     "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.12",
     "@types/node": "^24.10.2",

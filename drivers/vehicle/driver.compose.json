@@ -22,7 +22,6 @@
     "measure_voltage",
     "measure_current",
     "onoff.sentry",
-    "onoff.defrost",
     "steering_wheel_heater",
     "seat_heater.front_left",
     "seat_heater.front_right",
@@ -106,6 +105,47 @@
     },
     "windowcoverings_closed": {
       "title": { "en": "Windows" }
+    },
+    "thermostat_mode": {
+      "title": { "en": "Climate" },
+      "values": [
+        {
+          "id": "off",
+          "title": {
+            "en": "Off"
+          }
+        },
+        {
+          "id": "auto",
+          "title": {
+            "en": "Automatic"
+          }
+        },
+        {
+          "id": "defrost",
+          "title": {
+            "en": "Defrost"
+          }
+        },
+        {
+          "id": "keep_mode",
+          "title": {
+            "en": "Keep Mode"
+          }
+        },
+        {
+          "id": "dog_mode",
+          "title": {
+            "en": "Dog Mode"
+          }
+        },
+        {
+          "id": "camp_mode",
+          "title": {
+            "en": "Camp Mode"
+          }
+        }
+      ]
     }
   }
 }
