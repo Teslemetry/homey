@@ -4,7 +4,9 @@
   },
   "class": "car",
   "$extends": ["teslemetry"],
-  "uiQuickAction": false,
+  "ui": {
+    "quickAction": false
+  },
   "energy": {
     "electricCar": true
   },

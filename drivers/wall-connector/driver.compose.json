@@ -4,7 +4,9 @@
   },
   "class": "evcharger",
   "$extends": ["teslemetry"],
-  "uiQuickAction": false,
+  "ui": {
+    "quickAction": false
+  },
   "capabilities": [
     "evcharger_charging_state",
     "measure_power",

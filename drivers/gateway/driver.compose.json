@@ -4,7 +4,9 @@
   },
   "class": "sensor",
   "$extends": ["teslemetry"],
-  "uiQuickAction": false,
+  "ui": {
+    "quickAction": false
+  },
   "capabilities": [
     "measure_power.grid",
     "measure_power.load",

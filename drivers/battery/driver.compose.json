@@ -4,6 +4,9 @@
   },
   "class": "battery",
   "$extends": ["teslemetry"],
+  "ui": {
+    "quickAction": false
+  },
   "capabilities": [
     "measure_battery",
     "measure_power",
