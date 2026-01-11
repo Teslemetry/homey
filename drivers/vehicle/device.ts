@@ -23,8 +23,24 @@ const windowMap = new Map<SseData["data"]["FdWindow"], boolean>([
   ["WindowStateClosed", false],
 ]);
 
+const centerDisplayMap = new Map<SseData["data"]["CenterDisplay"], boolean>([
+  ["DisplayStateOff", false],
+  ["DisplayStateDim", false],
+  ["DisplayStateCharging", false],
+  ["DisplayStateLock", false],
+  ["DisplayStateSentry", false],
+  ["DisplayStateAccessory", true],
+  ["DisplayStateOn", true],
+  ["DisplayStateDriving", true],
+  ["DisplayStateDog", true],
+  ["DisplayStateEntertainment", true],
+]);
+
 export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
+  private volumeMax: number = 10.333;
+  private muted: boolean = false;
+  private lastVolume: number = 0.5;
 
   async onInit() {
     await super.onInit();
@@ -208,6 +224,73 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.vehicle.sse.onSignal("FpWindow", handleWindow);
     this.vehicle.sse.onSignal("RdWindow", handleWindow);
     this.vehicle.sse.onSignal("RpWindow", handleWindow);
+
+    // Media Volume
+    this.vehicle.sse.onSignal("MediaAudioVolume", (value) => {
+      if (value !== undefined && value !== null) {
+        const normalizedVolume = value / this.volumeMax;
+        this.lastVolume = normalizedVolume;
+        if (!this.muted) {
+          this.update("volume_set", normalizedVolume);
+        }
+      }
+    });
+
+    this.vehicle.sse.onSignal("MediaAudioVolumeMax", (value) => {
+      if (value !== undefined && value !== null) {
+        this.volumeMax = value;
+      }
+    });
+
+    // Media Playback Status
+    const handlePlaybackStatus = (
+      value:
+        | SseData["data"]["CenterDisplay"]
+        | SseData["data"]["MediaPlaybackStatus"],
+    ) => {
+      if (!value) return;
+      const display = centerDisplayMap.get(
+        value?.startsWith("CenterDisplay")
+          ? (value as SseData["data"]["CenterDisplay"])
+          : this.vehicle.sse.cache.data?.CenterDisplay,
+      );
+      const playback =
+        (value?.startsWith("MediaStatus")
+          ? value
+          : this.vehicle.sse.cache.data?.MediaPlaybackStatus) ===
+        "MediaStatusPlaying";
+
+      this.update("speaker_playing", display && playback);
+    };
+
+    this.vehicle.sse.onSignal("MediaPlaybackStatus", handlePlaybackStatus);
+    this.vehicle.sse.onSignal("CenterDisplay", handlePlaybackStatus);
+
+    // Media Track Information
+    this.vehicle.sse.onSignal("MediaNowPlayingTitle", (value) => {
+      this.update("speaker_track", value ?? "");
+    });
+
+    this.vehicle.sse.onSignal("MediaNowPlayingArtist", (value) => {
+      this.update("speaker_artist", value ?? "");
+    });
+
+    this.vehicle.sse.onSignal("MediaNowPlayingAlbum", (value) => {
+      this.update("speaker_album", value ?? "");
+    });
+
+    // Media Duration and Position (convert ms to seconds)
+    this.vehicle.sse.onSignal("MediaNowPlayingDuration", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("speaker_duration", value / 1000);
+      }
+    });
+
+    this.vehicle.sse.onSignal("MediaNowPlayingElapsed", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("speaker_position", value / 1000);
+      }
+    });
 
     // --- Capability Listeners (Actions) ---
 
@@ -403,6 +486,43 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     this.registerCapabilityListener("button.wakeup", async () => {
       this.vehicle.api.wakeUp().catch(this.handleApiError);
+    });
+
+    // Media Play/Pause Toggle
+    this.registerCapabilityListener("speaker_playing", async () => {
+      this.vehicle.api.mediaTogglePlayback().catch(this.handleApiError);
+    });
+
+    // Media Next Track
+    this.registerCapabilityListener("speaker_next", async () => {
+      this.vehicle.api.mediaNextTrack().catch(this.handleApiError);
+    });
+
+    // Media Previous Track
+    this.registerCapabilityListener("speaker_prev", async () => {
+      this.vehicle.api.mediaPreviousTrack().catch(this.handleApiError);
+    });
+
+    // Media Volume Control
+    this.registerCapabilityListener("volume_set", async (value: number) => {
+      this.muted = false;
+      const volume = value * this.volumeMax;
+      this.vehicle.api.adjustVolume(volume).catch(this.handleApiError);
+    });
+
+    // Media Mute Toggle
+    this.registerCapabilityListener("volume_mute", async (value: boolean) => {
+      this.muted = value;
+      if (value) {
+        // Mute: set volume to 0
+        this.vehicle.api.adjustVolume(0).catch(this.handleApiError);
+        this.update("volume_set", 0);
+      } else {
+        // Unmute: restore last volume
+        const volume = this.lastVolume * this.volumeMax;
+        this.vehicle.api.adjustVolume(volume).catch(this.handleApiError);
+        this.update("volume_set", this.lastVolume);
+      }
     });
   }
 

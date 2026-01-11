@@ -41,7 +41,17 @@
     "button.honk",
     "button.keyless",
     "button.homelink",
-    "button.wakeup"
+    "button.wakeup",
+    "speaker_playing",
+    "speaker_next",
+    "speaker_prev",
+    "speaker_track",
+    "speaker_artist",
+    "speaker_album",
+    "speaker_duration",
+    "speaker_position",
+    "volume_set",
+    "volume_mute"
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {
@@ -107,6 +117,15 @@
     },
     "windowcoverings_closed": {
       "title": { "en": "Windows" }
+    },
+    "speaker_track": {
+      "title": { "en": "Track" }
+    },
+    "speaker_artist": {
+      "title": { "en": "Artist" }
+    },
+    "speaker_album": {
+      "title": { "en": "Album" }
     },
     "thermostat_mode": {
       "title": { "en": "Climate" },

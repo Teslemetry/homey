@@ -781,7 +781,17 @@
         "button.honk",
         "button.keyless",
         "button.homelink",
-        "button.wakeup"
+        "button.wakeup",
+        "speaker_playing",
+        "speaker_next",
+        "speaker_prev",
+        "speaker_track",
+        "speaker_artist",
+        "speaker_album",
+        "speaker_duration",
+        "speaker_position",
+        "volume_set",
+        "volume_mute"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -892,6 +902,21 @@
             "en": "Windows"
           }
         },
+        "speaker_track": {
+          "title": {
+            "en": "Track"
+          }
+        },
+        "speaker_artist": {
+          "title": {
+            "en": "Artist"
+          }
+        },
+        "speaker_album": {
+          "title": {
+            "en": "Album"
+          }
+        },
         "thermostat_mode": {
           "title": {
             "en": "Climate"
@@ -937,90 +962,6 @@
         }
       },
       "id": "vehicle"
-    },
-    {
-      "connectivity": [
-        "cloud"
-      ],
-      "platforms": [
-        "local"
-      ],
-      "images": {
-        "small": "/drivers/vehicle-media/assets/images/small.png",
-        "large": "/drivers/vehicle-media/assets/images/large.png",
-        "xlarge": "/drivers/vehicle-media/assets/images/xlarge.png"
-      },
-      "pair": [
-        {
-          "id": "login_oauth2",
-          "template": "login_oauth2"
-        },
-        {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "add_devices"
-          }
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
-        }
-      ],
-      "repair": [
-        {
-          "id": "login_oauth2",
-          "template": "login_oauth2",
-          "navigation": {
-            "next": "list_devices"
-          }
-        },
-        {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "add_devices"
-          }
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
-        }
-      ],
-      "name": {
-        "en": "Tesla Vehicle Media"
-      },
-      "class": "speaker",
-      "capabilities": [
-        "speaker_playing",
-        "speaker_next",
-        "speaker_prev",
-        "speaker_track",
-        "speaker_artist",
-        "speaker_album",
-        "speaker_duration",
-        "speaker_position",
-        "volume_set",
-        "volume_mute"
-      ],
-      "capabilitiesOptions": {
-        "speaker_track": {
-          "title": {
-            "en": "Track"
-          }
-        },
-        "speaker_artist": {
-          "title": {
-            "en": "Artist"
-          }
-        },
-        "speaker_album": {
-          "title": {
-            "en": "Album"
-          }
-        }
-      },
-      "id": "vehicle-media"
     },
     {
       "connectivity": [
