@@ -308,6 +308,19 @@ export default class VehicleDevice extends TeslemetryDevice {
       else if (value === "ShiftStateD") this.update("gear", "D");
     });
 
+    // Navigation
+    this.vehicle.sse.onSignal("DestinationName", (value) =>
+      this.update("navigation_destination", value ?? ""),
+    );
+    this.vehicle.sse.onSignal("MinutesToArrival", (value) =>
+      this.update("minutes_to_arrival", value),
+    );
+
+    // Guest Mode
+    this.vehicle.sse.onSignal("GuestModeEnabled", (value) =>
+      this.update("guest_mode", value),
+    );
+
     // Media Volume
     this.vehicle.sse.onSignal("MediaAudioVolume", (value) => {
       if (value !== undefined && value !== null) {
@@ -564,6 +577,11 @@ export default class VehicleDevice extends TeslemetryDevice {
     // Sentry & Valet
     this.registerCapabilityListener("onoff.sentry", async (value) => {
       this.vehicle.api.setSentryMode(value).catch(this.handleApiError);
+    });
+
+    // Guest Mode
+    this.registerCapabilityListener("guest_mode", async (value) => {
+      this.vehicle.api.setGuestMode(value).catch(this.handleApiError);
     });
 
     // Doors/Frunk/Trunk

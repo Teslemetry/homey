@@ -66,7 +66,10 @@
     "seat_heater.rear_right",
     "seat_heater.rear_center",
     "seat_cooler.front_left",
-    "seat_cooler.front_right"
+    "seat_cooler.front_right",
+    "navigation_destination",
+    "minutes_to_arrival",
+    "guest_mode"
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {

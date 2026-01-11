@@ -1,0 +1,9 @@
+{
+  "type": "string",
+  "title": {
+    "en": "Navigation Destination"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

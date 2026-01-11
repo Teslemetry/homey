@@ -806,7 +806,10 @@
         "seat_heater.rear_right",
         "seat_heater.rear_center",
         "seat_cooler.front_left",
-        "seat_cooler.front_right"
+        "seat_cooler.front_right",
+        "navigation_destination",
+        "minutes_to_arrival",
+        "guest_mode"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -1215,6 +1218,15 @@
         }
       ]
     },
+    "guest_mode": {
+      "type": "boolean",
+      "title": {
+        "en": "Guest Mode"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "toggle"
+    },
     "measure_odometer": {
       "type": "number",
       "title": {
@@ -1253,6 +1265,28 @@
         "en": "km/h"
       },
       "decimals": 0
+    },
+    "minutes_to_arrival": {
+      "type": "number",
+      "title": {
+        "en": "Minutes to Arrival"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "min"
+      },
+      "decimals": 0
+    },
+    "navigation_destination": {
+      "type": "string",
+      "title": {
+        "en": "Navigation Destination"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
     },
     "operation_mode": {
       "type": "enum",
