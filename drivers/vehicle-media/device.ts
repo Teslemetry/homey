@@ -1,5 +1,18 @@
-import { VehicleDetails } from "@teslemetry/api";
+import { SseData, VehicleDetails } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+
+const centerDisplayMap = new Map<SseData["data"]["CenterDisplay"], boolean>([
+  ["DisplayStateOff", false],
+  ["DisplayStateDim", false],
+  ["DisplayStateCharging", false],
+  ["DisplayStateLock", false],
+  ["DisplayStateSentry", false],
+  ["DisplayStateAccessory", true],
+  ["DisplayStateOn", true],
+  ["DisplayStateDriving", true],
+  ["DisplayStateDog", true],
+  ["DisplayStateEntertainment", true],
+]);
 
 export default class MediaDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
@@ -40,11 +53,30 @@ export default class MediaDevice extends TeslemetryDevice {
     });
 
     // Playback Status
-    this.vehicle.sse.onSignal("MediaPlaybackStatus", (value) => {
-      // MediaPlaybackStatus enum: MediaStatusUnknown, MediaStatusStopped, MediaStatusPlaying, MediaStatusPaused
-      const isPlaying = value === "MediaStatusPlaying";
-      this.update("speaker_playing", isPlaying);
-    });
+    const handlePlaybackStatus = (
+      value:
+        | SseData["data"]["CenterDisplay"]
+        | SseData["data"]["MediaPlaybackStatus"],
+    ) => {
+      if (!value) return;
+      const display = centerDisplayMap.get(
+        value?.startsWith("CenterDisplay")
+          ? (value as SseData["data"]["CenterDisplay"])
+          : this.vehicle.sse.cache.data?.CenterDisplay,
+      );
+      const playback =
+        (value?.startsWith("MediaStatus")
+          ? value
+          : this.vehicle.sse.cache.data?.MediaPlaybackStatus) ===
+        "MediaStatusPlaying";
+
+      console.log("playback", value, display, playback, display && playback);
+
+      this.update("speaker_playing", display && playback);
+    };
+
+    this.vehicle.sse.onSignal("MediaPlaybackStatus", handlePlaybackStatus);
+    this.vehicle.sse.onSignal("CenterDisplay", handlePlaybackStatus);
 
     // Track Information
     this.vehicle.sse.onSignal("MediaNowPlayingTitle", (value) => {
