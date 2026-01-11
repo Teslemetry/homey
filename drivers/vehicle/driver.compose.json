@@ -23,6 +23,7 @@
     "measure_power",
     "measure_voltage",
     "measure_current",
+    "charge_limit",
     "onoff.sentry",
     "steering_wheel_heater",
     "seat_heater.front_left",

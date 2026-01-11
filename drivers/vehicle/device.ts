@@ -88,6 +88,11 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.vehicle.sse.onSignal("ChargeCurrentRequest", (value) =>
       this.update("measure_current", value),
     );
+    this.vehicle.sse.onSignal("ChargeLimitSoc", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("charge_limit", value / 100);
+      }
+    });
 
     // AC Charging
     this.vehicle.sse.onSignal("ACChargingEnergyIn", (value) =>
@@ -427,6 +432,12 @@ export default class VehicleDevice extends TeslemetryDevice {
       value
         ? this.vehicle.api.startCharging().catch(this.handleApiError)
         : this.vehicle.api.stopCharging().catch(this.handleApiError);
+    });
+
+    this.registerCapabilityListener("charge_limit", async (value: number) => {
+      this.vehicle.api
+        .setChargeLimit(Math.round(value * 100))
+        .catch(this.handleApiError);
     });
 
     this.registerCapabilityListener("onoff.charge_port", async (value) => {
