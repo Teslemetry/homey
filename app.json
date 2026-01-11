@@ -798,7 +798,7 @@
         "measure_pressure.rl",
         "measure_pressure.rr",
         "time_to_full_charge",
-        "measure_odometer",
+        "measure_distance.odometer",
         "gear",
         "measure_speed",
         "charging_amps",
@@ -809,7 +809,7 @@
         "seat_cooler.front_right",
         "navigation_destination",
         "minutes_to_arrival",
-        "guest_mode",
+        "onoff.guest_mode",
         "vehicle_state",
         "wifi_connected",
         "cellular_connected"
@@ -821,6 +821,16 @@
           },
           "units": {
             "en": "km"
+          }
+        },
+        "measure_distance.odometer": {
+          "title": {
+            "en": "Odometer"
+          }
+        },
+        "measure_speed": {
+          "title": {
+            "en": "Speed"
           }
         },
         "measure_temperature.outside": {
@@ -981,6 +991,11 @@
         "seat_cooler.front_right": {
           "title": {
             "en": "Seat Cooler (Front Right)"
+          }
+        },
+        "onoff.guest_mode": {
+          "title": {
+            "en": "Guest Mode"
           }
         },
         "thermostat_mode": {
@@ -1230,28 +1245,6 @@
         }
       ]
     },
-    "guest_mode": {
-      "type": "boolean",
-      "title": {
-        "en": "Guest Mode"
-      },
-      "getable": true,
-      "setable": true,
-      "uiComponent": "toggle"
-    },
-    "measure_odometer": {
-      "type": "number",
-      "title": {
-        "en": "Odometer"
-      },
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor",
-      "units": {
-        "en": "km"
-      },
-      "decimals": 0
-    },
     "measure_pressure": {
       "type": "number",
       "title": {
@@ -1264,19 +1257,6 @@
         "en": "bar"
       },
       "decimals": 1
-    },
-    "measure_speed": {
-      "type": "number",
-      "title": {
-        "en": "Speed"
-      },
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor",
-      "units": {
-        "en": "km/h"
-      },
-      "decimals": 0
     },
     "minutes_to_arrival": {
       "type": "number",
