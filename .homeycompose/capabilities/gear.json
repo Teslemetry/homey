@@ -1,0 +1,35 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Gear"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "values": [
+    {
+      "id": "P",
+      "title": {
+        "en": "Park"
+      }
+    },
+    {
+      "id": "R",
+      "title": {
+        "en": "Reverse"
+      }
+    },
+    {
+      "id": "N",
+      "title": {
+        "en": "Neutral"
+      }
+    },
+    {
+      "id": "D",
+      "title": {
+        "en": "Drive"
+      }
+    }
+  ]
+}

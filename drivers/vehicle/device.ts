@@ -58,6 +58,33 @@ export default class VehicleDevice extends TeslemetryDevice {
         ...this.driver.manifest.capabilitiesOptions["onoff.trunk"],
         setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
       }).catch(this.error);
+
+      // Seat cooling - only available on some vehicles
+      const hasSeatCooling = !!this.vehicle.metadata.config?.has_seat_cooling;
+      this.setCapabilityOptions("seat_cooler.front_left", {
+        ...this.driver.manifest.capabilitiesOptions["seat_cooler.front_left"],
+        setable: hasSeatCooling,
+      }).catch(this.error);
+      this.setCapabilityOptions("seat_cooler.front_right", {
+        ...this.driver.manifest.capabilitiesOptions["seat_cooler.front_right"],
+        setable: hasSeatCooling,
+      }).catch(this.error);
+
+      // Rear seat heaters - check if vehicle has them
+      const hasRearSeatHeaters =
+        (this.vehicle.metadata.config?.rear_seat_heaters ?? 0) > 0;
+      this.setCapabilityOptions("seat_heater.rear_left", {
+        ...this.driver.manifest.capabilitiesOptions["seat_heater.rear_left"],
+        setable: hasRearSeatHeaters,
+      }).catch(this.error);
+      this.setCapabilityOptions("seat_heater.rear_right", {
+        ...this.driver.manifest.capabilitiesOptions["seat_heater.rear_right"],
+        setable: hasRearSeatHeaters,
+      }).catch(this.error);
+      this.setCapabilityOptions("seat_heater.rear_center", {
+        ...this.driver.manifest.capabilitiesOptions["seat_heater.rear_center"],
+        setable: hasRearSeatHeaters,
+      }).catch(this.error);
     } catch (e) {
       this.log("Failed to initialize Vehicle device");
       this.error(e);
@@ -91,6 +118,14 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.vehicle.sse.onSignal("ChargeLimitSoc", (value) => {
       if (value !== undefined && value !== null) {
         this.update("charge_limit", value / 100);
+      }
+    });
+    this.vehicle.sse.onSignal("ChargeAmps", (value) =>
+      this.update("charging_amps", value),
+    );
+    this.vehicle.sse.onSignal("TimeToFullCharge", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("time_to_full_charge", value * 60);
       }
     });
 
@@ -198,6 +233,21 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.vehicle.sse.onSignal("SeatHeaterRight", (value) =>
       this.update("seat_heater.front_right", String(value)),
     );
+    this.vehicle.sse.onSignal("SeatHeaterRearLeft", (value) =>
+      this.update("seat_heater.rear_left", String(value)),
+    );
+    this.vehicle.sse.onSignal("SeatHeaterRearRight", (value) =>
+      this.update("seat_heater.rear_right", String(value)),
+    );
+    this.vehicle.sse.onSignal("SeatHeaterRearCenter", (value) =>
+      this.update("seat_heater.rear_center", String(value)),
+    );
+    this.vehicle.sse.onSignal("ClimateSeatCoolingFrontLeft", (value) =>
+      this.update("seat_cooler.front_left", String(value)),
+    );
+    this.vehicle.sse.onSignal("ClimateSeatCoolingFrontRight", (value) =>
+      this.update("seat_cooler.front_right", String(value)),
+    );
 
     // Doors & Windows (Assuming Signal names)
     this.vehicle.sse.onSignal("DoorState", (value) => {
@@ -229,6 +279,34 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.vehicle.sse.onSignal("FpWindow", handleWindow);
     this.vehicle.sse.onSignal("RdWindow", handleWindow);
     this.vehicle.sse.onSignal("RpWindow", handleWindow);
+
+    // Tire Pressure (TPMS)
+    this.vehicle.sse.onSignal("TpmsPressureFl", (value) =>
+      this.update("measure_pressure.fl", value),
+    );
+    this.vehicle.sse.onSignal("TpmsPressureFr", (value) =>
+      this.update("measure_pressure.fr", value),
+    );
+    this.vehicle.sse.onSignal("TpmsPressureRl", (value) =>
+      this.update("measure_pressure.rl", value),
+    );
+    this.vehicle.sse.onSignal("TpmsPressureRr", (value) =>
+      this.update("measure_pressure.rr", value),
+    );
+
+    // Vehicle Status
+    this.vehicle.sse.onSignal("Odometer", (value) =>
+      this.update("measure_odometer", value),
+    );
+    this.vehicle.sse.onSignal("VehicleSpeed", (value) =>
+      this.update("measure_speed", value),
+    );
+    this.vehicle.sse.onSignal("Gear", (value) => {
+      if (value === "ShiftStateP") this.update("gear", "P");
+      else if (value === "ShiftStateR") this.update("gear", "R");
+      else if (value === "ShiftStateN") this.update("gear", "N");
+      else if (value === "ShiftStateD") this.update("gear", "D");
+    });
 
     // Media Volume
     this.vehicle.sse.onSignal("MediaAudioVolume", (value) => {
@@ -425,7 +503,40 @@ export default class VehicleDevice extends TeslemetryDevice {
           .catch(this.handleApiError);
       },
     );
-    // Add rear heaters if API supports and IDs are known
+    this.registerCapabilityListener("seat_heater.rear_left", async (value) => {
+      this.vehicle.api
+        .setSeatHeater("rear_left", Number(value))
+        .catch(this.handleApiError);
+    });
+    this.registerCapabilityListener("seat_heater.rear_right", async (value) => {
+      this.vehicle.api
+        .setSeatHeater("rear_right", Number(value))
+        .catch(this.handleApiError);
+    });
+    this.registerCapabilityListener(
+      "seat_heater.rear_center",
+      async (value) => {
+        this.vehicle.api
+          .setSeatHeater("rear_center", Number(value))
+          .catch(this.handleApiError);
+      },
+    );
+    this.registerCapabilityListener(
+      "seat_cooler.front_left",
+      async (value) => {
+        this.vehicle.api
+          .setSeatCooler("front_left", Number(value))
+          .catch(this.handleApiError);
+      },
+    );
+    this.registerCapabilityListener(
+      "seat_cooler.front_right",
+      async (value) => {
+        this.vehicle.api
+          .setSeatCooler("front_right", Number(value))
+          .catch(this.handleApiError);
+      },
+    );
 
     // Charge
     this.registerCapabilityListener("evcharger_charging", async (value) => {
@@ -438,6 +549,10 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.vehicle.api
         .setChargeLimit(Math.round(value * 100))
         .catch(this.handleApiError);
+    });
+
+    this.registerCapabilityListener("charging_amps", async (value: number) => {
+      this.vehicle.api.setChargingAmps(value).catch(this.handleApiError);
     });
 
     this.registerCapabilityListener("onoff.charge_port", async (value) => {

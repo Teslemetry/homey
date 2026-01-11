@@ -1,0 +1,13 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Tire Pressure"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "units": {
+    "en": "bar"
+  },
+  "decimals": 1
+}

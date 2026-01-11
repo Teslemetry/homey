@@ -52,7 +52,21 @@
     "speaker_duration",
     "speaker_position",
     "volume_set",
-    "volume_mute"
+    "volume_mute",
+    "measure_pressure.fl",
+    "measure_pressure.fr",
+    "measure_pressure.rl",
+    "measure_pressure.rr",
+    "time_to_full_charge",
+    "measure_odometer",
+    "gear",
+    "measure_speed",
+    "charging_amps",
+    "seat_heater.rear_left",
+    "seat_heater.rear_right",
+    "seat_heater.rear_center",
+    "seat_cooler.front_left",
+    "seat_cooler.front_right"
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {
@@ -127,6 +141,33 @@
     },
     "speaker_album": {
       "title": { "en": "Album" }
+    },
+    "measure_pressure.fl": {
+      "title": { "en": "Tire Pressure (Front Left)" }
+    },
+    "measure_pressure.fr": {
+      "title": { "en": "Tire Pressure (Front Right)" }
+    },
+    "measure_pressure.rl": {
+      "title": { "en": "Tire Pressure (Rear Left)" }
+    },
+    "measure_pressure.rr": {
+      "title": { "en": "Tire Pressure (Rear Right)" }
+    },
+    "seat_heater.rear_left": {
+      "title": { "en": "Seat Heater (Rear Left)" }
+    },
+    "seat_heater.rear_right": {
+      "title": { "en": "Seat Heater (Rear Right)" }
+    },
+    "seat_heater.rear_center": {
+      "title": { "en": "Seat Heater (Rear Center)" }
+    },
+    "seat_cooler.front_left": {
+      "title": { "en": "Seat Cooler (Front Left)" }
+    },
+    "seat_cooler.front_right": {
+      "title": { "en": "Seat Cooler (Front Right)" }
     },
     "thermostat_mode": {
       "title": { "en": "Climate" },

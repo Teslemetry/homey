@@ -39,6 +39,26 @@ export default class VehicleDriver extends TeslemetryDriver {
               ...this.manifest.capabilitiesOptions["onoff.trunk"],
               setable: data.metadata.config?.can_actuate_trunks,
             },
+            "seat_cooler.front_left": {
+              ...this.manifest.capabilitiesOptions["seat_cooler.front_left"],
+              setable: data.metadata.config?.has_seat_cooling,
+            },
+            "seat_cooler.front_right": {
+              ...this.manifest.capabilitiesOptions["seat_cooler.front_right"],
+              setable: data.metadata.config?.has_seat_cooling,
+            },
+            "seat_heater.rear_left": {
+              ...this.manifest.capabilitiesOptions["seat_heater.rear_left"],
+              setable: (data.metadata.config?.rear_seat_heaters ?? 0) > 0,
+            },
+            "seat_heater.rear_right": {
+              ...this.manifest.capabilitiesOptions["seat_heater.rear_right"],
+              setable: (data.metadata.config?.rear_seat_heaters ?? 0) > 0,
+            },
+            "seat_heater.rear_center": {
+              ...this.manifest.capabilitiesOptions["seat_heater.rear_center"],
+              setable: (data.metadata.config?.rear_seat_heaters ?? 0) > 0,
+            },
           },
           ...icon?.[data.vin[3]],
         }));

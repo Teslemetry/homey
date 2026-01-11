@@ -1,0 +1,16 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Charging Amps"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "slider",
+  "units": {
+    "en": "A"
+  },
+  "min": 0,
+  "max": 48,
+  "step": 1,
+  "decimals": 0
+}
