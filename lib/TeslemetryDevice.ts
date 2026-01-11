@@ -82,10 +82,9 @@ export default class TeslemetryDevice extends Homey.Device {
     }
   };
 
-  protected handleApiError = ({
-    error,
-    error_description,
-  }: TeslemetryApiError): never => {
+  protected handleApiError = (apiError: TeslemetryApiError): never => {
+    const { error, error_description } = apiError;
+    this.error("API Error:", JSON.stringify(apiError));
     const key = `error.${error}`;
     const translation = this.homey.__(key);
     if (translation && translation !== key) {

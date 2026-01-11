@@ -138,10 +138,9 @@ export default class TeslemetryApp extends Homey.App {
     return this.oauth.hasValidToken() && !!this.teslemetry && !!this.products;
   }
 
-  public handleApiError = ({
-    error,
-    error_description,
-  }: TeslemetryApiError): never => {
+  public handleApiError = (apiError: TeslemetryApiError): never => {
+    const { error, error_description } = apiError;
+    this.error("API Error:", JSON.stringify(apiError));
     const key = `error.${error}`;
     const translation = this.homey.__(key);
     if (translation && translation !== key) {

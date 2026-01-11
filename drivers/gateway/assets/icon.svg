@@ -1,5 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960">
-  <rect x="280" y="100" width="400" height="760" rx="10" ry="10" stroke="black" stroke-width="40" fill="none" />
-  <line x1="360" y1="100" x2="360" y2="860" stroke="black" stroke-width="20" fill="none" />
-  <line x1="320" y1="180" x2="320" y2="300" stroke="black" stroke-width="10" stroke-linecap="round" fill="none" />
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960">
+  <g>
+    <path d="M589.28,185.11l66.85,12.46v563.98l-71.48,13.35-280.79-13.35V197.57l285.41-12.46M592.11,144.95l-4.57.2-285.41,12.46-38.26,1.67v640.42l38.1,1.81,280.79,13.35,4.66.22,4.58-.86,71.48-13.35,32.66-6.1V164.33l-32.67-6.09-66.85-12.46-4.5-.84h0Z"/>
+    <rect x="579.28" y="185.11" width="20" height="589.78"/>
+    <rect x="606.04" y="225.17" width="10" height="509.35"/>
+    <rect x="622.1" y="225.17" width="10" height="509.35"/>
+  </g>
+  <rect x="638.17" y="225.17" width="10" height="509.35"/>
 </svg>

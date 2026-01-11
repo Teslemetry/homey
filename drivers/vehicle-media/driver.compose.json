@@ -1,6 +1,6 @@
 {
   "name": {
-    "en": "Tesla Media Player"
+    "en": "Tesla Vehicle Media"
   },
   "class": "speaker",
   "$extends": ["teslemetry"],
