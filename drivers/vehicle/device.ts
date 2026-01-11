@@ -58,33 +58,6 @@ export default class VehicleDevice extends TeslemetryDevice {
         ...this.driver.manifest.capabilitiesOptions["onoff.trunk"],
         setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
       }).catch(this.error);
-
-      // Seat cooling - only available on some vehicles
-      const hasSeatCooling = !!this.vehicle.metadata.config?.has_seat_cooling;
-      this.setCapabilityOptions("seat_cooler.front_left", {
-        ...this.driver.manifest.capabilitiesOptions["seat_cooler.front_left"],
-        setable: hasSeatCooling,
-      }).catch(this.error);
-      this.setCapabilityOptions("seat_cooler.front_right", {
-        ...this.driver.manifest.capabilitiesOptions["seat_cooler.front_right"],
-        setable: hasSeatCooling,
-      }).catch(this.error);
-
-      // Rear seat heaters - check if vehicle has them
-      const hasRearSeatHeaters =
-        (this.vehicle.metadata.config?.rear_seat_heaters ?? 0) > 0;
-      this.setCapabilityOptions("seat_heater.rear_left", {
-        ...this.driver.manifest.capabilitiesOptions["seat_heater.rear_left"],
-        setable: hasRearSeatHeaters,
-      }).catch(this.error);
-      this.setCapabilityOptions("seat_heater.rear_right", {
-        ...this.driver.manifest.capabilitiesOptions["seat_heater.rear_right"],
-        setable: hasRearSeatHeaters,
-      }).catch(this.error);
-      this.setCapabilityOptions("seat_heater.rear_center", {
-        ...this.driver.manifest.capabilitiesOptions["seat_heater.rear_center"],
-        setable: hasRearSeatHeaters,
-      }).catch(this.error);
     } catch (e) {
       this.log("Failed to initialize Vehicle device");
       this.error(e);
@@ -295,12 +268,16 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
 
     // Vehicle Status
-    this.vehicle.sse.onSignal("Odometer", (value) =>
-      this.update("measure_odometer", value),
-    );
-    this.vehicle.sse.onSignal("VehicleSpeed", (value) =>
-      this.update("measure_speed", value),
-    );
+    this.vehicle.sse.onSignal("Odometer", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("measure_distance.odometer", value * 1000); // km to m
+      }
+    });
+    this.vehicle.sse.onSignal("VehicleSpeed", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("measure_speed", value / 3.6); // km/h to m/s
+      }
+    });
     this.vehicle.sse.onSignal("Gear", (value) => {
       if (value === "ShiftStateP") this.update("gear", "P");
       else if (value === "ShiftStateR") this.update("gear", "R");
@@ -318,8 +295,20 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Guest Mode
     this.vehicle.sse.onSignal("GuestModeEnabled", (value) =>
-      this.update("guest_mode", value),
+      this.update("onoff.guest_mode", value),
     );
+
+    // Vehicle State & Connectivity
+    this.vehicle.sse.on("state", (value) =>
+      this.update("vehicle_state", value.state),
+    );
+    this.vehicle.sse.on("connectivity", (value) => {
+      if (value.networkInterface === "WiFi") {
+        this.update("wifi_connected", value.status === "connected");
+      } else if (value.networkInterface === "Cellular") {
+        this.update("cellular_connected", value.status === "connected");
+      }
+    });
 
     // Media Volume
     this.vehicle.sse.onSignal("MediaAudioVolume", (value) => {
@@ -580,7 +569,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
 
     // Guest Mode
-    this.registerCapabilityListener("guest_mode", async (value) => {
+    this.registerCapabilityListener("onoff.guest_mode", async (value) => {
       this.vehicle.api.setGuestMode(value).catch(this.handleApiError);
     });
 

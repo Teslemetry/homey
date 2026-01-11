@@ -58,7 +58,7 @@
     "measure_pressure.rl",
     "measure_pressure.rr",
     "time_to_full_charge",
-    "measure_odometer",
+    "measure_distance.odometer",
     "gear",
     "measure_speed",
     "charging_amps",
@@ -69,12 +69,21 @@
     "seat_cooler.front_right",
     "navigation_destination",
     "minutes_to_arrival",
-    "guest_mode"
+    "onoff.guest_mode",
+    "vehicle_state",
+    "wifi_connected",
+    "cellular_connected"
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {
       "title": { "en": "Range" },
       "units": { "en": "km" }
+    },
+    "measure_distance.odometer": {
+      "title": { "en": "Odometer" }
+    },
+    "measure_speed": {
+      "title": { "en": "Speed" }
     },
     "measure_temperature.outside": {
       "title": { "en": "Outside Temperature" }
@@ -171,6 +180,9 @@
     },
     "seat_cooler.front_right": {
       "title": { "en": "Seat Cooler (Front Right)" }
+    },
+    "onoff.guest_mode": {
+      "title": { "en": "Guest Mode" }
     },
     "thermostat_mode": {
       "title": { "en": "Climate" },

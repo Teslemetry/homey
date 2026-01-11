@@ -809,7 +809,10 @@
         "seat_cooler.front_right",
         "navigation_destination",
         "minutes_to_arrival",
-        "guest_mode"
+        "guest_mode",
+        "vehicle_state",
+        "wifi_connected",
+        "cellular_connected"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -1141,6 +1144,15 @@
       "decimals": 2,
       "step": 0.01
     },
+    "cellular_connected": {
+      "type": "boolean",
+      "title": {
+        "en": "Cellular Connected"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
     "charge_limit": {
       "type": "number",
       "title": {
@@ -1428,6 +1440,44 @@
         "en": "min"
       },
       "decimals": 0
+    },
+    "vehicle_state": {
+      "type": "enum",
+      "title": {
+        "en": "Vehicle State"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "values": [
+        {
+          "id": "online",
+          "title": {
+            "en": "Online"
+          }
+        },
+        {
+          "id": "offline",
+          "title": {
+            "en": "Offline"
+          }
+        },
+        {
+          "id": "asleep",
+          "title": {
+            "en": "Asleep"
+          }
+        }
+      ]
+    },
+    "wifi_connected": {
+      "type": "boolean",
+      "title": {
+        "en": "WiFi Connected"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
     }
   }
 }

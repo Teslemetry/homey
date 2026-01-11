@@ -25,43 +25,48 @@ export default class VehicleDriver extends TeslemetryDriver {
           ({ metadata }) =>
             metadata.access && !!metadata.fleet_telemetry && !metadata.polling,
         )
-        .map((data) => ({
-          name: data.name,
-          data: {
-            vin: data.vin,
-          },
-          capabilitiesOptions: {
-            "onoff.frunk": {
-              ...this.manifest.capabilitiesOptions["onoff.frunk"],
-              setable: data.metadata.config?.can_actuate_trunks,
+        .map((data) => {
+          const hasSeatCooling = !!data.metadata.config?.has_seat_cooling;
+          const rearSeatHeaters = data.metadata.config?.rear_seat_heaters ?? 0;
+
+          // Build capabilities list, excluding unsupported features
+          const capabilities = (
+            this.manifest.capabilities as string[]
+          ).filter((cap) => {
+            if (
+              cap === "seat_cooler.front_left" ||
+              cap === "seat_cooler.front_right"
+            ) {
+              return hasSeatCooling;
+            }
+            if (cap === "seat_heater.rear_left" || cap === "seat_heater.rear_right") {
+              return rearSeatHeaters >= 2;
+            }
+            if (cap === "seat_heater.rear_center") {
+              return rearSeatHeaters >= 3;
+            }
+            return true;
+          });
+
+          return {
+            name: data.name,
+            data: {
+              vin: data.vin,
             },
-            "onoff.trunk": {
-              ...this.manifest.capabilitiesOptions["onoff.trunk"],
-              setable: data.metadata.config?.can_actuate_trunks,
+            capabilities,
+            capabilitiesOptions: {
+              "onoff.frunk": {
+                ...this.manifest.capabilitiesOptions["onoff.frunk"],
+                setable: data.metadata.config?.can_actuate_trunks,
+              },
+              "onoff.trunk": {
+                ...this.manifest.capabilitiesOptions["onoff.trunk"],
+                setable: data.metadata.config?.can_actuate_trunks,
+              },
             },
-            "seat_cooler.front_left": {
-              ...this.manifest.capabilitiesOptions["seat_cooler.front_left"],
-              setable: data.metadata.config?.has_seat_cooling,
-            },
-            "seat_cooler.front_right": {
-              ...this.manifest.capabilitiesOptions["seat_cooler.front_right"],
-              setable: data.metadata.config?.has_seat_cooling,
-            },
-            "seat_heater.rear_left": {
-              ...this.manifest.capabilitiesOptions["seat_heater.rear_left"],
-              setable: (data.metadata.config?.rear_seat_heaters ?? 0) > 0,
-            },
-            "seat_heater.rear_right": {
-              ...this.manifest.capabilitiesOptions["seat_heater.rear_right"],
-              setable: (data.metadata.config?.rear_seat_heaters ?? 0) > 0,
-            },
-            "seat_heater.rear_center": {
-              ...this.manifest.capabilitiesOptions["seat_heater.rear_center"],
-              setable: (data.metadata.config?.rear_seat_heaters ?? 0) > 0,
-            },
-          },
-          ...icon?.[data.vin[3]],
-        }));
+            ...icon?.[data.vin[3]],
+          };
+        });
     } catch (error) {
       this.homey.error("Failed to list vehicles:", error);
       throw new Error(

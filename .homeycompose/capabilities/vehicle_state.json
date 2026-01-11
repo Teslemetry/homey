@@ -1,0 +1,29 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Vehicle State"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "values": [
+    {
+      "id": "online",
+      "title": {
+        "en": "Online"
+      }
+    },
+    {
+      "id": "offline",
+      "title": {
+        "en": "Offline"
+      }
+    },
+    {
+      "id": "asleep",
+      "title": {
+        "en": "Asleep"
+      }
+    }
+  ]
+}
