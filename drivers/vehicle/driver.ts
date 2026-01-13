@@ -2,10 +2,10 @@ import type TeslemetryApp from "../../app.js";
 import TeslemetryDriver from "../../lib/TeslemetryDriver.js";
 
 const icon: Record<string, { icon: string }> = {
-  "3": { icon: "model3.svg" },
-  Y: { icon: "modelY.svg" },
   S: { icon: "modelS.svg" },
+  "3": { icon: "model3.svg" },
   X: { icon: "modelX.svg" },
+  Y: { icon: "icon.svg" },
   C: { icon: "cybertruck.svg" },
 };
 
@@ -30,23 +30,26 @@ export default class VehicleDriver extends TeslemetryDriver {
           const rearSeatHeaters = data.metadata.config?.rear_seat_heaters ?? 0;
 
           // Build capabilities list, excluding unsupported features
-          const capabilities = (
-            this.manifest.capabilities as string[]
-          ).filter((cap) => {
-            if (
-              cap === "seat_cooler.front_left" ||
-              cap === "seat_cooler.front_right"
-            ) {
-              return hasSeatCooling;
-            }
-            if (cap === "seat_heater.rear_left" || cap === "seat_heater.rear_right") {
-              return rearSeatHeaters >= 2;
-            }
-            if (cap === "seat_heater.rear_center") {
-              return rearSeatHeaters >= 3;
-            }
-            return true;
-          });
+          const capabilities = (this.manifest.capabilities as string[]).filter(
+            (cap) => {
+              if (
+                cap === "seat_cooler.front_left" ||
+                cap === "seat_cooler.front_right"
+              ) {
+                return hasSeatCooling;
+              }
+              if (
+                cap === "seat_heater.rear_left" ||
+                cap === "seat_heater.rear_right"
+              ) {
+                return rearSeatHeaters >= 2;
+              }
+              if (cap === "seat_heater.rear_center") {
+                return rearSeatHeaters >= 3;
+              }
+              return true;
+            },
+          );
 
           return {
             name: data.name,
