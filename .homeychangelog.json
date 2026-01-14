@@ -16,5 +16,8 @@
   },
   "0.0.7": {
     "en": "Bump the Teslemetry SDK to fix a crash"
+  },
+  "0.1.0": {
+    "en": "Split energy sites into three devices, and added many more vehicle capabilities"
   }
 }
