@@ -659,4 +659,51 @@ export default class VehicleDevice extends TeslemetryDevice {
   async onUninit() {
     this.vehicle.sse.data.removeAllListeners();
   }
+
+  // Public action methods for Flow cards
+  public async flowFlashLights(): Promise<void> {
+    await this.vehicle.api.flashLights().catch(this.handleApiError);
+  }
+
+  public async flowHonkHorn(): Promise<void> {
+    await this.vehicle.api.honkHorn().catch(this.handleApiError);
+  }
+
+  public async flowStartKeylessDriving(): Promise<void> {
+    await this.vehicle.api.remoteStart().catch(this.handleApiError);
+  }
+
+  public async flowTriggerHomelink(): Promise<void> {
+    const { latitude, longitude } = this.vehicle.sse.cache?.data?.Location || {
+      latitude: 0,
+      longitude: 0,
+    };
+    await this.vehicle.api
+      .triggerHomelink(latitude, longitude)
+      .catch(this.handleApiError);
+  }
+
+  public async flowWakeUp(): Promise<void> {
+    await this.vehicle.api.wakeUp().catch(this.handleApiError);
+  }
+
+  public async flowSetSteeringWheelHeater(level: string): Promise<void> {
+    switch (level) {
+      case "0":
+        await this.vehicle.api
+          .setSteeringWheelHeater(false)
+          .catch(this.handleApiError);
+        break;
+      case "1":
+        await this.vehicle.api
+          .setSteeringWheelHeatLevel(1)
+          .catch(this.handleApiError);
+        break;
+      case "3":
+        await this.vehicle.api
+          .setSteeringWheelHeatLevel(3)
+          .catch(this.handleApiError);
+        break;
+    }
+  }
 }

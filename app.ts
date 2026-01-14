@@ -5,6 +5,8 @@ import Homey from "homey";
 import { Products, Teslemetry } from "@teslemetry/api";
 import TeslemetryOAuth2Client from "./lib/TeslemetryOAuth2Client.js";
 import type { TeslemetryApiError } from "./@types/error.d.ts";
+import type VehicleDevice from "./drivers/vehicle/device.js";
+import type PowerwallDevice from "./drivers/battery/device.js";
 
 export default class TeslemetryApp extends Homey.App {
   public oauth!: TeslemetryOAuth2Client;
@@ -26,6 +28,9 @@ export default class TeslemetryApp extends Homey.App {
 
     this.oauth = new TeslemetryOAuth2Client(this);
 
+    // Register Flow card handlers
+    this.registerFlowCards();
+
     // Listen for token updates
     this.on("oauth2:token_saved", () => {
       this.log("Token saved, re-initializing Teslemetry...");
@@ -36,6 +41,83 @@ export default class TeslemetryApp extends Homey.App {
     await this.initializeTeslemetry().catch((error) => {
       this.log(error.message);
     });
+  }
+
+  /**
+   * Register Flow card action handlers
+   */
+  private registerFlowCards(): void {
+    // Vehicle action cards
+    this.homey.flow
+      .getActionCard("flash_lights")
+      .registerRunListener(async (args: { device: VehicleDevice }) => {
+        await args.device.flowFlashLights();
+      });
+
+    this.homey.flow
+      .getActionCard("honk_horn")
+      .registerRunListener(async (args: { device: VehicleDevice }) => {
+        await args.device.flowHonkHorn();
+      });
+
+    this.homey.flow
+      .getActionCard("keyless_driving")
+      .registerRunListener(async (args: { device: VehicleDevice }) => {
+        await args.device.flowStartKeylessDriving();
+      });
+
+    this.homey.flow
+      .getActionCard("homelink")
+      .registerRunListener(async (args: { device: VehicleDevice }) => {
+        await args.device.flowTriggerHomelink();
+      });
+
+    this.homey.flow
+      .getActionCard("wake_up")
+      .registerRunListener(async (args: { device: VehicleDevice }) => {
+        await args.device.flowWakeUp();
+      });
+
+    this.homey.flow
+      .getActionCard("set_steering_wheel_heater")
+      .registerRunListener(
+        async (args: { device: VehicleDevice; level: string }) => {
+          await args.device.flowSetSteeringWheelHeater(args.level);
+        },
+      );
+
+    // Battery/Powerwall action cards
+    this.homey.flow
+      .getActionCard("set_backup_reserve")
+      .registerRunListener(
+        async (args: { device: PowerwallDevice; percentage: number }) => {
+          await args.device.flowSetBackupReserve(args.percentage);
+        },
+      );
+
+    this.homey.flow
+      .getActionCard("set_allow_export")
+      .registerRunListener(
+        async (args: {
+          device: PowerwallDevice;
+          mode: "battery_ok" | "pv_only" | "never";
+        }) => {
+          await args.device.flowSetAllowExport(args.mode);
+        },
+      );
+
+    this.homey.flow
+      .getActionCard("set_operation_mode")
+      .registerRunListener(
+        async (args: {
+          device: PowerwallDevice;
+          mode: "self_consumption" | "backup" | "autonomous";
+        }) => {
+          await args.device.flowSetOperationMode(args.mode);
+        },
+      );
+
+    this.log("Flow card handlers registered");
   }
 
   /**

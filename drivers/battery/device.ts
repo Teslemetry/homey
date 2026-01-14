@@ -128,4 +128,28 @@ export default class PowerwallDevice extends TeslemetryDevice {
   async onUninit(): Promise<void> {
     this.pollingCleanup?.forEach((stop) => stop());
   }
+
+  // Public action methods for Flow cards
+  public async flowSetBackupReserve(percentage: number): Promise<void> {
+    this.log(`Setting backup reserve to ${percentage}%`);
+    await this.site.api
+      .setBackupReserve(percentage)
+      .catch(this.handleApiError);
+  }
+
+  public async flowSetAllowExport(
+    mode: "battery_ok" | "pv_only" | "never",
+  ): Promise<void> {
+    this.log(`Setting allow export to ${mode}`);
+    await this.site.api
+      .gridImportExport(mode, this.getCapabilityValue("onoff.charge_grid"))
+      .catch(this.handleApiError);
+  }
+
+  public async flowSetOperationMode(
+    mode: "self_consumption" | "backup" | "autonomous",
+  ): Promise<void> {
+    this.log(`Setting operation mode to ${mode}`);
+    await this.site.api.setOperationMode(mode).catch(this.handleApiError);
+  }
 }
