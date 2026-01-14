@@ -11,7 +11,7 @@
     }
   },
   "brandColor": "#3D6DB5",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "compatibility": ">=12.4.5",
   "sdk": 3,
   "platforms": [

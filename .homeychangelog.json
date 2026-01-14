@@ -19,5 +19,8 @@
   },
   "0.1.0": {
     "en": "Split energy sites into three devices, and added many more vehicle capabilities"
+  },
+  "0.1.1": {
+    "en": "Fixed flow card registration"
   }
 }
