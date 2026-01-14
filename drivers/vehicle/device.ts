@@ -299,9 +299,9 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
 
     // Vehicle State & Connectivity
-    this.vehicle.sse.on("state", (value) =>
-      this.update("vehicle_state", value.state),
-    );
+    this.vehicle.sse.on("state", (value) => {
+      if (value?.state) this.update("vehicle_state", value.state);
+    });
     this.vehicle.sse.on("connectivity", (value) => {
       if (value.networkInterface === "WiFi") {
         this.update("wifi_connected", value.status === "connected");
@@ -523,14 +523,11 @@ export default class VehicleDevice extends TeslemetryDevice {
           .catch(this.handleApiError);
       },
     );
-    this.registerCapabilityListener(
-      "seat_cooler.front_left",
-      async (value) => {
-        this.vehicle.api
-          .setSeatCooler("front_left", Number(value))
-          .catch(this.handleApiError);
-      },
-    );
+    this.registerCapabilityListener("seat_cooler.front_left", async (value) => {
+      this.vehicle.api
+        .setSeatCooler("front_left", Number(value))
+        .catch(this.handleApiError);
+    });
     this.registerCapabilityListener(
       "seat_cooler.front_right",
       async (value) => {
