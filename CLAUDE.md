@@ -52,7 +52,7 @@ Configuration lives in `.homeycompose/` - this generates `app.json` at build tim
 
 ### Capability Listeners
 
-**Do not await SDK actions in `registerCapabilityListener`** - they can take up to a minute. Use `.catch()` instead:
+**Do not await vehicle SDK actions in `registerCapabilityListener`** - they can take up to a minute. Use `.catch()` instead:
 
 ```typescript
 // Correct

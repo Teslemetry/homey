@@ -223,7 +223,7 @@ export default class TeslemetryApp extends Homey.App {
   public handleApiError = (apiError: TeslemetryApiError): never => {
     const { error, error_description } = apiError;
     this.error("API Error:", JSON.stringify(apiError));
-    const key = `error.${error}`;
+    const key = `error.${error?.toLowerCase()}`;
     const translation = this.homey.__(key);
     if (translation && translation !== key) {
       this.error(translation);
