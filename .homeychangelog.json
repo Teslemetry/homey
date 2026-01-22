@@ -22,5 +22,8 @@
   },
   "0.1.1": {
     "en": "Fixed flow card registration"
+  },
+  "0.1.2": {
+    "en": "Fixed energy history and some error handling bugs"
   }
 }
