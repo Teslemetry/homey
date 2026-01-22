@@ -1,5 +1,6 @@
 import { EnergyDetails } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+import { TeslemetryApiError } from "../../@types/error.js";
 
 export default class PowerwallDevice extends TeslemetryDevice {
   site!: EnergyDetails;
@@ -65,28 +66,30 @@ export default class PowerwallDevice extends TeslemetryDevice {
     this.site.api.on("energyHistory", async (energyHistory) => {
       if (!energyHistory.response?.time_series?.length) return;
 
-      let charged: number | null = null;
-      let discharged: number | null = null;
+      let charged = 0;
+      let discharged = 0;
+      let hasCharged = false;
+      let hasDischarged = false;
 
       for (const event of energyHistory.response.time_series) {
         if (
           event.total_battery_charge !== undefined &&
           event.total_battery_charge !== null
         ) {
-          //@ts-expect-error
           charged += event.total_battery_charge;
+          hasCharged = true;
         }
         if (
           event.total_battery_discharge !== undefined &&
           event.total_battery_discharge !== null
         ) {
-          //@ts-expect-error
           discharged += event.total_battery_discharge;
+          hasDischarged = true;
         }
       }
 
-      if (charged !== null) this.update("meter_power.charged", charged / 1000);
-      if (discharged !== null)
+      if (hasCharged) this.update("meter_power.charged", charged / 1000);
+      if (hasDischarged)
         this.update("meter_power.discharged", discharged / 1000);
     });
 
@@ -132,24 +135,35 @@ export default class PowerwallDevice extends TeslemetryDevice {
   // Public action methods for Flow cards
   public async flowSetBackupReserve(percentage: number): Promise<void> {
     this.log(`Setting backup reserve to ${percentage}%`);
-    await this.site.api
-      .setBackupReserve(percentage)
-      .catch(this.handleApiError);
+    try {
+      await this.site.api.setBackupReserve(percentage);
+    } catch (error) {
+      this.handleApiError(error as TeslemetryApiError);
+    }
   }
 
   public async flowSetAllowExport(
     mode: "battery_ok" | "pv_only" | "never",
   ): Promise<void> {
     this.log(`Setting allow export to ${mode}`);
-    await this.site.api
-      .gridImportExport(mode, this.getCapabilityValue("onoff.charge_grid"))
-      .catch(this.handleApiError);
+    try {
+      await this.site.api.gridImportExport(
+        mode,
+        this.getCapabilityValue("onoff.charge_grid"),
+      );
+    } catch (error) {
+      this.handleApiError(error as TeslemetryApiError);
+    }
   }
 
   public async flowSetOperationMode(
     mode: "self_consumption" | "backup" | "autonomous",
   ): Promise<void> {
     this.log(`Setting operation mode to ${mode}`);
-    await this.site.api.setOperationMode(mode).catch(this.handleApiError);
+    try {
+      await this.site.api.setOperationMode(mode);
+    } catch (error) {
+      this.handleApiError(error as TeslemetryApiError);
+    }
   }
 }

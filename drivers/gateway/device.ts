@@ -29,7 +29,10 @@ export default class GatewayDevice extends TeslemetryDevice {
       return;
     }
 
-    this.pollingCleanup = [this.site.api.requestPolling("liveStatus")];
+    this.pollingCleanup = [
+      this.site.api.requestPolling("liveStatus"),
+      this.site.api.requestPolling("energyHistory"),
+    ];
 
     this.site.api.on("liveStatus", (liveStatus) => {
       const data = liveStatus?.response;
@@ -50,30 +53,30 @@ export default class GatewayDevice extends TeslemetryDevice {
     this.site.api.on("energyHistory", async (energyHistory) => {
       if (!energyHistory.response?.time_series?.length) return;
 
-      let imported: number | null = null;
-      let exported: number | null = null;
+      let imported = 0;
+      let exported = 0;
+      let hasImported = false;
+      let hasExported = false;
 
       for (const event of energyHistory.response.time_series) {
         if (
           event.grid_energy_imported !== undefined &&
           event.grid_energy_imported !== null
         ) {
-          //@ts-expect-error
           imported += event.grid_energy_imported;
+          hasImported = true;
         }
         if (
           event.total_grid_energy_exported !== undefined &&
           event.total_grid_energy_exported !== null
         ) {
-          //@ts-expect-error
           exported += event.total_grid_energy_exported;
+          hasExported = true;
         }
       }
 
-      if (imported !== null)
-        this.update("meter_power.imported", imported / 1000);
-      if (exported !== null)
-        this.update("meter_power.exported", exported / 1000);
+      if (hasImported) this.update("meter_power.imported", imported / 1000);
+      if (hasExported) this.update("meter_power.exported", exported / 1000);
     });
   }
 

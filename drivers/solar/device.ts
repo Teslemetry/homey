@@ -18,7 +18,10 @@ export default class SolarDevice extends TeslemetryDevice {
       return;
     }
 
-    this.pollingCleanup = [this.site.api.requestPolling("liveStatus")];
+    this.pollingCleanup = [
+      this.site.api.requestPolling("liveStatus"),
+      this.site.api.requestPolling("energyHistory"),
+    ];
 
     this.site.api.on("liveStatus", (liveStatus) => {
       const data = liveStatus?.response;
@@ -29,19 +32,20 @@ export default class SolarDevice extends TeslemetryDevice {
     this.site.api.on("energyHistory", async (energyHistory) => {
       if (!energyHistory.response?.time_series?.length) return;
 
-      let generated: number | null = null;
+      let generated = 0;
+      let hasGenerated = false;
 
       for (const event of energyHistory.response.time_series) {
         if (
           event.total_solar_generation !== undefined &&
           event.total_solar_generation !== null
         ) {
-          // @ts-expect-error
           generated += event.total_solar_generation;
+          hasGenerated = true;
         }
       }
 
-      if (generated !== null) this.update("meter_power", generated / 1000);
+      if (hasGenerated) this.update("meter_power", generated / 1000);
     });
   }
 

@@ -43,6 +43,7 @@
   "source": "https://github.com/teslemetry/homey",
   "homepage": "https://teslemetry.com",
   "support": "mailto:support@teslemetry.com",
+  "homeyCommunityTopicId": 147636,
   "esm": true,
   "flow": {
     "triggers": [
