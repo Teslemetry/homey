@@ -385,9 +385,11 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Locked
     this.registerCapabilityListener("locked", async (value) => {
-      value
-        ? this.vehicle.api.lockDoors().catch(this.handleApiError)
-        : this.vehicle.api.unlockDoors().catch(this.handleApiError);
+      if (value) {
+        this.vehicle.api.lockDoors().catch(this.handleApiError);
+      } else {
+        this.vehicle.api.unlockDoors().catch(this.handleApiError);
+      }
     });
 
     // Climate
@@ -545,9 +547,11 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Charge
     this.registerCapabilityListener("evcharger_charging", async (value) => {
-      value
-        ? this.vehicle.api.startCharging().catch(this.handleApiError)
-        : this.vehicle.api.stopCharging().catch(this.handleApiError);
+      if (value) {
+        this.vehicle.api.startCharging().catch(this.handleApiError);
+      } else {
+        this.vehicle.api.stopCharging().catch(this.handleApiError);
+      }
     });
 
     this.registerCapabilityListener("charge_limit", async (value: number) => {
@@ -561,9 +565,11 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
 
     this.registerCapabilityListener("onoff.charge_port", async (value) => {
-      value
-        ? this.vehicle.api.openChargePort().catch(this.handleApiError)
-        : this.vehicle.api.closeChargePort().catch(this.handleApiError);
+      if (value) {
+        this.vehicle.api.openChargePort().catch(this.handleApiError);
+      } else {
+        this.vehicle.api.closeChargePort().catch(this.handleApiError);
+      }
     });
 
     // Sentry & Valet
@@ -584,20 +590,22 @@ export default class VehicleDevice extends TeslemetryDevice {
       // Cannot be closed
     });
 
-    this.registerCapabilityListener("onoff.trunk", async (value) => {
+    this.registerCapabilityListener("onoff.trunk", async (_value) => {
       this.vehicle.api.actuateTrunk("rear").catch(this.handleApiError);
     });
 
     this.registerCapabilityListener("windowcoverings_closed", async (value) => {
       const { latitude, longitude } = this.vehicle.sse.cache?.data
         ?.Location || { latitude: 0, longitude: 0 };
-      value
-        ? this.vehicle.api
-            .windowControl("close", latitude, longitude)
-            .catch(this.handleApiError)
-        : this.vehicle.api
-            .windowControl("vent", latitude, longitude)
-            .catch(this.handleApiError);
+      if (value) {
+        this.vehicle.api
+          .windowControl("close", latitude, longitude)
+          .catch(this.handleApiError);
+      } else {
+        this.vehicle.api
+          .windowControl("vent", latitude, longitude)
+          .catch(this.handleApiError);
+      }
     });
 
     // Buttons
@@ -710,6 +718,8 @@ export default class VehicleDevice extends TeslemetryDevice {
         await this.vehicle.api
           .setSteeringWheelHeatLevel(3)
           .catch(this.handleApiError);
+        break;
+      default:
         break;
     }
   }
