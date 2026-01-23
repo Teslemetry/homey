@@ -168,7 +168,7 @@ export default class VehicleDevice extends TeslemetryDevice {
       if (signals.ClimateKeeperMode === "ClimateKeeperModeStateParty") {
         return this.update("thermostat_mode", "camp_mode");
       }
-      if (signals.HvacPower == "HvacPowerStateOn") {
+      if (signals.HvacPower === "HvacPowerStateOn") {
         return this.update("thermostat_mode", "auto");
       }
       return this.update("thermostat_mode", "off");
@@ -493,6 +493,8 @@ export default class VehicleDevice extends TeslemetryDevice {
             .catch(this.handleApiError);
           // await this.vehicle.api.setSteeringWheelHeater(true);?
           break;
+        default:
+          throw new Error("Invalid level");
       }
     });
     this.registerCapabilityListener("seat_heater.front_left", async (value) => {

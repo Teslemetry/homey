@@ -57,7 +57,9 @@ export default class WallConnecter extends TeslemetryDevice {
       let hasCharged = false;
 
       for (const event of energyHistory.response?.charge_history) {
-        if (event.din !== this.din) continue;
+        if (event.din !== this.din || event.energy_added_wh === undefined) {
+          continue;
+        }
         charged += event.energy_added_wh;
         hasCharged = true;
       }
