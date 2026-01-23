@@ -1,12 +1,13 @@
-import sourceMapSupport from "source-map-support";
-sourceMapSupport.install();
+import sourceMapSupport from 'source-map-support';
 
-import Homey from "homey";
-import { Products, Teslemetry } from "@teslemetry/api";
-import TeslemetryOAuth2Client from "./lib/TeslemetryOAuth2Client.js";
-import type { TeslemetryApiError } from "./@types/error.d.ts";
-import type VehicleDevice from "./drivers/vehicle/device.js";
-import type PowerwallDevice from "./drivers/battery/device.js";
+import Homey from 'homey';
+import { Products, Teslemetry } from '@teslemetry/api';
+import TeslemetryOAuth2Client from './lib/TeslemetryOAuth2Client.js';
+import type { TeslemetryApiError } from './@types/error.d.ts';
+import type VehicleDevice from './drivers/vehicle/device.js';
+import type PowerwallDevice from './drivers/battery/device.js';
+
+sourceMapSupport.install();
 
 export default class TeslemetryApp extends Homey.App {
   public oauth!: TeslemetryOAuth2Client;
@@ -24,7 +25,7 @@ export default class TeslemetryApp extends Homey.App {
    * onInit is called when the app is initialized
    */
   async onInit() {
-    this.log("Teslemetry App initializing...");
+    this.log('Teslemetry App initializing...');
 
     this.oauth = new TeslemetryOAuth2Client(this);
 
@@ -32,8 +33,8 @@ export default class TeslemetryApp extends Homey.App {
     this.registerFlowCards();
 
     // Listen for token updates
-    this.on("oauth2:token_saved", () => {
-      this.log("Token saved, re-initializing Teslemetry...");
+    this.on('oauth2:token_saved', () => {
+      this.log('Token saved, re-initializing Teslemetry...');
       this.reinitialize();
     });
 
@@ -49,37 +50,37 @@ export default class TeslemetryApp extends Homey.App {
   private registerFlowCards(): void {
     // Vehicle action cards
     this.homey.flow
-      .getActionCard("flash_lights")
+      .getActionCard('flash_lights')
       .registerRunListener(async (args: { device: VehicleDevice }) => {
         await args.device.flowFlashLights();
       });
 
     this.homey.flow
-      .getActionCard("honk_horn")
+      .getActionCard('honk_horn')
       .registerRunListener(async (args: { device: VehicleDevice }) => {
         await args.device.flowHonkHorn();
       });
 
     this.homey.flow
-      .getActionCard("keyless_driving")
+      .getActionCard('keyless_driving')
       .registerRunListener(async (args: { device: VehicleDevice }) => {
         await args.device.flowStartKeylessDriving();
       });
 
     this.homey.flow
-      .getActionCard("homelink")
+      .getActionCard('homelink')
       .registerRunListener(async (args: { device: VehicleDevice }) => {
         await args.device.flowTriggerHomelink();
       });
 
     this.homey.flow
-      .getActionCard("wake_up")
+      .getActionCard('wake_up')
       .registerRunListener(async (args: { device: VehicleDevice }) => {
         await args.device.flowWakeUp();
       });
 
     this.homey.flow
-      .getActionCard("set_steering_wheel_heater")
+      .getActionCard('set_steering_wheel_heater')
       .registerRunListener(
         async (args: { device: VehicleDevice; level: string }) => {
           await args.device.flowSetSteeringWheelHeater(args.level);
@@ -88,7 +89,7 @@ export default class TeslemetryApp extends Homey.App {
 
     // Battery/Powerwall action cards
     this.homey.flow
-      .getActionCard("set_backup_reserve")
+      .getActionCard('set_backup_reserve')
       .registerRunListener(
         async (args: { device: PowerwallDevice; percentage: number }) => {
           await args.device.flowSetBackupReserve(args.percentage);
@@ -96,28 +97,28 @@ export default class TeslemetryApp extends Homey.App {
       );
 
     this.homey.flow
-      .getActionCard("set_allow_export")
+      .getActionCard('set_allow_export')
       .registerRunListener(
         async (args: {
           device: PowerwallDevice;
-          mode: "battery_ok" | "pv_only" | "never";
+          mode: 'battery_ok' | 'pv_only' | 'never';
         }) => {
           await args.device.flowSetAllowExport(args.mode);
         },
       );
 
     this.homey.flow
-      .getActionCard("set_operation_mode")
+      .getActionCard('set_operation_mode')
       .registerRunListener(
         async (args: {
           device: PowerwallDevice;
-          mode: "self_consumption" | "backup" | "autonomous";
+          mode: 'self_consumption' | 'backup' | 'autonomous';
         }) => {
           await args.device.flowSetOperationMode(args.mode);
         },
       );
 
-    this.log("Flow card handlers registered");
+    this.log('Flow card handlers registered');
   }
 
   /**
@@ -126,7 +127,7 @@ export default class TeslemetryApp extends Homey.App {
    */
   private async initializeTeslemetry(): Promise<void> {
     if (!this.oauth.hasValidToken()) {
-      throw new Error("No OAuth2 token available. User needs to authenticate.");
+      throw new Error('No OAuth2 token available. User needs to authenticate.');
     }
 
     if (this.teslemetry && this.products) {
@@ -134,7 +135,7 @@ export default class TeslemetryApp extends Homey.App {
       return;
     }
 
-    this.log("Initializing Teslemetry with OAuth2 token...");
+    this.log('Initializing Teslemetry with OAuth2 token...');
     this.teslemetry = new Teslemetry(this.oauth.getAccessToken, {
       logger: this.logger,
       stream: {
@@ -163,7 +164,7 @@ export default class TeslemetryApp extends Homey.App {
       this.teslemetry.sse.close();
       this.teslemetry = undefined;
       this.products = undefined;
-      this.log("Teslemetry connection cleaned up");
+      this.log('Teslemetry connection cleaned up');
     }
   }
 
@@ -184,7 +185,7 @@ export default class TeslemetryApp extends Homey.App {
         // Initialize with new OAuth2 session
         await this.initializeTeslemetry();
       } catch (error) {
-        this.error("Failed to reinitialize:", error);
+        this.error('Failed to reinitialize:', error);
       } finally {
         this.initializationPromise = undefined;
       }
@@ -222,7 +223,7 @@ export default class TeslemetryApp extends Homey.App {
 
   public handleApiError = (apiError: TeslemetryApiError): never => {
     const { error, error_description } = apiError;
-    this.error("API Error:", JSON.stringify(apiError));
+    this.error('API Error:', JSON.stringify(apiError));
     const key = `error.${error?.toLowerCase()}`;
     const translation = this.homey.__(key);
     if (translation && translation !== key) {

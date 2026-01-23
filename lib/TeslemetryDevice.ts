@@ -1,12 +1,13 @@
-import Homey from "homey";
-import type TeslemetryApp from "../app.js";
-import type TeslemetryDriver from "./TeslemetryDriver.js";
-import { TeslemetryApiError } from "../@types/error.js";
+import Homey from 'homey';
+import type TeslemetryApp from '../app.js';
+import type TeslemetryDriver from './TeslemetryDriver.js';
+import { TeslemetryApiError } from '../@types/error.js';
 
 export default class TeslemetryDevice extends Homey.Device {
-  declare homey: Homey.Device["homey"] & {
+  declare homey: Homey.Device['homey'] & {
     app: TeslemetryApp;
   };
+
   declare driver: TeslemetryDriver;
 
   async onInit() {
@@ -62,13 +63,13 @@ export default class TeslemetryDevice extends Homey.Device {
       return;
     }
     // Evaluate value if required
-    if (typeof value === "function") value = value();
+    if (typeof value === 'function') value = value();
     // Check if value is undefined
     if (value === undefined) {
       return;
     }
     // Set the capability value
-    //this.log(`Setting capability ${capability} to ${value}`);
+    // this.log(`Setting capability ${capability} to ${value}`);
     return this.setCapabilityValue(capability, value).catch(this.error);
   }
 
@@ -76,7 +77,7 @@ export default class TeslemetryDevice extends Homey.Device {
     if (response.result === false) {
       throw {
         response: null,
-        error: "command_failed",
+        error: 'command_failed',
         error_description: response.reason,
       };
     }
@@ -84,18 +85,18 @@ export default class TeslemetryDevice extends Homey.Device {
 
   protected handleApiError = (apiError: TeslemetryApiError): never => {
     const { error, error_description } = apiError;
-    this.error("API Error:", JSON.stringify(apiError));
+    this.error('API Error:', JSON.stringify(apiError));
     const key = `error.${error}`;
     const translation = this.homey.__(key);
     if (translation && translation !== key) {
       this.error(translation);
-      if (error === "invalid_token" || error === "subscription_required") {
+      if (error === 'invalid_token' || error === 'subscription_required') {
         this.setUnavailable(translation).catch(this.error);
       }
       throw new Error(translation);
     }
     this.error(error_description);
-    if (error === "invalid_token" || error === "subscription_required") {
+    if (error === 'invalid_token' || error === 'subscription_required') {
       this.setUnavailable(error_description).catch(this.error);
     }
     throw new Error(error_description);

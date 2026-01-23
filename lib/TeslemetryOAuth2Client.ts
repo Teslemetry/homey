@@ -68,7 +68,7 @@ export default class TeslemetryOAuth2Client {
       response_type: "code",
       client_id: TeslemetryOAuth2Client.CLIENT_ID,
       redirect_uri: TeslemetryOAuth2Client.REDIRECT_URL,
-      state: state,
+      state,
       code_challenge: codeChallenge,
       code_challenge_method: "S256",
     });
@@ -83,7 +83,7 @@ export default class TeslemetryOAuth2Client {
     const body = {
       grant_type: "authorization_code",
       client_id: TeslemetryOAuth2Client.CLIENT_ID,
-      code: code,
+      code,
       code_verifier: codeVerifier,
       redirect_uri: TeslemetryOAuth2Client.REDIRECT_URL,
     };

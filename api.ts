@@ -1,4 +1,4 @@
-import type TeslemetryApp from "./app.js";
+import type TeslemetryApp from './app.js';
 
 interface ApiContext {
   homey: {

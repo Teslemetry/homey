@@ -89,8 +89,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
       }
 
       if (hasCharged) this.update("meter_power.charged", charged / 1000);
-      if (hasDischarged)
+      if (hasDischarged) {
         this.update("meter_power.discharged", discharged / 1000);
+      }
     });
 
     // Register capability listeners

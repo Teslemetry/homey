@@ -50,7 +50,7 @@ export default class TeslemetryDriver extends Homey.Driver {
 
   private async handleOAuth2Login(session: any, onSuccess?: () => void) {
     const pkce = this.homey.app.oauth.generatePKCE();
-    const codeVerifier = pkce.codeVerifier;
+    const { codeVerifier } = pkce;
     const state = Math.random().toString(36).substring(7);
     const url = this.homey.app.oauth.getAuthorizationUrl(
       state,

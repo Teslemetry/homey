@@ -1,9 +1,8 @@
-import type TeslemetryApp from "../../app.js";
 import TeslemetryDriver from "../../lib/TeslemetryDriver.js";
 
 const icon: Record<string, { icon: string }> = {
   S: { icon: "modelS.svg" },
-  "3": { icon: "model3.svg" },
+  3: { icon: "model3.svg" },
   X: { icon: "modelX.svg" },
   Y: { icon: "icon.svg" },
   C: { icon: "cybertruck.svg" },

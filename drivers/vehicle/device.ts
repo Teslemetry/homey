@@ -1,5 +1,4 @@
-import type TeslemetryApp from "../../app.js";
-import { SseData, Teslemetry, VehicleDetails } from "@teslemetry/api";
+import { SseData, VehicleDetails } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 
 const isBool = (x: any) => typeof x === "boolean";
@@ -224,16 +223,21 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Doors & Windows (Assuming Signal names)
     this.vehicle.sse.onSignal("DoorState", (value) => {
-      if (isBool(value?.DriverFront))
+      if (isBool(value?.DriverFront)) {
         this.update("alarm_contact.fl", value.DriverFront);
-      if (isBool(value?.PassengerFront))
+      }
+      if (isBool(value?.PassengerFront)) {
         this.update("alarm_contact.fr", value.PassengerFront);
-      if (isBool(value?.DriverRear))
+      }
+      if (isBool(value?.DriverRear)) {
         this.update("alarm_contact.rl", value.DriverRear);
-      if (isBool(value?.PassengerRear))
+      }
+      if (isBool(value?.PassengerRear)) {
         this.update("alarm_contact.rr", value.PassengerRear);
-      if (isBool(value?.TrunkFront))
+      }
+      if (isBool(value?.TrunkFront)) {
         this.update("onoff.frunk", value.TrunkFront);
+      }
       if (isBool(value?.TrunkRear)) this.update("onoff.trunk", value.TrunkRear);
     });
 
@@ -397,7 +401,8 @@ export default class VehicleDevice extends TeslemetryDevice {
           .then(this.handleApiResponse)
           .catch(this.handleApiError);
         return;
-      } else if (value === "auto" && !climateState) {
+      }
+      if (value === "auto" && !climateState) {
         this.vehicle.api
           .startAutoConditioning()
           .then(this.handleApiResponse)
@@ -417,13 +422,12 @@ export default class VehicleDevice extends TeslemetryDevice {
             .catch(this.handleApiError);
         }
         return;
-      } else {
-        if (defrostValue) {
-          this.vehicle.api
-            .setPreconditioningMax(false, false)
-            .then(this.handleApiResponse)
-            .catch(this.handleApiError);
-        }
+      }
+      if (defrostValue) {
+        this.vehicle.api
+          .setPreconditioningMax(false, false)
+          .then(this.handleApiResponse)
+          .catch(this.handleApiError);
       }
 
       // Handle Keeper
@@ -481,13 +485,13 @@ export default class VehicleDevice extends TeslemetryDevice {
           this.vehicle.api
             .setSteeringWheelHeatLevel(1)
             .catch(this.handleApiError);
-          //await this.vehicle.api.setSteeringWheelHeater(true);?
+          // await this.vehicle.api.setSteeringWheelHeater(true);?
           break;
         case "3":
           this.vehicle.api
             .setSteeringWheelHeatLevel(3)
             .catch(this.handleApiError);
-          //await this.vehicle.api.setSteeringWheelHeater(true);?
+          // await this.vehicle.api.setSteeringWheelHeater(true);?
           break;
       }
     });
@@ -572,8 +576,9 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Doors/Frunk/Trunk
     this.registerCapabilityListener("onoff.frunk", async (value) => {
-      if (value)
+      if (value) {
         this.vehicle.api.actuateTrunk("front").catch(this.handleApiError);
+      }
       // Cannot be closed
     });
 
