@@ -49,22 +49,19 @@ export default class WallConnecter extends TeslemetryDevice {
       this.update("connected_vehicle", this.findVin(data.vin));
     });
 
-    this.site.api.on("chargeHistory", async (energyHistory) => {
-      this.log(energyHistory);
-      if (!energyHistory.response?.charge_history?.length) return;
+    this.site.api.on("chargeHistory", async (chargeHistory) => {
+      if (!chargeHistory.response?.charge_history?.length) return;
 
       let charged = 0;
       let hasCharged = false;
 
-      for (const event of energyHistory.response?.charge_history) {
+      for (const event of chargeHistory.response?.charge_history ?? []) {
         if (event.din !== this.din || event.energy_added_wh === undefined) {
           continue;
         }
         charged += event.energy_added_wh;
         hasCharged = true;
       }
-
-      this.log(charged);
 
       if (hasCharged) {
         this.update("meter_power", charged / 1000);
