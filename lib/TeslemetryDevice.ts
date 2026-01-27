@@ -103,4 +103,21 @@ export default class TeslemetryDevice extends Homey.Device {
     }
     throw new Error(error_description);
   };
+
+  private static readonly ACTION_TIMEOUT = 9000;
+
+  /**
+   * Wraps an API action with a 9-second timeout using Promise.race.
+   * If the action completes within the timeout, its result or error is returned.
+   * If the timeout wins, the promise resolves and the action continues in the background.
+   */
+  protected action(promise: Promise<unknown>): Promise<void> {
+    const timeout = new Promise<void>((resolve) =>
+      setTimeout(resolve, TeslemetryDevice.ACTION_TIMEOUT),
+    );
+    const handled = promise.then(() => {}, this.handleApiError);
+    // Prevent unhandled rejection if action fails after timeout
+    handled.catch(() => {});
+    return Promise.race([handled, timeout]);
+  }
 }

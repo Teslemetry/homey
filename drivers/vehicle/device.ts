@@ -385,11 +385,11 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Locked
     this.registerCapabilityListener("locked", async (value) => {
-      if (value) {
-        this.vehicle.api.lockDoors().catch(this.handleApiError);
-      } else {
-        this.vehicle.api.unlockDoors().catch(this.handleApiError);
-      }
+      return this.action(
+        value
+          ? this.vehicle.api.lockDoors()
+          : this.vehicle.api.unlockDoors(),
+      );
     });
 
     // Climate
@@ -398,17 +398,19 @@ export default class VehicleDevice extends TeslemetryDevice {
       const climateState =
         this.vehicle.sse.cache.data?.HvacPower === "HvacPowerStateOn";
       if (value === "off") {
-        this.vehicle.api
-          .stopAutoConditioning()
-          .then(this.handleApiResponse)
-          .catch(this.handleApiError);
+        await this.action(
+          this.vehicle.api
+            .stopAutoConditioning()
+            .then(this.handleApiResponse),
+        );
         return;
       }
       if (value === "auto" && !climateState) {
-        this.vehicle.api
-          .startAutoConditioning()
-          .then(this.handleApiResponse)
-          .catch(this.handleApiError);
+        await this.action(
+          this.vehicle.api
+            .startAutoConditioning()
+            .then(this.handleApiResponse),
+        );
         return;
       } // else climates on, so we need to check which other state to turn off
 
@@ -418,18 +420,20 @@ export default class VehicleDevice extends TeslemetryDevice {
       );
       if (value === "defrost") {
         if (!defrostValue) {
-          this.vehicle.api
-            .setPreconditioningMax(true, true)
-            .then(this.handleApiResponse)
-            .catch(this.handleApiError);
+          await this.action(
+            this.vehicle.api
+              .setPreconditioningMax(true, true)
+              .then(this.handleApiResponse),
+          );
         }
         return;
       }
       if (defrostValue) {
-        this.vehicle.api
-          .setPreconditioningMax(false, false)
-          .then(this.handleApiResponse)
-          .catch(this.handleApiError);
+        this.action(
+          this.vehicle.api
+            .setPreconditioningMax(false, false)
+            .then(this.handleApiResponse),
+        );
       }
 
       // Handle Keeper
@@ -437,222 +441,210 @@ export default class VehicleDevice extends TeslemetryDevice {
       switch (value) {
         case "keep_mode":
           if (climateKeep !== "ClimateKeeperModeStateOn") {
-            this.vehicle.api
-              .setClimateKeeperMode(1)
-              .then(this.handleApiResponse)
-              .catch(this.handleApiError);
+            await this.action(
+              this.vehicle.api
+                .setClimateKeeperMode(1)
+                .then(this.handleApiResponse),
+            );
           }
           return;
         case "dog_mode":
           if (climateKeep !== "ClimateKeeperModeStateDog") {
-            this.vehicle.api
-              .setClimateKeeperMode(2)
-              .then(this.handleApiResponse)
-              .catch(this.handleApiError);
+            await this.action(
+              this.vehicle.api
+                .setClimateKeeperMode(2)
+                .then(this.handleApiResponse),
+            );
           }
           return;
         case "camp_mode":
           if (climateKeep !== "ClimateKeeperModeStateParty") {
-            this.vehicle.api
-              .setClimateKeeperMode(3)
-              .then(this.handleApiResponse)
-              .catch(this.handleApiError);
+            await this.action(
+              this.vehicle.api
+                .setClimateKeeperMode(3)
+                .then(this.handleApiResponse),
+            );
           }
           return;
         default:
           if (climateKeep !== "ClimateKeeperModeStateOff") {
-            this.vehicle.api
-              .setClimateKeeperMode(0)
-              .then(this.handleApiResponse)
-              .catch(this.handleApiError);
+            await this.action(
+              this.vehicle.api
+                .setClimateKeeperMode(0)
+                .then(this.handleApiResponse),
+            );
           }
       }
     });
 
     this.registerCapabilityListener("target_temperature", async (value) => {
-      this.vehicle.api
-        .setTemps(value, value)
-        .then(this.handleApiResponse)
-        .catch(this.handleApiError);
+      return this.action(
+        this.vehicle.api.setTemps(value, value).then(this.handleApiResponse),
+      );
     });
 
     this.registerCapabilityListener("steering_wheel_heater", async (value) => {
       switch (value) {
         case "0":
-          this.vehicle.api
-            .setSteeringWheelHeater(false)
-            .catch(this.handleApiError);
-          break;
+          return this.action(this.vehicle.api.setSteeringWheelHeater(false));
         case "1":
-          this.vehicle.api
-            .setSteeringWheelHeatLevel(1)
-            .catch(this.handleApiError);
-          // await this.vehicle.api.setSteeringWheelHeater(true);?
-          break;
+          return this.action(this.vehicle.api.setSteeringWheelHeatLevel(1));
         case "3":
-          this.vehicle.api
-            .setSteeringWheelHeatLevel(3)
-            .catch(this.handleApiError);
-          // await this.vehicle.api.setSteeringWheelHeater(true);?
-          break;
+          return this.action(this.vehicle.api.setSteeringWheelHeatLevel(3));
         default:
           throw new Error("Invalid level");
       }
     });
     this.registerCapabilityListener("seat_heater.front_left", async (value) => {
-      this.vehicle.api
-        .setSeatHeater("front_left", Number(value))
-        .catch(this.handleApiError);
+      return this.action(
+        this.vehicle.api.setSeatHeater("front_left", Number(value)),
+      );
     });
 
     this.registerCapabilityListener(
       "seat_heater.front_right",
       async (value) => {
-        this.vehicle.api
-          .setSeatHeater("front_right", Number(value))
-          .catch(this.handleApiError);
+        return this.action(
+          this.vehicle.api.setSeatHeater("front_right", Number(value)),
+        );
       },
     );
     this.registerCapabilityListener("seat_heater.rear_left", async (value) => {
-      this.vehicle.api
-        .setSeatHeater("rear_left", Number(value))
-        .catch(this.handleApiError);
+      return this.action(
+        this.vehicle.api.setSeatHeater("rear_left", Number(value)),
+      );
     });
     this.registerCapabilityListener("seat_heater.rear_right", async (value) => {
-      this.vehicle.api
-        .setSeatHeater("rear_right", Number(value))
-        .catch(this.handleApiError);
+      return this.action(
+        this.vehicle.api.setSeatHeater("rear_right", Number(value)),
+      );
     });
     this.registerCapabilityListener(
       "seat_heater.rear_center",
       async (value) => {
-        this.vehicle.api
-          .setSeatHeater("rear_center", Number(value))
-          .catch(this.handleApiError);
+        return this.action(
+          this.vehicle.api.setSeatHeater("rear_center", Number(value)),
+        );
       },
     );
     this.registerCapabilityListener("seat_cooler.front_left", async (value) => {
-      this.vehicle.api
-        .setSeatCooler("front_left", Number(value))
-        .catch(this.handleApiError);
+      return this.action(
+        this.vehicle.api.setSeatCooler("front_left", Number(value)),
+      );
     });
     this.registerCapabilityListener(
       "seat_cooler.front_right",
       async (value) => {
-        this.vehicle.api
-          .setSeatCooler("front_right", Number(value))
-          .catch(this.handleApiError);
+        return this.action(
+          this.vehicle.api.setSeatCooler("front_right", Number(value)),
+        );
       },
     );
 
     // Charge
     this.registerCapabilityListener("evcharger_charging", async (value) => {
-      if (value) {
-        this.vehicle.api.startCharging().catch(this.handleApiError);
-      } else {
-        this.vehicle.api.stopCharging().catch(this.handleApiError);
-      }
+      return this.action(
+        value
+          ? this.vehicle.api.startCharging()
+          : this.vehicle.api.stopCharging(),
+      );
     });
 
     this.registerCapabilityListener("charge_limit", async (value: number) => {
-      this.vehicle.api
-        .setChargeLimit(Math.round(value * 100))
-        .catch(this.handleApiError);
+      return this.action(
+        this.vehicle.api.setChargeLimit(Math.round(value * 100)),
+      );
     });
 
     this.registerCapabilityListener("charging_amps", async (value: number) => {
-      this.vehicle.api.setChargingAmps(value).catch(this.handleApiError);
+      return this.action(this.vehicle.api.setChargingAmps(value));
     });
 
     this.registerCapabilityListener("onoff.charge_port", async (value) => {
-      if (value) {
-        this.vehicle.api.openChargePort().catch(this.handleApiError);
-      } else {
-        this.vehicle.api.closeChargePort().catch(this.handleApiError);
-      }
+      return this.action(
+        value
+          ? this.vehicle.api.openChargePort()
+          : this.vehicle.api.closeChargePort(),
+      );
     });
 
     // Sentry & Valet
     this.registerCapabilityListener("onoff.sentry", async (value) => {
-      this.vehicle.api.setSentryMode(value).catch(this.handleApiError);
+      return this.action(this.vehicle.api.setSentryMode(value));
     });
 
     // Guest Mode
     this.registerCapabilityListener("onoff.guest_mode", async (value) => {
-      this.vehicle.api.setGuestMode(value).catch(this.handleApiError);
+      return this.action(this.vehicle.api.setGuestMode(value));
     });
 
     // Doors/Frunk/Trunk
     this.registerCapabilityListener("onoff.frunk", async (value) => {
       if (value) {
-        this.vehicle.api.actuateTrunk("front").catch(this.handleApiError);
+        await this.action(this.vehicle.api.actuateTrunk("front"));
       }
       // Cannot be closed
     });
 
     this.registerCapabilityListener("onoff.trunk", async (_value) => {
-      this.vehicle.api.actuateTrunk("rear").catch(this.handleApiError);
+      return this.action(this.vehicle.api.actuateTrunk("rear"));
     });
 
     this.registerCapabilityListener("windowcoverings_closed", async (value) => {
       const { latitude, longitude } = this.vehicle.sse.cache?.data
         ?.Location || { latitude: 0, longitude: 0 };
-      if (value) {
-        this.vehicle.api
-          .windowControl("close", latitude, longitude)
-          .catch(this.handleApiError);
-      } else {
-        this.vehicle.api
-          .windowControl("vent", latitude, longitude)
-          .catch(this.handleApiError);
-      }
+      return this.action(
+        value
+          ? this.vehicle.api.windowControl("close", latitude, longitude)
+          : this.vehicle.api.windowControl("vent", latitude, longitude),
+      );
     });
 
     // Buttons
     this.registerCapabilityListener("button.flash", async () => {
-      this.vehicle.api.flashLights().catch(this.handleApiError);
+      return this.action(this.vehicle.api.flashLights());
     });
 
     this.registerCapabilityListener("button.honk", async () => {
-      this.vehicle.api.honkHorn().catch(this.handleApiError);
+      return this.action(this.vehicle.api.honkHorn());
     });
 
     this.registerCapabilityListener("button.keyless", async () => {
-      this.vehicle.api.remoteStart().catch(this.handleApiError);
+      return this.action(this.vehicle.api.remoteStart());
     });
 
     this.registerCapabilityListener("button.homelink", async () => {
       const { latitude, longitude } = this.vehicle.sse.cache?.data
         ?.Location || { latitude: 0, longitude: 0 };
-      this.vehicle.api
-        .triggerHomelink(latitude, longitude)
-        .catch(this.handleApiError);
+      return this.action(
+        this.vehicle.api.triggerHomelink(latitude, longitude),
+      );
     });
 
     this.registerCapabilityListener("button.wakeup", async () => {
-      this.vehicle.api.wakeUp().catch(this.handleApiError);
+      return this.action(this.vehicle.api.wakeUp());
     });
 
     // Media Play/Pause Toggle
     this.registerCapabilityListener("speaker_playing", async () => {
-      this.vehicle.api.mediaTogglePlayback().catch(this.handleApiError);
+      return this.action(this.vehicle.api.mediaTogglePlayback());
     });
 
     // Media Next Track
     this.registerCapabilityListener("speaker_next", async () => {
-      this.vehicle.api.mediaNextTrack().catch(this.handleApiError);
+      return this.action(this.vehicle.api.mediaNextTrack());
     });
 
     // Media Previous Track
     this.registerCapabilityListener("speaker_prev", async () => {
-      this.vehicle.api.mediaPreviousTrack().catch(this.handleApiError);
+      return this.action(this.vehicle.api.mediaPreviousTrack());
     });
 
     // Media Volume Control
     this.registerCapabilityListener("volume_set", async (value: number) => {
       this.muted = false;
       const volume = value * this.volumeMax;
-      this.vehicle.api.adjustVolume(volume).catch(this.handleApiError);
+      return this.action(this.vehicle.api.adjustVolume(volume));
     });
 
     // Media Mute Toggle
@@ -660,14 +652,13 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.muted = value;
       if (value) {
         // Mute: set volume to 0
-        this.vehicle.api.adjustVolume(0).catch(this.handleApiError);
         this.update("volume_set", 0);
-      } else {
-        // Unmute: restore last volume
-        const volume = this.lastVolume * this.volumeMax;
-        this.vehicle.api.adjustVolume(volume).catch(this.handleApiError);
-        this.update("volume_set", this.lastVolume);
+        return this.action(this.vehicle.api.adjustVolume(0));
       }
+      // Unmute: restore last volume
+      const volume = this.lastVolume * this.volumeMax;
+      this.update("volume_set", this.lastVolume);
+      return this.action(this.vehicle.api.adjustVolume(volume));
     });
   }
 
@@ -677,15 +668,15 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   // Public action methods for Flow cards
   public async flowFlashLights(): Promise<void> {
-    await this.vehicle.api.flashLights().catch(this.handleApiError);
+    await this.action(this.vehicle.api.flashLights());
   }
 
   public async flowHonkHorn(): Promise<void> {
-    await this.vehicle.api.honkHorn().catch(this.handleApiError);
+    await this.action(this.vehicle.api.honkHorn());
   }
 
   public async flowStartKeylessDriving(): Promise<void> {
-    await this.vehicle.api.remoteStart().catch(this.handleApiError);
+    await this.action(this.vehicle.api.remoteStart());
   }
 
   public async flowTriggerHomelink(): Promise<void> {
@@ -693,31 +684,23 @@ export default class VehicleDevice extends TeslemetryDevice {
       latitude: 0,
       longitude: 0,
     };
-    await this.vehicle.api
-      .triggerHomelink(latitude, longitude)
-      .catch(this.handleApiError);
+    await this.action(this.vehicle.api.triggerHomelink(latitude, longitude));
   }
 
   public async flowWakeUp(): Promise<void> {
-    await this.vehicle.api.wakeUp().catch(this.handleApiError);
+    await this.action(this.vehicle.api.wakeUp());
   }
 
   public async flowSetSteeringWheelHeater(level: string): Promise<void> {
     switch (level) {
       case "0":
-        await this.vehicle.api
-          .setSteeringWheelHeater(false)
-          .catch(this.handleApiError);
+        await this.action(this.vehicle.api.setSteeringWheelHeater(false));
         break;
       case "1":
-        await this.vehicle.api
-          .setSteeringWheelHeatLevel(1)
-          .catch(this.handleApiError);
+        await this.action(this.vehicle.api.setSteeringWheelHeatLevel(1));
         break;
       case "3":
-        await this.vehicle.api
-          .setSteeringWheelHeatLevel(3)
-          .catch(this.handleApiError);
+        await this.action(this.vehicle.api.setSteeringWheelHeatLevel(3));
         break;
       default:
         break;

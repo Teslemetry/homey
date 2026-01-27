@@ -1,6 +1,5 @@
 import { EnergyDetails } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
-import { TeslemetryApiError } from "../../@types/error.js";
 
 export default class PowerwallDevice extends TeslemetryDevice {
   site!: EnergyDetails;
@@ -99,33 +98,39 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.log(
         `Setting backup reserve to ${Math.round(value * 100)} (from ${value})`,
       );
-      await this.site.api
-        .setBackupReserve(Math.round(value * 100))
-        .catch(this.handleApiError);
+      return this.action(
+        this.site.api.setBackupReserve(Math.round(value * 100)),
+      );
     });
 
     this.registerCapabilityListener("allow_export", async (value) => {
       this.log(`Setting allow export to ${value}`);
-      await this.site.api
-        .gridImportExport(value, this.getCapabilityValue("onoff.charge_grid"))
-        .catch(this.handleApiError);
+      return this.action(
+        this.site.api.gridImportExport(
+          value,
+          this.getCapabilityValue("onoff.charge_grid"),
+        ),
+      );
     });
 
     this.registerCapabilityListener("operation_mode", async (value) => {
       this.log(`Setting operation mode to ${value}`);
-      await this.site.api.setOperationMode(value).catch(this.handleApiError);
+      return this.action(this.site.api.setOperationMode(value));
     });
 
     this.registerCapabilityListener("onoff.charge_grid", async (value) => {
       // When this is missing, its allowed
       this.log(`Setting charge from grid to ${!value}`);
-      await this.site.api
-        .gridImportExport(this.getCapabilityValue("allow_export"), !value)
-        .catch(this.handleApiError);
+      return this.action(
+        this.site.api.gridImportExport(
+          this.getCapabilityValue("allow_export"),
+          !value,
+        ),
+      );
     });
 
     this.registerCapabilityListener("onoff.storm", async (value) => {
-      await this.site.api.setStormMode(value).catch(this.handleApiError);
+      return this.action(this.site.api.setStormMode(value));
     });
   }
 
@@ -136,35 +141,25 @@ export default class PowerwallDevice extends TeslemetryDevice {
   // Public action methods for Flow cards
   public async flowSetBackupReserve(percentage: number): Promise<void> {
     this.log(`Setting backup reserve to ${percentage}%`);
-    try {
-      await this.site.api.setBackupReserve(percentage);
-    } catch (error) {
-      this.handleApiError(error as TeslemetryApiError);
-    }
+    await this.action(this.site.api.setBackupReserve(percentage));
   }
 
   public async flowSetAllowExport(
     mode: "battery_ok" | "pv_only" | "never",
   ): Promise<void> {
     this.log(`Setting allow export to ${mode}`);
-    try {
-      await this.site.api.gridImportExport(
+    await this.action(
+      this.site.api.gridImportExport(
         mode,
         this.getCapabilityValue("onoff.charge_grid"),
-      );
-    } catch (error) {
-      this.handleApiError(error as TeslemetryApiError);
-    }
+      ),
+    );
   }
 
   public async flowSetOperationMode(
     mode: "self_consumption" | "backup" | "autonomous",
   ): Promise<void> {
     this.log(`Setting operation mode to ${mode}`);
-    try {
-      await this.site.api.setOperationMode(mode);
-    } catch (error) {
-      this.handleApiError(error as TeslemetryApiError);
-    }
+    await this.action(this.site.api.setOperationMode(mode));
   }
 }
