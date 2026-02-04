@@ -49,10 +49,8 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.update("operation_mode", data.default_real_mode);
       this.update(
         "allow_export",
-        (data.components.customer_preferred_export_rule ??
-          data.components.non_export_configured)
-          ? "never"
-          : "battery_ok",
+        data.components.customer_preferred_export_rule ??
+          (data.components.non_export_configured ? "never" : "battery_ok"),
       );
       this.update(
         "onoff.charge_grid",
