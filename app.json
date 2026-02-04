@@ -575,7 +575,7 @@
         "quickAction": false
       },
       "capabilities": [
-        "measure_power.grid",
+        "measure_power",
         "measure_power.load",
         "alarm_generic.off_grid",
         "alarm_generic.island",
@@ -593,12 +593,9 @@
             "en": "Exported Energy"
           }
         },
-        "measure_power.grid": {
+        "measure_power": {
           "title": {
             "en": "Grid Power"
-          },
-          "units": {
-            "en": "W"
           }
         },
         "measure_power.load": {
@@ -1306,6 +1303,12 @@
           "id": "autonomous",
           "title": {
             "en": "Autonomous"
+          }
+        },
+        {
+          "id": "scheduler",
+          "title": {
+            "en": "Aggregation (VPP)"
           }
         }
       ]

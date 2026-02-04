@@ -38,7 +38,7 @@ export default class GatewayDevice extends TeslemetryDevice {
       const data = liveStatus?.response;
       if (!data) return;
 
-      this.update("measure_power.grid", data.grid_power);
+      this.update("measure_power", data.grid_power);
       this.update("measure_power.load", data.load_power);
       this.update(
         "alarm_generic.off_grid",
