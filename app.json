@@ -1304,12 +1304,6 @@
           "title": {
             "en": "Autonomous"
           }
-        },
-        {
-          "id": "scheduler",
-          "title": {
-            "en": "Aggregation (VPP)"
-          }
         }
       ]
     },
