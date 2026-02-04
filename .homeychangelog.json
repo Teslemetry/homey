@@ -28,5 +28,8 @@
   },
   "0.1.3": {
     "en": "EVSE energy usage fix."
+  },
+  "0.1.4": {
+    "en": "Fix grid power and operation mode logic"
   }
 }
