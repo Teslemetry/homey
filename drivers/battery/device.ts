@@ -106,7 +106,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
       return this.action(
         this.site.api.gridImportExport(
           value,
-          this.getCapabilityValue("onoff.charge_grid"),
+          !this.getCapabilityValue("onoff.charge_grid"),
         ),
       );
     });
@@ -149,7 +149,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     await this.action(
       this.site.api.gridImportExport(
         mode,
-        this.getCapabilityValue("onoff.charge_grid"),
+        !this.getCapabilityValue("onoff.charge_grid"),
       ),
     );
   }
