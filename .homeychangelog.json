@@ -31,5 +31,8 @@
   },
   "0.1.4": {
     "en": "Fix grid power and operation mode logic"
+  },
+  "0.1.5": {
+    "en": "Fixed the grid charging setting in both grid charge and export mode capabilities."
   }
 }
