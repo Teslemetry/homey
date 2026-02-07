@@ -104,10 +104,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     this.registerCapabilityListener("allow_export", async (value) => {
       this.log(`Setting allow export to ${value}`);
       return this.action(
-        this.site.api.gridImportExport(
-          value,
-          !this.getCapabilityValue("onoff.charge_grid"),
-        ),
+        this.site.api.gridImportExport(value),
       );
     });
 
@@ -147,10 +144,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
   ): Promise<void> {
     this.log(`Setting allow export to ${mode}`);
     await this.action(
-      this.site.api.gridImportExport(
-        mode,
-        !this.getCapabilityValue("onoff.charge_grid"),
-      ),
+      this.site.api.gridImportExport(mode),
     );
   }
 
