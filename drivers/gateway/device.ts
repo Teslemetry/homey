@@ -53,6 +53,9 @@ export default class GatewayDevice extends TeslemetryDevice {
     this.site.api.on("energyHistory", async (energyHistory) => {
       if (!energyHistory.response?.time_series?.length) return;
 
+      const dateKey =
+        energyHistory.response.time_series[0].timestamp.slice(0, 10);
+
       let imported = 0;
       let exported = 0;
       let hasImported = false;
@@ -75,8 +78,20 @@ export default class GatewayDevice extends TeslemetryDevice {
         }
       }
 
-      if (hasImported) this.update("meter_power.imported", imported / 1000);
-      if (hasExported) this.update("meter_power.exported", exported / 1000);
+      if (hasImported) {
+        await this.updateCumulativeMeter(
+          "meter_power.imported",
+          imported / 1000,
+          dateKey,
+        );
+      }
+      if (hasExported) {
+        await this.updateCumulativeMeter(
+          "meter_power.exported",
+          exported / 1000,
+          dateKey,
+        );
+      }
     });
   }
 

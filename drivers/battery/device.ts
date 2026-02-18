@@ -63,6 +63,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
     this.site.api.on("energyHistory", async (energyHistory) => {
       if (!energyHistory.response?.time_series?.length) return;
 
+      const dateKey =
+        energyHistory.response.time_series[0].timestamp.slice(0, 10);
+
       let charged = 0;
       let discharged = 0;
       let hasCharged = false;
@@ -85,9 +88,19 @@ export default class PowerwallDevice extends TeslemetryDevice {
         }
       }
 
-      if (hasCharged) this.update("meter_power.charged", charged / 1000);
+      if (hasCharged) {
+        await this.updateCumulativeMeter(
+          "meter_power.charged",
+          charged / 1000,
+          dateKey,
+        );
+      }
       if (hasDischarged) {
-        this.update("meter_power.discharged", discharged / 1000);
+        await this.updateCumulativeMeter(
+          "meter_power.discharged",
+          discharged / 1000,
+          dateKey,
+        );
       }
     });
 

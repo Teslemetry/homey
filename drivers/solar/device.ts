@@ -32,6 +32,9 @@ export default class SolarDevice extends TeslemetryDevice {
     this.site.api.on("energyHistory", async (energyHistory) => {
       if (!energyHistory.response?.time_series?.length) return;
 
+      const dateKey =
+        energyHistory.response.time_series[0].timestamp.slice(0, 10);
+
       let generated = 0;
       let hasGenerated = false;
 
@@ -45,7 +48,9 @@ export default class SolarDevice extends TeslemetryDevice {
         }
       }
 
-      if (hasGenerated) this.update("meter_power", generated / 1000);
+      if (hasGenerated) {
+        await this.updateCumulativeMeter("meter_power", generated / 1000, dateKey);
+      }
     });
   }
 

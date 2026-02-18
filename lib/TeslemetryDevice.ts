@@ -104,6 +104,34 @@ export default class TeslemetryDevice extends Homey.Device {
     throw new Error(error_description);
   };
 
+  protected async updateCumulativeMeter(
+    capability: string,
+    todayTotal: number,
+    dateKey: string,
+  ): Promise<void> {
+    const storeKey = `meter_${capability}`;
+    const lastDate = this.getStoreValue(`${storeKey}_date`) as string | null;
+    const lastToday = this.getStoreValue(`${storeKey}_last`) as number | null;
+    let offset = this.getStoreValue(`${storeKey}_offset`) as number | null;
+
+    // First run: initialize offset from existing capability value
+    if (offset === null) {
+      const current = this.getCapabilityValue(capability) as number | null;
+      offset = (current || 0) - todayTotal;
+      await this.setStoreValue(`${storeKey}_offset`, offset);
+    }
+
+    // Day rollover: date changed since last poll
+    if (lastDate !== null && dateKey !== lastDate && lastToday !== null) {
+      offset += lastToday;
+      await this.setStoreValue(`${storeKey}_offset`, offset);
+    }
+
+    await this.setStoreValue(`${storeKey}_date`, dateKey);
+    await this.setStoreValue(`${storeKey}_last`, todayTotal);
+    this.update(capability, offset + todayTotal);
+  }
+
   private static readonly ACTION_TIMEOUT = 9000;
 
   /**
