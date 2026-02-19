@@ -1,0 +1,20 @@
+{
+  "triggers": [
+    {
+      "id": "alarm_generic.off_grid_true",
+      "title": { "en": "Grid power lost" }
+    },
+    {
+      "id": "alarm_generic.off_grid_false",
+      "title": { "en": "Grid power restored" }
+    },
+    {
+      "id": "alarm_generic.island_true",
+      "title": { "en": "Island mode activated" }
+    },
+    {
+      "id": "alarm_generic.island_false",
+      "title": { "en": "Island mode deactivated" }
+    }
+  ]
+}

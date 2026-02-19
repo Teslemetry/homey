@@ -130,6 +130,136 @@
           }
         ],
         "id": "steering_wheel_heater_changed"
+      },
+      {
+        "id": "onoff.charge_grid_true",
+        "title": {
+          "en": "Charge from grid enabled"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "onoff.charge_grid_false",
+        "title": {
+          "en": "Charge from grid disabled"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "onoff.storm_true",
+        "title": {
+          "en": "Storm watch enabled"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "onoff.storm_false",
+        "title": {
+          "en": "Storm watch disabled"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.storm_true",
+        "title": {
+          "en": "Storm watch alert activated"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.storm_false",
+        "title": {
+          "en": "Storm watch alert deactivated"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.off_grid_true",
+        "title": {
+          "en": "Grid power lost"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.off_grid_false",
+        "title": {
+          "en": "Grid power restored"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.island_true",
+        "title": {
+          "en": "Island mode activated"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.island_false",
+        "title": {
+          "en": "Island mode deactivated"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          }
+        ]
       }
     ],
     "actions": [
@@ -412,6 +542,84 @@
           }
         ],
         "id": "wake_up"
+      },
+      {
+        "id": "onoff.charge_grid_on",
+        "title": {
+          "en": "Enable charge from grid"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "onoff.charge_grid_off",
+        "title": {
+          "en": "Disable charge from grid"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "onoff.charge_grid_toggle",
+        "title": {
+          "en": "Toggle charge from grid"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "onoff.storm_on",
+        "title": {
+          "en": "Enable storm watch"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "onoff.storm_off",
+        "title": {
+          "en": "Disable storm watch"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "onoff.storm_toggle",
+        "title": {
+          "en": "Toggle storm watch"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
       }
     ]
   },

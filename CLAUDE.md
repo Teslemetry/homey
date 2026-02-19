@@ -44,9 +44,41 @@ Each device type (vehicle, battery, solar, gateway, wall-connector) follows the 
 
 Configuration lives in `.homeycompose/` - this generates `app.json` at build time:
 - `.homeycompose/app.json` - Base app manifest (edit this, not `app.json`)
-- `.homeycompose/capabilities/` - Custom capability definitions
+- `.homeycompose/capabilities/` - Custom capability definitions (base capabilities only, NOT subcapabilities)
 - `.homeycompose/flow/` - Flow card definitions (triggers, actions)
 - `.homeycompose/drivers/` - Driver capability configurations
+- `drivers/<type>/driver.flow.compose.json` - Driver-specific flow cards (triggers, conditions, actions)
+
+### Subcapability Flow Cards
+
+Homey does **not** auto-generate flow cards for subcapabilities (e.g., `alarm_generic.off_grid`, `onoff.charge_grid`). You must define them manually in `drivers/<type>/driver.flow.compose.json`. Do **not** create files like `.homeycompose/capabilities/alarm_generic.off_grid.json` — the `.` in capability names is reserved and will fail validation.
+
+Use the subcapability ID in the flow card ID following the pattern `<capability>.<sub>_<state>`:
+
+```json
+{
+  "triggers": [
+    {
+      "id": "alarm_generic.off_grid_true",
+      "title": { "en": "Grid power lost" }
+    },
+    {
+      "id": "alarm_generic.off_grid_false",
+      "title": { "en": "Grid power restored" }
+    }
+  ],
+  "actions": [
+    {
+      "id": "onoff.charge_grid_on",
+      "title": { "en": "Enable charge from grid" }
+    }
+  ]
+}
+```
+
+ID patterns by capability type:
+- **Boolean triggers** (`alarm_generic`, `onoff`): `<cap>.<sub>_true`, `<cap>.<sub>_false`
+- **On/off actions**: `<cap>.<sub>_on`, `<cap>.<sub>_off`, `<cap>.<sub>_toggle`
 
 ## Key Patterns
 

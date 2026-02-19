@@ -1,0 +1,54 @@
+{
+  "triggers": [
+    {
+      "id": "onoff.charge_grid_true",
+      "title": { "en": "Charge from grid enabled" }
+    },
+    {
+      "id": "onoff.charge_grid_false",
+      "title": { "en": "Charge from grid disabled" }
+    },
+    {
+      "id": "onoff.storm_true",
+      "title": { "en": "Storm watch enabled" }
+    },
+    {
+      "id": "onoff.storm_false",
+      "title": { "en": "Storm watch disabled" }
+    },
+    {
+      "id": "alarm_generic.storm_true",
+      "title": { "en": "Storm watch alert activated" }
+    },
+    {
+      "id": "alarm_generic.storm_false",
+      "title": { "en": "Storm watch alert deactivated" }
+    }
+  ],
+  "actions": [
+    {
+      "id": "onoff.charge_grid_on",
+      "title": { "en": "Enable charge from grid" }
+    },
+    {
+      "id": "onoff.charge_grid_off",
+      "title": { "en": "Disable charge from grid" }
+    },
+    {
+      "id": "onoff.charge_grid_toggle",
+      "title": { "en": "Toggle charge from grid" }
+    },
+    {
+      "id": "onoff.storm_on",
+      "title": { "en": "Enable storm watch" }
+    },
+    {
+      "id": "onoff.storm_off",
+      "title": { "en": "Disable storm watch" }
+    },
+    {
+      "id": "onoff.storm_toggle",
+      "title": { "en": "Toggle storm watch" }
+    }
+  ]
+}
