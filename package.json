@@ -10,6 +10,7 @@
     "dev": "homey app run",
     "app:run": "homey app run",
     "app:install": "homey app install",
+    "select": "homey select",
     "app:validate": "homey app validate --level verified",
     "app:publish": "homey app publish",
     "homey": "homey",
