@@ -10,16 +10,8 @@
   "capabilities": [
     "evcharger_charging_state",
     "measure_power",
+    "meter_power",
     "connected_vehicle"
-  ],
-  "settings": [
-    {
-      "id": "track_energy",
-      "type": "checkbox",
-      "label": { "en": "Energy Tracking" },
-      "hint": { "en": "Track energy usage in Homey's energy dashboard. Disable if using a local Wall Connector integration to avoid double counting." },
-      "value": false
-    }
   ],
   "energy": {
     "evCharger": true,

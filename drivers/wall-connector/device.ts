@@ -6,31 +6,6 @@ export default class WallConnecter extends TeslemetryDevice {
   din!: string;
   pollingCleanup!: Array<() => void>;
 
-  public async ensureCapabilities() {
-    await super.ensureCapabilities();
-    if (this.getSetting("track_energy") && !this.hasCapability("meter_power")) {
-      await this.addCapability("meter_power");
-    }
-  }
-
-  async onSettings({
-    newSettings,
-    changedKeys,
-  }: {
-    oldSettings: Record<string, any>;
-    newSettings: Record<string, any>;
-    changedKeys: string[];
-  }): Promise<void> {
-    if (changedKeys.includes("track_energy")) {
-      if (newSettings.track_energy) {
-        await this.addCapability("meter_power");
-        this.pollingCleanup.push(this.site.api.requestPolling("chargeHistory"));
-      } else {
-        await this.removeCapability("meter_power");
-      }
-    }
-  }
-
   /**
    * onInit is called when the device is initialized.
    */
@@ -50,11 +25,8 @@ export default class WallConnecter extends TeslemetryDevice {
 
     this.pollingCleanup = [
       this.site.api.requestPolling("liveStatus"),
+      this.site.api.requestPolling("chargeHistory"),
     ];
-
-    if (this.getSetting("track_energy")) {
-      this.pollingCleanup.push(this.site.api.requestPolling("chargeHistory"));
-    }
 
     this.site.api.on("liveStatus", ({ response }) => {
       // Get specific Wall Connector
@@ -78,7 +50,6 @@ export default class WallConnecter extends TeslemetryDevice {
     });
 
     this.site.api.on("chargeHistory", async (chargeHistory) => {
-      if (!this.getSetting("track_energy")) return;
       if (!chargeHistory.response?.charge_history?.length) return;
 
       let charged = 0;

@@ -4,4 +4,6 @@ Control your vehicles with climate settings, charging management, security featu
 
 To get started, you'll need a Teslemetry account with an active subscription. Login to teslemetry.com/console and ensure your setup. Then install this app on your Homey and add your Tesla products through the pairing wizard using OAuth authentication.
 
+Wall Connector energy usage is tracked by default and appears in Homey's energy dashboard. Because Tesla's API only reports energy after a charging session finishes, energy data will not update in real time during a charge. For real-time local energy data, the "Tesla Power Connect" app is recommended. If you use both, you can exclude the Teslemetry device from the energy dashboard in the device's energy settings to avoid double counting.
+
 Legacy vehicles that don't support Fleet Telemetry are not supported by this app at this time.
