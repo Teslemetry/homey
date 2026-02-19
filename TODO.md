@@ -13,15 +13,12 @@ The Homey energy tab shows energy flowing from the grid into the house even when
 - The house icon in Homey's energy tab may derive its flow from cumulative meter data rather than real-time `measure_power` values
 - Need to investigate how Homey calculates the house flow arrows and whether the gateway's energy configuration is correctly representing grid import/export
 
-## 2. Duplicate flow trigger cards
+## ~~2. Duplicate flow trigger cards~~ DONE
 
 **Gateway:** Duplicate "generic alarm turned on for" entries in 'when' cards.
 **Powerwall:** Duplicate "turned on for" and "turned off for" entries in 'when' cards.
 
-**Technical context:**
-- Gateway has `alarm_generic.off_grid` and `alarm_generic.island` - Homey auto-generates trigger cards for each `alarm_generic` subcapability
-- Battery has `alarm_generic.storm` - may also generate duplicate triggers
-- May need custom trigger flow cards with clear labels instead of relying on Homey's auto-generated ones, or use `preventTag: true` / capability options to suppress auto-generation
+**Resolution:** Added `driver.flow.compose.json` files with descriptive flow cards for all boolean subcapabilities on gateway, battery, and vehicle drivers. Homey uses these instead of auto-generating generic duplicates.
 
 ## 3. No condition ('and') flow cards
 
@@ -35,18 +32,11 @@ Teslemetry does not appear as an option when adding an 'and' card in flows. Ther
 - Charge from grid enabled - uses `onoff.charge_grid` on battery
 - Storm watch active - uses `alarm_generic.storm` on battery
 
-## 4. Missing action ('then') flow cards for energy products
+## ~~4. Missing action ('then') flow cards for energy products~~ DONE
 
 Current energy action cards: `set_allow_export`, `set_backup_reserve`, `set_operation_mode`.
 
-**Missing actions:**
-- Set charge from grid on/off - capability `onoff.charge_grid` exists on battery but has no flow card
-- Set storm watch on/off - capability `onoff.storm` exists on battery but has no flow card
-
-**Technical context:**
-- `onoff.charge_grid` listener calls `site.api.gridImportExport()` with the inverted value
-- `onoff.storm` listener calls `site.api.stormMode(value)`
-- Flow card definitions go in `.homeycompose/flow/actions/`
+**Resolution:** Added action flow cards for `onoff.charge_grid` (on/off/toggle) and `onoff.storm` (on/off/toggle) in `drivers/battery/driver.flow.compose.json`.
 
 ## 5. Vehicle flow cards visible to energy-only users
 
@@ -61,5 +51,4 @@ David (no Tesla vehicle) sees vehicle-related items in the 'when' trigger card l
 
 David requested a way to detect power outages in flows. The gateway capabilities exist (`alarm_generic.off_grid`, `alarm_generic.island`) and Homey auto-generates basic trigger cards for alarms, but:
 - No condition card to check grid status (covered by issue #3)
-- Auto-generated trigger card labels are generic ("Generic alarm turned on") rather than descriptive ("Grid power lost")
-- May want dedicated trigger cards with clear naming: "Power outage detected", "Grid restored", "Island mode activated"
+- ~~Auto-generated trigger card labels are generic ("Generic alarm turned on") rather than descriptive ("Grid power lost")~~ DONE - descriptive trigger cards added in `drivers/gateway/driver.flow.compose.json`

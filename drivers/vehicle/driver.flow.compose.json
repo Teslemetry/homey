@@ -1,0 +1,146 @@
+{
+  "triggers": [
+    {
+      "id": "onoff.charge_port_true",
+      "title": { "en": "Charge port opened" }
+    },
+    {
+      "id": "onoff.charge_port_false",
+      "title": { "en": "Charge port closed" }
+    },
+    {
+      "id": "onoff.sentry_true",
+      "title": { "en": "Sentry mode enabled" }
+    },
+    {
+      "id": "onoff.sentry_false",
+      "title": { "en": "Sentry mode disabled" }
+    },
+    {
+      "id": "onoff.frunk_true",
+      "title": { "en": "Frunk opened" }
+    },
+    {
+      "id": "onoff.frunk_false",
+      "title": { "en": "Frunk closed" }
+    },
+    {
+      "id": "onoff.trunk_true",
+      "title": { "en": "Trunk opened" }
+    },
+    {
+      "id": "onoff.trunk_false",
+      "title": { "en": "Trunk closed" }
+    },
+    {
+      "id": "onoff.guest_mode_true",
+      "title": { "en": "Guest mode enabled" }
+    },
+    {
+      "id": "onoff.guest_mode_false",
+      "title": { "en": "Guest mode disabled" }
+    },
+    {
+      "id": "locked.charge_latch_true",
+      "title": { "en": "Charge port latch engaged" }
+    },
+    {
+      "id": "locked.charge_latch_false",
+      "title": { "en": "Charge port latch disengaged" }
+    },
+    {
+      "id": "alarm_contact.fl_true",
+      "title": { "en": "Front left door opened" }
+    },
+    {
+      "id": "alarm_contact.fl_false",
+      "title": { "en": "Front left door closed" }
+    },
+    {
+      "id": "alarm_contact.fr_true",
+      "title": { "en": "Front right door opened" }
+    },
+    {
+      "id": "alarm_contact.fr_false",
+      "title": { "en": "Front right door closed" }
+    },
+    {
+      "id": "alarm_contact.rl_true",
+      "title": { "en": "Rear left door opened" }
+    },
+    {
+      "id": "alarm_contact.rl_false",
+      "title": { "en": "Rear left door closed" }
+    },
+    {
+      "id": "alarm_contact.rr_true",
+      "title": { "en": "Rear right door opened" }
+    },
+    {
+      "id": "alarm_contact.rr_false",
+      "title": { "en": "Rear right door closed" }
+    }
+  ],
+  "actions": [
+    {
+      "id": "onoff.charge_port_on",
+      "title": { "en": "Open charge port" }
+    },
+    {
+      "id": "onoff.charge_port_off",
+      "title": { "en": "Close charge port" }
+    },
+    {
+      "id": "onoff.charge_port_toggle",
+      "title": { "en": "Toggle charge port" }
+    },
+    {
+      "id": "onoff.sentry_on",
+      "title": { "en": "Enable sentry mode" }
+    },
+    {
+      "id": "onoff.sentry_off",
+      "title": { "en": "Disable sentry mode" }
+    },
+    {
+      "id": "onoff.sentry_toggle",
+      "title": { "en": "Toggle sentry mode" }
+    },
+    {
+      "id": "onoff.frunk_on",
+      "title": { "en": "Open frunk" }
+    },
+    {
+      "id": "onoff.frunk_off",
+      "title": { "en": "Close frunk" }
+    },
+    {
+      "id": "onoff.frunk_toggle",
+      "title": { "en": "Toggle frunk" }
+    },
+    {
+      "id": "onoff.trunk_on",
+      "title": { "en": "Open trunk" }
+    },
+    {
+      "id": "onoff.trunk_off",
+      "title": { "en": "Close trunk" }
+    },
+    {
+      "id": "onoff.trunk_toggle",
+      "title": { "en": "Toggle trunk" }
+    },
+    {
+      "id": "onoff.guest_mode_on",
+      "title": { "en": "Enable guest mode" }
+    },
+    {
+      "id": "onoff.guest_mode_off",
+      "title": { "en": "Disable guest mode" }
+    },
+    {
+      "id": "onoff.guest_mode_toggle",
+      "title": { "en": "Toggle guest mode" }
+    }
+  ]
+}
