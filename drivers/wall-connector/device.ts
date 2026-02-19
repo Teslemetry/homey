@@ -6,6 +6,31 @@ export default class WallConnecter extends TeslemetryDevice {
   din!: string;
   pollingCleanup!: Array<() => void>;
 
+  public async ensureCapabilities() {
+    await super.ensureCapabilities();
+    if (this.getSetting("track_energy") && !this.hasCapability("meter_power")) {
+      await this.addCapability("meter_power");
+    }
+  }
+
+  async onSettings({
+    newSettings,
+    changedKeys,
+  }: {
+    oldSettings: Record<string, any>;
+    newSettings: Record<string, any>;
+    changedKeys: string[];
+  }): Promise<void> {
+    if (changedKeys.includes("track_energy")) {
+      if (newSettings.track_energy) {
+        await this.addCapability("meter_power");
+        this.pollingCleanup.push(this.site.api.requestPolling("chargeHistory"));
+      } else {
+        await this.removeCapability("meter_power");
+      }
+    }
+  }
+
   /**
    * onInit is called when the device is initialized.
    */
@@ -25,8 +50,11 @@ export default class WallConnecter extends TeslemetryDevice {
 
     this.pollingCleanup = [
       this.site.api.requestPolling("liveStatus"),
-      this.site.api.requestPolling("chargeHistory"),
     ];
+
+    if (this.getSetting("track_energy")) {
+      this.pollingCleanup.push(this.site.api.requestPolling("chargeHistory"));
+    }
 
     this.site.api.on("liveStatus", ({ response }) => {
       // Get specific Wall Connector
@@ -50,12 +78,13 @@ export default class WallConnecter extends TeslemetryDevice {
     });
 
     this.site.api.on("chargeHistory", async (chargeHistory) => {
+      if (!this.getSetting("track_energy")) return;
       if (!chargeHistory.response?.charge_history?.length) return;
 
       let charged = 0;
       let hasCharged = false;
 
-      for (const event of chargeHistory.response?.charge_history ?? []) {
+      for (const event of chargeHistory.response.charge_history) {
         if (event.din !== this.din || event.energy_added_wh === undefined) {
           continue;
         }
@@ -64,7 +93,9 @@ export default class WallConnecter extends TeslemetryDevice {
       }
 
       if (hasCharged) {
-        this.update("meter_power", charged / 1000);
+        const now = new Date();
+        const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+        await this.updateCumulativeMeter("meter_power", charged / 1000, dateKey);
       }
     });
   }
