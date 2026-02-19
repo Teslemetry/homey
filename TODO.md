@@ -34,17 +34,16 @@ Current energy action cards: `set_allow_export`, `set_backup_reserve`, `set_oper
 
 **Resolution:** Added action flow cards for `onoff.charge_grid` (on/off/toggle) and `onoff.storm` (on/off/toggle) in `drivers/battery/driver.flow.compose.json`.
 
-## 5. Vehicle flow cards visible to energy-only users
+## ~~5. Vehicle flow cards visible to energy-only users~~ DONE
 
-David (no Tesla vehicle) sees vehicle-related items in the 'when' trigger card list. The `steering_wheel_heater_changed` trigger card does not have a device capability filter to hide it from users without vehicles.
+**Resolution:** Added device capability filters (`args` with `filter`) to all 4 app-level trigger cards in `.homeycompose/flow/triggers/`. Also added missing `titleFormatted` (required for verified apps):
+- `steering_wheel_heater_changed` → filter: `capabilities=steering_wheel_heater`
+- `operation_mode_changed` → filter: `capabilities=operation_mode`
+- `allow_export_changed` → filter: `capabilities=allow_export`
+- `backup_reserve_changed` → filter: `capabilities=backup_reserve`
 
-**Technical context:**
-- Action cards like `flash_lights` use `"filter": "capabilities=button.flash"` which correctly hides them
-- Trigger card `steering_wheel_heater_changed` in `.homeycompose/flow/triggers/steering_wheel_heater_changed.json` needs a similar filter added
-- Other trigger cards (`allow_export_changed`, `backup_reserve_changed`, `operation_mode_changed`) are energy-specific and fine
+## ~~6. Grid status / power outage detection in flows~~ DONE
 
-## 6. Grid status / power outage detection in flows
-
-David requested a way to detect power outages in flows. The gateway capabilities exist (`alarm_generic.off_grid`, `alarm_generic.island`) and Homey auto-generates basic trigger cards for alarms, but:
-- No condition card to check grid status (covered by issue #3)
-- ~~Auto-generated trigger card labels are generic ("Generic alarm turned on") rather than descriptive ("Grid power lost")~~ DONE - descriptive trigger cards added in `drivers/gateway/driver.flow.compose.json`
+**Resolution:** Fully covered by other items:
+- Condition cards to check grid status added in issue #3
+- Descriptive trigger cards added in `drivers/gateway/driver.flow.compose.json` (issue #2)

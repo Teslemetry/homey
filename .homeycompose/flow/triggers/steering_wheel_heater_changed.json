@@ -2,9 +2,22 @@
   "title": {
     "en": "Steering wheel heater changed"
   },
+  "titleFormatted": {
+    "en": "Steering wheel heater changed on [[device]]"
+  },
   "hint": {
     "en": "This card triggers when the steering wheel heater level changes."
   },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=steering_wheel_heater",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
   "tokens": [
     {
       "name": "steering_wheel_heater",

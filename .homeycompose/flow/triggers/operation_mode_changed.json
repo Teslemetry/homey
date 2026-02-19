@@ -2,9 +2,22 @@
   "title": {
     "en": "Operation mode changed"
   },
+  "titleFormatted": {
+    "en": "Operation mode changed on [[device]]"
+  },
   "hint": {
     "en": "This card triggers when the operation mode changes."
   },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=operation_mode",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
   "tokens": [
     {
       "name": "operation_mode",

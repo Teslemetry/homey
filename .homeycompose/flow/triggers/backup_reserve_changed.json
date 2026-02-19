@@ -2,9 +2,22 @@
   "title": {
     "en": "Backup reserve changed"
   },
+  "titleFormatted": {
+    "en": "Backup reserve changed on [[device]]"
+  },
   "hint": {
     "en": "This card triggers when the backup reserve percentage changes."
   },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=backup_reserve",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
   "tokens": [
     {
       "name": "backup_reserve",

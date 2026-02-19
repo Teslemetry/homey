@@ -2,9 +2,22 @@
   "title": {
     "en": "Allow export changed"
   },
+  "titleFormatted": {
+    "en": "Allow export changed on [[device]]"
+  },
   "hint": {
     "en": "This card triggers when the export setting changes."
   },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=allow_export",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
   "tokens": [
     {
       "name": "allow_export",

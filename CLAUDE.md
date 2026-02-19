@@ -80,6 +80,25 @@ ID patterns by capability type:
 - **Boolean triggers** (`alarm_generic`, `onoff`): `<cap>.<sub>_true`, `<cap>.<sub>_false`
 - **On/off actions**: `<cap>.<sub>_on`, `<cap>.<sub>_off`, `<cap>.<sub>_toggle`
 
+### Flow Card Device Filters
+
+All app-level flow cards in `.homeycompose/flow/` **must** include an `args` entry with a device `filter` so cards only appear for users who have a device with the relevant capability. Without this, energy-only users see vehicle cards and vice versa. Verified apps also require `titleFormatted`.
+
+```json
+{
+  "title": { "en": "Steering wheel heater changed" },
+  "titleFormatted": { "en": "Steering wheel heater changed on [[device]]" },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=steering_wheel_heater",
+      "title": { "en": "Device" }
+    }
+  ]
+}
+```
+
 ## Key Patterns
 
 ### Capability Listeners
