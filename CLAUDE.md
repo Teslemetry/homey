@@ -125,6 +125,12 @@ this.vehicle.sse.onSignal("ChargePortLatch", (value) =>
 );
 ```
 
+### Cumulative Energy Meters
+
+Homey's energy tab uses `cumulative: true` meter capabilities (`meter_power.*`) to calculate energy flow arrows and history. These values **must be monotonically increasing** (like a utility meter that never resets). If a cumulative meter value decreases, Homey's energy tracking and flow visualization break.
+
+The Tesla `energyHistory` API returns daily totals (midnight to now, 5-minute intervals). Use `updateCumulativeMeter()` in `TeslemetryDevice` to convert daily totals into monotonically increasing values. It tracks a persistent offset across day boundaries using Homey's device store, detecting day rollover by comparing the date from `time_series[0].timestamp`.
+
 ### Capability Updates
 
 Use the `update()` method which safely handles unsupported capabilities:
