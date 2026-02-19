@@ -704,6 +704,136 @@
             "filter": "driver_id=gateway"
           }
         ]
+      },
+      {
+        "id": "onoff.charge_port",
+        "title": {
+          "en": "Charge port is !{{open|closed}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.sentry",
+        "title": {
+          "en": "Sentry mode is !{{enabled|disabled}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.frunk",
+        "title": {
+          "en": "Frunk is !{{open|closed}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.trunk",
+        "title": {
+          "en": "Trunk is !{{open|closed}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.guest_mode",
+        "title": {
+          "en": "Guest mode is !{{enabled|disabled}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "locked.charge_latch",
+        "title": {
+          "en": "Charge port latch is !{{engaged|disengaged}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_contact.fl",
+        "title": {
+          "en": "Front left door is !{{open|closed}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_contact.fr",
+        "title": {
+          "en": "Front right door is !{{open|closed}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_contact.rl",
+        "title": {
+          "en": "Rear left door is !{{open|closed}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_contact.rr",
+        "title": {
+          "en": "Rear right door is !{{open|closed}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
       }
     ],
     "actions": [
