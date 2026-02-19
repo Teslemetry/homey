@@ -34,5 +34,8 @@
   },
   "0.1.5": {
     "en": "Fixed the grid charging setting in both grid charge and export mode capabilities."
+  },
+  "0.2.0": {
+    "en": "Fixed cumulative energy meters resetting at midnight, which was causing Homey's energy flow visualization to show incorrect grid usage. Added descriptive flow cards"
   }
 }
