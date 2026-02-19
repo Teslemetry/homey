@@ -16,5 +16,15 @@
       "id": "alarm_generic.island_false",
       "title": { "en": "Island mode deactivated" }
     }
+  ],
+  "conditions": [
+    {
+      "id": "alarm_generic.off_grid",
+      "title": { "en": "Grid is !{{offline|online}}" }
+    },
+    {
+      "id": "alarm_generic.island",
+      "title": { "en": "Island mode is !{{active|inactive}}" }
+    }
   ]
 }

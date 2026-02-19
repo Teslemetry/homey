@@ -20,17 +20,13 @@ The Homey energy tab shows energy flowing from the grid into the house even when
 
 **Resolution:** Added `driver.flow.compose.json` files with descriptive flow cards for all boolean subcapabilities on gateway, battery, and vehicle drivers. Homey uses these instead of auto-generating generic duplicates.
 
-## 3. No condition ('and') flow cards
+## ~~3. No condition ('and') flow cards~~ DONE
 
-Teslemetry does not appear as an option when adding an 'and' card in flows. There are zero condition cards defined in `.homeycompose/flow/conditions/`.
-
-**Useful conditions to add:**
-- Grid status (online/offline) - uses `alarm_generic.off_grid` on gateway
-- Island mode active - uses `alarm_generic.island` on gateway
-- Operation mode is X - uses `operation_mode` on battery
-- Battery level above/below X% - uses `measure_battery` on battery
-- Charge from grid enabled - uses `onoff.charge_grid` on battery
-- Storm watch active - uses `alarm_generic.storm` on battery
+**Resolution:** Added 6 condition cards:
+- Gateway subcapability conditions in `drivers/gateway/driver.flow.compose.json`: Grid offline/online (`alarm_generic.off_grid`), Island mode active/inactive (`alarm_generic.island`)
+- Battery subcapability conditions in `drivers/battery/driver.flow.compose.json`: Charge from grid enabled/disabled (`onoff.charge_grid`), Storm watch alert active/inactive (`alarm_generic.storm`)
+- App-level conditions in `.homeycompose/flow/conditions/`: Operation mode is X (`operation_mode_is`), Battery level above X% (`battery_level`)
+- Run listeners registered in `app.ts` for `operation_mode_is` and `battery_level`
 
 ## ~~4. Missing action ('then') flow cards for energy products~~ DONE
 

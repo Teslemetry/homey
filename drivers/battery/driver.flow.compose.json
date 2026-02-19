@@ -25,6 +25,16 @@
       "title": { "en": "Storm watch alert deactivated" }
     }
   ],
+  "conditions": [
+    {
+      "id": "onoff.charge_grid",
+      "title": { "en": "Charge from grid is !{{enabled|disabled}}" }
+    },
+    {
+      "id": "alarm_generic.storm",
+      "title": { "en": "Storm watch alert is !{{active|inactive}}" }
+    }
+  ],
   "actions": [
     {
       "id": "onoff.charge_grid_on",

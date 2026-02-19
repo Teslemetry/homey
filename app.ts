@@ -118,6 +118,25 @@ export default class TeslemetryApp extends Homey.App {
         },
       );
 
+    // Condition cards
+    this.homey.flow
+      .getConditionCard('operation_mode_is')
+      .registerRunListener(
+        async (args: { device: PowerwallDevice; mode: string }) => {
+          return args.device.getCapabilityValue('operation_mode') === args.mode;
+        },
+      );
+
+    this.homey.flow
+      .getConditionCard('battery_level')
+      .registerRunListener(
+        async (args: { device: PowerwallDevice; percentage: number }) => {
+          return (
+            args.device.getCapabilityValue('measure_battery') >= args.percentage
+          );
+        },
+      );
+
     this.log('Flow card handlers registered');
   }
 
