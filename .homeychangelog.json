@@ -37,5 +37,8 @@
   },
   "0.2.0": {
     "en": "Fixed cumulative energy meters resetting at midnight, which was causing Homey's energy flow visualization to show incorrect grid usage. Added descriptive flow cards"
+  },
+  "0.2.1": {
+    "en": "Added remaining vehicle icons by Ivo Derksen"
   }
 }
