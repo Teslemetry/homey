@@ -80,7 +80,8 @@
       "units": { "en": "km" }
     },
     "measure_distance.odometer": {
-      "title": { "en": "Odometer" }
+      "title": { "en": "Odometer" },
+      "units": { "en": "km" }
     },
     "measure_speed": {
       "title": { "en": "Speed" }

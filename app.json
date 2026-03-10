@@ -1801,6 +1801,9 @@
         "measure_distance.odometer": {
           "title": {
             "en": "Odometer"
+          },
+          "units": {
+            "en": "km"
           }
         },
         "measure_speed": {
