@@ -36,6 +36,8 @@ const centerDisplayMap = new Map<SseData["data"]["CenterDisplay"], boolean>([
 ]);
 
 const MILES_TO_METERS = 1609.344;
+const MPH_TO_METERS_PER_SECOND = 0.44704;
+const ATM_TO_BAR = 1.01325;
 
 export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
@@ -263,16 +265,28 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Tire Pressure (TPMS)
     this.vehicle.sse.onSignal("TpmsPressureFl", (value) =>
-      this.update("measure_pressure.fl", value),
+      this.update(
+        "measure_pressure.fl",
+        value !== undefined && value !== null ? value * ATM_TO_BAR : value,
+      ),
     );
     this.vehicle.sse.onSignal("TpmsPressureFr", (value) =>
-      this.update("measure_pressure.fr", value),
+      this.update(
+        "measure_pressure.fr",
+        value !== undefined && value !== null ? value * ATM_TO_BAR : value,
+      ),
     );
     this.vehicle.sse.onSignal("TpmsPressureRl", (value) =>
-      this.update("measure_pressure.rl", value),
+      this.update(
+        "measure_pressure.rl",
+        value !== undefined && value !== null ? value * ATM_TO_BAR : value,
+      ),
     );
     this.vehicle.sse.onSignal("TpmsPressureRr", (value) =>
-      this.update("measure_pressure.rr", value),
+      this.update(
+        "measure_pressure.rr",
+        value !== undefined && value !== null ? value * ATM_TO_BAR : value,
+      ),
     );
 
     // Vehicle Status
@@ -283,7 +297,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
     this.vehicle.sse.onSignal("VehicleSpeed", (value) => {
       if (value !== undefined && value !== null) {
-        this.update("measure_speed", value / 3.6); // km/h to m/s
+        this.update("measure_speed", value * MPH_TO_METERS_PER_SECOND);
       }
     });
     this.vehicle.sse.onSignal("Gear", (value) => {
