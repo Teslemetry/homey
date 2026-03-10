@@ -35,7 +35,7 @@ const centerDisplayMap = new Map<SseData["data"]["CenterDisplay"], boolean>([
   ["DisplayStateEntertainment", true],
 ]);
 
-const MILES_TO_METERS = 1609.344;
+const MILES_TO_KILOMETERS = 1.609344;
 const MPH_TO_METERS_PER_SECOND = 0.44704;
 const ATM_TO_BAR = 1.01325;
 
@@ -75,7 +75,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
     this.vehicle.sse.onSignal("EstBatteryRange", (value) => {
       if (value !== undefined && value !== null) {
-        this.update("measure_distance.range", value * MILES_TO_METERS);
+        this.update("measure_distance.range", value * MILES_TO_KILOMETERS);
       }
     });
 
@@ -292,7 +292,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     // Vehicle Status
     this.vehicle.sse.onSignal("Odometer", (value) => {
       if (value !== undefined && value !== null) {
-        this.update("measure_distance.odometer", value * MILES_TO_METERS);
+        this.update("measure_distance.odometer", value * MILES_TO_KILOMETERS);
       }
     });
     this.vehicle.sse.onSignal("VehicleSpeed", (value) => {
