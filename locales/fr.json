@@ -1,0 +1,9 @@
+{
+  "error": {
+    "invalid_token": "Jeton invalide. Veuillez réessayer.",
+    "invalid_refresh_token": "Jeton de rafraîchissement invalide. Veuillez vous ré-authentifier.",
+    "subscription_required": "Abonnement requis. Veuillez vérifier votre abonnement Teslemetry.",
+    "could_not_wake_vehicle": "Le véhicule ne s'est pas réveillé. Veuillez réessayer.",
+    "insufficient_credits": "Crédits de commande insuffisants. Veuillez acheter des crédits supplémentaires pour exécuter des commandes."
+  }
+}

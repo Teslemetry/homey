@@ -1,9 +1,33 @@
 {
   "title": {
-    "en": "Set operation mode"
+    "en": "Set operation mode",
+    "nl": "Instelmodus instellen",
+    "da": "Indstil driftsmåde",
+    "de": "Betriebsmodus einstellen",
+    "es": "Establecer modo de operación",
+    "fr": "Définir le mode de fonctionnement",
+    "it": "Imposta modalità di funzionamento",
+    "no": "Sett driftsmodus",
+    "sv": "Ställ in driftläge",
+    "pl": "Ustaw tryb działania",
+    "ru": "Установить режим работы",
+    "ko": "작동 모드 설정",
+    "ar": "تعيين وضع التشغيل"
   },
   "titleFormatted": {
-    "en": "Set operation mode of [[device]] to [[mode]]"
+    "en": "Set operation mode of [[device]] to [[mode]]",
+    "nl": "Instelmodus van [[device]] naar [[mode]]",
+    "da": "Indstil driftsmåde for [[device]] til [[mode]]",
+    "de": "Betriebsmodus von [[device]] auf [[mode]] einstellen",
+    "es": "Establecer modo de operación de [[device]] a [[mode]]",
+    "fr": "Définir le mode de fonctionnement de [[device]] sur [[mode]]",
+    "it": "Imposta la modalità di funzionamento di [[device]] su [[mode]]",
+    "no": "Sett driftsmodus for [[device]] til [[mode]]",
+    "sv": "Ställ in driftläge för [[device]] till [[mode]]",
+    "pl": "Ustaw tryb działania [[device]] na [[mode]]",
+    "ru": "Установить режим работы [[device]] на [[mode]]",
+    "ko": "[[device]]의 작동 모드를 [[mode]]로 설정",
+    "ar": "تعيين وضع التشغيل لـ[[device]] إلى [[mode]]"
   },
   "args": [
     {
@@ -11,32 +35,92 @@
       "name": "device",
       "filter": "capabilities=operation_mode",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
       }
     },
     {
       "type": "dropdown",
       "name": "mode",
       "title": {
-        "en": "Mode"
+        "en": "Mode",
+        "nl": "Modus",
+        "da": "Tilstand",
+        "de": "Modus",
+        "es": "Modo",
+        "fr": "Mode",
+        "it": "Modalità",
+        "no": "Modus",
+        "sv": "Läge",
+        "pl": "Tryb",
+        "ru": "Режим",
+        "ko": "모드",
+        "ar": "الوضع"
       },
       "values": [
         {
           "id": "self_consumption",
           "label": {
-            "en": "Self Consumption"
+            "en": "Self Consumption",
+            "nl": "Zelfverbruik",
+            "da": "Egen forbrug",
+            "de": "Eigenverbrauch",
+            "es": "Autoconsumo",
+            "fr": "Autoconsommation",
+            "it": "Autoconsumo",
+            "no": "Eget forbruk",
+            "sv": "Självförbrukning",
+            "pl": "Autokonsumpcja",
+            "ru": "Собственное потребление",
+            "ko": "자가 소비",
+            "ar": "الاستهلاك الذاتي"
           }
         },
         {
           "id": "backup",
           "label": {
-            "en": "Backup"
+            "en": "Backup",
+            "nl": "Backup",
+            "da": "Sikkerhedskopi",
+            "de": "Sicherung",
+            "es": "Respaldo",
+            "fr": "Sauvegarde",
+            "it": "Backup",
+            "no": "Sikkerhetskopi",
+            "sv": "Säkerhetskopiera",
+            "pl": "Kopia zapasowa",
+            "ru": "Резервное копирование",
+            "ko": "백업",
+            "ar": "نسخ احتياطي"
           }
         },
         {
           "id": "autonomous",
           "label": {
-            "en": "Autonomous"
+            "en": "Autonomous",
+            "nl": "Autonoom",
+            "da": "Selvstændig",
+            "de": "Autonom",
+            "es": "Autónomo",
+            "fr": "Autonome",
+            "it": "Autonomo",
+            "no": "Selvstyrt",
+            "sv": "Självständig",
+            "pl": "Autonomiczny",
+            "ru": "Автономный",
+            "ko": "자율",
+            "ar": "مستقل"
           }
         }
       ]

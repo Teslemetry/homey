@@ -1,7 +1,19 @@
 {
   "type": "enum",
   "title": {
-    "en": "Seat Heater"
+    "en": "Seat Heater",
+    "nl": "Stoelverwarming",
+    "da": "Sædevarmer",
+    "de": "Sitzheizung",
+    "es": "Calefacción de asiento",
+    "fr": "Chauffage de siège",
+    "it": "Riscaldamento del sedile",
+    "no": "Setevarmer",
+    "sv": "Sittvärmare",
+    "pl": "Podgrzewanie siedzenia",
+    "ru": "Подогрев сиденья",
+    "ko": "좌석 히터",
+    "ar": "مسخن المقعد"
   },
   "getable": true,
   "setable": true,
@@ -10,25 +22,73 @@
     {
       "id": "0",
       "title": {
-        "en": "Off"
+        "en": "Off",
+        "nl": "Uit",
+        "da": "Fra",
+        "de": "Aus",
+        "es": "Apagado",
+        "fr": "Éteint",
+        "it": "Spento",
+        "no": "Av",
+        "sv": "Av",
+        "pl": "Wyłączone",
+        "ru": "Выключено",
+        "ko": "끄기",
+        "ar": "إيقاف"
       }
     },
     {
       "id": "1",
       "title": {
-        "en": "Low"
+        "en": "Low",
+        "nl": "Laag",
+        "da": "Lav",
+        "de": "Niedrig",
+        "es": "Bajo",
+        "fr": "Faible",
+        "it": "Basso",
+        "no": "Lav",
+        "sv": "Låg",
+        "pl": "Niski",
+        "ru": "Низкий",
+        "ko": "낮음",
+        "ar": "منخفض"
       }
     },
     {
       "id": "2",
       "title": {
-        "en": "Medium"
+        "en": "Medium",
+        "nl": "Middel",
+        "da": "Mellem",
+        "de": "Mittel",
+        "es": "Medio",
+        "fr": "Moyen",
+        "it": "Medio",
+        "no": "Middels",
+        "sv": "Medium",
+        "pl": "Średni",
+        "ru": "Средний",
+        "ko": "중간",
+        "ar": "متوسط"
       }
     },
     {
       "id": "3",
       "title": {
-        "en": "High"
+        "en": "High",
+        "nl": "Hoog",
+        "da": "Høj",
+        "de": "Hoch",
+        "es": "Alto",
+        "fr": "Élevé",
+        "it": "Alto",
+        "no": "Høy",
+        "sv": "Hög",
+        "pl": "Wysoki",
+        "ru": "Высокий",
+        "ko": "높음",
+        "ar": "مرتفع"
       }
     }
   ]

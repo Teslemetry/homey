@@ -1,12 +1,48 @@
 {
   "title": {
-    "en": "The export setting has changed"
+    "en": "The export setting has changed",
+    "nl": "De exportinstelling is gewijzigd",
+    "da": "Eksportindstillingen er ændret",
+    "de": "Die Exporteinstellung wurde geändert",
+    "es": "La configuración de exportación ha cambiado",
+    "fr": "Le paramètre d'exportation a changé",
+    "it": "L'impostazione di esportazione è cambiata",
+    "no": "Eksportinnstillingen har blitt endret",
+    "sv": "Exportinställningen har ändrats",
+    "pl": "Ustawienie eksportu zostało zmienione",
+    "ru": "Настройка экспорта изменилась",
+    "ko": "내보내기 설정이 변경되었습니다",
+    "ar": "تم تغيير إعداد التصدير"
   },
   "titleFormatted": {
-    "en": "The export setting has changed on [[device]]"
+    "en": "The export setting has changed on [[device]]",
+    "nl": "De exportinstelling is gewijzigd op [[device]]",
+    "da": "Eksportindstillingen er ændret på [[device]]",
+    "de": "Die Exporteinstellung wurde auf [[device]] geändert",
+    "es": "La configuración de exportación ha cambiado en [[device]]",
+    "fr": "Le paramètre d'exportation a changé sur [[device]]",
+    "it": "L'impostazione di esportazione è cambiata su [[device]]",
+    "no": "Eksportinnstillingen har blitt endret på [[device]]",
+    "sv": "Exportinställningen har ändrats på [[device]]",
+    "pl": "Ustawienie eksportu zostało zmienione na [[device]]",
+    "ru": "Настройка экспорта изменилась на [[device]]",
+    "ko": "[[device]]에서 내보내기 설정이 변경되었습니다",
+    "ar": "تم تغيير إعداد التصدير على [[device]]"
   },
   "hint": {
-    "en": "This card triggers when the export setting changes."
+    "en": "This card triggers when the export setting changes.",
+    "nl": "Deze kaart wordt geactiveerd wanneer de exportinstelling verandert.",
+    "da": "Dette kort udløses, når eksportindstillingen ændres.",
+    "de": "Diese Karte wird ausgelöst, wenn die Exporteinstellung geändert wird.",
+    "es": "Esta tarjeta se activa cuando cambia la configuración de exportación.",
+    "fr": "Cette carte se déclenche lorsque le paramètre d'exportation change.",
+    "it": "Questa scheda si attiva quando cambia l'impostazione di esportazione.",
+    "no": "Dette kortet aktiveres når eksportinnstillingen endres.",
+    "sv": "Detta kort utlöses när exportinställningen ändras.",
+    "pl": "Ta karta uruchamia się, gdy zmienia się ustawienie eksportu.",
+    "ru": "Эта карта срабатывает, когда изменяется настройка экспорта.",
+    "ko": "이 카드는 내보내기 설정이 변경될 때 실행됩니다.",
+    "ar": "يتم تفعيل هذه البطاقة عند تغيير إعداد التصدير."
   },
   "args": [
     {
@@ -14,7 +50,19 @@
       "name": "device",
       "filter": "capabilities=allow_export",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
       }
     }
   ],
@@ -23,10 +71,34 @@
       "name": "allow_export",
       "type": "string",
       "title": {
-        "en": "Mode"
+        "en": "Mode",
+        "nl": "Modus",
+        "da": "Tilstand",
+        "de": "Modus",
+        "es": "Modo",
+        "fr": "Mode",
+        "it": "Modalità",
+        "no": "Modus",
+        "sv": "Läge",
+        "pl": "Tryb",
+        "ru": "Режим",
+        "ko": "모드",
+        "ar": "الوضع"
       },
       "example": {
-        "en": "Battery and Solar"
+        "en": "Battery and Solar",
+        "nl": "Batterij en Zon",
+        "da": "Batteri og solenergi",
+        "de": "Batterie und Solar",
+        "es": "Batería y Solar",
+        "fr": "Batterie et Solaire",
+        "it": "Batteria e solare",
+        "no": "Batteri og solenergi",
+        "sv": "Batteri och solenergi",
+        "pl": "Bateria i Słońce",
+        "ru": "Батарея и Солнечный",
+        "ko": "배터리 및 태양열",
+        "ar": "البطارية والطاقة الشمسية"
       }
     }
   ]

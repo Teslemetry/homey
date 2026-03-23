@@ -1,7 +1,19 @@
 {
   "type": "boolean",
   "title": {
-    "en": "WiFi Connected"
+    "en": "WiFi Connected",
+    "nl": "WiFi Verbonden",
+    "da": "WiFi Forbundet",
+    "de": "WLAN Verbunden",
+    "es": "WiFi Conectado",
+    "fr": "WiFi Connecté",
+    "it": "WiFi Connesso",
+    "no": "WiFi Tilkoblet",
+    "sv": "WiFi Ansluten",
+    "pl": "WiFi Połączono",
+    "ru": "WiFi Подключено",
+    "ko": "WiFi 연결됨",
+    "ar": "واي فاي متصل"
   },
   "getable": true,
   "setable": false,

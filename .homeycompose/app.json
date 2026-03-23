@@ -14,14 +14,42 @@
   "version": "1.0.0",
   "compatibility": ">=12.4.5",
   "sdk": 3,
-  "platforms": ["local"],
+  "platforms": [
+    "local"
+  ],
   "name": {
-    "en": "Teslemetry"
+    "en": "Teslemetry",
+    "nl": "Teslemetry",
+    "da": "Teslemetry",
+    "de": "Teslemetry",
+    "es": "Teslemetry",
+    "fr": "Teslemetry",
+    "it": "Teslemetry",
+    "no": "Teslemetry",
+    "sv": "Teslemetry",
+    "pl": "Teslemetry",
+    "ru": "Teslemetry",
+    "ko": "Teslemetry",
+    "ar": "تسليميتري"
   },
   "description": {
-    "en": "Simple and secure access to the Tesla Fleet API and real-time Tesla Fleet Telemetry"
+    "en": "Simple and secure access to the Tesla Fleet API and real-time Tesla Fleet Telemetry",
+    "nl": "Eenvoudige en veilige toegang tot de Tesla Fleet API en real-time Tesla Fleet Telemetrie",
+    "da": "Simpel og sikker adgang til Tesla Fleet API og real-time Tesla Fleet Telemetri",
+    "de": "Einfacher und sicherer Zugang zur Tesla Fleet API und Echtzeit-Tesla Fleet Telemetrie",
+    "es": "Acceso simple y seguro a la API de Tesla Fleet y Telemetría de Tesla Fleet en tiempo real",
+    "fr": "Accès simple et sécurisé à l'API Tesla Fleet et à la télémétrie Tesla Fleet en temps réel",
+    "it": "Accesso semplice e sicuro all'API di Tesla Fleet e telemetria Tesla Fleet in tempo reale",
+    "no": "Enkel og sikker tilgang til Tesla Fleet API og sanntid Tesla Fleet Telemetri",
+    "sv": "Enkel och säker tillgång till Tesla Fleet API och realtids Tesla Fleet Telemetri",
+    "pl": "Prosty i bezpieczny dostęp do API floty Tesli i telemetrii floty Tesli w czasie rzeczywistym",
+    "ru": "Простой и безопасный доступ к API автопарка Tesla и телеметрии автопарка Tesla в реальном времени",
+    "ko": "Tesla Fleet API 및 실시간 Tesla Fleet Telemetry에 간단하고 안전하게 액세스",
+    "ar": "وصول بسيط وآمن إلى API أسطول Tesla وTelemetry أسطول Tesla في الوقت الفعلي"
   },
-  "category": ["energy"],
+  "category": [
+    "energy"
+  ],
   "permissions": [],
   "images": {
     "small": "/assets/images/small.png",

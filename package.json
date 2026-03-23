@@ -13,6 +13,7 @@
     "select": "homey select",
     "app:validate": "homey app validate --level verified",
     "app:publish": "homey app publish",
+    "app:translate": "homey app translate",
     "homey": "homey",
     "size": "du -sh .homeybuild"
   },

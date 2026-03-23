@@ -2,29 +2,113 @@
   "triggers": [
     {
       "id": "alarm_generic.off_grid_true",
-      "title": { "en": "Grid power has been lost" }
+      "title": {
+        "en": "Grid power has been lost",
+        "nl": "Netstroom is uitgevallen",
+        "da": "Netstrøm er blevet afbrudt",
+        "de": "Netzstrom ist ausgefallen",
+        "es": "Se ha perdido la energía de la red",
+        "fr": "L'alimentation électrique a été coupée",
+        "it": "La corrente di rete è stata persa",
+        "no": "Nettstrømmen har blitt borte",
+        "sv": "Strömmen från elnätet har förlorats",
+        "pl": "Zasilanie sieciowe zostało utracone",
+        "ru": "Сетевая электроэнергия отключена",
+        "ko": "전력망의 전기가 끊겼습니다",
+        "ar": "تم فقدان طاقة الشبكة"
+      }
     },
     {
       "id": "alarm_generic.off_grid_false",
-      "title": { "en": "Grid power has been restored" }
+      "title": {
+        "en": "Grid power has been restored",
+        "nl": "Netstroom is hersteld",
+        "da": "Netstrømmen er blevet genoprettet",
+        "de": "Netzstrom wurde wiederhergestellt",
+        "es": "La energía de la red ha sido restaurada",
+        "fr": "L'alimentation électrique a été rétablie",
+        "it": "La corrente di rete è stata ripristinata",
+        "no": "Nettstrømmen er blitt gjenopprettet",
+        "sv": "Strömmen från elnätet har återställts",
+        "pl": "Zasilanie sieciowe zostało przywrócone",
+        "ru": "Сетевая электроэнергия восстановлена",
+        "ko": "전력망의 전력이 복구되었습니다",
+        "ar": "تم استعادة طاقة الشبكة"
+      }
     },
     {
       "id": "alarm_generic.island_true",
-      "title": { "en": "Island mode has been activated" }
+      "title": {
+        "en": "Island mode has been activated",
+        "nl": "Eilandmodus is geactiveerd",
+        "da": "Ø-tilstand er blevet aktiveret",
+        "de": "Inselmodus wurde aktiviert",
+        "es": "El modo isla ha sido activado",
+        "fr": "Le mode île a été activé",
+        "it": "La modalità isola è stata attivata",
+        "no": "Øy-modus har blitt aktivert",
+        "sv": "Ö-läge har aktiverats",
+        "pl": "Tryb wyspowy został włączony",
+        "ru": "Режим изоляции был активирован",
+        "ko": "섬 모드가 활성화되었습니다",
+        "ar": "تم تفعيل وضع الجزيرة"
+      }
     },
     {
       "id": "alarm_generic.island_false",
-      "title": { "en": "Island mode has been deactivated" }
+      "title": {
+        "en": "Island mode has been deactivated",
+        "nl": "Eilandmodus is gedeactiveerd",
+        "da": "Ø-tilstand er blevet deaktiveret",
+        "de": "Inselmodus wurde deaktiviert",
+        "es": "El modo isla ha sido desactivado",
+        "fr": "Le mode île a été désactivé",
+        "it": "La modalità isola è stata disattivata",
+        "no": "Øy-modus har blitt deaktivert",
+        "sv": "Ö-läge har avaktiverats",
+        "pl": "Tryb wyspowy został wyłączony",
+        "ru": "Режим изоляции был деактивирован",
+        "ko": "섬 모드가 비활성화되었습니다",
+        "ar": "تم إلغاء تفعيل وضع الجزيرة"
+      }
     }
   ],
   "conditions": [
     {
       "id": "alarm_generic.off_grid",
-      "title": { "en": "Grid is !{{offline|online}}" }
+      "title": {
+        "en": "Grid is !{{offline|online}}",
+        "nl": "Netwerk is !{{offline|online}}",
+        "da": "Net er !{{offline|online}}",
+        "de": "Netz ist !{{offline|online}}",
+        "es": "La red está !{{offline|online}}",
+        "fr": "Le réseau est !{{hors ligne|en ligne}}",
+        "it": "La rete è !{{offline|online}}",
+        "no": "Nettet er !{{frakoblet|tilkoblet}}",
+        "sv": "Nätet är !{{offline|online}}",
+        "pl": "Sieć jest !{{offline|online}}",
+        "ru": "Сеть !{{офлайн|онлайн}}",
+        "ko": "전력망이 !{{오프라인|온라인}} 상태입니다",
+        "ar": "الشبكة !{{غير متصلة|متصلة}}"
+      }
     },
     {
       "id": "alarm_generic.island",
-      "title": { "en": "Island mode is !{{active|inactive}}" }
+      "title": {
+        "en": "Island mode is !{{active|inactive}}",
+        "nl": "Eilandmodus is !{{actief|inactief}}",
+        "da": "Ø-tilstand er !{{aktiv|inaktiv}}",
+        "de": "Inselmodus ist !{{aktiv|inaktiv}}",
+        "es": "El modo isla está !{{activo|inactivo}}",
+        "fr": "Le mode île est !{{actif|inactif}}",
+        "it": "La modalità isola è !{{attiva|inattiva}}",
+        "no": "Øy-modus er !{{aktiv|inaktiv}}",
+        "sv": "Ö-läge är !{{aktiv|inaktiv}}",
+        "pl": "Tryb wyspowy jest !{{aktywny|nieaktywny}}",
+        "ru": "Режим изоляции !{{активен|неактивен}}",
+        "ko": "섬 모드가 !{{활성화|비활성화}} 상태입니다",
+        "ar": "وضع الجزيرة !{{نشط|غير نشط}}"
+      }
     }
   ]
 }

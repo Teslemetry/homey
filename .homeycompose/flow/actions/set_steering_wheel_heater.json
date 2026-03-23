@@ -1,9 +1,33 @@
 {
   "title": {
-    "en": "Set steering wheel heater"
+    "en": "Set steering wheel heater",
+    "nl": "Zet stuurwielverwarming aan",
+    "da": "Indstil ratvarmer",
+    "de": "Lenkradheizung einstellen",
+    "es": "Configurar calefactor del volante",
+    "fr": "Régler le chauffage du volant",
+    "it": "Imposta riscaldatore del volante",
+    "no": "Sett rattvarmer",
+    "sv": "Ställ in rattvärmare",
+    "pl": "Ustaw podgrzewanie kierownicy",
+    "ru": "Установить обогреватель руля",
+    "ko": "스티어링 휠 히터 설정",
+    "ar": "ضبط سخان عجلة القيادة"
   },
   "titleFormatted": {
-    "en": "Set [[device]] steering wheel heater to [[level]]"
+    "en": "Set [[device]] steering wheel heater to [[level]]",
+    "nl": "Zet [[device]] stuurwielverwarming op [[level]]",
+    "da": "Indstil [[device]] ratvarmer til [[level]]",
+    "de": "Lenkradheizung von [[device]] auf [[level]] einstellen",
+    "es": "Configura el calefactor de volante de [[device]] a [[level]]",
+    "fr": "Régler le chauffage du volant [[device]] sur [[level]]",
+    "it": "Imposta il riscaldatore del volante [[device]] su [[level]]",
+    "no": "Sett [[device]] rattvarmer til [[level]]",
+    "sv": "Ställ in [[device]] rattvärmare till [[level]]",
+    "pl": "Ustaw podgrzewanie kierownicy [[device]] na [[level]]",
+    "ru": "Установить обогреватель руля [[device]] на [[level]]",
+    "ko": "[[device]] 스티어링 휠 히터 [[level]]로 설정",
+    "ar": "ضبط سخان عجلة القيادة [[device]] على [[level]]"
   },
   "args": [
     {
@@ -11,32 +35,92 @@
       "name": "device",
       "filter": "capabilities=steering_wheel_heater",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
       }
     },
     {
       "type": "dropdown",
       "name": "level",
       "title": {
-        "en": "Level"
+        "en": "Level",
+        "nl": "Niveau",
+        "da": "Niveau",
+        "de": "Ebene",
+        "es": "Nivel",
+        "fr": "Niveau",
+        "it": "Livello",
+        "no": "Nivå",
+        "sv": "Nivå",
+        "pl": "Poziom",
+        "ru": "Уровень",
+        "ko": "수준",
+        "ar": "المستوى"
       },
       "values": [
         {
           "id": "0",
           "label": {
-            "en": "Off"
+            "en": "Off",
+            "nl": "Uit",
+            "da": "Slukket",
+            "de": "Aus",
+            "es": "Apagado",
+            "fr": "Éteint",
+            "it": "Spento",
+            "no": "Av",
+            "sv": "Av",
+            "pl": "Wyłączone",
+            "ru": "Выкл",
+            "ko": "끄기",
+            "ar": "إيقاف"
           }
         },
         {
           "id": "1",
           "label": {
-            "en": "Low"
+            "en": "Low",
+            "nl": "Laag",
+            "da": "Lav",
+            "de": "Niedrig",
+            "es": "Bajo",
+            "fr": "Bas",
+            "it": "Basso",
+            "no": "Lav",
+            "sv": "Låg",
+            "pl": "Niski",
+            "ru": "Низкий",
+            "ko": "낮음",
+            "ar": "منخفض"
           }
         },
         {
           "id": "3",
           "label": {
-            "en": "High"
+            "en": "High",
+            "nl": "Hoog",
+            "da": "Høj",
+            "de": "Hoch",
+            "es": "Alto",
+            "fr": "Élevé",
+            "it": "Alto",
+            "no": "Høy",
+            "sv": "Hög",
+            "pl": "Wysoki",
+            "ru": "Высокий",
+            "ko": "높음",
+            "ar": "مرتفع"
           }
         }
       ]

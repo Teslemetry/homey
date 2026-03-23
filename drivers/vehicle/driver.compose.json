@@ -1,9 +1,23 @@
 {
   "name": {
-    "en": "Tesla Vehicle"
+    "en": "Tesla Vehicle",
+    "nl": "Tesla Voertuig",
+    "da": "Tesla Køretøj",
+    "de": "Tesla Fahrzeug",
+    "es": "Vehículo Tesla",
+    "fr": "Véhicule Tesla",
+    "it": "Veicolo Tesla",
+    "no": "Tesla Kjøretøy",
+    "sv": "Tesla Fordon",
+    "pl": "Pojazd Tesla",
+    "ru": "Транспорт Tesla",
+    "ko": "테슬라 차량",
+    "ar": "مركبة تسلا"
   },
   "class": "car",
-  "$extends": ["teslemetry"],
+  "$extends": [
+    "teslemetry"
+  ],
   "ui": {
     "quickAction": false
   },
@@ -76,152 +90,746 @@
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {
-      "title": { "en": "Range" },
-      "units": { "en": "km" }
+      "title": {
+        "en": "Range",
+        "nl": "Bereik",
+        "da": "Rækkevidde",
+        "de": "Reichweite",
+        "es": "Autonomía",
+        "fr": "Portée",
+        "it": "Raggio",
+        "no": "Rekkevidde",
+        "sv": "Räckvidd",
+        "pl": "Zasięg",
+        "ru": "Запас хода",
+        "ko": "주행 거리",
+        "ar": "المدى"
+      },
+      "units": {
+        "en": "km"
+      }
     },
     "measure_distance.odometer": {
-      "title": { "en": "Odometer" },
-      "units": { "en": "km" }
+      "title": {
+        "en": "Odometer",
+        "nl": "Kilometerteller",
+        "da": "Kilometertæller",
+        "de": "Kilometerzähler",
+        "es": "Odómetro",
+        "fr": "Odomètre",
+        "it": "Contachilometri",
+        "no": "Kilometerteller",
+        "sv": "Odometer",
+        "pl": "Licznik kilometrów",
+        "ru": "Одометр",
+        "ko": "주행 거리계",
+        "ar": "عداد المسافات"
+      },
+      "units": {
+        "en": "km"
+      }
     },
     "measure_speed": {
-      "title": { "en": "Speed" }
+      "title": {
+        "en": "Speed",
+        "nl": "Snelheid",
+        "da": "Hastighed",
+        "de": "Geschwindigkeit",
+        "es": "Velocidad",
+        "fr": "Vitesse",
+        "it": "Velocità",
+        "no": "Fart",
+        "sv": "Hastighet",
+        "pl": "Prędkość",
+        "ru": "Скорость",
+        "ko": "속도",
+        "ar": "السرعة"
+      }
     },
     "measure_temperature.outside": {
-      "title": { "en": "Outside Temperature" }
+      "title": {
+        "en": "Outside Temperature",
+        "nl": "Buitentemperatuur",
+        "da": "Udendørstemperatur",
+        "de": "Außentemperatur",
+        "es": "Temperatura Exterior",
+        "fr": "Température extérieure",
+        "it": "Temperatura esterna",
+        "no": "Utetemperatur",
+        "sv": "Utetemperatur",
+        "pl": "Temperatura na zewnątrz",
+        "ru": "Температура снаружи",
+        "ko": "외부 온도",
+        "ar": "درجة حرارة الخارج"
+      }
     },
     "onoff.charge_port": {
-      "title": { "en": "Charge Port Door" }
+      "title": {
+        "en": "Charge Port Door",
+        "nl": "Laadpoortdeur",
+        "da": "Ladeportdør",
+        "de": "Ladeporttür",
+        "es": "Puerta del puerto de carga",
+        "fr": "Porte de la prise de charge",
+        "it": "Porta di ricarica",
+        "no": "Ladeportdør",
+        "sv": "Laddportsdörr",
+        "pl": "Drzwi portu ładowania",
+        "ru": "Дверца порта зарядки",
+        "ko": "충전 포트 도어",
+        "ar": "باب منفذ الشحن"
+      }
     },
     "evcharger_charging": {
-      "title": { "en": "Charging" }
+      "title": {
+        "en": "Charging",
+        "nl": "Opladen",
+        "da": "Lader",
+        "de": "Laden",
+        "es": "Cargando",
+        "fr": "En charge",
+        "it": "In carica",
+        "no": "Lader",
+        "sv": "Laddar",
+        "pl": "Ładowanie",
+        "ru": "Зарядка",
+        "ko": "충전 중",
+        "ar": "جار الشحن"
+      }
     },
     "onoff.sentry": {
-      "title": { "en": "Sentry Mode" }
+      "title": {
+        "en": "Sentry Mode",
+        "nl": "Bewakingsmodus",
+        "da": "Vagtfunktion",
+        "de": "Wächtermodus",
+        "es": "Modo Centinela",
+        "fr": "Mode Sentinelle",
+        "it": "Modalità Sentinella",
+        "no": "Vaktmodus",
+        "sv": "Bevakningsläge",
+        "pl": "Tryb straży",
+        "ru": "Режим сторожа",
+        "ko": "감시 모드",
+        "ar": "وضع الحراسة"
+      }
     },
     "onoff.defrost": {
-      "title": { "en": "Defrost" }
+      "title": {
+        "en": "Defrost",
+        "nl": "Ontdooien",
+        "da": "Aftøning",
+        "de": "Enteisen",
+        "es": "Descongelar",
+        "fr": "Dégivrage",
+        "it": "Sbrinamento",
+        "no": "Avfrosting",
+        "sv": "Avfrostning",
+        "pl": "Odmrażanie",
+        "ru": "Разморозка",
+        "ko": "제상",
+        "ar": "إزالة الصقيع"
+      }
     },
     "locked.charge_latch": {
-      "title": { "en": "Charge Port Latch" }
+      "title": {
+        "en": "Charge Port Latch",
+        "nl": "Laadpoortvergrendeling",
+        "da": "Ladelås",
+        "de": "Ladeanschluss",
+        "es": "Pestillo del puerto de carga",
+        "fr": "Verrouillage du port de charge",
+        "it": "Fermo del portello di carica",
+        "no": "Ladelås",
+        "sv": "Laddportspärr",
+        "pl": "Zatrzask portu ładowania",
+        "ru": "Засов порта зарядки",
+        "ko": "충전 포트 래치",
+        "ar": "مزلاج منفذ الشحن"
+      }
     },
     "seat_heater.front_left": {
-      "title": { "en": "Seat Heater (Front Left)" }
+      "title": {
+        "en": "Seat Heater (Front Left)",
+        "nl": "Stoelverwarmer (Voor Links)",
+        "da": "Sædevarmer (Foran Venstre)",
+        "de": "Sitzheizung (Vorne Links)",
+        "es": "Calefacción del Asiento (Delantero Izquierdo)",
+        "fr": "Chauffage de siège (Avant Gauche)",
+        "it": "Riscaldamento Sedile (Anteriore Sinistra)",
+        "no": "Setevarmer (Foran Venstre)",
+        "sv": "Sätesvärmare (Främre Vänster)",
+        "pl": "Podgrzewanie Siedzenia (Przód Lewy)",
+        "ru": "Подогрев сиденья (Переднее левое)",
+        "ko": "시트 히터 (앞 왼쪽)",
+        "ar": "مدفأة المقعد (أمام يسار)"
+      }
     },
     "seat_heater.front_right": {
-      "title": { "en": "Seat Heater (Front Right)" }
+      "title": {
+        "en": "Seat Heater (Front Right)",
+        "nl": "Stoelverwarmer (Voor Rechts)",
+        "da": "Sædevarmer (Foran Højre)",
+        "de": "Sitzheizung (Vorne Rechts)",
+        "es": "Calefacción del Asiento (Delantero Derecho)",
+        "fr": "Chauffage de siège (Avant Droit)",
+        "it": "Riscaldamento Sedile (Anteriore Destra)",
+        "no": "Setevarmer (Foran Høyre)",
+        "sv": "Sätesvärmare (Främre Höger)",
+        "pl": "Podgrzewanie Siedzenia (Przód Prawy)",
+        "ru": "Подогрев сиденья (Переднее правое)",
+        "ko": "시트 히터 (앞 오른쪽)",
+        "ar": "مدفأة المقعد (أمام يمين)"
+      }
     },
     "onoff.frunk": {
-      "title": { "en": "Frunk" }
+      "title": {
+        "en": "Frunk",
+        "nl": "Frunk",
+        "da": "Frunk",
+        "de": "Frunk",
+        "es": "Frunk",
+        "fr": "Frunk",
+        "it": "Frunk",
+        "no": "Frunk",
+        "sv": "Frunk",
+        "pl": "Frunk",
+        "ru": "Франк",
+        "ko": "프렁크",
+        "ar": "Frunk"
+      }
     },
     "onoff.trunk": {
-      "title": { "en": "Trunk" }
+      "title": {
+        "en": "Trunk",
+        "nl": "Kofferbak",
+        "da": "Bagagerum",
+        "de": "Kofferraum",
+        "es": "Baúl",
+        "fr": "Coffre",
+        "it": "Baule",
+        "no": "Bagasjerom",
+        "sv": "Bagageutrymme",
+        "pl": "Bagażnik",
+        "ru": "Багажник",
+        "ko": "트렁크",
+        "ar": "صندوق السيارة"
+      }
     },
     "alarm_contact.fl": {
-      "title": { "en": "Door (Front Left)" }
+      "title": {
+        "en": "Door (Front Left)",
+        "nl": "Deur (Voor Links)",
+        "da": "Dør (Foran Venstre)",
+        "de": "Tür (Vorne Links)",
+        "es": "Puerta (Delantera Izquierda)",
+        "fr": "Porte (Avant Gauche)",
+        "it": "Porta (Anteriore Sinistra)",
+        "no": "Dør (Foran Venstre)",
+        "sv": "Dörr (Främre Vänster)",
+        "pl": "Drzwi (Przód Lewy)",
+        "ru": "Дверь (Передняя левая)",
+        "ko": "문 (앞 왼쪽)",
+        "ar": "باب (أمام يسار)"
+      }
     },
     "alarm_contact.fr": {
-      "title": { "en": "Door (Front Right)" }
+      "title": {
+        "en": "Door (Front Right)",
+        "nl": "Deur (Voor Rechts)",
+        "da": "Dør (Foran Højre)",
+        "de": "Tür (Vorne Rechts)",
+        "es": "Puerta (Delantera Derecha)",
+        "fr": "Porte (Avant Droit)",
+        "it": "Porta (Anteriore Destra)",
+        "no": "Dør (Foran Høyre)",
+        "sv": "Dörr (Främre Höger)",
+        "pl": "Drzwi (Przód Prawy)",
+        "ru": "Дверь (Передняя правая)",
+        "ko": "문 (앞 오른쪽)",
+        "ar": "باب (أمام يمين)"
+      }
     },
     "alarm_contact.rl": {
-      "title": { "en": "Door (Rear Left)" }
+      "title": {
+        "en": "Door (Rear Left)",
+        "nl": "Deur (Achter Links)",
+        "da": "Dør (Bag Venstre)",
+        "de": "Tür (Hinten links)",
+        "es": "Puerta (Trasera Izquierda)",
+        "fr": "Porte (Arrière Gauche)",
+        "it": "Porta (Posteriore Sinistra)",
+        "no": "Dør (Bak Venstre)",
+        "sv": "Dörr (Bakre Vänster)",
+        "pl": "Drzwi (Tył Lewy)",
+        "ru": "Дверь (Задняя левая)",
+        "ko": "문 (뒤 왼쪽)",
+        "ar": "باب (خلف يسار)"
+      }
     },
     "alarm_contact.rr": {
-      "title": { "en": "Door (Rear Right)" }
+      "title": {
+        "en": "Door (Rear Right)",
+        "nl": "Deur (Achter Rechts)",
+        "da": "Dør (Bag Højre)",
+        "de": "Tür (Hinten rechts)",
+        "es": "Puerta (Trasera Derecha)",
+        "fr": "Porte (Arrière Droit)",
+        "it": "Porta (Posteriore Destra)",
+        "no": "Dør (Bak Høyre)",
+        "sv": "Dörr (Bakre Höger)",
+        "pl": "Drzwi (Tył Prawy)",
+        "ru": "Дверь (Задняя правая)",
+        "ko": "문 (뒤 오른쪽)",
+        "ar": "باب (خلف يمين)"
+      }
     },
     "button.flash": {
-      "title": { "en": "Flash Lights" }
+      "title": {
+        "en": "Flash Lights",
+        "nl": "Koplampen Knipperen",
+        "da": "Blinklys",
+        "de": "Lichter An/Aus",
+        "es": "Luces Flash",
+        "fr": "Clignoter",
+        "it": "Lampeggia Luci",
+        "no": "Blinklys",
+        "sv": "Blinklyktor",
+        "pl": "Światła Migające",
+        "ru": "Мигать фарами",
+        "ko": "전조등 깜빡임",
+        "ar": "الأضواء الوميض"
+      }
     },
     "button.honk": {
-      "title": { "en": "Honk Horn" }
+      "title": {
+        "en": "Honk Horn",
+        "nl": "Toeter",
+        "da": "Tudehorn",
+        "de": "Hupen",
+        "es": "Tocar Bocina",
+        "fr": "Klaxonner",
+        "it": "Suona Clacson",
+        "no": "Tut i hornet",
+        "sv": "Tuta med horn",
+        "pl": "Zatrąbić",
+        "ru": "Сигналить",
+        "ko": "경적 울리기",
+        "ar": "اطلاق البوق"
+      }
     },
     "button.keyless": {
-      "title": { "en": "Keyless Driving" }
+      "title": {
+        "en": "Keyless Driving",
+        "nl": "Sleutellos Rijden",
+        "da": "Nøglefri Kørsel",
+        "de": "Schlüsselloses Fahren",
+        "es": "Conducción Sin Llave",
+        "fr": "Conduite sans clé",
+        "it": "Guida senza chiavi",
+        "no": "Nøkkelfri Kjøre",
+        "sv": "Nyckelfri Körning",
+        "pl": "Jazda Bezzamkowa",
+        "ru": "Бесключевой доступ",
+        "ko": "키 없는 주행",
+        "ar": "القيادة بدون مفتاح"
+      }
     },
     "button.homelink": {
-      "title": { "en": "HomeLink" }
+      "title": {
+        "en": "HomeLink",
+        "nl": "HomeLink",
+        "da": "HomeLink",
+        "de": "HomeLink",
+        "es": "HomeLink",
+        "fr": "HomeLink",
+        "it": "HomeLink",
+        "no": "HomeLink",
+        "sv": "HomeLink",
+        "pl": "HomeLink",
+        "ru": "HomeLink",
+        "ko": "홈링크",
+        "ar": "هوملينك"
+      }
     },
     "button.wakeup": {
-      "title": { "en": "Wake Up" }
+      "title": {
+        "en": "Wake Up",
+        "nl": "Wakker worden",
+        "da": "Vågn op",
+        "de": "Aufwachen",
+        "es": "Despierta",
+        "fr": "Se réveiller",
+        "it": "Svegliati",
+        "no": "Våkne opp",
+        "sv": "Vakna",
+        "pl": "Budzenie",
+        "ru": "Проснуться",
+        "ko": "깨우기",
+        "ar": "استيقظ"
+      }
     },
     "windowcoverings_closed": {
-      "title": { "en": "Windows" }
+      "title": {
+        "en": "Windows",
+        "nl": "Ramen",
+        "da": "Vinduer",
+        "de": "Fenster",
+        "es": "Ventanillas",
+        "fr": "Fenêtres",
+        "it": "Finestre",
+        "no": "Vinduer",
+        "sv": "Fönster",
+        "pl": "Okna",
+        "ru": "Окна",
+        "ko": "창문",
+        "ar": "النوافذ"
+      }
     },
     "speaker_track": {
-      "title": { "en": "Track" }
+      "title": {
+        "en": "Track",
+        "nl": "Track",
+        "da": "Spor",
+        "de": "Titel",
+        "es": "Pista",
+        "fr": "Piste",
+        "it": "Brano",
+        "no": "Spor",
+        "sv": "Låt",
+        "pl": "Utwór",
+        "ru": "Трек",
+        "ko": "트랙",
+        "ar": "المسار"
+      }
     },
     "speaker_artist": {
-      "title": { "en": "Artist" }
+      "title": {
+        "en": "Artist",
+        "nl": "Artiest",
+        "da": "Kunstner",
+        "de": "Künstler",
+        "es": "Artista",
+        "fr": "Artiste",
+        "it": "Artista",
+        "no": "Kunstner",
+        "sv": "Artist",
+        "pl": "Artysta",
+        "ru": "Исполнитель",
+        "ko": "아티스트",
+        "ar": "الفنان"
+      }
     },
     "speaker_album": {
-      "title": { "en": "Album" }
+      "title": {
+        "en": "Album",
+        "nl": "Album",
+        "da": "Album",
+        "de": "Album",
+        "es": "Álbum",
+        "fr": "Album",
+        "it": "Album",
+        "no": "Album",
+        "sv": "Album",
+        "pl": "Album",
+        "ru": "Альбом",
+        "ko": "앨범",
+        "ar": "الألبوم"
+      }
     },
     "measure_pressure.fl": {
-      "title": { "en": "Tire Pressure (Front Left)" }
+      "title": {
+        "en": "Tire Pressure (Front Left)",
+        "nl": "Bandenspanning (Voor Links)",
+        "da": "Dæktryk (Forreste Venstre)",
+        "de": "Reifendruck (Vorne Links)",
+        "es": "Presión de los Neumáticos (Delantera Izquierda)",
+        "fr": "Pression des pneus (Avant Gauche)",
+        "it": "Pressione Pneumatici (Anteriore Sinistra)",
+        "no": "Dekktrykk (Foran Venstre)",
+        "sv": "Däckstryck (Främre Vänster)",
+        "pl": "Ciśnienie w oponach (Przód Lewy)",
+        "ru": "Давление в шинах (Передняя левая)",
+        "ko": "타이어 압력 (앞 왼쪽)",
+        "ar": "ضغط الإطارات (أمام يسار)"
+      }
     },
     "measure_pressure.fr": {
-      "title": { "en": "Tire Pressure (Front Right)" }
+      "title": {
+        "en": "Tire Pressure (Front Right)",
+        "nl": "Bandenspanning (Voor Rechts)",
+        "da": "Dæktryk (Forreste Højre)",
+        "de": "Reifendruck (Vorne Rechts)",
+        "es": "Presión de los Neumáticos (Delantera Derecha)",
+        "fr": "Pression des pneus (Avant Droit)",
+        "it": "Pressione Pneumatici (Anteriore Destra)",
+        "no": "Dekktrykk (Foran Høyre)",
+        "sv": "Däckstryck (Främre Höger)",
+        "pl": "Ciśnienie w oponach (Przód Prawy)",
+        "ru": "Давление в шинах (Передняя правая)",
+        "ko": "타이어 압력 (앞 오른쪽)",
+        "ar": "ضغط الإطارات (أمام يمين)"
+      }
     },
     "measure_pressure.rl": {
-      "title": { "en": "Tire Pressure (Rear Left)" }
+      "title": {
+        "en": "Tire Pressure (Rear Left)",
+        "nl": "Bandenspanning (Achter Links)",
+        "da": "Dæktryk (Bageste Venstre)",
+        "de": "Reifendruck (Hinten links)",
+        "es": "Presión de los Neumáticos (Trasera Izquierda)",
+        "fr": "Pression des pneus (Arrière Gauche)",
+        "it": "Pressione Pneumatici (Posteriore Sinistra)",
+        "no": "Dekktrykk (Bak Venstre)",
+        "sv": "Däckstryck (Bakre Vänster)",
+        "pl": "Ciśnienie w oponach (Tył Lewy)",
+        "ru": "Давление в шинах (Задняя левая)",
+        "ko": "타이어 압력 (뒤 왼쪽)",
+        "ar": "ضغط الإطارات (خلف يسار)"
+      }
     },
     "measure_pressure.rr": {
-      "title": { "en": "Tire Pressure (Rear Right)" }
+      "title": {
+        "en": "Tire Pressure (Rear Right)",
+        "nl": "Bandenspanning (Achter Rechts)",
+        "da": "Dæktryk (Bageste Højre)",
+        "de": "Reifendruck (Hinten rechts)",
+        "es": "Presión de los Neumáticos (Trasera Derecha)",
+        "fr": "Pression des pneus (Arrière Droit)",
+        "it": "Pressione Pneumatici (Posteriore Destra)",
+        "no": "Dekktrykk (Bak Høyre)",
+        "sv": "Däckstryck (Bakre Höger)",
+        "pl": "Ciśnienie w oponach (Tył Prawy)",
+        "ru": "Давление в шинах (Задняя правая)",
+        "ko": "타이어 압력 (뒤 오른쪽)",
+        "ar": "ضغط الإطارات (خلف يمين)"
+      }
     },
     "seat_heater.rear_left": {
-      "title": { "en": "Seat Heater (Rear Left)" }
+      "title": {
+        "en": "Seat Heater (Rear Left)",
+        "nl": "Stoelverwarmer (Achter Links)",
+        "da": "Sædevarmer (Bag Venstre)",
+        "de": "Sitzheizung (Hinten links)",
+        "es": "Calefacción del Asiento (Trasera Izquierda)",
+        "fr": "Chauffage de siège (Arrière Gauche)",
+        "it": "Riscaldamento Sedile (Posteriore Sinistra)",
+        "no": "Setevarmer (Bak Venstre)",
+        "sv": "Sätesvärmare (Bakre Vänster)",
+        "pl": "Podgrzewanie Siedzenia (Tył Lewy)",
+        "ru": "Подогрев сиденья (Заднее левое)",
+        "ko": "시트 히터 (뒤 왼쪽)",
+        "ar": "مدفأة المقعد (خلف يسار)"
+      }
     },
     "seat_heater.rear_right": {
-      "title": { "en": "Seat Heater (Rear Right)" }
+      "title": {
+        "en": "Seat Heater (Rear Right)",
+        "nl": "Stoelverwarmer (Achter Rechts)",
+        "da": "Sædevarmer (Bag Højre)",
+        "de": "Sitzheizung (Hinten rechts)",
+        "es": "Calefacción del Asiento (Trasera Derecha)",
+        "fr": "Chauffage de siège (Arrière Droit)",
+        "it": "Riscaldamento Sedile (Posteriore Destra)",
+        "no": "Setevarmer (Bak Høyre)",
+        "sv": "Sätesvärmare (Bakre Höger)",
+        "pl": "Podgrzewanie Siedzenia (Tył Prawy)",
+        "ru": "Подогрев сиденья (Заднее правое)",
+        "ko": "시트 히터 (뒤 오른쪽)",
+        "ar": "مدفأة المقعد (خلف يمين)"
+      }
     },
     "seat_heater.rear_center": {
-      "title": { "en": "Seat Heater (Rear Center)" }
+      "title": {
+        "en": "Seat Heater (Rear Center)",
+        "nl": "Stoelverwarmer (Achter Midden)",
+        "da": "Sædevarmer (Bag Midt)",
+        "de": "Sitzheizung (Hinten Mitte)",
+        "es": "Calefacción del Asiento (Trasera Central)",
+        "fr": "Chauffage de siège (Arrière Centre)",
+        "it": "Riscaldamento Sedile (Posteriore Centro)",
+        "no": "Setevarmer (Bak Midten)",
+        "sv": "Sätesvärmare (Bakre Mitten)",
+        "pl": "Podgrzewanie Siedzenia (Tył Środkowy)",
+        "ru": "Подогрев сиденья (Заднее среднее)",
+        "ko": "시트 히터 (뒤 중앙)",
+        "ar": "مدفأة المقعد (خلف وسط)"
+      }
     },
     "seat_cooler.front_left": {
-      "title": { "en": "Seat Cooler (Front Left)" }
+      "title": {
+        "en": "Seat Cooler (Front Left)",
+        "nl": "Stoelkoeler (Voor Links)",
+        "da": "Sædekøler (Foran Venstre)",
+        "de": "Sitzkühlung (Vorne Links)",
+        "es": "Enfriador del Asiento (Delantera Izquierda)",
+        "fr": "Refroidisseur de siège (Avant Gauche)",
+        "it": "Raffreddamento Sedile (Anteriore Sinistra)",
+        "no": "Setekjøler (Foran Venstre)",
+        "sv": "Säteskylare (Främre Vänster)",
+        "pl": "Chłodzenie Siedzenia (Przód Lewy)",
+        "ru": "Охладитель сиденья (Переднее левое)",
+        "ko": "시트 쿨러 (앞 왼쪽)",
+        "ar": "مبرد المقعد (أمام يسار)"
+      }
     },
     "seat_cooler.front_right": {
-      "title": { "en": "Seat Cooler (Front Right)" }
+      "title": {
+        "en": "Seat Cooler (Front Right)",
+        "nl": "Stoelkoeler (Voor Rechts)",
+        "da": "Sædekøler (Foran Højre)",
+        "de": "Sitzkühlung (Vorne Rechts)",
+        "es": "Enfriador del Asiento (Delantera Derecha)",
+        "fr": "Refroidisseur de siège (Avant Droit)",
+        "it": "Raffreddamento Sedile (Anteriore Destra)",
+        "no": "Setekjøler (Foran Høyre)",
+        "sv": "Säteskylare (Främre Höger)",
+        "pl": "Chłodzenie Siedzenia (Przód Prawy)",
+        "ru": "Охладитель сиденья (Переднее правое)",
+        "ko": "시트 쿨러 (앞 오른쪽)",
+        "ar": "مبرد المقعد (أمام يمين)"
+      }
     },
     "onoff.guest_mode": {
-      "title": { "en": "Guest Mode" }
+      "title": {
+        "en": "Guest Mode",
+        "nl": "Gastmodus",
+        "da": "Gæstemodus",
+        "de": "Gastmodus",
+        "es": "Modo Invitado",
+        "fr": "Mode Invité",
+        "it": "Modalità Ospite",
+        "no": "Gjestemodus",
+        "sv": "Gästläge",
+        "pl": "Tryb Gościa",
+        "ru": "Гостевой режим",
+        "ko": "손님 모드",
+        "ar": "وضع الضيف"
+      }
     },
     "thermostat_mode": {
-      "title": { "en": "Climate" },
+      "title": {
+        "en": "Climate",
+        "nl": "Klimaat",
+        "da": "Klima",
+        "de": "Klima",
+        "es": "Clima",
+        "fr": "Climat",
+        "it": "Clima",
+        "no": "Klima",
+        "sv": "Klimat",
+        "pl": "Klimat",
+        "ru": "Климат",
+        "ko": "기후",
+        "ar": "المناخ"
+      },
       "values": [
         {
           "id": "off",
           "title": {
-            "en": "Off"
+            "en": "Off",
+            "nl": "Uit",
+            "da": "Fra",
+            "de": "Aus",
+            "es": "Apagado",
+            "fr": "Éteint",
+            "it": "Spento",
+            "no": "Av",
+            "sv": "Av",
+            "pl": "Wył.",
+            "ru": "Выключено",
+            "ko": "꺼짐",
+            "ar": "إيقاف"
           }
         },
         {
           "id": "auto",
           "title": {
-            "en": "Automatic"
+            "en": "Automatic",
+            "nl": "Automatisch",
+            "da": "Automatisk",
+            "de": "Automatisch",
+            "es": "Automático",
+            "fr": "Automatique",
+            "it": "Automatico",
+            "no": "Automatisk",
+            "sv": "Automatisk",
+            "pl": "Automatyczny",
+            "ru": "Автоматический",
+            "ko": "자동",
+            "ar": "تلقائي"
           }
         },
         {
           "id": "defrost",
           "title": {
-            "en": "Defrost"
+            "en": "Defrost",
+            "nl": "Ontdooien",
+            "da": "Aftøning",
+            "de": "Enteisen",
+            "es": "Descongelar",
+            "fr": "Dégivrer",
+            "it": "Disgelo",
+            "no": "Avfrost",
+            "sv": "Avfrostning",
+            "pl": "Odmrażanie",
+            "ru": "Разморозка",
+            "ko": "제상",
+            "ar": "إزالة الصقيع"
           }
         },
         {
           "id": "keep_mode",
           "title": {
-            "en": "Keep Mode"
+            "en": "Keep Mode",
+            "nl": "Bewaarmodus",
+            "da": "Bevar tilstand",
+            "de": "Haltemodus",
+            "es": "Modo de reserva",
+            "fr": "Mode de maintien",
+            "it": "Modalità conserva",
+            "no": "Bevar modus",
+            "sv": "Bibehåll läge",
+            "pl": "Tryb zachowania",
+            "ru": "Режим поддержания",
+            "ko": "유지 모드",
+            "ar": "وضع الاحتفاظ"
           }
         },
         {
           "id": "dog_mode",
           "title": {
-            "en": "Dog Mode"
+            "en": "Dog Mode",
+            "nl": "Hondenmodus",
+            "da": "Hundetilstand",
+            "de": "Hundemodus",
+            "es": "Modo Perro",
+            "fr": "Mode chien",
+            "it": "Modalità cane",
+            "no": "Hundemodus",
+            "sv": "Hundläge",
+            "pl": "Tryb psa",
+            "ru": "Режим для собаки",
+            "ko": "강아지 모드",
+            "ar": "وضع الكلب"
           }
         },
         {
           "id": "camp_mode",
           "title": {
-            "en": "Camp Mode"
+            "en": "Camp Mode",
+            "nl": "Campingmodus",
+            "da": "Campingtilstand",
+            "de": "Campingmodus",
+            "es": "Modo de campamento",
+            "fr": "Mode camping",
+            "it": "Modalità campeggio",
+            "no": "Campingmodus",
+            "sv": "Campingläge",
+            "pl": "Tryb kempingowy",
+            "ru": "Режим кемпинга",
+            "ko": "캠프 모드",
+            "ar": "وضع التخييم"
           }
         }
       ]

@@ -1,7 +1,19 @@
 {
   "type": "string",
   "title": {
-    "en": "Connected Vehicle"
+    "en": "Connected Vehicle",
+    "nl": "Verbonden Voertuig",
+    "da": "Forbundet Køretøj",
+    "de": "Verbundenes Fahrzeug",
+    "es": "Vehículo Conectado",
+    "fr": "Véhicule Connecté",
+    "it": "Veicolo Connesso",
+    "no": "Tilkoblet Kjøretøy",
+    "sv": "Anslutet Fordon",
+    "pl": "Połączony Pojazd",
+    "ru": "Подключенное Транспортное Средство",
+    "ko": "연결된 차량",
+    "ar": "المركبة المتصلة"
   },
   "getable": true,
   "setable": false,

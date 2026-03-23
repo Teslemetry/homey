@@ -1,0 +1,9 @@
+{
+  "error": {
+    "invalid_token": "Nieprawidłowy token. Spróbuj ponownie.",
+    "invalid_refresh_token": "Nieprawidłowy token odświeżania. Proszę ponownie uwierzytelnić się.",
+    "subscription_required": "Wymagana subskrypcja. Proszę sprawdzić swoją subskrypcję Teslemetry.",
+    "could_not_wake_vehicle": "Nie udało się obudzić pojazdu. Spróbuj ponownie.",
+    "insufficient_credits": "Niewystarczająca ilość kredytów na polecenia. Proszę zakupić dodatkowe kredyty, aby uruchomić polecenia."
+  }
+}

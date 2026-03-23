@@ -2,63 +2,259 @@
   "triggers": [
     {
       "id": "onoff.charge_grid_true",
-      "title": { "en": "Charge from grid has been enabled" }
+      "title": {
+        "en": "Charge from grid has been enabled",
+        "nl": "Opladen via het net is ingeschakeld",
+        "da": "Opladning fra nettet er aktiveret",
+        "de": "Laden vom Netz wurde aktiviert",
+        "es": "La carga desde la red se ha habilitado",
+        "fr": "La charge depuis le réseau a été activée",
+        "it": "La ricarica dalla rete è stata abilitata",
+        "no": "Lading fra nettet er aktivert",
+        "sv": "Laddning från nätet har aktiverats",
+        "pl": "Ładowanie z sieci zostało włączone",
+        "ru": "Зарядка от сети включена",
+        "ko": "그리드에서 충전이 활성화되었습니다",
+        "ar": "تم تمكين الشحن من الشبكة"
+      }
     },
     {
       "id": "onoff.charge_grid_false",
-      "title": { "en": "Charge from grid has been disabled" }
+      "title": {
+        "en": "Charge from grid has been disabled",
+        "nl": "Opladen via het net is uitgeschakeld",
+        "da": "Opladning fra nettet er deaktiveret",
+        "de": "Laden vom Netz wurde deaktiviert",
+        "es": "La carga desde la red se ha deshabilitado",
+        "fr": "La charge depuis le réseau a été désactivée",
+        "it": "La ricarica dalla rete è stata disabilitata",
+        "no": "Lading fra nettet er deaktivert",
+        "sv": "Laddning från nätet har inaktiverats",
+        "pl": "Ładowanie z sieci zostało wyłączone",
+        "ru": "Зарядка от сети отключена",
+        "ko": "그리드에서 충전이 비활성화되었습니다",
+        "ar": "تم تعطيل الشحن من الشبكة"
+      }
     },
     {
       "id": "onoff.storm_true",
-      "title": { "en": "Storm watch has been enabled" }
+      "title": {
+        "en": "Storm watch has been enabled",
+        "nl": "Stormwaarschuwing is ingeschakeld",
+        "da": "Stormvagt er aktiveret",
+        "de": "Sturmüberwachung wurde aktiviert",
+        "es": "La alerta de tormenta se ha habilitado",
+        "fr": "La veille tempête a été activée",
+        "it": "Il monitoraggio delle tempeste è stato abilitato",
+        "no": "Stormvarsling er aktivert",
+        "sv": "Stormbevakning har aktiverats",
+        "pl": "Nadzór burzowy został włączony",
+        "ru": "Штормовое наблюдение включено",
+        "ko": "폭풍 감시가 활성화되었습니다",
+        "ar": "تم تمكين مراقبة العاصفة"
+      }
     },
     {
       "id": "onoff.storm_false",
-      "title": { "en": "Storm watch has been disabled" }
+      "title": {
+        "en": "Storm watch has been disabled",
+        "nl": "Stormwaarschuwing is uitgeschakeld",
+        "da": "Stormvagt er deaktiveret",
+        "de": "Sturmüberwachung wurde deaktiviert",
+        "es": "La alerta de tormenta se ha deshabilitado",
+        "fr": "La veille tempête a été désactivée",
+        "it": "Il monitoraggio delle tempeste è stato disabilitato",
+        "no": "Stormvarsling er deaktivert",
+        "sv": "Stormbevakning har inaktiverats",
+        "pl": "Nadzór burzowy został wyłączony",
+        "ru": "Штормовое наблюдение отключено",
+        "ko": "폭풍 감시가 비활성화되었습니다",
+        "ar": "تم تعطيل مراقبة العاصفة"
+      }
     },
     {
       "id": "alarm_generic.storm_true",
-      "title": { "en": "The storm watch alert has been activated" }
+      "title": {
+        "en": "The storm watch alert has been activated",
+        "nl": "De stormwaarschuwing is geactiveerd",
+        "da": "Stormvagten er blevet aktiveret",
+        "de": "Der Sturmwarnalarm wurde aktiviert",
+        "es": "La alerta de vigilancia de tormenta se ha activado",
+        "fr": "L'alerte de veille tempête a été activée",
+        "it": "L'allerta monitoraggio tempesta è stata attivata",
+        "no": "Stormvarselet er aktivert",
+        "sv": "Stormvarningen har aktiverats",
+        "pl": "Alarm burzowy został aktywowany",
+        "ru": "Штормовое предупреждение активировано",
+        "ko": "폭풍 감시 경보가 활성화되었습니다",
+        "ar": "تم تفعيل تنبيه مراقبة العاصفة"
+      }
     },
     {
       "id": "alarm_generic.storm_false",
-      "title": { "en": "The storm watch alert has been deactivated" }
+      "title": {
+        "en": "The storm watch alert has been deactivated",
+        "nl": "De stormwaarschuwing is gedeactiveerd",
+        "da": "Stormvagten er blevet deaktiveret",
+        "de": "Der Sturmwarnalarm wurde deaktiviert",
+        "es": "La alerta de vigilancia de tormenta se ha desactivado",
+        "fr": "L'alerte de veille tempête a été désactivée",
+        "it": "L'allerta monitoraggio tempesta è stata disattivata",
+        "no": "Stormvarselet er deaktivert",
+        "sv": "Stormvarningen har inaktiverats",
+        "pl": "Alarm burzowy został dezaktywowany",
+        "ru": "Штормовое предупреждение деактивировано",
+        "ko": "폭풍 감시 경보가 비활성화되었습니다",
+        "ar": "تم تعطيل تنبيه مراقبة العاصفة"
+      }
     }
   ],
   "conditions": [
     {
       "id": "onoff.charge_grid",
-      "title": { "en": "Charge from grid is !{{enabled|disabled}}" }
+      "title": {
+        "en": "Charge from grid is !{{enabled|disabled}}",
+        "nl": "Opladen via het net is !{{ingeschakeld|uitgeschakeld}}",
+        "da": "Opladning fra nettet er !{{aktiveret|deaktiveret}}",
+        "de": "Laden vom Netz ist !{{aktiviert|deaktiviert}}",
+        "es": "La carga desde la red está !{{habilitada|deshabilitada}}",
+        "fr": "La charge depuis le réseau est !{{activée|désactivée}}",
+        "it": "La ricarica dalla rete è !{{abilitata|disabilitata}}",
+        "no": "Lading fra nettet er !{{aktivert|deaktivert}}",
+        "sv": "Laddning från nätet är !{{aktiverad|inaktiverad}}",
+        "pl": "Ładowanie z sieci jest !{{włączone|wyłączone}}",
+        "ru": "Зарядка от сети !{{включена|выключена}}",
+        "ko": "그리드에서 충전이 !{{활성화됨|비활성화됨}}",
+        "ar": "الشحن من الشبكة !{{ممكّن|تم تعطيله}}"
+      }
     },
     {
       "id": "alarm_generic.storm",
-      "title": { "en": "Storm watch alert is !{{active|inactive}}" }
+      "title": {
+        "en": "Storm watch alert is !{{active|inactive}}",
+        "nl": "De stormwaarschuwing is !{{actief|inactief}}",
+        "da": "Stormvagtalarmen er !{{aktiv|inaktiv}}",
+        "de": "Der Sturmwarner ist !{{aktiv|inaktiv}}",
+        "es": "La alerta de vigilancia de tormenta está !{{activa|inactiva}}",
+        "fr": "L'alerte de veille tempête est !{{active|inactive}}",
+        "it": "L'allerta monitoraggio tempesta è !{{attiva|inattiva}}",
+        "no": "Stormvarselsalarmen er !{{aktiv|inaktiv}}",
+        "sv": "Stormvarningen är !{{aktiv|inaktiv}}",
+        "pl": "Alarm burzowy jest !{{aktywny|nieaktywny}}",
+        "ru": "Штормовое предупреждение !{{активно|неактивно}}",
+        "ko": "폭풍 감시 경보가 !{{활성화됨|비활성화됨}}",
+        "ar": "تنبيه مراقبة العاصفة !{{نشط|غير نشط}}"
+      }
     }
   ],
   "actions": [
     {
       "id": "onoff.charge_grid_on",
-      "title": { "en": "Enable charge from grid" }
+      "title": {
+        "en": "Enable charge from grid",
+        "nl": "Opladen via het net inschakelen",
+        "da": "Aktiver opladning fra nettet",
+        "de": "Laden vom Netz aktivieren",
+        "es": "Habilitar carga desde la red",
+        "fr": "Activer la charge depuis le réseau",
+        "it": "Abilita la ricarica dalla rete",
+        "no": "Aktiver lading fra nettet",
+        "sv": "Aktivera laddning från nätet",
+        "pl": "Włącz ładowanie z sieci",
+        "ru": "Включить зарядку от сети",
+        "ko": "그리드에서 충전 활성화",
+        "ar": "تمكين الشحن من الشبكة"
+      }
     },
     {
       "id": "onoff.charge_grid_off",
-      "title": { "en": "Disable charge from grid" }
+      "title": {
+        "en": "Disable charge from grid",
+        "nl": "Opladen via het net uitschakelen",
+        "da": "Deaktiver opladning fra nettet",
+        "de": "Laden vom Netz deaktivieren",
+        "es": "Deshabilitar carga desde la red",
+        "fr": "Désactiver la charge depuis le réseau",
+        "it": "Disabilita la ricarica dalla rete",
+        "no": "Deaktiver lading fra nettet",
+        "sv": "Inaktivera laddning från nätet",
+        "pl": "Wyłącz ładowanie z sieci",
+        "ru": "Отключить зарядку от сети",
+        "ko": "그리드에서 충전 비활성화",
+        "ar": "تعطيل الشحن من الشبكة"
+      }
     },
     {
       "id": "onoff.charge_grid_toggle",
-      "title": { "en": "Toggle charge from grid" }
+      "title": {
+        "en": "Toggle charge from grid",
+        "nl": "Opladen via het net wisselen",
+        "da": "Skift opladning fra nettet",
+        "de": "Laden vom Netz umschalten",
+        "es": "Alternar carga desde la red",
+        "fr": "Basculer la charge depuis le réseau",
+        "it": "Alterna la ricarica dalla rete",
+        "no": "Bytt lading fra nettet",
+        "sv": "Växla laddning från nätet",
+        "pl": "Przełącz ładowanie z sieci",
+        "ru": "Переключить зарядку от сети",
+        "ko": "그리드에서 충전 전환",
+        "ar": "تبديل الشحن من الشبكة"
+      }
     },
     {
       "id": "onoff.storm_on",
-      "title": { "en": "Enable storm watch" }
+      "title": {
+        "en": "Enable storm watch",
+        "nl": "Stormwaarschuwing inschakelen",
+        "da": "Aktiver stormvagt",
+        "de": "Sturmüberwachung aktivieren",
+        "es": "Habilitar alerta de tormenta",
+        "fr": "Activer la veille tempête",
+        "it": "Abilita il monitoraggio delle tempeste",
+        "no": "Aktiver stormvarsling",
+        "sv": "Aktivera stormbevakning",
+        "pl": "Włącz nadzór burzowy",
+        "ru": "Включить штормовое наблюдение",
+        "ko": "폭풍 감시 활성화",
+        "ar": "تمكين مراقبة العاصفة"
+      }
     },
     {
       "id": "onoff.storm_off",
-      "title": { "en": "Disable storm watch" }
+      "title": {
+        "en": "Disable storm watch",
+        "nl": "Stormwaarschuwing uitschakelen",
+        "da": "Deaktiver stormvagt",
+        "de": "Sturmüberwachung deaktivieren",
+        "es": "Deshabilitar alerta de tormenta",
+        "fr": "Désactiver la veille tempête",
+        "it": "Disabilita il monitoraggio delle tempeste",
+        "no": "Deaktiver stormvarsling",
+        "sv": "Inaktivera stormbevakning",
+        "pl": "Wyłącz nadzór burzowy",
+        "ru": "Отключить штормовое наблюдение",
+        "ko": "폭풍 감시 비활성화",
+        "ar": "تعطيل مراقبة العاصفة"
+      }
     },
     {
       "id": "onoff.storm_toggle",
-      "title": { "en": "Toggle storm watch" }
+      "title": {
+        "en": "Toggle storm watch",
+        "nl": "Stormwaarschuwing wisselen",
+        "da": "Skift stormvagt",
+        "de": "Sturmüberwachung umschalten",
+        "es": "Alternar alerta de tormenta",
+        "fr": "Basculer la veille tempête",
+        "it": "Alterna il monitoraggio delle tempeste",
+        "no": "Bytt stormvarsling",
+        "sv": "Växla stormbevakning",
+        "pl": "Przełącz nadzór burzowy",
+        "ru": "Переключить штормовое наблюдение",
+        "ko": "폭풍 감시 전환",
+        "ar": "تبديل مراقبة العاصفة"
+      }
     }
   ]
 }

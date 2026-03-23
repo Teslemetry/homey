@@ -1,13 +1,37 @@
 {
   "type": "number",
   "title": {
-    "en": "Time to Full Charge"
+    "en": "Time to Full Charge",
+    "nl": "Tijd tot Volledige Lading",
+    "da": "Tid til fuld opladning",
+    "de": "Zeit bis zur vollständigen Aufladung",
+    "es": "Tiempo para carga completa",
+    "fr": "Temps jusqu'à charge complète",
+    "it": "Tempo per la carica completa",
+    "no": "Tid til full lading",
+    "sv": "Tid till full laddning",
+    "pl": "Czas do pełnego naładowania",
+    "ru": "Время до полной зарядки",
+    "ko": "완전 충전까지의 시간",
+    "ar": "الوقت حتى الشحن الكامل"
   },
   "getable": true,
   "setable": false,
   "uiComponent": "sensor",
   "units": {
-    "en": "min"
+    "en": "min",
+    "nl": "min",
+    "da": "min",
+    "de": "min",
+    "es": "min",
+    "fr": "min",
+    "it": "min",
+    "no": "min",
+    "sv": "min",
+    "pl": "min",
+    "ru": "мин",
+    "ko": "분",
+    "ar": "دقيقة"
   },
   "decimals": 0
 }

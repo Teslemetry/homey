@@ -1,12 +1,48 @@
 {
   "title": {
-    "en": "Trigger HomeLink"
+    "en": "Trigger HomeLink",
+    "nl": "Activeer HomeLink",
+    "da": "Aktiver HomeLink",
+    "de": "HomeLink auslösen",
+    "es": "Activar HomeLink",
+    "fr": "Déclencher HomeLink",
+    "it": "Attiva HomeLink",
+    "no": "Aktiver HomeLink",
+    "sv": "Aktivera HomeLink",
+    "pl": "Uruchom HomeLink",
+    "ru": "Активировать HomeLink",
+    "ko": "홈링크 트리거",
+    "ar": "تشغيل HomeLink"
   },
   "titleFormatted": {
-    "en": "Trigger HomeLink on [[device]]"
+    "en": "Trigger HomeLink on [[device]]",
+    "nl": "Activeer HomeLink op [[device]]",
+    "da": "Aktiver HomeLink på [[device]]",
+    "de": "HomeLink auf [[device]] auslösen",
+    "es": "Activar HomeLink en [[device]]",
+    "fr": "Déclencher HomeLink sur [[device]]",
+    "it": "Attiva HomeLink su [[device]]",
+    "no": "Aktiver HomeLink på [[device]]",
+    "sv": "Aktivera HomeLink på [[device]]",
+    "pl": "Uruchom HomeLink na [[device]]",
+    "ru": "Активировать HomeLink на [[device]]",
+    "ko": "[[device]]에서 홈링크 트리거",
+    "ar": "تشغيل HomeLink على [[device]]"
   },
   "hint": {
-    "en": "This card triggers the HomeLink garage door opener."
+    "en": "This card triggers the HomeLink garage door opener.",
+    "nl": "Deze kaart activeert de HomeLink garageopener.",
+    "da": "Dette kort udløser HomeLink garageportåbneren.",
+    "de": "Diese Karte löst den HomeLink Garagentoröffner aus.",
+    "es": "Esta tarjeta activa el abridor de puerta de garaje HomeLink.",
+    "fr": "Cette carte déclenche l'ouvre-porte de garage HomeLink.",
+    "it": "Questa scheda attiva l'apriporta del garage HomeLink.",
+    "no": "Dette kortet aktiverer HomeLink garasjeportåpner.",
+    "sv": "Detta kort utlöser HomeLink garageportöppnare.",
+    "pl": "Ta karta uruchamia otwieracz do drzwi garażowych HomeLink.",
+    "ru": "Эта карта активирует открыть дверь гаража HomeLink.",
+    "ko": "이 카드는 홈링크 차고문 열림을 실행합니다.",
+    "ar": "تقوم هذه البطاقة بتشغيل جهاز فتح باب المرآب HomeLink."
   },
   "args": [
     {
@@ -14,7 +50,19 @@
       "name": "device",
       "filter": "capabilities=button.homelink",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
       }
     }
   ]

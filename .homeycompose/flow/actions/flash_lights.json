@@ -1,12 +1,48 @@
 {
   "title": {
-    "en": "Flash lights"
+    "en": "Flash lights",
+    "nl": "Lichten knipperen",
+    "da": "Blink lys",
+    "de": "Lichter blinken",
+    "es": "Luces intermitentes",
+    "fr": "Clignoter les lumières",
+    "it": "Lampeggia luci",
+    "no": "Blink lys",
+    "sv": "Blinka lampor",
+    "pl": "Migające światła",
+    "ru": "Мигание огней",
+    "ko": "불빛 깜빡임",
+    "ar": "وميض الأضواء"
   },
   "titleFormatted": {
-    "en": "Flash lights on [[device]]"
+    "en": "Flash lights on [[device]]",
+    "nl": "Lichten knipperen op [[device]]",
+    "da": "Blink lys på [[device]]",
+    "de": "Lichter blinken auf [[device]]",
+    "es": "Luces intermitentes en [[device]]",
+    "fr": "Clignoter les lumières sur [[device]]",
+    "it": "Lampeggia luci su [[device]]",
+    "no": "Blink lys på [[device]]",
+    "sv": "Blinka lampor på [[device]]",
+    "pl": "Migające światła na [[device]]",
+    "ru": "Мигание огней на [[device]]",
+    "ko": "[[device]]에서 불빛 깜빡임",
+    "ar": "وميض الأضواء على [[device]]"
   },
   "hint": {
-    "en": "Flash the vehicle's lights."
+    "en": "Flash the vehicle's lights.",
+    "nl": "Laat de lichten van het voertuig knipperen.",
+    "da": "Blink køretøjets lys.",
+    "de": "Blitzen Sie die Lichter des Fahrzeugs.",
+    "es": "Haz parpadear las luces del vehículo.",
+    "fr": "Clignotez les lumières du véhicule.",
+    "it": "Lampeggia le luci del veicolo.",
+    "no": "Blink kjøretøyets lys.",
+    "sv": "Blinka fordonets lampor.",
+    "pl": "Migaj światłami pojazdu.",
+    "ru": "Включите мигание огней автомобиля.",
+    "ko": "차량의 불빛을 깜빡이세요.",
+    "ar": "وميض أضواء السيارة."
   },
   "args": [
     {
@@ -14,7 +50,19 @@
       "name": "device",
       "filter": "capabilities=button.flash",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Toestel",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
       }
     }
   ]

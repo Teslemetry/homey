@@ -1,9 +1,33 @@
 {
   "title": {
-    "en": "Set allow export"
+    "en": "Set allow export",
+    "nl": "Export toestaan instellen",
+    "da": "Indstil tillad eksport",
+    "de": "Export erlauben festlegen",
+    "es": "Establecer permitir exportación",
+    "fr": "Définir autoriser l'exportation",
+    "it": "Imposta consenti esportazione",
+    "no": "Sett tillat eksport",
+    "sv": "Ställ in tillåt export",
+    "pl": "Ustaw zezwolenie na eksport",
+    "ru": "Установить разрешение на экспорт",
+    "ko": "내보내기 허용 설정",
+    "ar": "تعيين السماح بالتصدير"
   },
   "titleFormatted": {
-    "en": "Set allow export to [[mode]] on [[device]]"
+    "en": "Set allow export to [[mode]] on [[device]]",
+    "nl": "Stel export toestaan in op [[mode]] op [[device]]",
+    "da": "Indstil tillad eksport til [[mode]] på [[device]]",
+    "de": "Export erlauben auf [[mode]] auf [[device]] setzen",
+    "es": "Establecer permitir exportación a [[mode]] en [[device]]",
+    "fr": "Définir autoriser l'exportation à [[mode]] sur [[device]]",
+    "it": "Imposta consenti esportazione su [[mode]] su [[device]]",
+    "no": "Sett tillat eksport til [[mode]] på [[device]]",
+    "sv": "Ställ in tillåt export till [[mode]] på [[device]]",
+    "pl": "Ustaw zezwolenie na eksport na [[mode]] na [[device]]",
+    "ru": "Установить разрешение на экспорт на [[mode]] на [[device]]",
+    "ko": "[[device]]에서 [[mode]]로 내보내기 허용 설정",
+    "ar": "تعيين السماح بالتصدير إلى [[mode]] على [[device]]"
   },
   "args": [
     {
@@ -11,32 +35,92 @@
       "name": "device",
       "filter": "capabilities=allow_export",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
       }
     },
     {
       "type": "dropdown",
       "name": "mode",
       "title": {
-        "en": "Mode"
+        "en": "Mode",
+        "nl": "Modus",
+        "da": "Tilstand",
+        "de": "Modus",
+        "es": "Modo",
+        "fr": "Mode",
+        "it": "Modalità",
+        "no": "Modus",
+        "sv": "Läge",
+        "pl": "Tryb",
+        "ru": "Режим",
+        "ko": "모드",
+        "ar": "الوضع"
       },
       "values": [
         {
           "id": "battery_ok",
           "label": {
-            "en": "Battery and Solar"
+            "en": "Battery and Solar",
+            "nl": "Batterij en Zonne-energie",
+            "da": "Batteri og Solenergi",
+            "de": "Batterie und Solar",
+            "es": "Batería y Solar",
+            "fr": "Batterie et Solaire",
+            "it": "Batteria e Solare",
+            "no": "Batteri og Solenergi",
+            "sv": "Batteri och Solenergi",
+            "pl": "Bateria i Słoneczna",
+            "ru": "Батарея и Солнечная энергия",
+            "ko": "배터리 및 태양광",
+            "ar": "البطارية والطاقة الشمسية"
           }
         },
         {
           "id": "pv_only",
           "label": {
-            "en": "Solar Only"
+            "en": "Solar Only",
+            "nl": "Alleen Zonne-energie",
+            "da": "Kun solenergi",
+            "de": "Nur Solar",
+            "es": "Solo Solar",
+            "fr": "Solaire uniquement",
+            "it": "Solo Solare",
+            "no": "Kun Solenergi",
+            "sv": "Endast Solenergi",
+            "pl": "Tylko Słoneczna",
+            "ru": "Только Солнечная энергия",
+            "ko": "태양광만",
+            "ar": "الطاقة الشمسية فقط"
           }
         },
         {
           "id": "never",
           "label": {
-            "en": "Never"
+            "en": "Never",
+            "nl": "Nooit",
+            "da": "Aldrig",
+            "de": "Niemals",
+            "es": "Nunca",
+            "fr": "Jamais",
+            "it": "Mai",
+            "no": "Aldri",
+            "sv": "Aldrig",
+            "pl": "Nigdy",
+            "ru": "Никогда",
+            "ko": "안 함",
+            "ar": "أبداً"
           }
         }
       ]

@@ -1,7 +1,19 @@
 {
   "type": "enum",
   "title": {
-    "en": "Gear"
+    "en": "Gear",
+    "nl": "Versnelling",
+    "da": "Gear",
+    "de": "Gang",
+    "es": "Marcha",
+    "fr": "Vitesse",
+    "it": "Marcia",
+    "no": "Gir",
+    "sv": "Växel",
+    "pl": "Bieg",
+    "ru": "Передача",
+    "ko": "기어",
+    "ar": "السرعة"
   },
   "getable": true,
   "setable": false,
@@ -10,25 +22,73 @@
     {
       "id": "P",
       "title": {
-        "en": "Park"
+        "en": "Park",
+        "nl": "Parkeren",
+        "da": "Parkering",
+        "de": "Parken",
+        "es": "Estacionar",
+        "fr": "Stationner",
+        "it": "Parcheggio",
+        "no": "Parkere",
+        "sv": "Parkera",
+        "pl": "Parking",
+        "ru": "Парковка",
+        "ko": "주차",
+        "ar": "توقف"
       }
     },
     {
       "id": "R",
       "title": {
-        "en": "Reverse"
+        "en": "Reverse",
+        "nl": "Achteruit",
+        "da": "Bakke",
+        "de": "Rückwärts",
+        "es": "Reversa",
+        "fr": "Marche arrière",
+        "it": "Retromarcia",
+        "no": "Revers",
+        "sv": "Backa",
+        "pl": "Wsteczny",
+        "ru": "Задний ход",
+        "ko": "후진",
+        "ar": "عكس"
       }
     },
     {
       "id": "N",
       "title": {
-        "en": "Neutral"
+        "en": "Neutral",
+        "nl": "Neutraal",
+        "da": "Neutral",
+        "de": "Neutral",
+        "es": "Neutral",
+        "fr": "Neutre",
+        "it": "Folle",
+        "no": "Nøytral",
+        "sv": "Neutral",
+        "pl": "Neutralny",
+        "ru": "Нейтраль",
+        "ko": "중립",
+        "ar": "محايد"
       }
     },
     {
       "id": "D",
       "title": {
-        "en": "Drive"
+        "en": "Drive",
+        "nl": "Rijden",
+        "da": "Kør",
+        "de": "Fahren",
+        "es": "Conducir",
+        "fr": "Conduire",
+        "it": "Guida",
+        "no": "Kjøre",
+        "sv": "Köra",
+        "pl": "Jazda",
+        "ru": "Движение",
+        "ko": "주행",
+        "ar": "قيادة"
       }
     }
   ]

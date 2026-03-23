@@ -1,0 +1,9 @@
+{
+  "error": {
+    "invalid_token": "Token inválido. Por favor, inténtalo de nuevo.",
+    "invalid_refresh_token": "Token de actualización inválido. Por favor, vuelve a autenticarte.",
+    "subscription_required": "Suscripción requerida. Por favor, verifica tu suscripción de Teslemetry.",
+    "could_not_wake_vehicle": "El vehículo no se despertó. Por favor, inténtalo de nuevo.",
+    "insufficient_credits": "Créditos de comando insuficientes. Por favor, compra créditos adicionales para ejecutar comandos."
+  }
+}

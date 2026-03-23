@@ -2,187 +2,817 @@
   "triggers": [
     {
       "id": "onoff.charge_port_true",
-      "title": { "en": "The charge port has opened" }
+      "title": {
+        "en": "The charge port has opened",
+        "nl": "De laadpoort is geopend",
+        "da": "Ladeporten er åbnet",
+        "de": "Der Ladeanschluss hat sich geöffnet",
+        "es": "El puerto de carga se ha abierto",
+        "fr": "Le port de charge est ouvert",
+        "it": "La porta di ricarica è aperta",
+        "no": "Ladeporten har åpnet",
+        "sv": "Laddningsporten har öppnats",
+        "pl": "Port ładowania został otwarty",
+        "ru": "Порт зарядки открыт",
+        "ko": "충전 포트가 열렸습니다",
+        "ar": "تم فتح منفذ الشحن"
+      }
     },
     {
       "id": "onoff.charge_port_false",
-      "title": { "en": "The charge port has closed" }
+      "title": {
+        "en": "The charge port has closed",
+        "nl": "De laadpoort is gesloten",
+        "da": "Ladeporten er lukket",
+        "de": "Der Ladeanschluss hat sich geschlossen",
+        "es": "El puerto de carga se ha cerrado",
+        "fr": "Le port de charge est fermé",
+        "it": "La porta di ricarica è chiusa",
+        "no": "Ladeporten har lukket",
+        "sv": "Laddningsporten har stängts",
+        "pl": "Port ładowania został zamknięty",
+        "ru": "Порт зарядки закрыт",
+        "ko": "충전 포트가 닫혔습니다",
+        "ar": "تم إغلاق منفذ الشحن"
+      }
     },
     {
       "id": "onoff.sentry_true",
-      "title": { "en": "Sentry mode has been enabled" }
+      "title": {
+        "en": "Sentry mode has been enabled",
+        "nl": "De bewakingsmodus is ingeschakeld",
+        "da": "Sentineltilstand er aktiveret",
+        "de": "Wächtermodus wurde aktiviert",
+        "es": "El modo centinela ha sido activado",
+        "fr": "Le mode sentinelle a été activé",
+        "it": "La modalità sentinella è stata attivata",
+        "no": "Vaktmodus er aktivert",
+        "sv": "Vaktläget har aktiverats",
+        "pl": "Tryb strażnika został włączony",
+        "ru": "Режим охраны включен",
+        "ko": "센트리 모드가 활성화되었습니다",
+        "ar": "تم تفعيل وضع الحراسة"
+      }
     },
     {
       "id": "onoff.sentry_false",
-      "title": { "en": "Sentry mode has been disabled" }
+      "title": {
+        "en": "Sentry mode has been disabled",
+        "nl": "De bewakingsmodus is uitgeschakeld",
+        "da": "Sentineltilstand er deaktiveret",
+        "de": "Wächtermodus wurde deaktiviert",
+        "es": "El modo centinela ha sido desactivado",
+        "fr": "Le mode sentinelle a été désactivé",
+        "it": "La modalità sentinella è stata disattivata",
+        "no": "Vaktmodus er deaktivert",
+        "sv": "Vaktläget har avaktiverats",
+        "pl": "Tryb strażnika został wyłączony",
+        "ru": "Режим охраны отключен",
+        "ko": "센트리 모드가 비활성화되었습니다",
+        "ar": "تم تعطيل وضع الحراسة"
+      }
     },
     {
       "id": "onoff.frunk_true",
-      "title": { "en": "The frunk has opened" }
+      "title": {
+        "en": "The frunk has opened",
+        "nl": "De frunk is geopend",
+        "da": "Frunken er åbnet",
+        "de": "Der Frunk hat sich geöffnet",
+        "es": "El maletero delantero se ha abierto",
+        "fr": "Le coffre avant est ouvert",
+        "it": "Il cofono anteriore è aperto",
+        "no": "Frunken har åpnet",
+        "sv": "Frunken har öppnats",
+        "pl": "Przedni bagażnik został otwarty",
+        "ru": "Передний багажник открыт",
+        "ko": "프렁크가 열렸습니다",
+        "ar": "تم فتح الصندوق الأمامي"
+      }
     },
     {
       "id": "onoff.frunk_false",
-      "title": { "en": "The frunk has closed" }
+      "title": {
+        "en": "The frunk has closed",
+        "nl": "De frunk is gesloten",
+        "da": "Frunken er lukket",
+        "de": "Der Frunk hat sich geschlossen",
+        "es": "El maletero delantero se ha cerrado",
+        "fr": "Le coffre avant est fermé",
+        "it": "Il cofono anteriore è chiuso",
+        "no": "Frunken har lukket",
+        "sv": "Frunken har stängts",
+        "pl": "Przedni bagażnik został zamknięty",
+        "ru": "Передний багажник закрыт",
+        "ko": "프렁크가 닫혔습니다",
+        "ar": "تم إغلاق الصندوق الأمامي"
+      }
     },
     {
       "id": "onoff.trunk_true",
-      "title": { "en": "The trunk has opened" }
+      "title": {
+        "en": "The trunk has opened",
+        "nl": "De kofferbak is geopend",
+        "da": "Baggagerummet er åbnet",
+        "de": "Der Kofferraum hat sich geöffnet",
+        "es": "El maletero se ha abierto",
+        "fr": "Le coffre est ouvert",
+        "it": "Il bagagliaio è aperto",
+        "no": "Bagasjerommet har åpnet",
+        "sv": "Bagageutrymmet har öppnats",
+        "pl": "Bagażnik został otwarty",
+        "ru": "Багажник открыт",
+        "ko": "트렁크가 열렸습니다",
+        "ar": "تم فتح صندوق السيارة"
+      }
     },
     {
       "id": "onoff.trunk_false",
-      "title": { "en": "The trunk has closed" }
+      "title": {
+        "en": "The trunk has closed",
+        "nl": "De kofferbak is gesloten",
+        "da": "Baggagerummet er lukket",
+        "de": "Der Kofferraum hat sich geschlossen",
+        "es": "El maletero se ha cerrado",
+        "fr": "Le coffre est fermé",
+        "it": "Il bagagliaio è chiuso",
+        "no": "Bagasjerommet har lukket",
+        "sv": "Bagageutrymmet har stängts",
+        "pl": "Bagażnik został zamknięty",
+        "ru": "Багажник закрыт",
+        "ko": "트렁크가 닫혔습니다",
+        "ar": "تم إغلاق صندوق السيارة"
+      }
     },
     {
       "id": "onoff.guest_mode_true",
-      "title": { "en": "Guest mode has been enabled" }
+      "title": {
+        "en": "Guest mode has been enabled",
+        "nl": "Gastmodus is ingeschakeld",
+        "da": "Gæstetilstand er aktiveret",
+        "de": "Gastmodus wurde aktiviert",
+        "es": "El modo invitado ha sido activado",
+        "fr": "Le mode invité a été activé",
+        "it": "La modalità ospite è stata attivata",
+        "no": "Gjestemodus er aktivert",
+        "sv": "Gästläget har aktiverats",
+        "pl": "Tryb gościa został włączony",
+        "ru": "Гостевой режим включен",
+        "ko": "게스트 모드가 활성화되었습니다",
+        "ar": "تم تفعيل وضع الضيف"
+      }
     },
     {
       "id": "onoff.guest_mode_false",
-      "title": { "en": "Guest mode has been disabled" }
+      "title": {
+        "en": "Guest mode has been disabled",
+        "nl": "Gastmodus is uitgeschakeld",
+        "da": "Gæstetilstand er deaktiveret",
+        "de": "Gastmodus wurde deaktiviert",
+        "es": "El modo invitado ha sido desactivado",
+        "fr": "Le mode invité a été désactivé",
+        "it": "La modalità ospite è stata disattivata",
+        "no": "Gjestemodus er deaktivert",
+        "sv": "Gästläget har avaktiverats",
+        "pl": "Tryb gościa został wyłączony",
+        "ru": "Гостевой режим отключен",
+        "ko": "게스트 모드가 비활성화되었습니다",
+        "ar": "تم تعطيل وضع الضيف"
+      }
     },
     {
       "id": "locked.charge_latch_true",
-      "title": { "en": "The charge port latch has engaged" }
+      "title": {
+        "en": "The charge port latch has engaged",
+        "nl": "De vergrendeling van de laadpoort is geactiveerd",
+        "da": "Låsen på ladeporten er aktiveret",
+        "de": "Der Ladeanschlussraster hat sich eingerastet",
+        "es": "El pestillo del puerto de carga se ha activado",
+        "fr": "Le loquet du port de charge est engagé",
+        "it": "La chiusura della porta di ricarica è inserita",
+        "no": "Låsen til ladeporten er låst",
+        "sv": "Laddportens spärr har aktiverats",
+        "pl": "Zamek portu ładowania został zablokowany",
+        "ru": "Замок зарядного порта закрылся",
+        "ko": "충전 포트 걸쇠가 잠겼습니다",
+        "ar": "تم تفعيل قفل منفذ الشحن"
+      }
     },
     {
       "id": "locked.charge_latch_false",
-      "title": { "en": "The charge port latch has disengaged" }
+      "title": {
+        "en": "The charge port latch has disengaged",
+        "nl": "De vergrendeling van de laadpoort is gedeactiveerd",
+        "da": "Låsen på ladeporten er deaktiveret",
+        "de": "Der Ladeanschlussraster hat sich gelöst",
+        "es": "El pestillo del puerto de carga se ha desactivado",
+        "fr": "Le loquet du port de charge est désengagé",
+        "it": "La chiusura della porta di ricarica è disinserita",
+        "no": "Låsen til ladeporten er låst opp",
+        "sv": "Laddportens spärr har deaktiverats",
+        "pl": "Zamek portu ładowania został odblokowany",
+        "ru": "Замок зарядного порта открыт",
+        "ko": "충전 포트 걸쇠가 풀렸습니다",
+        "ar": "تم إلغاء قفل منفذ الشحن"
+      }
     },
     {
       "id": "alarm_contact.fl_true",
-      "title": { "en": "The front left door has opened" }
+      "title": {
+        "en": "The front left door has opened",
+        "nl": "De linkervoordeur is geopend",
+        "da": "Den forreste venstre dør er åbnet",
+        "de": "Die vordere linke Tür hat sich geöffnet",
+        "es": "La puerta delantera izquierda se ha abierto",
+        "fr": "La porte avant gauche est ouverte",
+        "it": "La porta anteriore sinistra è aperta",
+        "no": "Foran venstre dør har åpnet",
+        "sv": "Den vänstra framdörren har öppnats",
+        "pl": "Przednie lewe drzwi zostały otwarte",
+        "ru": "Левая передняя дверь открыта",
+        "ko": "왼쪽 앞 문이 열렸습니다",
+        "ar": "تم فتح الباب الأمامي الأيسر"
+      }
     },
     {
       "id": "alarm_contact.fl_false",
-      "title": { "en": "The front left door has closed" }
+      "title": {
+        "en": "The front left door has closed",
+        "nl": "De linkervoordeur is gesloten",
+        "da": "Den forreste venstre dør er lukket",
+        "de": "Die vordere linke Tür hat sich geschlossen",
+        "es": "La puerta delantera izquierda se ha cerrado",
+        "fr": "La porte avant gauche est fermée",
+        "it": "La porta anteriore sinistra è chiusa",
+        "no": "Foran venstre dør har lukket",
+        "sv": "Den vänstra framdörren har stängts",
+        "pl": "Przednie lewe drzwi zostały zamknięte",
+        "ru": "Левая передняя дверь закрыта",
+        "ko": "왼쪽 앞 문이 닫혔습니다",
+        "ar": "تم إغلاق الباب الأمامي الأيسر"
+      }
     },
     {
       "id": "alarm_contact.fr_true",
-      "title": { "en": "The front right door has opened" }
+      "title": {
+        "en": "The front right door has opened",
+        "nl": "De rechtervoordeur is geopend",
+        "da": "Den forreste højre dør er åbnet",
+        "de": "Die vordere rechte Tür hat sich geöffnet",
+        "es": "La puerta delantera derecha se ha abierto",
+        "fr": "La porte avant droite est ouverte",
+        "it": "La porta anteriore destra è aperta",
+        "no": "Foran høyre dør har åpnet",
+        "sv": "Den högra framdörren har öppnats",
+        "pl": "Przednie prawe drzwi zostały otwarte",
+        "ru": "Правая передняя дверь открыта",
+        "ko": "오른쪽 앞 문이 열렸습니다",
+        "ar": "تم فتح الباب الأمامي الأيمن"
+      }
     },
     {
       "id": "alarm_contact.fr_false",
-      "title": { "en": "The front right door has closed" }
+      "title": {
+        "en": "The front right door has closed",
+        "nl": "De rechtervoordeur is gesloten",
+        "da": "Den forreste højre dør er lukket",
+        "de": "Die vordere rechte Tür hat sich geschlossen",
+        "es": "La puerta delantera derecha se ha cerrado",
+        "fr": "La porte avant droite est fermée",
+        "it": "La porta anteriore destra è chiusa",
+        "no": "Foran høyre dør har lukket",
+        "sv": "Den högra framdörren har stängts",
+        "pl": "Przednie prawe drzwi zostały zamknięte",
+        "ru": "Правая передняя дверь закрыта",
+        "ko": "오른쪽 앞 문이 닫혔습니다",
+        "ar": "تم إغلاق الباب الأمامي الأيمن"
+      }
     },
     {
       "id": "alarm_contact.rl_true",
-      "title": { "en": "The rear left door has opened" }
+      "title": {
+        "en": "The rear left door has opened",
+        "nl": "De achterdeur links is geopend",
+        "da": "Den bagerste venstre dør er åbnet",
+        "de": "Die hintere linke Tür hat sich geöffnet",
+        "es": "La puerta trasera izquierda se ha abierto",
+        "fr": "La porte arrière gauche est ouverte",
+        "it": "La porta posteriore sinistra è aperta",
+        "no": "Bak venstre dør har åpnet",
+        "sv": "Den vänstra bakdörren har öppnats",
+        "pl": "Lewe tylne drzwi zostały otwarte",
+        "ru": "Левая задняя дверь открыта",
+        "ko": "왼쪽 뒷문이 열렸습니다",
+        "ar": "تم فتح الباب الخلفي الأيسر"
+      }
     },
     {
       "id": "alarm_contact.rl_false",
-      "title": { "en": "The rear left door has closed" }
+      "title": {
+        "en": "The rear left door has closed",
+        "nl": "De achterdeur links is gesloten",
+        "da": "Den bagerste venstre dør er lukket",
+        "de": "Die hintere linke Tür hat sich geschlossen",
+        "es": "La puerta trasera izquierda se ha cerrado",
+        "fr": "La porte arrière gauche est fermée",
+        "it": "La porta posteriore sinistra è chiusa",
+        "no": "Bak venstre dør har lukket",
+        "sv": "Den vänstra bakdörren har stängts",
+        "pl": "Lewe tylne drzwi zostały zamknięte",
+        "ru": "Левая задняя дверь закрыта",
+        "ko": "왼쪽 뒷문이 닫혔습니다",
+        "ar": "تم إغلاق الباب الخلفي الأيسر"
+      }
     },
     {
       "id": "alarm_contact.rr_true",
-      "title": { "en": "The rear right door has opened" }
+      "title": {
+        "en": "The rear right door has opened",
+        "nl": "De achterdeur rechts is geopend",
+        "da": "Den bagerste højre dør er åbnet",
+        "de": "Die hintere rechte Tür hat sich geöffnet",
+        "es": "La puerta trasera derecha se ha abierto",
+        "fr": "La porte arrière droite est ouverte",
+        "it": "La porta posteriore destra è aperta",
+        "no": "Bak høyre dør har åpnet",
+        "sv": "Den högra bakdörren har öppnats",
+        "pl": "Prawe tylne drzwi zostały otwarte",
+        "ru": "Правая задняя дверь открыта",
+        "ko": "오른쪽 뒷문이 열렸습니다",
+        "ar": "تم فتح الباب الخلفي الأيمن"
+      }
     },
     {
       "id": "alarm_contact.rr_false",
-      "title": { "en": "The rear right door has closed" }
+      "title": {
+        "en": "The rear right door has closed",
+        "nl": "De achterdeur rechts is gesloten",
+        "da": "Den bagerste højre dør er lukket",
+        "de": "Die hintere rechte Tür hat sich geschlossen",
+        "es": "La puerta trasera derecha se ha cerrado",
+        "fr": "La porte arrière droite est fermée",
+        "it": "La porta posteriore destra è chiusa",
+        "no": "Bak høyre dør har lukket",
+        "sv": "Den högra bakdörren har stängts",
+        "pl": "Prawe tylne drzwi zostały zamknięte",
+        "ru": "Правая задняя дверь закрыта",
+        "ko": "오른쪽 뒷문이 닫혔습니다",
+        "ar": "تم إغلاق الباب الخلفي الأيمن"
+      }
     }
   ],
   "conditions": [
     {
       "id": "onoff.charge_port",
-      "title": { "en": "Charge port is !{{open|closed}}" }
+      "title": {
+        "en": "Charge port is !{{open|closed}}",
+        "nl": "De laadpoort is !{{open|closed}}",
+        "da": "Ladeporten er !{{open|closed}}",
+        "de": "Der Ladeanschluss ist !{{open|closed}}",
+        "es": "El puerto de carga está !{{open|closed}}",
+        "fr": "Le port de charge est !{{open|closed}}",
+        "it": "La porta di ricarica è !{{open|closed}}",
+        "no": "Ladeporten er !{{open|closed}}",
+        "sv": "Laddningsporten är !{{open|closed}}",
+        "pl": "Port ładowania jest !{{open|closed}}",
+        "ru": "Порт зарядки !{{open|closed}}",
+        "ko": "충전 포트가 !{{open|closed}}",
+        "ar": "منفذ الشحن !{{open|closed}}"
+      }
     },
     {
       "id": "onoff.sentry",
-      "title": { "en": "Sentry mode is !{{enabled|disabled}}" }
+      "title": {
+        "en": "Sentry mode is !{{enabled|disabled}}",
+        "nl": "De bewakingsmodus is !{{enabled|disabled}}",
+        "da": "Sentineltilstand er !{{enabled|disabled}}",
+        "de": "Wächtermodus ist !{{enabled|disabled}}",
+        "es": "El modo centinela está !{{enabled|disabled}}",
+        "fr": "Le mode sentinelle est !{{enabled|disabled}}",
+        "it": "La modalità sentinella è !{{enabled|disabled}}",
+        "no": "Vaktmodus er !{{enabled|disabled}}",
+        "sv": "Vaktläget är !{{enabled|disabled}}",
+        "pl": "Tryb strażnika jest !{{enabled|disabled}}",
+        "ru": "Режим охраны !{{enabled|disabled}}",
+        "ko": "센트리 모드가 !{{enabled|disabled}}",
+        "ar": "وضع الحراسة !{{enabled|disabled}}"
+      }
     },
     {
       "id": "onoff.frunk",
-      "title": { "en": "Frunk is !{{open|closed}}" }
+      "title": {
+        "en": "Frunk is !{{open|closed}}",
+        "nl": "De frunk is !{{open|closed}}",
+        "da": "Frunken er !{{open|closed}}",
+        "de": "Der Frunk ist !{{open|closed}}",
+        "es": "El maletero delantero está !{{open|closed}}",
+        "fr": "Le coffre avant est !{{open|closed}}",
+        "it": "Il cofono anteriore è !{{open|closed}}",
+        "no": "Frunken er !{{open|closed}}",
+        "sv": "Frunken är !{{open|closed}}",
+        "pl": "Przedni bagażnik jest !{{open|closed}}",
+        "ru": "Передний багажник !{{open|closed}}",
+        "ko": "프렁크가 !{{open|closed}}",
+        "ar": "الصندوق الأمامي !{{open|closed}}"
+      }
     },
     {
       "id": "onoff.trunk",
-      "title": { "en": "Trunk is !{{open|closed}}" }
+      "title": {
+        "en": "Trunk is !{{open|closed}}",
+        "nl": "De kofferbak is !{{open|closed}}",
+        "da": "Baggagerummet er !{{open|closed}}",
+        "de": "Der Kofferraum ist !{{open|closed}}",
+        "es": "El maletero está !{{open|closed}}",
+        "fr": "Le coffre est !{{open|closed}}",
+        "it": "Il bagagliaio è !{{open|closed}}",
+        "no": "Bagasjerommet er !{{open|closed}}",
+        "sv": "Bagageutrymmet är !{{open|closed}}",
+        "pl": "Bagażnik jest !{{open|closed}}",
+        "ru": "Багажник !{{open|closed}}",
+        "ko": "트렁크가 !{{open|closed}}",
+        "ar": "صندوق السيارة !{{open|closed}}"
+      }
     },
     {
       "id": "onoff.guest_mode",
-      "title": { "en": "Guest mode is !{{enabled|disabled}}" }
+      "title": {
+        "en": "Guest mode is !{{enabled|disabled}}",
+        "nl": "Gastmodus is !{{enabled|disabled}}",
+        "da": "Gæstetilstand er !{{enabled|disabled}}",
+        "de": "Gastmodus ist !{{enabled|disabled}}",
+        "es": "El modo invitado está !{{enabled|disabled}}",
+        "fr": "Le mode invité est !{{enabled|disabled}}",
+        "it": "La modalità ospite è !{{enabled|disabled}}",
+        "no": "Gjestemodus er !{{enabled|disabled}}",
+        "sv": "Gästläget är !{{enabled|disabled}}",
+        "pl": "Tryb gościa jest !{{enabled|disabled}}",
+        "ru": "Гостевой режим !{{enabled|disabled}}",
+        "ko": "게스트 모드가 !{{enabled|disabled}}",
+        "ar": "وضع الضيف !{{enabled|disabled}}"
+      }
     },
     {
       "id": "locked.charge_latch",
-      "title": { "en": "Charge port latch is !{{engaged|disengaged}}" }
+      "title": {
+        "en": "Charge port latch is !{{engaged|disengaged}}",
+        "nl": "De vergrendeling van de laadpoort is !{{engaged|disengaged}}",
+        "da": "Låsen på ladeporten er !{{engaged|disengaged}}",
+        "de": "Der Ladeanschlussraster ist !{{engaged|disengaged}}",
+        "es": "El pestillo del puerto de carga está !{{engaged|disengaged}}",
+        "fr": "Le loquet du port de charge est !{{engaged|disengaged}}",
+        "it": "La chiusura della porta di ricarica è !{{engaged|disengaged}}",
+        "no": "Låsen til ladeporten er !{{engaged|disengaged}}",
+        "sv": "Laddportens spärr är !{{engaged|disengaged}}",
+        "pl": "Zamek portu ładowania jest !{{engaged|disengaged}}",
+        "ru": "Замок зарядного порта !{{engaged|disengaged}}",
+        "ko": "충전 포트 걸쇠가 !{{engaged|disengaged}}",
+        "ar": "قفل منفذ الشحن !{{engaged|disengaged}}"
+      }
     },
     {
       "id": "alarm_contact.fl",
-      "title": { "en": "Front left door is !{{open|closed}}" }
+      "title": {
+        "en": "Front left door is !{{open|closed}}",
+        "nl": "De linkervoordeur is !{{open|closed}}",
+        "da": "Den forreste venstre dør er !{{open|closed}}",
+        "de": "Die vordere linke Tür ist !{{open|closed}}",
+        "es": "La puerta delantera izquierda está !{{open|closed}}",
+        "fr": "La porte avant gauche est !{{open|closed}}",
+        "it": "La porta anteriore sinistra è !{{open|closed}}",
+        "no": "Foran venstre dør er !{{open|closed}}",
+        "sv": "Den vänstra framdörren är !{{open|closed}}",
+        "pl": "Przednie lewe drzwi są !{{open|closed}}",
+        "ru": "Левая передняя дверь !{{open|closed}}",
+        "ko": "왼쪽 앞 문이 !{{open|closed}}",
+        "ar": "الباب الأمامي الأيسر !{{open|closed}}"
+      }
     },
     {
       "id": "alarm_contact.fr",
-      "title": { "en": "Front right door is !{{open|closed}}" }
+      "title": {
+        "en": "Front right door is !{{open|closed}}",
+        "nl": "De rechtervoordeur is !{{open|closed}}",
+        "da": "Den forreste højre dør er !{{open|closed}}",
+        "de": "Die vordere rechte Tür ist !{{open|closed}}",
+        "es": "La puerta delantera derecha está !{{open|closed}}",
+        "fr": "La porte avant droite est !{{open|closed}}",
+        "it": "La porta anteriore destra è !{{open|closed}}",
+        "no": "Foran høyre dør er !{{open|closed}}",
+        "sv": "Den högra framdörren är !{{open|closed}}",
+        "pl": "Przednie prawe drzwi są !{{open|closed}}",
+        "ru": "Правая передняя дверь !{{open|closed}}",
+        "ko": "오른쪽 앞 문이 !{{open|closed}}",
+        "ar": "الباب الأمامي الأيمن !{{open|closed}}"
+      }
     },
     {
       "id": "alarm_contact.rl",
-      "title": { "en": "Rear left door is !{{open|closed}}" }
+      "title": {
+        "en": "Rear left door is !{{open|closed}}",
+        "nl": "De achterdeur links is !{{open|closed}}",
+        "da": "Den bagerste venstre dør er !{{open|closed}}",
+        "de": "Die hintere linke Tür ist !{{open|closed}}",
+        "es": "La puerta trasera izquierda está !{{open|closed}}",
+        "fr": "La porte arrière gauche est !{{open|closed}}",
+        "it": "La porta posteriore sinistra è !{{open|closed}}",
+        "no": "Bak venstre dør er !{{open|closed}}",
+        "sv": "Den vänstra bakdörren är !{{open|closed}}",
+        "pl": "Lewe tylne drzwi są !{{open|closed}}",
+        "ru": "Левая задняя дверь !{{open|closed}}",
+        "ko": "왼쪽 뒷문이 !{{open|closed}}",
+        "ar": "الباب الخلفي الأيسر !{{open|closed}}"
+      }
     },
     {
       "id": "alarm_contact.rr",
-      "title": { "en": "Rear right door is !{{open|closed}}" }
+      "title": {
+        "en": "Rear right door is !{{open|closed}}",
+        "nl": "De achterdeur rechts is !{{open|closed}}",
+        "da": "Den bagerste højre dør er !{{open|closed}}",
+        "de": "Die hintere rechte Tür ist !{{open|closed}}",
+        "es": "La puerta trasera derecha está !{{open|closed}}",
+        "fr": "La porte arrière droite est !{{open|closed}}",
+        "it": "La porta posteriore destra è !{{open|closed}}",
+        "no": "Bak høyre dør er !{{open|closed}}",
+        "sv": "Den högra bakdörren är !{{open|closed}}",
+        "pl": "Prawe tylne drzwi są !{{open|closed}}",
+        "ru": "Правая задняя дверь !{{open|closed}}",
+        "ko": "오른쪽 뒷문이 !{{open|closed}}",
+        "ar": "الباب الخلفي الأيمن !{{open|closed}}"
+      }
     }
   ],
   "actions": [
     {
       "id": "onoff.charge_port_on",
-      "title": { "en": "Open charge port" }
+      "title": {
+        "en": "Open charge port",
+        "nl": "Open laadpoort",
+        "da": "Åbn ladeporten",
+        "de": "Ladeanschluss öffnen",
+        "es": "Abrir puerto de carga",
+        "fr": "Ouvrir le port de charge",
+        "it": "Apri porta di ricarica",
+        "no": "Åpne ladeporten",
+        "sv": "Öppna laddningsporten",
+        "pl": "Otwórz port ładowania",
+        "ru": "Открыть порт зарядки",
+        "ko": "충전 포트 열기",
+        "ar": "افتح منفذ الشحن"
+      }
     },
     {
       "id": "onoff.charge_port_off",
-      "title": { "en": "Close charge port" }
+      "title": {
+        "en": "Close charge port",
+        "nl": "Sluit laadpoort",
+        "da": "Luk ladeporten",
+        "de": "Ladeanschluss schließen",
+        "es": "Cerrar puerto de carga",
+        "fr": "Fermer le port de charge",
+        "it": "Chiudi porta di ricarica",
+        "no": "Lukk ladeporten",
+        "sv": "Stäng laddningsporten",
+        "pl": "Zamknij port ładowania",
+        "ru": "Закрыть порт зарядки",
+        "ko": "충전 포트 닫기",
+        "ar": "اغلق منفذ الشحن"
+      }
     },
     {
       "id": "onoff.charge_port_toggle",
-      "title": { "en": "Toggle charge port" }
+      "title": {
+        "en": "Toggle charge port",
+        "nl": "Wissel laadpoort",
+        "da": "Skift ladeporten",
+        "de": "Ladeanschluss umschalten",
+        "es": "Cambiar puerto de carga",
+        "fr": "Basculer le port de charge",
+        "it": "Attiva/disattiva porta di ricarica",
+        "no": "Veksle ladeporten",
+        "sv": "Växla laddningsporten",
+        "pl": "Przełącz port ładowania",
+        "ru": "Переключить порт зарядки",
+        "ko": "충전 포트 전환",
+        "ar": "تبديل منفذ الشحن"
+      }
     },
     {
       "id": "onoff.sentry_on",
-      "title": { "en": "Enable sentry mode" }
+      "title": {
+        "en": "Enable sentry mode",
+        "nl": "Schakel bewakingsmodus in",
+        "da": "Aktiver sentineltilstand",
+        "de": "Wächtermodus aktivieren",
+        "es": "Activar modo centinela",
+        "fr": "Activer le mode sentinelle",
+        "it": "Attiva modalità sentinella",
+        "no": "Aktiver vaktmodus",
+        "sv": "Aktivera vaktläget",
+        "pl": "Włącz tryb strażnika",
+        "ru": "Включить режим охраны",
+        "ko": "센트리 모드 활성화",
+        "ar": "تفعيل وضع الحراسة"
+      }
     },
     {
       "id": "onoff.sentry_off",
-      "title": { "en": "Disable sentry mode" }
+      "title": {
+        "en": "Disable sentry mode",
+        "nl": "Schakel bewakingsmodus uit",
+        "da": "Deaktiver sentineltilstand",
+        "de": "Wächtermodus deaktivieren",
+        "es": "Desactivar modo centinela",
+        "fr": "Désactiver le mode sentinelle",
+        "it": "Disattiva modalità sentinella",
+        "no": "Deaktiver vaktmodus",
+        "sv": "Avaktivera vaktläget",
+        "pl": "Wyłącz tryb strażnika",
+        "ru": "Отключить режим охраны",
+        "ko": "센트리 모드 비활성화",
+        "ar": "تعطيل وضع الحراسة"
+      }
     },
     {
       "id": "onoff.sentry_toggle",
-      "title": { "en": "Toggle sentry mode" }
+      "title": {
+        "en": "Toggle sentry mode",
+        "nl": "Wissel bewakingsmodus",
+        "da": "Skift sentineltilstand",
+        "de": "Wächtermodus umschalten",
+        "es": "Cambiar modo centinela",
+        "fr": "Basculer le mode sentinelle",
+        "it": "Attiva/disattiva modalità sentinella",
+        "no": "Veksle vaktmodus",
+        "sv": "Växla vaktläget",
+        "pl": "Przełącz tryb strażnika",
+        "ru": "Переключить режим охраны",
+        "ko": "센트리 모드 전환",
+        "ar": "تبديل وضع الحراسة"
+      }
     },
     {
       "id": "onoff.frunk_on",
-      "title": { "en": "Open frunk" }
+      "title": {
+        "en": "Open frunk",
+        "nl": "Open frunk",
+        "da": "Åbn frunken",
+        "de": "Frunk öffnen",
+        "es": "Abrir frunk",
+        "fr": "Ouvrir le coffre avant",
+        "it": "Apri cofono anteriore",
+        "no": "Åpne frunken",
+        "sv": "Öppna frunken",
+        "pl": "Otwórz przedni bagażnik",
+        "ru": "Открыть передний багажник",
+        "ko": "프렁크 열기",
+        "ar": "افتح الصندوق الأمامي"
+      }
     },
     {
       "id": "onoff.frunk_off",
-      "title": { "en": "Close frunk" }
+      "title": {
+        "en": "Close frunk",
+        "nl": "Sluit frunk",
+        "da": "Luk frunken",
+        "de": "Frunk schließen",
+        "es": "Cerrar frunk",
+        "fr": "Fermer le coffre avant",
+        "it": "Chiudi cofono anteriore",
+        "no": "Lukk frunken",
+        "sv": "Stäng frunken",
+        "pl": "Zamknij przedni bagażnik",
+        "ru": "Закрыть передний багажник",
+        "ko": "프렁크 닫기",
+        "ar": "اغلق الصندوق الأمامي"
+      }
     },
     {
       "id": "onoff.frunk_toggle",
-      "title": { "en": "Toggle frunk" }
+      "title": {
+        "en": "Toggle frunk",
+        "nl": "Wissel frunk",
+        "da": "Skift frunken",
+        "de": "Frunk umschalten",
+        "es": "Cambiar frunk",
+        "fr": "Basculer le coffre avant",
+        "it": "Attiva/disattiva cofono anteriore",
+        "no": "Veksle frunken",
+        "sv": "Växla frunken",
+        "pl": "Przełącz przedni bagażnik",
+        "ru": "Переключить передний багажник",
+        "ko": "프렁크 전환",
+        "ar": "تبديل الصندوق الأمامي"
+      }
     },
     {
       "id": "onoff.trunk_on",
-      "title": { "en": "Open trunk" }
+      "title": {
+        "en": "Open trunk",
+        "nl": "Open kofferbak",
+        "da": "Åbn bagagerummet",
+        "de": "Kofferraum öffnen",
+        "es": "Abrir maletero",
+        "fr": "Ouvrir le coffre",
+        "it": "Apri bagagliaio",
+        "no": "Åpne bagasjerommet",
+        "sv": "Öppna bagageutrymmet",
+        "pl": "Otwórz bagażnik",
+        "ru": "Открыть багажник",
+        "ko": "트렁크 열기",
+        "ar": "افتح صندوق السيارة"
+      }
     },
     {
       "id": "onoff.trunk_off",
-      "title": { "en": "Close trunk" }
+      "title": {
+        "en": "Close trunk",
+        "nl": "Sluit kofferbak",
+        "da": "Luk bagagerummet",
+        "de": "Kofferraum schließen",
+        "es": "Cerrar maletero",
+        "fr": "Fermer le coffre",
+        "it": "Chiudi bagagliaio",
+        "no": "Lukk bagasjerommet",
+        "sv": "Stäng bagageutrymmet",
+        "pl": "Zamknij bagażnik",
+        "ru": "Закрыть багажник",
+        "ko": "트렁크 닫기",
+        "ar": "اغلق صندوق السيارة"
+      }
     },
     {
       "id": "onoff.trunk_toggle",
-      "title": { "en": "Toggle trunk" }
+      "title": {
+        "en": "Toggle trunk",
+        "nl": "Wissel kofferbak",
+        "da": "Skift bagagerummet",
+        "de": "Kofferraum umschalten",
+        "es": "Cambiar maletero",
+        "fr": "Basculer le coffre",
+        "it": "Attiva/disattiva bagagliaio",
+        "no": "Veksle bagasjerommet",
+        "sv": "Växla bagageutrymmet",
+        "pl": "Przełącz bagażnik",
+        "ru": "Переключить багажник",
+        "ko": "트렁크 전환",
+        "ar": "تبديل صندوق السيارة"
+      }
     },
     {
       "id": "onoff.guest_mode_on",
-      "title": { "en": "Enable guest mode" }
+      "title": {
+        "en": "Enable guest mode",
+        "nl": "Gastmodus inschakelen",
+        "da": "Aktiver gæstetilstand",
+        "de": "Gastmodus aktivieren",
+        "es": "Activar modo invitado",
+        "fr": "Activer le mode invité",
+        "it": "Attiva modalità ospite",
+        "no": "Aktiver gjestemodus",
+        "sv": "Aktivera gästäget",
+        "pl": "Włącz tryb gościa",
+        "ru": "Включить гостевой режим",
+        "ko": "게스트 모드 활성화",
+        "ar": "تفعيل وضع الضيف"
+      }
     },
     {
       "id": "onoff.guest_mode_off",
-      "title": { "en": "Disable guest mode" }
+      "title": {
+        "en": "Disable guest mode",
+        "nl": "Gastmodus uitschakelen",
+        "da": "Deaktiver gæstetilstand",
+        "de": "Gastmodus deaktivieren",
+        "es": "Desactivar modo invitado",
+        "fr": "Désactiver le mode invité",
+        "it": "Disattiva modalità ospite",
+        "no": "Deaktiver gjestemodus",
+        "sv": "Avaktivera gæstäget",
+        "pl": "Wyłącz tryb gościa",
+        "ru": "Отключить гостевой режим",
+        "ko": "게스트 모드 비활성화",
+        "ar": "تعطيل وضع الضيف"
+      }
     },
     {
       "id": "onoff.guest_mode_toggle",
-      "title": { "en": "Toggle guest mode" }
+      "title": {
+        "en": "Toggle guest mode",
+        "nl": "Wissel gastmodus",
+        "da": "Skift gæstetilstand",
+        "de": "Gastmodus umschalten",
+        "es": "Cambiar modo invitado",
+        "fr": "Basculer le mode invité",
+        "it": "Attiva/disattiva modalità ospite",
+        "no": "Veksle gjestemodus",
+        "sv": "Växla gästäget",
+        "pl": "Przełącz tryb gościa",
+        "ru": "Переключить гостевой режим",
+        "ko": "게스트 모드 전환",
+        "ar": "تبديل وضع الضيف"
+      }
     }
   ]
 }

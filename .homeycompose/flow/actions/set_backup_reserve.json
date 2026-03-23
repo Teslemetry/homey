@@ -1,9 +1,33 @@
 {
   "title": {
-    "en": "Set backup reserve"
+    "en": "Set backup reserve",
+    "nl": "Stel reserveback-up in",
+    "da": "Indstil backupreserve",
+    "de": "Backup-Reserve festlegen",
+    "es": "Establecer reserva de respaldo",
+    "fr": "Définir la réserve de sauvegarde",
+    "it": "Imposta riserva di backup",
+    "no": "Sett reserve for backup",
+    "sv": "Ställ in backupreserv",
+    "pl": "Ustaw rezerwę kopii zapasowej",
+    "ru": "Установить резервную копию",
+    "ko": "백업 예약 설정",
+    "ar": "تعيين احتياطي النسخ الاحتياطي"
   },
   "titleFormatted": {
-    "en": "Set [[device]] backup reserve to [[percentage]]%"
+    "en": "Set [[device]] backup reserve to [[percentage]]%",
+    "nl": "Stel [[device]] reserveback-up in op [[percentage]]%",
+    "da": "Indstil [[device]] backupreserve til [[percentage]]%",
+    "de": "Backup-Reserve von [[device]] auf [[percentage]]% festlegen",
+    "es": "Establecer reserva de respaldo de [[device]] al [[percentage]]%",
+    "fr": "Définir la réserve de sauvegarde de [[device]] à [[percentage]]%",
+    "it": "Imposta la riserva di backup di [[device]] al [[percentage]]%",
+    "no": "Sett [[device]] reserve for backup til [[percentage]]%",
+    "sv": "Ställ in [[device]] backupreserv till [[percentage]]%",
+    "pl": "Ustaw rezerwę kopii zapasowej [[device]] na [[percentage]]%",
+    "ru": "Установить резервную копию [[device]] на [[percentage]]%",
+    "ko": "[[device]] 백업 예약을 [[percentage]]%로 설정",
+    "ar": "تعيين احتياطي النسخ الاحتياطي لجهاز [[device]] إلى [[percentage]]%"
   },
   "args": [
     {
@@ -11,14 +35,38 @@
       "name": "device",
       "filter": "capabilities=backup_reserve",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
       }
     },
     {
       "type": "range",
       "name": "percentage",
       "title": {
-        "en": "Percentage"
+        "en": "Percentage",
+        "nl": "Percentage",
+        "da": "Procentdel",
+        "de": "Prozentsatz",
+        "es": "Porcentaje",
+        "fr": "Pourcentage",
+        "it": "Percentuale",
+        "no": "Prosent",
+        "sv": "Procentandel",
+        "pl": "Procent",
+        "ru": "Процент",
+        "ko": "백분율",
+        "ar": "النسبة المئوية"
       },
       "min": 0,
       "max": 100,

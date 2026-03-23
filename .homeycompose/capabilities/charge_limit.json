@@ -1,13 +1,37 @@
 {
   "type": "number",
   "title": {
-    "en": "Charge Limit"
+    "en": "Charge Limit",
+    "nl": "Oplaadlimiet",
+    "da": "Opladningsgrænse",
+    "de": "Ladegrenze",
+    "es": "Límite de carga",
+    "fr": "Limite de charge",
+    "it": "Limite di carica",
+    "no": "Ladegrense",
+    "sv": "Laddgräns",
+    "pl": "Limit ładowania",
+    "ru": "Предел зарядки",
+    "ko": "충전 한도",
+    "ar": "حد الشحن"
   },
   "getable": true,
   "setable": true,
   "uiComponent": "slider",
   "units": {
-    "en": "%"
+    "en": "%",
+    "nl": "%",
+    "da": "%",
+    "de": "%",
+    "es": "%",
+    "fr": "%",
+    "it": "%",
+    "no": "%",
+    "sv": "%",
+    "pl": "%",
+    "ru": "%",
+    "ko": "%",
+    "ar": "%"
   },
   "min": 0,
   "max": 1,

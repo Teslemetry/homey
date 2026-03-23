@@ -1,13 +1,37 @@
 {
   "type": "number",
   "title": {
-    "en": "Charging Amps"
+    "en": "Charging Amps",
+    "nl": "Oplaadstroo",
+    "da": "Ladeforstærkere",
+    "de": "Ladestrom",
+    "es": "Amperios de carga",
+    "fr": "Ampères de charge",
+    "it": "Ampere di carica",
+    "no": "Ladestrøm",
+    "sv": "Laddningsampere",
+    "pl": "Ampery ładowania",
+    "ru": "Зарядный ток",
+    "ko": "충전 앰프",
+    "ar": "أمبير الشحن"
   },
   "getable": true,
   "setable": true,
   "uiComponent": "slider",
   "units": {
-    "en": "A"
+    "en": "A",
+    "nl": "A",
+    "da": "A",
+    "de": "A",
+    "es": "A",
+    "fr": "A",
+    "it": "A",
+    "no": "A",
+    "sv": "A",
+    "pl": "A",
+    "ru": "А",
+    "ko": "A",
+    "ar": "أ"
   },
   "min": 0,
   "max": 48,

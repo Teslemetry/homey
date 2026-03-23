@@ -1,13 +1,37 @@
 {
   "type": "number",
   "title": {
-    "en": "Minutes to Arrival"
+    "en": "Minutes to Arrival",
+    "nl": "Minuten tot aankomst",
+    "da": "Minutter til ankomst",
+    "de": "Minuten bis zur Ankunft",
+    "es": "Minutos para la llegada",
+    "fr": "Minutes avant l'arrivée",
+    "it": "Minuti all'arrivo",
+    "no": "Minutter til ankomst",
+    "sv": "Minuter till ankomst",
+    "pl": "Minuty do przyjazdu",
+    "ru": "Минут до прибытия",
+    "ko": "도착까지 분",
+    "ar": "الدقائق حتى الوصول"
   },
   "getable": true,
   "setable": false,
   "uiComponent": "sensor",
   "units": {
-    "en": "min"
+    "en": "min",
+    "nl": "min",
+    "da": "min",
+    "de": "min",
+    "es": "min",
+    "fr": "min",
+    "it": "min",
+    "no": "min",
+    "sv": "min",
+    "pl": "min",
+    "ru": "мин",
+    "ko": "분",
+    "ar": "دقيقة"
   },
   "decimals": 0
 }

@@ -1,12 +1,48 @@
 {
   "title": {
-    "en": "Honk horn"
+    "en": "Honk horn",
+    "nl": "Toeteren",
+    "da": "Tud hornet",
+    "de": "Hupe betätigen",
+    "es": "Toque el claxon",
+    "fr": "Klaxonner",
+    "it": "Suona clacson",
+    "no": "Tut hornet",
+    "sv": "Tuta",
+    "pl": "Użyj klaksonu",
+    "ru": "Посигнальте",
+    "ko": "경적 울리기",
+    "ar": "اضغط على البوق"
   },
   "titleFormatted": {
-    "en": "Honk horn on [[device]]"
+    "en": "Honk horn on [[device]]",
+    "nl": "Toeteren op [[device]]",
+    "da": "Tud hornet på [[device]]",
+    "de": "Hupe betätigen auf [[device]]",
+    "es": "Toque el claxon en [[device]]",
+    "fr": "Klaxonner sur [[device]]",
+    "it": "Suona clacson su [[device]]",
+    "no": "Tut hornet på [[device]]",
+    "sv": "Tuta på [[device]]",
+    "pl": "Użyj klaksonu na [[device]]",
+    "ru": "Посигнальте на [[device]]",
+    "ko": "[[device]]에서 경적 울리기",
+    "ar": "اضغط على بوق [[device]]"
   },
   "hint": {
-    "en": "This card triggers the vehicle's horn."
+    "en": "This card triggers the vehicle's horn.",
+    "nl": "Deze kaart activeert de toeter van het voertuig.",
+    "da": "Dette kort aktiverer køretøjets horn.",
+    "de": "Diese Karte löst die Hupe des Fahrzeugs aus.",
+    "es": "Esta tarjeta activa el claxon del vehículo.",
+    "fr": "Cette carte déclenche le klaxon du véhicule.",
+    "it": "Questa carta attiva il clacson del veicolo.",
+    "no": "Dette kortet utløser kjøretøyets horn.",
+    "sv": "Detta kort aktiverar fordonets tuta.",
+    "pl": "Ta karta uruchamia klakson pojazdu.",
+    "ru": "Эта карта активирует сигнал автомобиля.",
+    "ko": "이 카드는 차량의 경적을 울립니다.",
+    "ar": "تقوم هذه البطاقة بتفعيل بوق المركبة."
   },
   "args": [
     {
@@ -14,7 +50,19 @@
       "name": "device",
       "filter": "capabilities=button.honk",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
       }
     }
   ]

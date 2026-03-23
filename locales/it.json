@@ -1,0 +1,9 @@
+{
+  "error": {
+    "invalid_token": "Token non valido. Per favore riprova.",
+    "invalid_refresh_token": "Token di refresh non valido. Per favore riautenticati.",
+    "subscription_required": "Abbonamento richiesto. Per favore controlla il tuo abbonamento a Teslemetry.",
+    "could_not_wake_vehicle": "Il veicolo non si è svegliato. Per favore riprova.",
+    "insufficient_credits": "Crediti comando insufficienti. Per favore acquista crediti aggiuntivi per eseguire i comandi."
+  }
+}

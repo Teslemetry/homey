@@ -19,10 +19,34 @@
     "local"
   ],
   "name": {
-    "en": "Teslemetry"
+    "en": "Teslemetry",
+    "nl": "Teslemetry",
+    "da": "Teslemetry",
+    "de": "Teslemetry",
+    "es": "Teslemetry",
+    "fr": "Teslemetry",
+    "it": "Teslemetry",
+    "no": "Teslemetry",
+    "sv": "Teslemetry",
+    "pl": "Teslemetry",
+    "ru": "Teslemetry",
+    "ko": "Teslemetry",
+    "ar": "تسليميتري"
   },
   "description": {
-    "en": "Simple and secure access to the Tesla Fleet API and real-time Tesla Fleet Telemetry"
+    "en": "Simple and secure access to the Tesla Fleet API and real-time Tesla Fleet Telemetry",
+    "nl": "Eenvoudige en veilige toegang tot de Tesla Fleet API en real-time Tesla Fleet Telemetrie",
+    "da": "Simpel og sikker adgang til Tesla Fleet API og real-time Tesla Fleet Telemetri",
+    "de": "Einfacher und sicherer Zugang zur Tesla Fleet API und Echtzeit-Tesla Fleet Telemetrie",
+    "es": "Acceso simple y seguro a la API de Tesla Fleet y Telemetría de Tesla Fleet en tiempo real",
+    "fr": "Accès simple et sécurisé à l'API Tesla Fleet et à la télémétrie Tesla Fleet en temps réel",
+    "it": "Accesso semplice e sicuro all'API di Tesla Fleet e telemetria Tesla Fleet in tempo reale",
+    "no": "Enkel og sikker tilgang til Tesla Fleet API og sanntid Tesla Fleet Telemetri",
+    "sv": "Enkel och säker tillgång till Tesla Fleet API och realtids Tesla Fleet Telemetri",
+    "pl": "Prosty i bezpieczny dostęp do API floty Tesli i telemetrii floty Tesli w czasie rzeczywistym",
+    "ru": "Простой и безопасный доступ к API автопарка Tesla и телеметрии автопарка Tesla в реальном времени",
+    "ko": "Tesla Fleet API 및 실시간 Tesla Fleet Telemetry에 간단하고 안전하게 액세스",
+    "ar": "وصول بسيط وآمن إلى API أسطول Tesla وTelemetry أسطول Tesla في الوقت الفعلي"
   },
   "category": [
     "energy"
@@ -49,13 +73,49 @@
     "triggers": [
       {
         "title": {
-          "en": "The export setting has changed"
+          "en": "The export setting has changed",
+          "nl": "De exportinstelling is gewijzigd",
+          "da": "Eksportindstillingen er ændret",
+          "de": "Die Exporteinstellung wurde geändert",
+          "es": "La configuración de exportación ha cambiado",
+          "fr": "Le paramètre d'exportation a changé",
+          "it": "L'impostazione di esportazione è cambiata",
+          "no": "Eksportinnstillingen har blitt endret",
+          "sv": "Exportinställningen har ändrats",
+          "pl": "Ustawienie eksportu zostało zmienione",
+          "ru": "Настройка экспорта изменилась",
+          "ko": "내보내기 설정이 변경되었습니다",
+          "ar": "تم تغيير إعداد التصدير"
         },
         "titleFormatted": {
-          "en": "The export setting has changed on [[device]]"
+          "en": "The export setting has changed on [[device]]",
+          "nl": "De exportinstelling is gewijzigd op [[device]]",
+          "da": "Eksportindstillingen er ændret på [[device]]",
+          "de": "Die Exporteinstellung wurde auf [[device]] geändert",
+          "es": "La configuración de exportación ha cambiado en [[device]]",
+          "fr": "Le paramètre d'exportation a changé sur [[device]]",
+          "it": "L'impostazione di esportazione è cambiata su [[device]]",
+          "no": "Eksportinnstillingen har blitt endret på [[device]]",
+          "sv": "Exportinställningen har ändrats på [[device]]",
+          "pl": "Ustawienie eksportu zostało zmienione na [[device]]",
+          "ru": "Настройка экспорта изменилась на [[device]]",
+          "ko": "[[device]]에서 내보내기 설정이 변경되었습니다",
+          "ar": "تم تغيير إعداد التصدير على [[device]]"
         },
         "hint": {
-          "en": "This card triggers when the export setting changes."
+          "en": "This card triggers when the export setting changes.",
+          "nl": "Deze kaart wordt geactiveerd wanneer de exportinstelling verandert.",
+          "da": "Dette kort udløses, når eksportindstillingen ændres.",
+          "de": "Diese Karte wird ausgelöst, wenn die Exporteinstellung geändert wird.",
+          "es": "Esta tarjeta se activa cuando cambia la configuración de exportación.",
+          "fr": "Cette carte se déclenche lorsque le paramètre d'exportation change.",
+          "it": "Questa scheda si attiva quando cambia l'impostazione di esportazione.",
+          "no": "Dette kortet aktiveres når eksportinnstillingen endres.",
+          "sv": "Detta kort utlöses när exportinställningen ändras.",
+          "pl": "Ta karta uruchamia się, gdy zmienia się ustawienie eksportu.",
+          "ru": "Эта карта срабатывает, когда изменяется настройка экспорта.",
+          "ko": "이 카드는 내보내기 설정이 변경될 때 실행됩니다.",
+          "ar": "يتم تفعيل هذه البطاقة عند تغيير إعداد التصدير."
         },
         "args": [
           {
@@ -63,7 +123,19 @@
             "name": "device",
             "filter": "capabilities=allow_export",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
             }
           }
         ],
@@ -72,10 +144,34 @@
             "name": "allow_export",
             "type": "string",
             "title": {
-              "en": "Mode"
+              "en": "Mode",
+              "nl": "Modus",
+              "da": "Tilstand",
+              "de": "Modus",
+              "es": "Modo",
+              "fr": "Mode",
+              "it": "Modalità",
+              "no": "Modus",
+              "sv": "Läge",
+              "pl": "Tryb",
+              "ru": "Режим",
+              "ko": "모드",
+              "ar": "الوضع"
             },
             "example": {
-              "en": "Battery and Solar"
+              "en": "Battery and Solar",
+              "nl": "Batterij en Zon",
+              "da": "Batteri og solenergi",
+              "de": "Batterie und Solar",
+              "es": "Batería y Solar",
+              "fr": "Batterie et Solaire",
+              "it": "Batteria e solare",
+              "no": "Batteri og solenergi",
+              "sv": "Batteri och solenergi",
+              "pl": "Bateria i Słońce",
+              "ru": "Батарея и Солнечный",
+              "ko": "배터리 및 태양열",
+              "ar": "البطارية والطاقة الشمسية"
             }
           }
         ],
@@ -83,13 +179,49 @@
       },
       {
         "title": {
-          "en": "The backup reserve has changed"
+          "en": "The backup reserve has changed",
+          "nl": "De back-upreserve is gewijzigd",
+          "da": "Backupreserven er ændret",
+          "de": "Die Sicherungsreserve hat sich geändert",
+          "es": "La reserva de respaldo ha cambiado",
+          "fr": "La réserve de sauvegarde a changé",
+          "it": "La riserva di backup è cambiata",
+          "no": "Sikkerhetsreserven har endret seg",
+          "sv": "Säkerhetsreserven har ändrats",
+          "pl": "Rezerwa kopii zapasowej została zmieniona",
+          "ru": "Резервная копия изменилась",
+          "ko": "백업 예비가 변경되었습니다",
+          "ar": "تم تغيير احتياطي النسخ الاحتياطي"
         },
         "titleFormatted": {
-          "en": "The backup reserve has changed on [[device]]"
+          "en": "The backup reserve has changed on [[device]]",
+          "nl": "De back-upreserve is veranderd op [[device]]",
+          "da": "Backupreserven er ændret på [[device]]",
+          "de": "Die Sicherungsreserve hat sich auf [[device]] geändert",
+          "es": "La reserva de respaldo ha cambiado en [[device]]",
+          "fr": "La réserve de sauvegarde a changé sur [[device]]",
+          "it": "La riserva di backup è cambiata su [[device]]",
+          "no": "Sikkerhetsreserven har endret seg på [[device]]",
+          "sv": "Säkerhetsreserven har ändrats på [[device]]",
+          "pl": "Rezerwa kopii zapasowej została zmieniona na [[device]]",
+          "ru": "Резервная копия изменилась на [[device]]",
+          "ko": "[[device]]에서 백업 예비가 변경되었습니다",
+          "ar": "تم تغيير احتياطي النسخ الاحتياطي على [[device]]"
         },
         "hint": {
-          "en": "This card triggers when the backup reserve percentage changes."
+          "en": "This card triggers when the backup reserve percentage changes.",
+          "nl": "Deze kaart wordt geactiveerd wanneer het percentage back-upreserve verandert.",
+          "da": "Dette kort udløses, når procentdelen af backupreserven ændres.",
+          "de": "Diese Karte wird ausgelöst, wenn sich der Prozentsatz der Sicherungsreserve ändert.",
+          "es": "Esta tarjeta se activa cuando cambia el porcentaje de reserva de respaldo.",
+          "fr": "Cette carte se déclenche lorsque le pourcentage de la réserve de sauvegarde change.",
+          "it": "Questa scheda si attiva quando cambia la percentuale della riserva di backup.",
+          "no": "Dette kortet trigges når sikkerhetsreserveprosenten endres.",
+          "sv": "Detta kort utlöses när säkerhetsreservens procentsats ändras.",
+          "pl": "Ta karta jest wyzwalana, gdy zmienia się procent rezerwy kopii zapasowej.",
+          "ru": "Эта карта срабатывает, когда изменяется процент резервного копирования.",
+          "ko": "백업 예비 비율이 변경되면 이 카드가 활성화됩니다.",
+          "ar": "تُفعّل هذه البطاقة عند تغير نسبة احتياطي النسخ الاحتياطي."
         },
         "args": [
           {
@@ -97,7 +229,19 @@
             "name": "device",
             "filter": "capabilities=backup_reserve",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
             }
           }
         ],
@@ -106,7 +250,19 @@
             "name": "backup_reserve",
             "type": "number",
             "title": {
-              "en": "Reserve"
+              "en": "Reserve",
+              "nl": "Reserve",
+              "da": "Reserve",
+              "de": "Reserve",
+              "es": "Reserva",
+              "fr": "Réserve",
+              "it": "Riserva",
+              "no": "Reserve",
+              "sv": "Reserv",
+              "pl": "Rezerwa",
+              "ru": "Резерв",
+              "ko": "예비",
+              "ar": "احتياطي"
             },
             "example": {
               "en": "20"
@@ -117,13 +273,49 @@
       },
       {
         "title": {
-          "en": "The operation mode has changed"
+          "en": "The operation mode has changed",
+          "nl": "De bedieningsmodus is gewijzigd",
+          "da": "Driftsindstillingen er ændret",
+          "de": "Der Betriebsmodus hat sich geändert",
+          "es": "El modo de operación ha cambiado",
+          "fr": "Le mode de fonctionnement a changé",
+          "it": "Il modo di funzionamento è cambiato",
+          "no": "Driftsmodus er endret",
+          "sv": "Driftläget har ändrats",
+          "pl": "Tryb operacyjny został zmieniony",
+          "ru": "Режим работы изменился",
+          "ko": "작동 모드가 변경되었습니다",
+          "ar": "تم تغيير وضع التشغيل"
         },
         "titleFormatted": {
-          "en": "The operation mode has changed on [[device]]"
+          "en": "The operation mode has changed on [[device]]",
+          "nl": "De bedieningsmodus van [[device]] is gewijzigd",
+          "da": "Driftsindstillingen er ændret på [[device]]",
+          "de": "Der Betriebsmodus hat sich auf [[device]] geändert",
+          "es": "El modo de operación ha cambiado en [[device]]",
+          "fr": "Le mode de fonctionnement a changé sur [[device]]",
+          "it": "Il modo di funzionamento è cambiato su [[device]]",
+          "no": "Driftsmodus er endret på [[device]]",
+          "sv": "Driftläget har ändrats på [[device]]",
+          "pl": "Tryb operacyjny został zmieniony na [[device]]",
+          "ru": "Режим работы изменился на [[device]]",
+          "ko": "[[device]]의 작동 모드가 변경되었습니다",
+          "ar": "تم تغيير وضع التشغيل على [[device]]"
         },
         "hint": {
-          "en": "This card triggers when the operation mode changes."
+          "en": "This card triggers when the operation mode changes.",
+          "nl": "Deze kaart activeert wanneer de bedieningsmodus verandert.",
+          "da": "Dette kort aktiveres, når driftsindstillingen ændres.",
+          "de": "Diese Karte wird ausgelöst, wenn sich der Betriebsmodus ändert.",
+          "es": "Esta tarjeta se activa cuando cambia el modo de operación.",
+          "fr": "Cette carte se déclenche lorsque le mode de fonctionnement change.",
+          "it": "Questa scheda si attiva quando il modo di funzionamento cambia.",
+          "no": "Dette kortet utløses når driftsmodus endres.",
+          "sv": "Detta kort utlöses när driftläget ändras.",
+          "pl": "Ta karta uruchamia się, gdy zmienia się tryb operacyjny.",
+          "ru": "Эта карта срабатывает при изменении режима работы.",
+          "ko": "작동 모드가 변경되면 이 카드가 트리거됩니다.",
+          "ar": "تتفاعل هذه البطاقة عندما يتغير وضع التشغيل."
         },
         "args": [
           {
@@ -131,7 +323,19 @@
             "name": "device",
             "filter": "capabilities=operation_mode",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
             }
           }
         ],
@@ -140,10 +344,34 @@
             "name": "operation_mode",
             "type": "string",
             "title": {
-              "en": "Mode"
+              "en": "Mode",
+              "nl": "Modus",
+              "da": "Tilstand",
+              "de": "Modus",
+              "es": "Modo",
+              "fr": "Mode",
+              "it": "Modalità",
+              "no": "Modus",
+              "sv": "Läge",
+              "pl": "Tryb",
+              "ru": "Режим",
+              "ko": "모드",
+              "ar": "الوضع"
             },
             "example": {
-              "en": "Self Consumption"
+              "en": "Self Consumption",
+              "nl": "Zelfverbruik",
+              "da": "Egenforbrug",
+              "de": "Eigenverbrauch",
+              "es": "Autoconsumo",
+              "fr": "Autoconsommation",
+              "it": "Auto consumo",
+              "no": "Egenforbruk",
+              "sv": "Självförbrukning",
+              "pl": "Autokonsumpcja",
+              "ru": "Самопотребление",
+              "ko": "자가소비",
+              "ar": "الاستهلاك الذاتي"
             }
           }
         ],
@@ -151,13 +379,49 @@
       },
       {
         "title": {
-          "en": "The steering wheel heater level has changed"
+          "en": "The steering wheel heater level has changed",
+          "nl": "Het stuurverwarmingsniveau is gewijzigd",
+          "da": "Ratvarmeniveauet er ændret",
+          "de": "Die Lenkradheizstufe hat sich geändert",
+          "es": "El nivel del calefactor del volante ha cambiado",
+          "fr": "Le niveau du chauffage du volant a changé",
+          "it": "Il livello del riscaldatore del volante è cambiato",
+          "no": "Rattvarmernivået er endret",
+          "sv": "Rattvärmenivån har ändrats",
+          "pl": "Poziom grzania kierownicy został zmieniony",
+          "ru": "Уровень подогрева рулевого колеса изменился",
+          "ko": "스티어링 휠 히터 레벨이 변경되었습니다",
+          "ar": "تم تغيير مستوى سخان عجلة القيادة"
         },
         "titleFormatted": {
-          "en": "The steering wheel heater level has changed on [[device]]"
+          "en": "The steering wheel heater level has changed on [[device]]",
+          "nl": "Het stuurverwarmingsniveau is gewijzigd op [[device]]",
+          "da": "Ratvarmeniveauet er ændret på [[device]]",
+          "de": "Die Lenkradheizstufe hat sich auf [[device]] geändert",
+          "es": "El nivel del calefactor del volante ha cambiado en [[device]]",
+          "fr": "Le niveau du chauffage du volant a changé sur [[device]]",
+          "it": "Il livello del riscaldatore del volante è cambiato su [[device]]",
+          "no": "Rattvarmernivået er endret på [[device]]",
+          "sv": "Rattvärmenivån har ändrats på [[device]]",
+          "pl": "Poziom grzania kierownicy został zmieniony na [[device]]",
+          "ru": "Уровень подогрева рулевого колеса изменился на [[device]]",
+          "ko": "스티어링 휠 히터 레벨이 [[device]]에서 변경되었습니다",
+          "ar": "تم تغيير مستوى سخان عجلة القيادة على [[device]]"
         },
         "hint": {
-          "en": "This card triggers when the steering wheel heater level changes."
+          "en": "This card triggers when the steering wheel heater level changes.",
+          "nl": "Deze kaart wordt geactiveerd wanneer het stuurverwarmingsniveau verandert.",
+          "da": "Dette kort aktiveres, når ratvarmeniveauet ændres.",
+          "de": "Diese Karte wird ausgelöst, wenn sich die Lenkradheizstufe ändert.",
+          "es": "Esta tarjeta se activa cuando cambia el nivel del calefactor del volante.",
+          "fr": "Cette carte se déclenche lorsque le niveau du chauffage du volant change.",
+          "it": "Questa carta si attiva quando il livello del riscaldatore del volante cambia.",
+          "no": "Dette kortet utløses når rattvarmernivået endres.",
+          "sv": "Detta kort utlöses när rattvärmenivån ändras.",
+          "pl": "Ta karta zostaje uruchomiona, gdy poziom grzania kierownicy się zmienia.",
+          "ru": "Эта карта активируется, когда уровень подогрева рулевого колеса меняется.",
+          "ko": "스티어링 휠 히터 레벨이 변경되면 이 카드가 작동합니다.",
+          "ar": "يتم تفعيل هذه البطاقة عند تغيير مستوى سخان عجلة القيادة."
         },
         "args": [
           {
@@ -165,7 +429,19 @@
             "name": "device",
             "filter": "capabilities=steering_wheel_heater",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
             }
           }
         ],
@@ -174,10 +450,34 @@
             "name": "steering_wheel_heater",
             "type": "string",
             "title": {
-              "en": "Level"
+              "en": "Level",
+              "nl": "Niveau",
+              "da": "Niveau",
+              "de": "Stufe",
+              "es": "Nivel",
+              "fr": "Niveau",
+              "it": "Livello",
+              "no": "Nivå",
+              "sv": "Nivå",
+              "pl": "Poziom",
+              "ru": "Уровень",
+              "ko": "레벨",
+              "ar": "المستوى"
             },
             "example": {
-              "en": "High"
+              "en": "High",
+              "nl": "Hoog",
+              "da": "Høj",
+              "de": "Hoch",
+              "es": "Alto",
+              "fr": "Élevé",
+              "it": "Alto",
+              "no": "Høy",
+              "sv": "Hög",
+              "pl": "Wysoki",
+              "ru": "Высокий",
+              "ko": "높음",
+              "ar": "عالي"
             }
           }
         ],
@@ -186,7 +486,19 @@
       {
         "id": "onoff.charge_grid_true",
         "title": {
-          "en": "Charge from grid has been enabled"
+          "en": "Charge from grid has been enabled",
+          "nl": "Opladen via het net is ingeschakeld",
+          "da": "Opladning fra nettet er aktiveret",
+          "de": "Laden vom Netz wurde aktiviert",
+          "es": "La carga desde la red se ha habilitado",
+          "fr": "La charge depuis le réseau a été activée",
+          "it": "La ricarica dalla rete è stata abilitata",
+          "no": "Lading fra nettet er aktivert",
+          "sv": "Laddning från nätet har aktiverats",
+          "pl": "Ładowanie z sieci zostało włączone",
+          "ru": "Зарядка от сети включена",
+          "ko": "그리드에서 충전이 활성화되었습니다",
+          "ar": "تم تمكين الشحن من الشبكة"
         },
         "args": [
           {
@@ -199,7 +511,19 @@
       {
         "id": "onoff.charge_grid_false",
         "title": {
-          "en": "Charge from grid has been disabled"
+          "en": "Charge from grid has been disabled",
+          "nl": "Opladen via het net is uitgeschakeld",
+          "da": "Opladning fra nettet er deaktiveret",
+          "de": "Laden vom Netz wurde deaktiviert",
+          "es": "La carga desde la red se ha deshabilitado",
+          "fr": "La charge depuis le réseau a été désactivée",
+          "it": "La ricarica dalla rete è stata disabilitata",
+          "no": "Lading fra nettet er deaktivert",
+          "sv": "Laddning från nätet har inaktiverats",
+          "pl": "Ładowanie z sieci zostało wyłączone",
+          "ru": "Зарядка от сети отключена",
+          "ko": "그리드에서 충전이 비활성화되었습니다",
+          "ar": "تم تعطيل الشحن من الشبكة"
         },
         "args": [
           {
@@ -212,7 +536,19 @@
       {
         "id": "onoff.storm_true",
         "title": {
-          "en": "Storm watch has been enabled"
+          "en": "Storm watch has been enabled",
+          "nl": "Stormwaarschuwing is ingeschakeld",
+          "da": "Stormvagt er aktiveret",
+          "de": "Sturmüberwachung wurde aktiviert",
+          "es": "La alerta de tormenta se ha habilitado",
+          "fr": "La veille tempête a été activée",
+          "it": "Il monitoraggio delle tempeste è stato abilitato",
+          "no": "Stormvarsling er aktivert",
+          "sv": "Stormbevakning har aktiverats",
+          "pl": "Nadzór burzowy został włączony",
+          "ru": "Штормовое наблюдение включено",
+          "ko": "폭풍 감시가 활성화되었습니다",
+          "ar": "تم تمكين مراقبة العاصفة"
         },
         "args": [
           {
@@ -225,7 +561,19 @@
       {
         "id": "onoff.storm_false",
         "title": {
-          "en": "Storm watch has been disabled"
+          "en": "Storm watch has been disabled",
+          "nl": "Stormwaarschuwing is uitgeschakeld",
+          "da": "Stormvagt er deaktiveret",
+          "de": "Sturmüberwachung wurde deaktiviert",
+          "es": "La alerta de tormenta se ha deshabilitado",
+          "fr": "La veille tempête a été désactivée",
+          "it": "Il monitoraggio delle tempeste è stato disabilitato",
+          "no": "Stormvarsling er deaktivert",
+          "sv": "Stormbevakning har inaktiverats",
+          "pl": "Nadzór burzowy został wyłączony",
+          "ru": "Штормовое наблюдение отключено",
+          "ko": "폭풍 감시가 비활성화되었습니다",
+          "ar": "تم تعطيل مراقبة العاصفة"
         },
         "args": [
           {
@@ -238,7 +586,19 @@
       {
         "id": "alarm_generic.storm_true",
         "title": {
-          "en": "The storm watch alert has been activated"
+          "en": "The storm watch alert has been activated",
+          "nl": "De stormwaarschuwing is geactiveerd",
+          "da": "Stormvagten er blevet aktiveret",
+          "de": "Der Sturmwarnalarm wurde aktiviert",
+          "es": "La alerta de vigilancia de tormenta se ha activado",
+          "fr": "L'alerte de veille tempête a été activée",
+          "it": "L'allerta monitoraggio tempesta è stata attivata",
+          "no": "Stormvarselet er aktivert",
+          "sv": "Stormvarningen har aktiverats",
+          "pl": "Alarm burzowy został aktywowany",
+          "ru": "Штормовое предупреждение активировано",
+          "ko": "폭풍 감시 경보가 활성화되었습니다",
+          "ar": "تم تفعيل تنبيه مراقبة العاصفة"
         },
         "args": [
           {
@@ -251,7 +611,19 @@
       {
         "id": "alarm_generic.storm_false",
         "title": {
-          "en": "The storm watch alert has been deactivated"
+          "en": "The storm watch alert has been deactivated",
+          "nl": "De stormwaarschuwing is gedeactiveerd",
+          "da": "Stormvagten er blevet deaktiveret",
+          "de": "Der Sturmwarnalarm wurde deaktiviert",
+          "es": "La alerta de vigilancia de tormenta se ha desactivado",
+          "fr": "L'alerte de veille tempête a été désactivée",
+          "it": "L'allerta monitoraggio tempesta è stata disattivata",
+          "no": "Stormvarselet er deaktivert",
+          "sv": "Stormvarningen har inaktiverats",
+          "pl": "Alarm burzowy został dezaktywowany",
+          "ru": "Штормовое предупреждение деактивировано",
+          "ko": "폭풍 감시 경보가 비활성화되었습니다",
+          "ar": "تم تعطيل تنبيه مراقبة العاصفة"
         },
         "args": [
           {
@@ -264,7 +636,19 @@
       {
         "id": "alarm_generic.off_grid_true",
         "title": {
-          "en": "Grid power has been lost"
+          "en": "Grid power has been lost",
+          "nl": "Netstroom is uitgevallen",
+          "da": "Netstrøm er blevet afbrudt",
+          "de": "Netzstrom ist ausgefallen",
+          "es": "Se ha perdido la energía de la red",
+          "fr": "L'alimentation électrique a été coupée",
+          "it": "La corrente di rete è stata persa",
+          "no": "Nettstrømmen har blitt borte",
+          "sv": "Strömmen från elnätet har förlorats",
+          "pl": "Zasilanie sieciowe zostało utracone",
+          "ru": "Сетевая электроэнергия отключена",
+          "ko": "전력망의 전기가 끊겼습니다",
+          "ar": "تم فقدان طاقة الشبكة"
         },
         "args": [
           {
@@ -277,7 +661,19 @@
       {
         "id": "alarm_generic.off_grid_false",
         "title": {
-          "en": "Grid power has been restored"
+          "en": "Grid power has been restored",
+          "nl": "Netstroom is hersteld",
+          "da": "Netstrømmen er blevet genoprettet",
+          "de": "Netzstrom wurde wiederhergestellt",
+          "es": "La energía de la red ha sido restaurada",
+          "fr": "L'alimentation électrique a été rétablie",
+          "it": "La corrente di rete è stata ripristinata",
+          "no": "Nettstrømmen er blitt gjenopprettet",
+          "sv": "Strömmen från elnätet har återställts",
+          "pl": "Zasilanie sieciowe zostało przywrócone",
+          "ru": "Сетевая электроэнергия восстановлена",
+          "ko": "전력망의 전력이 복구되었습니다",
+          "ar": "تم استعادة طاقة الشبكة"
         },
         "args": [
           {
@@ -290,7 +686,19 @@
       {
         "id": "alarm_generic.island_true",
         "title": {
-          "en": "Island mode has been activated"
+          "en": "Island mode has been activated",
+          "nl": "Eilandmodus is geactiveerd",
+          "da": "Ø-tilstand er blevet aktiveret",
+          "de": "Inselmodus wurde aktiviert",
+          "es": "El modo isla ha sido activado",
+          "fr": "Le mode île a été activé",
+          "it": "La modalità isola è stata attivata",
+          "no": "Øy-modus har blitt aktivert",
+          "sv": "Ö-läge har aktiverats",
+          "pl": "Tryb wyspowy został włączony",
+          "ru": "Режим изоляции был активирован",
+          "ko": "섬 모드가 활성화되었습니다",
+          "ar": "تم تفعيل وضع الجزيرة"
         },
         "args": [
           {
@@ -303,7 +711,19 @@
       {
         "id": "alarm_generic.island_false",
         "title": {
-          "en": "Island mode has been deactivated"
+          "en": "Island mode has been deactivated",
+          "nl": "Eilandmodus is gedeactiveerd",
+          "da": "Ø-tilstand er blevet deaktiveret",
+          "de": "Inselmodus wurde deaktiviert",
+          "es": "El modo isla ha sido desactivado",
+          "fr": "Le mode île a été désactivé",
+          "it": "La modalità isola è stata disattivata",
+          "no": "Øy-modus har blitt deaktivert",
+          "sv": "Ö-läge har avaktiverats",
+          "pl": "Tryb wyspowy został wyłączony",
+          "ru": "Режим изоляции был деактивирован",
+          "ko": "섬 모드가 비활성화되었습니다",
+          "ar": "تم إلغاء تفعيل وضع الجزيرة"
         },
         "args": [
           {
@@ -316,7 +736,19 @@
       {
         "id": "onoff.charge_port_true",
         "title": {
-          "en": "The charge port has opened"
+          "en": "The charge port has opened",
+          "nl": "De laadpoort is geopend",
+          "da": "Ladeporten er åbnet",
+          "de": "Der Ladeanschluss hat sich geöffnet",
+          "es": "El puerto de carga se ha abierto",
+          "fr": "Le port de charge est ouvert",
+          "it": "La porta di ricarica è aperta",
+          "no": "Ladeporten har åpnet",
+          "sv": "Laddningsporten har öppnats",
+          "pl": "Port ładowania został otwarty",
+          "ru": "Порт зарядки открыт",
+          "ko": "충전 포트가 열렸습니다",
+          "ar": "تم فتح منفذ الشحن"
         },
         "args": [
           {
@@ -329,7 +761,19 @@
       {
         "id": "onoff.charge_port_false",
         "title": {
-          "en": "The charge port has closed"
+          "en": "The charge port has closed",
+          "nl": "De laadpoort is gesloten",
+          "da": "Ladeporten er lukket",
+          "de": "Der Ladeanschluss hat sich geschlossen",
+          "es": "El puerto de carga se ha cerrado",
+          "fr": "Le port de charge est fermé",
+          "it": "La porta di ricarica è chiusa",
+          "no": "Ladeporten har lukket",
+          "sv": "Laddningsporten har stängts",
+          "pl": "Port ładowania został zamknięty",
+          "ru": "Порт зарядки закрыт",
+          "ko": "충전 포트가 닫혔습니다",
+          "ar": "تم إغلاق منفذ الشحن"
         },
         "args": [
           {
@@ -342,7 +786,19 @@
       {
         "id": "onoff.sentry_true",
         "title": {
-          "en": "Sentry mode has been enabled"
+          "en": "Sentry mode has been enabled",
+          "nl": "De bewakingsmodus is ingeschakeld",
+          "da": "Sentineltilstand er aktiveret",
+          "de": "Wächtermodus wurde aktiviert",
+          "es": "El modo centinela ha sido activado",
+          "fr": "Le mode sentinelle a été activé",
+          "it": "La modalità sentinella è stata attivata",
+          "no": "Vaktmodus er aktivert",
+          "sv": "Vaktläget har aktiverats",
+          "pl": "Tryb strażnika został włączony",
+          "ru": "Режим охраны включен",
+          "ko": "센트리 모드가 활성화되었습니다",
+          "ar": "تم تفعيل وضع الحراسة"
         },
         "args": [
           {
@@ -355,7 +811,19 @@
       {
         "id": "onoff.sentry_false",
         "title": {
-          "en": "Sentry mode has been disabled"
+          "en": "Sentry mode has been disabled",
+          "nl": "De bewakingsmodus is uitgeschakeld",
+          "da": "Sentineltilstand er deaktiveret",
+          "de": "Wächtermodus wurde deaktiviert",
+          "es": "El modo centinela ha sido desactivado",
+          "fr": "Le mode sentinelle a été désactivé",
+          "it": "La modalità sentinella è stata disattivata",
+          "no": "Vaktmodus er deaktivert",
+          "sv": "Vaktläget har avaktiverats",
+          "pl": "Tryb strażnika został wyłączony",
+          "ru": "Режим охраны отключен",
+          "ko": "센트리 모드가 비활성화되었습니다",
+          "ar": "تم تعطيل وضع الحراسة"
         },
         "args": [
           {
@@ -368,7 +836,19 @@
       {
         "id": "onoff.frunk_true",
         "title": {
-          "en": "The frunk has opened"
+          "en": "The frunk has opened",
+          "nl": "De frunk is geopend",
+          "da": "Frunken er åbnet",
+          "de": "Der Frunk hat sich geöffnet",
+          "es": "El maletero delantero se ha abierto",
+          "fr": "Le coffre avant est ouvert",
+          "it": "Il cofono anteriore è aperto",
+          "no": "Frunken har åpnet",
+          "sv": "Frunken har öppnats",
+          "pl": "Przedni bagażnik został otwarty",
+          "ru": "Передний багажник открыт",
+          "ko": "프렁크가 열렸습니다",
+          "ar": "تم فتح الصندوق الأمامي"
         },
         "args": [
           {
@@ -381,7 +861,19 @@
       {
         "id": "onoff.frunk_false",
         "title": {
-          "en": "The frunk has closed"
+          "en": "The frunk has closed",
+          "nl": "De frunk is gesloten",
+          "da": "Frunken er lukket",
+          "de": "Der Frunk hat sich geschlossen",
+          "es": "El maletero delantero se ha cerrado",
+          "fr": "Le coffre avant est fermé",
+          "it": "Il cofono anteriore è chiuso",
+          "no": "Frunken har lukket",
+          "sv": "Frunken har stängts",
+          "pl": "Przedni bagażnik został zamknięty",
+          "ru": "Передний багажник закрыт",
+          "ko": "프렁크가 닫혔습니다",
+          "ar": "تم إغلاق الصندوق الأمامي"
         },
         "args": [
           {
@@ -394,7 +886,19 @@
       {
         "id": "onoff.trunk_true",
         "title": {
-          "en": "The trunk has opened"
+          "en": "The trunk has opened",
+          "nl": "De kofferbak is geopend",
+          "da": "Baggagerummet er åbnet",
+          "de": "Der Kofferraum hat sich geöffnet",
+          "es": "El maletero se ha abierto",
+          "fr": "Le coffre est ouvert",
+          "it": "Il bagagliaio è aperto",
+          "no": "Bagasjerommet har åpnet",
+          "sv": "Bagageutrymmet har öppnats",
+          "pl": "Bagażnik został otwarty",
+          "ru": "Багажник открыт",
+          "ko": "트렁크가 열렸습니다",
+          "ar": "تم فتح صندوق السيارة"
         },
         "args": [
           {
@@ -407,7 +911,19 @@
       {
         "id": "onoff.trunk_false",
         "title": {
-          "en": "The trunk has closed"
+          "en": "The trunk has closed",
+          "nl": "De kofferbak is gesloten",
+          "da": "Baggagerummet er lukket",
+          "de": "Der Kofferraum hat sich geschlossen",
+          "es": "El maletero se ha cerrado",
+          "fr": "Le coffre est fermé",
+          "it": "Il bagagliaio è chiuso",
+          "no": "Bagasjerommet har lukket",
+          "sv": "Bagageutrymmet har stängts",
+          "pl": "Bagażnik został zamknięty",
+          "ru": "Багажник закрыт",
+          "ko": "트렁크가 닫혔습니다",
+          "ar": "تم إغلاق صندوق السيارة"
         },
         "args": [
           {
@@ -420,7 +936,19 @@
       {
         "id": "onoff.guest_mode_true",
         "title": {
-          "en": "Guest mode has been enabled"
+          "en": "Guest mode has been enabled",
+          "nl": "Gastmodus is ingeschakeld",
+          "da": "Gæstetilstand er aktiveret",
+          "de": "Gastmodus wurde aktiviert",
+          "es": "El modo invitado ha sido activado",
+          "fr": "Le mode invité a été activé",
+          "it": "La modalità ospite è stata attivata",
+          "no": "Gjestemodus er aktivert",
+          "sv": "Gästläget har aktiverats",
+          "pl": "Tryb gościa został włączony",
+          "ru": "Гостевой режим включен",
+          "ko": "게스트 모드가 활성화되었습니다",
+          "ar": "تم تفعيل وضع الضيف"
         },
         "args": [
           {
@@ -433,7 +961,19 @@
       {
         "id": "onoff.guest_mode_false",
         "title": {
-          "en": "Guest mode has been disabled"
+          "en": "Guest mode has been disabled",
+          "nl": "Gastmodus is uitgeschakeld",
+          "da": "Gæstetilstand er deaktiveret",
+          "de": "Gastmodus wurde deaktiviert",
+          "es": "El modo invitado ha sido desactivado",
+          "fr": "Le mode invité a été désactivé",
+          "it": "La modalità ospite è stata disattivata",
+          "no": "Gjestemodus er deaktivert",
+          "sv": "Gästläget har avaktiverats",
+          "pl": "Tryb gościa został wyłączony",
+          "ru": "Гостевой режим отключен",
+          "ko": "게스트 모드가 비활성화되었습니다",
+          "ar": "تم تعطيل وضع الضيف"
         },
         "args": [
           {
@@ -446,7 +986,19 @@
       {
         "id": "locked.charge_latch_true",
         "title": {
-          "en": "The charge port latch has engaged"
+          "en": "The charge port latch has engaged",
+          "nl": "De vergrendeling van de laadpoort is geactiveerd",
+          "da": "Låsen på ladeporten er aktiveret",
+          "de": "Der Ladeanschlussraster hat sich eingerastet",
+          "es": "El pestillo del puerto de carga se ha activado",
+          "fr": "Le loquet du port de charge est engagé",
+          "it": "La chiusura della porta di ricarica è inserita",
+          "no": "Låsen til ladeporten er låst",
+          "sv": "Laddportens spärr har aktiverats",
+          "pl": "Zamek portu ładowania został zablokowany",
+          "ru": "Замок зарядного порта закрылся",
+          "ko": "충전 포트 걸쇠가 잠겼습니다",
+          "ar": "تم تفعيل قفل منفذ الشحن"
         },
         "args": [
           {
@@ -459,7 +1011,19 @@
       {
         "id": "locked.charge_latch_false",
         "title": {
-          "en": "The charge port latch has disengaged"
+          "en": "The charge port latch has disengaged",
+          "nl": "De vergrendeling van de laadpoort is gedeactiveerd",
+          "da": "Låsen på ladeporten er deaktiveret",
+          "de": "Der Ladeanschlussraster hat sich gelöst",
+          "es": "El pestillo del puerto de carga se ha desactivado",
+          "fr": "Le loquet du port de charge est désengagé",
+          "it": "La chiusura della porta di ricarica è disinserita",
+          "no": "Låsen til ladeporten er låst opp",
+          "sv": "Laddportens spärr har deaktiverats",
+          "pl": "Zamek portu ładowania został odblokowany",
+          "ru": "Замок зарядного порта открыт",
+          "ko": "충전 포트 걸쇠가 풀렸습니다",
+          "ar": "تم إلغاء قفل منفذ الشحن"
         },
         "args": [
           {
@@ -472,7 +1036,19 @@
       {
         "id": "alarm_contact.fl_true",
         "title": {
-          "en": "The front left door has opened"
+          "en": "The front left door has opened",
+          "nl": "De linkervoordeur is geopend",
+          "da": "Den forreste venstre dør er åbnet",
+          "de": "Die vordere linke Tür hat sich geöffnet",
+          "es": "La puerta delantera izquierda se ha abierto",
+          "fr": "La porte avant gauche est ouverte",
+          "it": "La porta anteriore sinistra è aperta",
+          "no": "Foran venstre dør har åpnet",
+          "sv": "Den vänstra framdörren har öppnats",
+          "pl": "Przednie lewe drzwi zostały otwarte",
+          "ru": "Левая передняя дверь открыта",
+          "ko": "왼쪽 앞 문이 열렸습니다",
+          "ar": "تم فتح الباب الأمامي الأيسر"
         },
         "args": [
           {
@@ -485,7 +1061,19 @@
       {
         "id": "alarm_contact.fl_false",
         "title": {
-          "en": "The front left door has closed"
+          "en": "The front left door has closed",
+          "nl": "De linkervoordeur is gesloten",
+          "da": "Den forreste venstre dør er lukket",
+          "de": "Die vordere linke Tür hat sich geschlossen",
+          "es": "La puerta delantera izquierda se ha cerrado",
+          "fr": "La porte avant gauche est fermée",
+          "it": "La porta anteriore sinistra è chiusa",
+          "no": "Foran venstre dør har lukket",
+          "sv": "Den vänstra framdörren har stängts",
+          "pl": "Przednie lewe drzwi zostały zamknięte",
+          "ru": "Левая передняя дверь закрыта",
+          "ko": "왼쪽 앞 문이 닫혔습니다",
+          "ar": "تم إغلاق الباب الأمامي الأيسر"
         },
         "args": [
           {
@@ -498,7 +1086,19 @@
       {
         "id": "alarm_contact.fr_true",
         "title": {
-          "en": "The front right door has opened"
+          "en": "The front right door has opened",
+          "nl": "De rechtervoordeur is geopend",
+          "da": "Den forreste højre dør er åbnet",
+          "de": "Die vordere rechte Tür hat sich geöffnet",
+          "es": "La puerta delantera derecha se ha abierto",
+          "fr": "La porte avant droite est ouverte",
+          "it": "La porta anteriore destra è aperta",
+          "no": "Foran høyre dør har åpnet",
+          "sv": "Den högra framdörren har öppnats",
+          "pl": "Przednie prawe drzwi zostały otwarte",
+          "ru": "Правая передняя дверь открыта",
+          "ko": "오른쪽 앞 문이 열렸습니다",
+          "ar": "تم فتح الباب الأمامي الأيمن"
         },
         "args": [
           {
@@ -511,7 +1111,19 @@
       {
         "id": "alarm_contact.fr_false",
         "title": {
-          "en": "The front right door has closed"
+          "en": "The front right door has closed",
+          "nl": "De rechtervoordeur is gesloten",
+          "da": "Den forreste højre dør er lukket",
+          "de": "Die vordere rechte Tür hat sich geschlossen",
+          "es": "La puerta delantera derecha se ha cerrado",
+          "fr": "La porte avant droite est fermée",
+          "it": "La porta anteriore destra è chiusa",
+          "no": "Foran høyre dør har lukket",
+          "sv": "Den högra framdörren har stängts",
+          "pl": "Przednie prawe drzwi zostały zamknięte",
+          "ru": "Правая передняя дверь закрыта",
+          "ko": "오른쪽 앞 문이 닫혔습니다",
+          "ar": "تم إغلاق الباب الأمامي الأيمن"
         },
         "args": [
           {
@@ -524,7 +1136,19 @@
       {
         "id": "alarm_contact.rl_true",
         "title": {
-          "en": "The rear left door has opened"
+          "en": "The rear left door has opened",
+          "nl": "De achterdeur links is geopend",
+          "da": "Den bagerste venstre dør er åbnet",
+          "de": "Die hintere linke Tür hat sich geöffnet",
+          "es": "La puerta trasera izquierda se ha abierto",
+          "fr": "La porte arrière gauche est ouverte",
+          "it": "La porta posteriore sinistra è aperta",
+          "no": "Bak venstre dør har åpnet",
+          "sv": "Den vänstra bakdörren har öppnats",
+          "pl": "Lewe tylne drzwi zostały otwarte",
+          "ru": "Левая задняя дверь открыта",
+          "ko": "왼쪽 뒷문이 열렸습니다",
+          "ar": "تم فتح الباب الخلفي الأيسر"
         },
         "args": [
           {
@@ -537,7 +1161,19 @@
       {
         "id": "alarm_contact.rl_false",
         "title": {
-          "en": "The rear left door has closed"
+          "en": "The rear left door has closed",
+          "nl": "De achterdeur links is gesloten",
+          "da": "Den bagerste venstre dør er lukket",
+          "de": "Die hintere linke Tür hat sich geschlossen",
+          "es": "La puerta trasera izquierda se ha cerrado",
+          "fr": "La porte arrière gauche est fermée",
+          "it": "La porta posteriore sinistra è chiusa",
+          "no": "Bak venstre dør har lukket",
+          "sv": "Den vänstra bakdörren har stängts",
+          "pl": "Lewe tylne drzwi zostały zamknięte",
+          "ru": "Левая задняя дверь закрыта",
+          "ko": "왼쪽 뒷문이 닫혔습니다",
+          "ar": "تم إغلاق الباب الخلفي الأيسر"
         },
         "args": [
           {
@@ -550,7 +1186,19 @@
       {
         "id": "alarm_contact.rr_true",
         "title": {
-          "en": "The rear right door has opened"
+          "en": "The rear right door has opened",
+          "nl": "De achterdeur rechts is geopend",
+          "da": "Den bagerste højre dør er åbnet",
+          "de": "Die hintere rechte Tür hat sich geöffnet",
+          "es": "La puerta trasera derecha se ha abierto",
+          "fr": "La porte arrière droite est ouverte",
+          "it": "La porta posteriore destra è aperta",
+          "no": "Bak høyre dør har åpnet",
+          "sv": "Den högra bakdörren har öppnats",
+          "pl": "Prawe tylne drzwi zostały otwarte",
+          "ru": "Правая задняя дверь открыта",
+          "ko": "오른쪽 뒷문이 열렸습니다",
+          "ar": "تم فتح الباب الخلفي الأيمن"
         },
         "args": [
           {
@@ -563,7 +1211,19 @@
       {
         "id": "alarm_contact.rr_false",
         "title": {
-          "en": "The rear right door has closed"
+          "en": "The rear right door has closed",
+          "nl": "De achterdeur rechts is gesloten",
+          "da": "Den bagerste højre dør er lukket",
+          "de": "Die hintere rechte Tür hat sich geschlossen",
+          "es": "La puerta trasera derecha se ha cerrado",
+          "fr": "La porte arrière droite est fermée",
+          "it": "La porta posteriore destra è chiusa",
+          "no": "Bak høyre dør har lukket",
+          "sv": "Den högra bakdörren har stängts",
+          "pl": "Prawe tylne drzwi zostały zamknięte",
+          "ru": "Правая задняя дверь закрыта",
+          "ko": "오른쪽 뒷문이 닫혔습니다",
+          "ar": "تم إغلاق الباب الخلفي الأيمن"
         },
         "args": [
           {
@@ -577,10 +1237,34 @@
     "conditions": [
       {
         "title": {
-          "en": "Battery level comparison"
+          "en": "Battery level comparison",
+          "nl": "Batterijniveauvergelijking",
+          "da": "Batteriniveau sammenligning",
+          "de": "Batteriestand Vergleich",
+          "es": "Comparación de nivel de batería",
+          "fr": "Comparaison des niveaux de batterie",
+          "it": "Confronto dei livelli della batteria",
+          "no": "Batterinivå sammenligning",
+          "sv": "Jämförelse av batterinivå",
+          "pl": "Porównanie poziomu baterii",
+          "ru": "Сравнение уровня заряда батареи",
+          "ko": "배터리 수준 비교",
+          "ar": "مقارنة مستوى البطارية"
         },
         "titleFormatted": {
-          "en": "Battery level of [[device]] is above [[percentage]]%"
+          "en": "Battery level of [[device]] is above [[percentage]]%",
+          "nl": "Het batterijniveau van de [[device]] is boven de [[percentage]]%",
+          "da": "Batteriniveauet for [[device]] er over [[percentage]]%",
+          "de": "Batteriestand von [[device]] ist über [[percentage]]%",
+          "es": "El nivel de batería de [[device]] está por encima de [[percentage]]%",
+          "fr": "Le niveau de batterie de [[device]] est supérieur à [[percentage]]%",
+          "it": "Il livello della batteria di [[device]] è superiore a [[percentage]]%",
+          "no": "Batterinivået til [[device]] er over [[percentage]]%",
+          "sv": "Batterinivån för [[device]] är över [[percentage]]%",
+          "pl": "Poziom baterii urządzenia [[device]] jest powyżej [[percentage]]%",
+          "ru": "Уровень заряда батареи устройства [[device]] выше [[percentage]]%",
+          "ko": "[[device]]의 배터리 수준이 [[percentage]]% 이상입니다",
+          "ar": "مستوى بطارية [[device]] أعلى من [[percentage]]%"
         },
         "args": [
           {
@@ -588,14 +1272,38 @@
             "name": "device",
             "filter": "capabilities=measure_battery",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "기기",
+              "ar": "جهاز"
             }
           },
           {
             "type": "range",
             "name": "percentage",
             "title": {
-              "en": "Percentage"
+              "en": "Percentage",
+              "nl": "Percentage",
+              "da": "Procentdel",
+              "de": "Prozentsatz",
+              "es": "Porcentaje",
+              "fr": "Pourcentage",
+              "it": "Percentuale",
+              "no": "Prosentandel",
+              "sv": "Procent",
+              "pl": "Procent",
+              "ru": "Процент",
+              "ko": "백분율",
+              "ar": "نسبة مئوية"
             },
             "min": 0,
             "max": 100,
@@ -609,10 +1317,34 @@
       },
       {
         "title": {
-          "en": "Operation mode is"
+          "en": "Operation mode is",
+          "nl": "Bedrijfsmodus is",
+          "da": "Driftstilstand er",
+          "de": "Betriebsmodus ist",
+          "es": "El modo de operación es",
+          "fr": "Le mode de fonctionnement est",
+          "it": "La modalità di funzionamento è",
+          "no": "Operasjonsmodus er",
+          "sv": "Driftläge är",
+          "pl": "Tryb operacyjny to",
+          "ru": "Режим работы: ",
+          "ko": "작동 모드입니다",
+          "ar": "وضع التشغيل هو"
         },
         "titleFormatted": {
-          "en": "Operation mode of [[device]] is [[mode]]"
+          "en": "Operation mode of [[device]] is [[mode]]",
+          "nl": "Bedrijfsmodus van [[device]] is [[mode]]",
+          "da": "Driftstilstand for [[device]] er [[mode]]",
+          "de": "Betriebsmodus von [[device]] ist [[mode]]",
+          "es": "El modo de operación de [[device]] es [[mode]]",
+          "fr": "Le mode de fonctionnement de [[device]] est [[mode]]",
+          "it": "La modalità di funzionamento di [[device]] è [[mode]]",
+          "no": "Operasjonsmodus for [[device]] er [[mode]]",
+          "sv": "Driftläge för [[device]] är [[mode]]",
+          "pl": "Tryb operacyjny urządzenia [[device]] to [[mode]]",
+          "ru": "Режим работы [[device]]: [[mode]]",
+          "ko": "[[device]]의 작동 모드는 [[mode]]입니다",
+          "ar": "وضع التشغيل ل[[device]] هو [[mode]]"
         },
         "args": [
           {
@@ -620,32 +1352,92 @@
             "name": "device",
             "filter": "capabilities=operation_mode",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
             }
           },
           {
             "type": "dropdown",
             "name": "mode",
             "title": {
-              "en": "Mode"
+              "en": "Mode",
+              "nl": "Modus",
+              "da": "Tilstand",
+              "de": "Modus",
+              "es": "Modo",
+              "fr": "Mode",
+              "it": "Modalità",
+              "no": "Modus",
+              "sv": "Läge",
+              "pl": "Tryb",
+              "ru": "Режим",
+              "ko": "모드",
+              "ar": "نمط"
             },
             "values": [
               {
                 "id": "self_consumption",
                 "label": {
-                  "en": "Self Consumption"
+                  "en": "Self Consumption",
+                  "nl": "Zelfverbruik",
+                  "da": "Egenforbrug",
+                  "de": "Eigenverbrauch",
+                  "es": "Autoconsumo",
+                  "fr": "Autoconsommation",
+                  "it": "Autoconsumo",
+                  "no": "Egenforbruk",
+                  "sv": "Egenförbrukning",
+                  "pl": "Samokonsumpcja",
+                  "ru": "Самопотребление",
+                  "ko": "자가 소모",
+                  "ar": "استهلاك ذاتي"
                 }
               },
               {
                 "id": "backup",
                 "label": {
-                  "en": "Backup"
+                  "en": "Backup",
+                  "nl": "Back-up",
+                  "da": "Backup",
+                  "de": "Sicherung",
+                  "es": "Respaldo",
+                  "fr": "Sauvegarde",
+                  "it": "Backup",
+                  "no": "Sikkerhetskopi",
+                  "sv": "Säkerhetskopia",
+                  "pl": "Kopia zapasowa",
+                  "ru": "Резервная копия",
+                  "ko": "백업",
+                  "ar": "نسخة احتياطية"
                 }
               },
               {
                 "id": "autonomous",
                 "label": {
-                  "en": "Autonomous"
+                  "en": "Autonomous",
+                  "nl": "Autonoom",
+                  "da": "Autonom",
+                  "de": "Autonom",
+                  "es": "Autónomo",
+                  "fr": "Autonome",
+                  "it": "Autonomo",
+                  "no": "Autonom",
+                  "sv": "Autonom",
+                  "pl": "Autonomiczny",
+                  "ru": "Автономный",
+                  "ko": "자율",
+                  "ar": "ذاتي"
                 }
               }
             ]
@@ -656,7 +1448,19 @@
       {
         "id": "onoff.charge_grid",
         "title": {
-          "en": "Charge from grid is !{{enabled|disabled}}"
+          "en": "Charge from grid is !{{enabled|disabled}}",
+          "nl": "Opladen via het net is !{{ingeschakeld|uitgeschakeld}}",
+          "da": "Opladning fra nettet er !{{aktiveret|deaktiveret}}",
+          "de": "Laden vom Netz ist !{{aktiviert|deaktiviert}}",
+          "es": "La carga desde la red está !{{habilitada|deshabilitada}}",
+          "fr": "La charge depuis le réseau est !{{activée|désactivée}}",
+          "it": "La ricarica dalla rete è !{{abilitata|disabilitata}}",
+          "no": "Lading fra nettet er !{{aktivert|deaktivert}}",
+          "sv": "Laddning från nätet är !{{aktiverad|inaktiverad}}",
+          "pl": "Ładowanie z sieci jest !{{włączone|wyłączone}}",
+          "ru": "Зарядка от сети !{{включена|выключена}}",
+          "ko": "그리드에서 충전이 !{{활성화됨|비활성화됨}}",
+          "ar": "الشحن من الشبكة !{{ممكّن|تم تعطيله}}"
         },
         "args": [
           {
@@ -669,7 +1473,19 @@
       {
         "id": "alarm_generic.storm",
         "title": {
-          "en": "Storm watch alert is !{{active|inactive}}"
+          "en": "Storm watch alert is !{{active|inactive}}",
+          "nl": "De stormwaarschuwing is !{{actief|inactief}}",
+          "da": "Stormvagtalarmen er !{{aktiv|inaktiv}}",
+          "de": "Der Sturmwarner ist !{{aktiv|inaktiv}}",
+          "es": "La alerta de vigilancia de tormenta está !{{activa|inactiva}}",
+          "fr": "L'alerte de veille tempête est !{{active|inactive}}",
+          "it": "L'allerta monitoraggio tempesta è !{{attiva|inattiva}}",
+          "no": "Stormvarselsalarmen er !{{aktiv|inaktiv}}",
+          "sv": "Stormvarningen är !{{aktiv|inaktiv}}",
+          "pl": "Alarm burzowy jest !{{aktywny|nieaktywny}}",
+          "ru": "Штормовое предупреждение !{{активно|неактивно}}",
+          "ko": "폭풍 감시 경보가 !{{활성화됨|비활성화됨}}",
+          "ar": "تنبيه مراقبة العاصفة !{{نشط|غير نشط}}"
         },
         "args": [
           {
@@ -682,7 +1498,19 @@
       {
         "id": "alarm_generic.off_grid",
         "title": {
-          "en": "Grid is !{{offline|online}}"
+          "en": "Grid is !{{offline|online}}",
+          "nl": "Netwerk is !{{offline|online}}",
+          "da": "Net er !{{offline|online}}",
+          "de": "Netz ist !{{offline|online}}",
+          "es": "La red está !{{offline|online}}",
+          "fr": "Le réseau est !{{hors ligne|en ligne}}",
+          "it": "La rete è !{{offline|online}}",
+          "no": "Nettet er !{{frakoblet|tilkoblet}}",
+          "sv": "Nätet är !{{offline|online}}",
+          "pl": "Sieć jest !{{offline|online}}",
+          "ru": "Сеть !{{офлайн|онлайн}}",
+          "ko": "전력망이 !{{오프라인|온라인}} 상태입니다",
+          "ar": "الشبكة !{{غير متصلة|متصلة}}"
         },
         "args": [
           {
@@ -695,7 +1523,19 @@
       {
         "id": "alarm_generic.island",
         "title": {
-          "en": "Island mode is !{{active|inactive}}"
+          "en": "Island mode is !{{active|inactive}}",
+          "nl": "Eilandmodus is !{{actief|inactief}}",
+          "da": "Ø-tilstand er !{{aktiv|inaktiv}}",
+          "de": "Inselmodus ist !{{aktiv|inaktiv}}",
+          "es": "El modo isla está !{{activo|inactivo}}",
+          "fr": "Le mode île est !{{actif|inactif}}",
+          "it": "La modalità isola è !{{attiva|inattiva}}",
+          "no": "Øy-modus er !{{aktiv|inaktiv}}",
+          "sv": "Ö-läge är !{{aktiv|inaktiv}}",
+          "pl": "Tryb wyspowy jest !{{aktywny|nieaktywny}}",
+          "ru": "Режим изоляции !{{активен|неактивен}}",
+          "ko": "섬 모드가 !{{활성화|비활성화}} 상태입니다",
+          "ar": "وضع الجزيرة !{{نشط|غير نشط}}"
         },
         "args": [
           {
@@ -708,7 +1548,19 @@
       {
         "id": "onoff.charge_port",
         "title": {
-          "en": "Charge port is !{{open|closed}}"
+          "en": "Charge port is !{{open|closed}}",
+          "nl": "De laadpoort is !{{open|closed}}",
+          "da": "Ladeporten er !{{open|closed}}",
+          "de": "Der Ladeanschluss ist !{{open|closed}}",
+          "es": "El puerto de carga está !{{open|closed}}",
+          "fr": "Le port de charge est !{{open|closed}}",
+          "it": "La porta di ricarica è !{{open|closed}}",
+          "no": "Ladeporten er !{{open|closed}}",
+          "sv": "Laddningsporten är !{{open|closed}}",
+          "pl": "Port ładowania jest !{{open|closed}}",
+          "ru": "Порт зарядки !{{open|closed}}",
+          "ko": "충전 포트가 !{{open|closed}}",
+          "ar": "منفذ الشحن !{{open|closed}}"
         },
         "args": [
           {
@@ -721,7 +1573,19 @@
       {
         "id": "onoff.sentry",
         "title": {
-          "en": "Sentry mode is !{{enabled|disabled}}"
+          "en": "Sentry mode is !{{enabled|disabled}}",
+          "nl": "De bewakingsmodus is !{{enabled|disabled}}",
+          "da": "Sentineltilstand er !{{enabled|disabled}}",
+          "de": "Wächtermodus ist !{{enabled|disabled}}",
+          "es": "El modo centinela está !{{enabled|disabled}}",
+          "fr": "Le mode sentinelle est !{{enabled|disabled}}",
+          "it": "La modalità sentinella è !{{enabled|disabled}}",
+          "no": "Vaktmodus er !{{enabled|disabled}}",
+          "sv": "Vaktläget är !{{enabled|disabled}}",
+          "pl": "Tryb strażnika jest !{{enabled|disabled}}",
+          "ru": "Режим охраны !{{enabled|disabled}}",
+          "ko": "센트리 모드가 !{{enabled|disabled}}",
+          "ar": "وضع الحراسة !{{enabled|disabled}}"
         },
         "args": [
           {
@@ -734,7 +1598,19 @@
       {
         "id": "onoff.frunk",
         "title": {
-          "en": "Frunk is !{{open|closed}}"
+          "en": "Frunk is !{{open|closed}}",
+          "nl": "De frunk is !{{open|closed}}",
+          "da": "Frunken er !{{open|closed}}",
+          "de": "Der Frunk ist !{{open|closed}}",
+          "es": "El maletero delantero está !{{open|closed}}",
+          "fr": "Le coffre avant est !{{open|closed}}",
+          "it": "Il cofono anteriore è !{{open|closed}}",
+          "no": "Frunken er !{{open|closed}}",
+          "sv": "Frunken är !{{open|closed}}",
+          "pl": "Przedni bagażnik jest !{{open|closed}}",
+          "ru": "Передний багажник !{{open|closed}}",
+          "ko": "프렁크가 !{{open|closed}}",
+          "ar": "الصندوق الأمامي !{{open|closed}}"
         },
         "args": [
           {
@@ -747,7 +1623,19 @@
       {
         "id": "onoff.trunk",
         "title": {
-          "en": "Trunk is !{{open|closed}}"
+          "en": "Trunk is !{{open|closed}}",
+          "nl": "De kofferbak is !{{open|closed}}",
+          "da": "Baggagerummet er !{{open|closed}}",
+          "de": "Der Kofferraum ist !{{open|closed}}",
+          "es": "El maletero está !{{open|closed}}",
+          "fr": "Le coffre est !{{open|closed}}",
+          "it": "Il bagagliaio è !{{open|closed}}",
+          "no": "Bagasjerommet er !{{open|closed}}",
+          "sv": "Bagageutrymmet är !{{open|closed}}",
+          "pl": "Bagażnik jest !{{open|closed}}",
+          "ru": "Багажник !{{open|closed}}",
+          "ko": "트렁크가 !{{open|closed}}",
+          "ar": "صندوق السيارة !{{open|closed}}"
         },
         "args": [
           {
@@ -760,7 +1648,19 @@
       {
         "id": "onoff.guest_mode",
         "title": {
-          "en": "Guest mode is !{{enabled|disabled}}"
+          "en": "Guest mode is !{{enabled|disabled}}",
+          "nl": "Gastmodus is !{{enabled|disabled}}",
+          "da": "Gæstetilstand er !{{enabled|disabled}}",
+          "de": "Gastmodus ist !{{enabled|disabled}}",
+          "es": "El modo invitado está !{{enabled|disabled}}",
+          "fr": "Le mode invité est !{{enabled|disabled}}",
+          "it": "La modalità ospite è !{{enabled|disabled}}",
+          "no": "Gjestemodus er !{{enabled|disabled}}",
+          "sv": "Gästläget är !{{enabled|disabled}}",
+          "pl": "Tryb gościa jest !{{enabled|disabled}}",
+          "ru": "Гостевой режим !{{enabled|disabled}}",
+          "ko": "게스트 모드가 !{{enabled|disabled}}",
+          "ar": "وضع الضيف !{{enabled|disabled}}"
         },
         "args": [
           {
@@ -773,7 +1673,19 @@
       {
         "id": "locked.charge_latch",
         "title": {
-          "en": "Charge port latch is !{{engaged|disengaged}}"
+          "en": "Charge port latch is !{{engaged|disengaged}}",
+          "nl": "De vergrendeling van de laadpoort is !{{engaged|disengaged}}",
+          "da": "Låsen på ladeporten er !{{engaged|disengaged}}",
+          "de": "Der Ladeanschlussraster ist !{{engaged|disengaged}}",
+          "es": "El pestillo del puerto de carga está !{{engaged|disengaged}}",
+          "fr": "Le loquet du port de charge est !{{engaged|disengaged}}",
+          "it": "La chiusura della porta di ricarica è !{{engaged|disengaged}}",
+          "no": "Låsen til ladeporten er !{{engaged|disengaged}}",
+          "sv": "Laddportens spärr är !{{engaged|disengaged}}",
+          "pl": "Zamek portu ładowania jest !{{engaged|disengaged}}",
+          "ru": "Замок зарядного порта !{{engaged|disengaged}}",
+          "ko": "충전 포트 걸쇠가 !{{engaged|disengaged}}",
+          "ar": "قفل منفذ الشحن !{{engaged|disengaged}}"
         },
         "args": [
           {
@@ -786,7 +1698,19 @@
       {
         "id": "alarm_contact.fl",
         "title": {
-          "en": "Front left door is !{{open|closed}}"
+          "en": "Front left door is !{{open|closed}}",
+          "nl": "De linkervoordeur is !{{open|closed}}",
+          "da": "Den forreste venstre dør er !{{open|closed}}",
+          "de": "Die vordere linke Tür ist !{{open|closed}}",
+          "es": "La puerta delantera izquierda está !{{open|closed}}",
+          "fr": "La porte avant gauche est !{{open|closed}}",
+          "it": "La porta anteriore sinistra è !{{open|closed}}",
+          "no": "Foran venstre dør er !{{open|closed}}",
+          "sv": "Den vänstra framdörren är !{{open|closed}}",
+          "pl": "Przednie lewe drzwi są !{{open|closed}}",
+          "ru": "Левая передняя дверь !{{open|closed}}",
+          "ko": "왼쪽 앞 문이 !{{open|closed}}",
+          "ar": "الباب الأمامي الأيسر !{{open|closed}}"
         },
         "args": [
           {
@@ -799,7 +1723,19 @@
       {
         "id": "alarm_contact.fr",
         "title": {
-          "en": "Front right door is !{{open|closed}}"
+          "en": "Front right door is !{{open|closed}}",
+          "nl": "De rechtervoordeur is !{{open|closed}}",
+          "da": "Den forreste højre dør er !{{open|closed}}",
+          "de": "Die vordere rechte Tür ist !{{open|closed}}",
+          "es": "La puerta delantera derecha está !{{open|closed}}",
+          "fr": "La porte avant droite est !{{open|closed}}",
+          "it": "La porta anteriore destra è !{{open|closed}}",
+          "no": "Foran høyre dør er !{{open|closed}}",
+          "sv": "Den högra framdörren är !{{open|closed}}",
+          "pl": "Przednie prawe drzwi są !{{open|closed}}",
+          "ru": "Правая передняя дверь !{{open|closed}}",
+          "ko": "오른쪽 앞 문이 !{{open|closed}}",
+          "ar": "الباب الأمامي الأيمن !{{open|closed}}"
         },
         "args": [
           {
@@ -812,7 +1748,19 @@
       {
         "id": "alarm_contact.rl",
         "title": {
-          "en": "Rear left door is !{{open|closed}}"
+          "en": "Rear left door is !{{open|closed}}",
+          "nl": "De achterdeur links is !{{open|closed}}",
+          "da": "Den bagerste venstre dør er !{{open|closed}}",
+          "de": "Die hintere linke Tür ist !{{open|closed}}",
+          "es": "La puerta trasera izquierda está !{{open|closed}}",
+          "fr": "La porte arrière gauche est !{{open|closed}}",
+          "it": "La porta posteriore sinistra è !{{open|closed}}",
+          "no": "Bak venstre dør er !{{open|closed}}",
+          "sv": "Den vänstra bakdörren är !{{open|closed}}",
+          "pl": "Lewe tylne drzwi są !{{open|closed}}",
+          "ru": "Левая задняя дверь !{{open|closed}}",
+          "ko": "왼쪽 뒷문이 !{{open|closed}}",
+          "ar": "الباب الخلفي الأيسر !{{open|closed}}"
         },
         "args": [
           {
@@ -825,7 +1773,19 @@
       {
         "id": "alarm_contact.rr",
         "title": {
-          "en": "Rear right door is !{{open|closed}}"
+          "en": "Rear right door is !{{open|closed}}",
+          "nl": "De achterdeur rechts is !{{open|closed}}",
+          "da": "Den bagerste højre dør er !{{open|closed}}",
+          "de": "Die hintere rechte Tür ist !{{open|closed}}",
+          "es": "La puerta trasera derecha está !{{open|closed}}",
+          "fr": "La porte arrière droite est !{{open|closed}}",
+          "it": "La porta posteriore destra è !{{open|closed}}",
+          "no": "Bak høyre dør er !{{open|closed}}",
+          "sv": "Den högra bakdörren är !{{open|closed}}",
+          "pl": "Prawe tylne drzwi są !{{open|closed}}",
+          "ru": "Правая задняя дверь !{{open|closed}}",
+          "ko": "오른쪽 뒷문이 !{{open|closed}}",
+          "ar": "الباب الخلفي الأيمن !{{open|closed}}"
         },
         "args": [
           {
@@ -839,13 +1799,49 @@
     "actions": [
       {
         "title": {
-          "en": "Flash lights"
+          "en": "Flash lights",
+          "nl": "Lichten knipperen",
+          "da": "Blink lys",
+          "de": "Lichter blinken",
+          "es": "Luces intermitentes",
+          "fr": "Clignoter les lumières",
+          "it": "Lampeggia luci",
+          "no": "Blink lys",
+          "sv": "Blinka lampor",
+          "pl": "Migające światła",
+          "ru": "Мигание огней",
+          "ko": "불빛 깜빡임",
+          "ar": "وميض الأضواء"
         },
         "titleFormatted": {
-          "en": "Flash lights on [[device]]"
+          "en": "Flash lights on [[device]]",
+          "nl": "Lichten knipperen op [[device]]",
+          "da": "Blink lys på [[device]]",
+          "de": "Lichter blinken auf [[device]]",
+          "es": "Luces intermitentes en [[device]]",
+          "fr": "Clignoter les lumières sur [[device]]",
+          "it": "Lampeggia luci su [[device]]",
+          "no": "Blink lys på [[device]]",
+          "sv": "Blinka lampor på [[device]]",
+          "pl": "Migające światła na [[device]]",
+          "ru": "Мигание огней на [[device]]",
+          "ko": "[[device]]에서 불빛 깜빡임",
+          "ar": "وميض الأضواء على [[device]]"
         },
         "hint": {
-          "en": "Flash the vehicle's lights."
+          "en": "Flash the vehicle's lights.",
+          "nl": "Laat de lichten van het voertuig knipperen.",
+          "da": "Blink køretøjets lys.",
+          "de": "Blitzen Sie die Lichter des Fahrzeugs.",
+          "es": "Haz parpadear las luces del vehículo.",
+          "fr": "Clignotez les lumières du véhicule.",
+          "it": "Lampeggia le luci del veicolo.",
+          "no": "Blink kjøretøyets lys.",
+          "sv": "Blinka fordonets lampor.",
+          "pl": "Migaj światłami pojazdu.",
+          "ru": "Включите мигание огней автомобиля.",
+          "ko": "차량의 불빛을 깜빡이세요.",
+          "ar": "وميض أضواء السيارة."
         },
         "args": [
           {
@@ -853,7 +1849,19 @@
             "name": "device",
             "filter": "capabilities=button.flash",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Toestel",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
             }
           }
         ],
@@ -861,13 +1869,49 @@
       },
       {
         "title": {
-          "en": "Trigger HomeLink"
+          "en": "Trigger HomeLink",
+          "nl": "Activeer HomeLink",
+          "da": "Aktiver HomeLink",
+          "de": "HomeLink auslösen",
+          "es": "Activar HomeLink",
+          "fr": "Déclencher HomeLink",
+          "it": "Attiva HomeLink",
+          "no": "Aktiver HomeLink",
+          "sv": "Aktivera HomeLink",
+          "pl": "Uruchom HomeLink",
+          "ru": "Активировать HomeLink",
+          "ko": "홈링크 트리거",
+          "ar": "تشغيل HomeLink"
         },
         "titleFormatted": {
-          "en": "Trigger HomeLink on [[device]]"
+          "en": "Trigger HomeLink on [[device]]",
+          "nl": "Activeer HomeLink op [[device]]",
+          "da": "Aktiver HomeLink på [[device]]",
+          "de": "HomeLink auf [[device]] auslösen",
+          "es": "Activar HomeLink en [[device]]",
+          "fr": "Déclencher HomeLink sur [[device]]",
+          "it": "Attiva HomeLink su [[device]]",
+          "no": "Aktiver HomeLink på [[device]]",
+          "sv": "Aktivera HomeLink på [[device]]",
+          "pl": "Uruchom HomeLink na [[device]]",
+          "ru": "Активировать HomeLink на [[device]]",
+          "ko": "[[device]]에서 홈링크 트리거",
+          "ar": "تشغيل HomeLink على [[device]]"
         },
         "hint": {
-          "en": "This card triggers the HomeLink garage door opener."
+          "en": "This card triggers the HomeLink garage door opener.",
+          "nl": "Deze kaart activeert de HomeLink garageopener.",
+          "da": "Dette kort udløser HomeLink garageportåbneren.",
+          "de": "Diese Karte löst den HomeLink Garagentoröffner aus.",
+          "es": "Esta tarjeta activa el abridor de puerta de garaje HomeLink.",
+          "fr": "Cette carte déclenche l'ouvre-porte de garage HomeLink.",
+          "it": "Questa scheda attiva l'apriporta del garage HomeLink.",
+          "no": "Dette kortet aktiverer HomeLink garasjeportåpner.",
+          "sv": "Detta kort utlöser HomeLink garageportöppnare.",
+          "pl": "Ta karta uruchamia otwieracz do drzwi garażowych HomeLink.",
+          "ru": "Эта карта активирует открыть дверь гаража HomeLink.",
+          "ko": "이 카드는 홈링크 차고문 열림을 실행합니다.",
+          "ar": "تقوم هذه البطاقة بتشغيل جهاز فتح باب المرآب HomeLink."
         },
         "args": [
           {
@@ -875,7 +1919,19 @@
             "name": "device",
             "filter": "capabilities=button.homelink",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
             }
           }
         ],
@@ -883,13 +1939,49 @@
       },
       {
         "title": {
-          "en": "Honk horn"
+          "en": "Honk horn",
+          "nl": "Toeteren",
+          "da": "Tud hornet",
+          "de": "Hupe betätigen",
+          "es": "Toque el claxon",
+          "fr": "Klaxonner",
+          "it": "Suona clacson",
+          "no": "Tut hornet",
+          "sv": "Tuta",
+          "pl": "Użyj klaksonu",
+          "ru": "Посигнальте",
+          "ko": "경적 울리기",
+          "ar": "اضغط على البوق"
         },
         "titleFormatted": {
-          "en": "Honk horn on [[device]]"
+          "en": "Honk horn on [[device]]",
+          "nl": "Toeteren op [[device]]",
+          "da": "Tud hornet på [[device]]",
+          "de": "Hupe betätigen auf [[device]]",
+          "es": "Toque el claxon en [[device]]",
+          "fr": "Klaxonner sur [[device]]",
+          "it": "Suona clacson su [[device]]",
+          "no": "Tut hornet på [[device]]",
+          "sv": "Tuta på [[device]]",
+          "pl": "Użyj klaksonu na [[device]]",
+          "ru": "Посигнальте на [[device]]",
+          "ko": "[[device]]에서 경적 울리기",
+          "ar": "اضغط على بوق [[device]]"
         },
         "hint": {
-          "en": "This card triggers the vehicle's horn."
+          "en": "This card triggers the vehicle's horn.",
+          "nl": "Deze kaart activeert de toeter van het voertuig.",
+          "da": "Dette kort aktiverer køretøjets horn.",
+          "de": "Diese Karte löst die Hupe des Fahrzeugs aus.",
+          "es": "Esta tarjeta activa el claxon del vehículo.",
+          "fr": "Cette carte déclenche le klaxon du véhicule.",
+          "it": "Questa carta attiva il clacson del veicolo.",
+          "no": "Dette kortet utløser kjøretøyets horn.",
+          "sv": "Detta kort aktiverar fordonets tuta.",
+          "pl": "Ta karta uruchamia klakson pojazdu.",
+          "ru": "Эта карта активирует сигнал автомобиля.",
+          "ko": "이 카드는 차량의 경적을 울립니다.",
+          "ar": "تقوم هذه البطاقة بتفعيل بوق المركبة."
         },
         "args": [
           {
@@ -897,7 +1989,19 @@
             "name": "device",
             "filter": "capabilities=button.honk",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
             }
           }
         ],
@@ -905,13 +2009,49 @@
       },
       {
         "title": {
-          "en": "Start keyless driving"
+          "en": "Start keyless driving",
+          "nl": "Start met sleutelloos rijden",
+          "da": "Start nøglefri kørsel",
+          "de": "Schlüsselloses Fahren starten",
+          "es": "Comenzar conducción sin llave",
+          "fr": "Démarrer la conduite sans clé",
+          "it": "Avvia la guida senza chiave",
+          "no": "Start nøkkelfri kjøring",
+          "sv": "Starta nyckellös körning",
+          "pl": "Rozpocznij jazdę bez kluczyka",
+          "ru": "Начать безключевое вождение",
+          "ko": "키 없는 운전 시작",
+          "ar": "ابدأ القيادة بدون مفتاح"
         },
         "titleFormatted": {
-          "en": "Start keyless driving on [[device]]"
+          "en": "Start keyless driving on [[device]]",
+          "nl": "Start met sleutelloos rijden op [[device]]",
+          "da": "Start nøglefri kørsel på [[device]]",
+          "de": "Schlüsselloses Fahren starten auf [[device]]",
+          "es": "Comenzar conducción sin llave en [[device]]",
+          "fr": "Démarrer la conduite sans clé sur [[device]]",
+          "it": "Avvia la guida senza chiave su [[device]]",
+          "no": "Start nøkkelfri kjøring på [[device]]",
+          "sv": "Starta nyckellös körning på [[device]]",
+          "pl": "Rozpocznij jazdę bez kluczyka na [[device]]",
+          "ru": "Начать безключевое вождение на [[device]]",
+          "ko": "[[device]]에서 키 없는 운전 시작",
+          "ar": "ابدأ القيادة بدون مفتاح على [[device]]"
         },
         "hint": {
-          "en": "Enable keyless driving for the vehicle."
+          "en": "Enable keyless driving for the vehicle.",
+          "nl": "Schakel sleutelloos rijden in voor het voertuig.",
+          "da": "Aktiver nøglefri kørsel for køretøjet.",
+          "de": "Schlüsselloses Fahren für das Fahrzeug aktivieren.",
+          "es": "Habilitar la conducción sin llave para el vehículo.",
+          "fr": "Activer la conduite sans clé pour le véhicule.",
+          "it": "Abilita la guida senza chiave per il veicolo.",
+          "no": "Aktiver nøkkelfri kjøring for kjøretøyet.",
+          "sv": "Aktivera nyckellös körning för fordonet.",
+          "pl": "Włącz jazdę bez kluczyka dla pojazdu.",
+          "ru": "Включить безключевое вождение для автомобиля.",
+          "ko": "차량에 대한 키 없는 운전 활성화.",
+          "ar": "تمكين القيادة بدون مفتاح للمركبة."
         },
         "args": [
           {
@@ -919,7 +2059,19 @@
             "name": "device",
             "filter": "capabilities=button.keyless",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
             }
           }
         ],
@@ -927,10 +2079,34 @@
       },
       {
         "title": {
-          "en": "Set allow export"
+          "en": "Set allow export",
+          "nl": "Export toestaan instellen",
+          "da": "Indstil tillad eksport",
+          "de": "Export erlauben festlegen",
+          "es": "Establecer permitir exportación",
+          "fr": "Définir autoriser l'exportation",
+          "it": "Imposta consenti esportazione",
+          "no": "Sett tillat eksport",
+          "sv": "Ställ in tillåt export",
+          "pl": "Ustaw zezwolenie na eksport",
+          "ru": "Установить разрешение на экспорт",
+          "ko": "내보내기 허용 설정",
+          "ar": "تعيين السماح بالتصدير"
         },
         "titleFormatted": {
-          "en": "Set allow export to [[mode]] on [[device]]"
+          "en": "Set allow export to [[mode]] on [[device]]",
+          "nl": "Stel export toestaan in op [[mode]] op [[device]]",
+          "da": "Indstil tillad eksport til [[mode]] på [[device]]",
+          "de": "Export erlauben auf [[mode]] auf [[device]] setzen",
+          "es": "Establecer permitir exportación a [[mode]] en [[device]]",
+          "fr": "Définir autoriser l'exportation à [[mode]] sur [[device]]",
+          "it": "Imposta consenti esportazione su [[mode]] su [[device]]",
+          "no": "Sett tillat eksport til [[mode]] på [[device]]",
+          "sv": "Ställ in tillåt export till [[mode]] på [[device]]",
+          "pl": "Ustaw zezwolenie na eksport na [[mode]] na [[device]]",
+          "ru": "Установить разрешение на экспорт на [[mode]] на [[device]]",
+          "ko": "[[device]]에서 [[mode]]로 내보내기 허용 설정",
+          "ar": "تعيين السماح بالتصدير إلى [[mode]] على [[device]]"
         },
         "args": [
           {
@@ -938,32 +2114,92 @@
             "name": "device",
             "filter": "capabilities=allow_export",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
             }
           },
           {
             "type": "dropdown",
             "name": "mode",
             "title": {
-              "en": "Mode"
+              "en": "Mode",
+              "nl": "Modus",
+              "da": "Tilstand",
+              "de": "Modus",
+              "es": "Modo",
+              "fr": "Mode",
+              "it": "Modalità",
+              "no": "Modus",
+              "sv": "Läge",
+              "pl": "Tryb",
+              "ru": "Режим",
+              "ko": "모드",
+              "ar": "الوضع"
             },
             "values": [
               {
                 "id": "battery_ok",
                 "label": {
-                  "en": "Battery and Solar"
+                  "en": "Battery and Solar",
+                  "nl": "Batterij en Zonne-energie",
+                  "da": "Batteri og Solenergi",
+                  "de": "Batterie und Solar",
+                  "es": "Batería y Solar",
+                  "fr": "Batterie et Solaire",
+                  "it": "Batteria e Solare",
+                  "no": "Batteri og Solenergi",
+                  "sv": "Batteri och Solenergi",
+                  "pl": "Bateria i Słoneczna",
+                  "ru": "Батарея и Солнечная энергия",
+                  "ko": "배터리 및 태양광",
+                  "ar": "البطارية والطاقة الشمسية"
                 }
               },
               {
                 "id": "pv_only",
                 "label": {
-                  "en": "Solar Only"
+                  "en": "Solar Only",
+                  "nl": "Alleen Zonne-energie",
+                  "da": "Kun solenergi",
+                  "de": "Nur Solar",
+                  "es": "Solo Solar",
+                  "fr": "Solaire uniquement",
+                  "it": "Solo Solare",
+                  "no": "Kun Solenergi",
+                  "sv": "Endast Solenergi",
+                  "pl": "Tylko Słoneczna",
+                  "ru": "Только Солнечная энергия",
+                  "ko": "태양광만",
+                  "ar": "الطاقة الشمسية فقط"
                 }
               },
               {
                 "id": "never",
                 "label": {
-                  "en": "Never"
+                  "en": "Never",
+                  "nl": "Nooit",
+                  "da": "Aldrig",
+                  "de": "Niemals",
+                  "es": "Nunca",
+                  "fr": "Jamais",
+                  "it": "Mai",
+                  "no": "Aldri",
+                  "sv": "Aldrig",
+                  "pl": "Nigdy",
+                  "ru": "Никогда",
+                  "ko": "안 함",
+                  "ar": "أبداً"
                 }
               }
             ]
@@ -973,10 +2209,34 @@
       },
       {
         "title": {
-          "en": "Set backup reserve"
+          "en": "Set backup reserve",
+          "nl": "Stel reserveback-up in",
+          "da": "Indstil backupreserve",
+          "de": "Backup-Reserve festlegen",
+          "es": "Establecer reserva de respaldo",
+          "fr": "Définir la réserve de sauvegarde",
+          "it": "Imposta riserva di backup",
+          "no": "Sett reserve for backup",
+          "sv": "Ställ in backupreserv",
+          "pl": "Ustaw rezerwę kopii zapasowej",
+          "ru": "Установить резервную копию",
+          "ko": "백업 예약 설정",
+          "ar": "تعيين احتياطي النسخ الاحتياطي"
         },
         "titleFormatted": {
-          "en": "Set [[device]] backup reserve to [[percentage]]%"
+          "en": "Set [[device]] backup reserve to [[percentage]]%",
+          "nl": "Stel [[device]] reserveback-up in op [[percentage]]%",
+          "da": "Indstil [[device]] backupreserve til [[percentage]]%",
+          "de": "Backup-Reserve von [[device]] auf [[percentage]]% festlegen",
+          "es": "Establecer reserva de respaldo de [[device]] al [[percentage]]%",
+          "fr": "Définir la réserve de sauvegarde de [[device]] à [[percentage]]%",
+          "it": "Imposta la riserva di backup di [[device]] al [[percentage]]%",
+          "no": "Sett [[device]] reserve for backup til [[percentage]]%",
+          "sv": "Ställ in [[device]] backupreserv till [[percentage]]%",
+          "pl": "Ustaw rezerwę kopii zapasowej [[device]] na [[percentage]]%",
+          "ru": "Установить резервную копию [[device]] на [[percentage]]%",
+          "ko": "[[device]] 백업 예약을 [[percentage]]%로 설정",
+          "ar": "تعيين احتياطي النسخ الاحتياطي لجهاز [[device]] إلى [[percentage]]%"
         },
         "args": [
           {
@@ -984,14 +2244,38 @@
             "name": "device",
             "filter": "capabilities=backup_reserve",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
             }
           },
           {
             "type": "range",
             "name": "percentage",
             "title": {
-              "en": "Percentage"
+              "en": "Percentage",
+              "nl": "Percentage",
+              "da": "Procentdel",
+              "de": "Prozentsatz",
+              "es": "Porcentaje",
+              "fr": "Pourcentage",
+              "it": "Percentuale",
+              "no": "Prosent",
+              "sv": "Procentandel",
+              "pl": "Procent",
+              "ru": "Процент",
+              "ko": "백분율",
+              "ar": "النسبة المئوية"
             },
             "min": 0,
             "max": 100,
@@ -1005,10 +2289,34 @@
       },
       {
         "title": {
-          "en": "Set operation mode"
+          "en": "Set operation mode",
+          "nl": "Instelmodus instellen",
+          "da": "Indstil driftsmåde",
+          "de": "Betriebsmodus einstellen",
+          "es": "Establecer modo de operación",
+          "fr": "Définir le mode de fonctionnement",
+          "it": "Imposta modalità di funzionamento",
+          "no": "Sett driftsmodus",
+          "sv": "Ställ in driftläge",
+          "pl": "Ustaw tryb działania",
+          "ru": "Установить режим работы",
+          "ko": "작동 모드 설정",
+          "ar": "تعيين وضع التشغيل"
         },
         "titleFormatted": {
-          "en": "Set operation mode of [[device]] to [[mode]]"
+          "en": "Set operation mode of [[device]] to [[mode]]",
+          "nl": "Instelmodus van [[device]] naar [[mode]]",
+          "da": "Indstil driftsmåde for [[device]] til [[mode]]",
+          "de": "Betriebsmodus von [[device]] auf [[mode]] einstellen",
+          "es": "Establecer modo de operación de [[device]] a [[mode]]",
+          "fr": "Définir le mode de fonctionnement de [[device]] sur [[mode]]",
+          "it": "Imposta la modalità di funzionamento di [[device]] su [[mode]]",
+          "no": "Sett driftsmodus for [[device]] til [[mode]]",
+          "sv": "Ställ in driftläge för [[device]] till [[mode]]",
+          "pl": "Ustaw tryb działania [[device]] na [[mode]]",
+          "ru": "Установить режим работы [[device]] на [[mode]]",
+          "ko": "[[device]]의 작동 모드를 [[mode]]로 설정",
+          "ar": "تعيين وضع التشغيل لـ[[device]] إلى [[mode]]"
         },
         "args": [
           {
@@ -1016,32 +2324,92 @@
             "name": "device",
             "filter": "capabilities=operation_mode",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
             }
           },
           {
             "type": "dropdown",
             "name": "mode",
             "title": {
-              "en": "Mode"
+              "en": "Mode",
+              "nl": "Modus",
+              "da": "Tilstand",
+              "de": "Modus",
+              "es": "Modo",
+              "fr": "Mode",
+              "it": "Modalità",
+              "no": "Modus",
+              "sv": "Läge",
+              "pl": "Tryb",
+              "ru": "Режим",
+              "ko": "모드",
+              "ar": "الوضع"
             },
             "values": [
               {
                 "id": "self_consumption",
                 "label": {
-                  "en": "Self Consumption"
+                  "en": "Self Consumption",
+                  "nl": "Zelfverbruik",
+                  "da": "Egen forbrug",
+                  "de": "Eigenverbrauch",
+                  "es": "Autoconsumo",
+                  "fr": "Autoconsommation",
+                  "it": "Autoconsumo",
+                  "no": "Eget forbruk",
+                  "sv": "Självförbrukning",
+                  "pl": "Autokonsumpcja",
+                  "ru": "Собственное потребление",
+                  "ko": "자가 소비",
+                  "ar": "الاستهلاك الذاتي"
                 }
               },
               {
                 "id": "backup",
                 "label": {
-                  "en": "Backup"
+                  "en": "Backup",
+                  "nl": "Backup",
+                  "da": "Sikkerhedskopi",
+                  "de": "Sicherung",
+                  "es": "Respaldo",
+                  "fr": "Sauvegarde",
+                  "it": "Backup",
+                  "no": "Sikkerhetskopi",
+                  "sv": "Säkerhetskopiera",
+                  "pl": "Kopia zapasowa",
+                  "ru": "Резервное копирование",
+                  "ko": "백업",
+                  "ar": "نسخ احتياطي"
                 }
               },
               {
                 "id": "autonomous",
                 "label": {
-                  "en": "Autonomous"
+                  "en": "Autonomous",
+                  "nl": "Autonoom",
+                  "da": "Selvstændig",
+                  "de": "Autonom",
+                  "es": "Autónomo",
+                  "fr": "Autonome",
+                  "it": "Autonomo",
+                  "no": "Selvstyrt",
+                  "sv": "Självständig",
+                  "pl": "Autonomiczny",
+                  "ru": "Автономный",
+                  "ko": "자율",
+                  "ar": "مستقل"
                 }
               }
             ]
@@ -1051,10 +2419,34 @@
       },
       {
         "title": {
-          "en": "Set steering wheel heater"
+          "en": "Set steering wheel heater",
+          "nl": "Zet stuurwielverwarming aan",
+          "da": "Indstil ratvarmer",
+          "de": "Lenkradheizung einstellen",
+          "es": "Configurar calefactor del volante",
+          "fr": "Régler le chauffage du volant",
+          "it": "Imposta riscaldatore del volante",
+          "no": "Sett rattvarmer",
+          "sv": "Ställ in rattvärmare",
+          "pl": "Ustaw podgrzewanie kierownicy",
+          "ru": "Установить обогреватель руля",
+          "ko": "스티어링 휠 히터 설정",
+          "ar": "ضبط سخان عجلة القيادة"
         },
         "titleFormatted": {
-          "en": "Set [[device]] steering wheel heater to [[level]]"
+          "en": "Set [[device]] steering wheel heater to [[level]]",
+          "nl": "Zet [[device]] stuurwielverwarming op [[level]]",
+          "da": "Indstil [[device]] ratvarmer til [[level]]",
+          "de": "Lenkradheizung von [[device]] auf [[level]] einstellen",
+          "es": "Configura el calefactor de volante de [[device]] a [[level]]",
+          "fr": "Régler le chauffage du volant [[device]] sur [[level]]",
+          "it": "Imposta il riscaldatore del volante [[device]] su [[level]]",
+          "no": "Sett [[device]] rattvarmer til [[level]]",
+          "sv": "Ställ in [[device]] rattvärmare till [[level]]",
+          "pl": "Ustaw podgrzewanie kierownicy [[device]] na [[level]]",
+          "ru": "Установить обогреватель руля [[device]] на [[level]]",
+          "ko": "[[device]] 스티어링 휠 히터 [[level]]로 설정",
+          "ar": "ضبط سخان عجلة القيادة [[device]] على [[level]]"
         },
         "args": [
           {
@@ -1062,32 +2454,92 @@
             "name": "device",
             "filter": "capabilities=steering_wheel_heater",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
             }
           },
           {
             "type": "dropdown",
             "name": "level",
             "title": {
-              "en": "Level"
+              "en": "Level",
+              "nl": "Niveau",
+              "da": "Niveau",
+              "de": "Ebene",
+              "es": "Nivel",
+              "fr": "Niveau",
+              "it": "Livello",
+              "no": "Nivå",
+              "sv": "Nivå",
+              "pl": "Poziom",
+              "ru": "Уровень",
+              "ko": "수준",
+              "ar": "المستوى"
             },
             "values": [
               {
                 "id": "0",
                 "label": {
-                  "en": "Off"
+                  "en": "Off",
+                  "nl": "Uit",
+                  "da": "Slukket",
+                  "de": "Aus",
+                  "es": "Apagado",
+                  "fr": "Éteint",
+                  "it": "Spento",
+                  "no": "Av",
+                  "sv": "Av",
+                  "pl": "Wyłączone",
+                  "ru": "Выкл",
+                  "ko": "끄기",
+                  "ar": "إيقاف"
                 }
               },
               {
                 "id": "1",
                 "label": {
-                  "en": "Low"
+                  "en": "Low",
+                  "nl": "Laag",
+                  "da": "Lav",
+                  "de": "Niedrig",
+                  "es": "Bajo",
+                  "fr": "Bas",
+                  "it": "Basso",
+                  "no": "Lav",
+                  "sv": "Låg",
+                  "pl": "Niski",
+                  "ru": "Низкий",
+                  "ko": "낮음",
+                  "ar": "منخفض"
                 }
               },
               {
                 "id": "3",
                 "label": {
-                  "en": "High"
+                  "en": "High",
+                  "nl": "Hoog",
+                  "da": "Høj",
+                  "de": "Hoch",
+                  "es": "Alto",
+                  "fr": "Élevé",
+                  "it": "Alto",
+                  "no": "Høy",
+                  "sv": "Hög",
+                  "pl": "Wysoki",
+                  "ru": "Высокий",
+                  "ko": "높음",
+                  "ar": "مرتفع"
                 }
               }
             ]
@@ -1097,13 +2549,49 @@
       },
       {
         "title": {
-          "en": "Wake up vehicle"
+          "en": "Wake up vehicle",
+          "nl": "Maak voertuig wakker",
+          "da": "Væk køretøj",
+          "de": "Fahrzeug aufwecken",
+          "es": "Despertar vehículo",
+          "fr": "Réveiller le véhicule",
+          "it": "Sveglia il veicolo",
+          "no": "Vekk kjøretøy",
+          "sv": "Väck fordon",
+          "pl": "Obudź pojazd",
+          "ru": "Разбудить транспортное средство",
+          "ko": "차량 깨우기",
+          "ar": "إيقاظ المركبة"
         },
         "titleFormatted": {
-          "en": "Wake up [[device]]"
+          "en": "Wake up [[device]]",
+          "nl": "Maak [[device]] wakker",
+          "da": "Væk [[device]]",
+          "de": "Wecke [[device]]",
+          "es": "Despertar [[device]]",
+          "fr": "Réveiller [[device]]",
+          "it": "Sveglia [[device]]",
+          "no": "Vekk [[device]]",
+          "sv": "Väck [[device]]",
+          "pl": "Obudź [[device]]",
+          "ru": "Разбудить [[device]]",
+          "ko": "[[device]] 깨우기",
+          "ar": "إيقاظ [[device]]"
         },
         "hint": {
-          "en": "Wake up the vehicle from sleep mode."
+          "en": "Wake up the vehicle from sleep mode.",
+          "nl": "Maak het voertuig wakker uit de slaapstand.",
+          "da": "Væk køretøjet fra dvaletilstand.",
+          "de": "Wecken Sie das Fahrzeug aus dem Schlafmodus.",
+          "es": "Despierta el vehículo del modo de suspensión.",
+          "fr": "Réveillez le véhicule du mode veille.",
+          "it": "Sveglia il veicolo dalla modalità sleep.",
+          "no": "Vekk kjøretøyet fra dvalemodus.",
+          "sv": "Väck fordonet från viloläge.",
+          "pl": "Obudź pojazd z trybu uśpienia.",
+          "ru": "Разбудить транспортное средство из спящего режима.",
+          "ko": "차량을 절전 모드에서 깨우세요.",
+          "ar": "إيقاظ المركبة من وضع السكون."
         },
         "args": [
           {
@@ -1111,7 +2599,19 @@
             "name": "device",
             "filter": "capabilities=button.wakeup",
             "title": {
-              "en": "Device"
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
             }
           }
         ],
@@ -1120,7 +2620,19 @@
       {
         "id": "onoff.charge_grid_on",
         "title": {
-          "en": "Enable charge from grid"
+          "en": "Enable charge from grid",
+          "nl": "Opladen via het net inschakelen",
+          "da": "Aktiver opladning fra nettet",
+          "de": "Laden vom Netz aktivieren",
+          "es": "Habilitar carga desde la red",
+          "fr": "Activer la charge depuis le réseau",
+          "it": "Abilita la ricarica dalla rete",
+          "no": "Aktiver lading fra nettet",
+          "sv": "Aktivera laddning från nätet",
+          "pl": "Włącz ładowanie z sieci",
+          "ru": "Включить зарядку от сети",
+          "ko": "그리드에서 충전 활성화",
+          "ar": "تمكين الشحن من الشبكة"
         },
         "args": [
           {
@@ -1133,7 +2645,19 @@
       {
         "id": "onoff.charge_grid_off",
         "title": {
-          "en": "Disable charge from grid"
+          "en": "Disable charge from grid",
+          "nl": "Opladen via het net uitschakelen",
+          "da": "Deaktiver opladning fra nettet",
+          "de": "Laden vom Netz deaktivieren",
+          "es": "Deshabilitar carga desde la red",
+          "fr": "Désactiver la charge depuis le réseau",
+          "it": "Disabilita la ricarica dalla rete",
+          "no": "Deaktiver lading fra nettet",
+          "sv": "Inaktivera laddning från nätet",
+          "pl": "Wyłącz ładowanie z sieci",
+          "ru": "Отключить зарядку от сети",
+          "ko": "그리드에서 충전 비활성화",
+          "ar": "تعطيل الشحن من الشبكة"
         },
         "args": [
           {
@@ -1146,7 +2670,19 @@
       {
         "id": "onoff.charge_grid_toggle",
         "title": {
-          "en": "Toggle charge from grid"
+          "en": "Toggle charge from grid",
+          "nl": "Opladen via het net wisselen",
+          "da": "Skift opladning fra nettet",
+          "de": "Laden vom Netz umschalten",
+          "es": "Alternar carga desde la red",
+          "fr": "Basculer la charge depuis le réseau",
+          "it": "Alterna la ricarica dalla rete",
+          "no": "Bytt lading fra nettet",
+          "sv": "Växla laddning från nätet",
+          "pl": "Przełącz ładowanie z sieci",
+          "ru": "Переключить зарядку от сети",
+          "ko": "그리드에서 충전 전환",
+          "ar": "تبديل الشحن من الشبكة"
         },
         "args": [
           {
@@ -1159,7 +2695,19 @@
       {
         "id": "onoff.storm_on",
         "title": {
-          "en": "Enable storm watch"
+          "en": "Enable storm watch",
+          "nl": "Stormwaarschuwing inschakelen",
+          "da": "Aktiver stormvagt",
+          "de": "Sturmüberwachung aktivieren",
+          "es": "Habilitar alerta de tormenta",
+          "fr": "Activer la veille tempête",
+          "it": "Abilita il monitoraggio delle tempeste",
+          "no": "Aktiver stormvarsling",
+          "sv": "Aktivera stormbevakning",
+          "pl": "Włącz nadzór burzowy",
+          "ru": "Включить штормовое наблюдение",
+          "ko": "폭풍 감시 활성화",
+          "ar": "تمكين مراقبة العاصفة"
         },
         "args": [
           {
@@ -1172,7 +2720,19 @@
       {
         "id": "onoff.storm_off",
         "title": {
-          "en": "Disable storm watch"
+          "en": "Disable storm watch",
+          "nl": "Stormwaarschuwing uitschakelen",
+          "da": "Deaktiver stormvagt",
+          "de": "Sturmüberwachung deaktivieren",
+          "es": "Deshabilitar alerta de tormenta",
+          "fr": "Désactiver la veille tempête",
+          "it": "Disabilita il monitoraggio delle tempeste",
+          "no": "Deaktiver stormvarsling",
+          "sv": "Inaktivera stormbevakning",
+          "pl": "Wyłącz nadzór burzowy",
+          "ru": "Отключить штормовое наблюдение",
+          "ko": "폭풍 감시 비활성화",
+          "ar": "تعطيل مراقبة العاصفة"
         },
         "args": [
           {
@@ -1185,7 +2745,19 @@
       {
         "id": "onoff.storm_toggle",
         "title": {
-          "en": "Toggle storm watch"
+          "en": "Toggle storm watch",
+          "nl": "Stormwaarschuwing wisselen",
+          "da": "Skift stormvagt",
+          "de": "Sturmüberwachung umschalten",
+          "es": "Alternar alerta de tormenta",
+          "fr": "Basculer la veille tempête",
+          "it": "Alterna il monitoraggio delle tempeste",
+          "no": "Bytt stormvarsling",
+          "sv": "Växla stormbevakning",
+          "pl": "Przełącz nadzór burzowy",
+          "ru": "Переключить штормовое наблюдение",
+          "ko": "폭풍 감시 전환",
+          "ar": "تبديل مراقبة العاصفة"
         },
         "args": [
           {
@@ -1198,7 +2770,19 @@
       {
         "id": "onoff.charge_port_on",
         "title": {
-          "en": "Open charge port"
+          "en": "Open charge port",
+          "nl": "Open laadpoort",
+          "da": "Åbn ladeporten",
+          "de": "Ladeanschluss öffnen",
+          "es": "Abrir puerto de carga",
+          "fr": "Ouvrir le port de charge",
+          "it": "Apri porta di ricarica",
+          "no": "Åpne ladeporten",
+          "sv": "Öppna laddningsporten",
+          "pl": "Otwórz port ładowania",
+          "ru": "Открыть порт зарядки",
+          "ko": "충전 포트 열기",
+          "ar": "افتح منفذ الشحن"
         },
         "args": [
           {
@@ -1211,7 +2795,19 @@
       {
         "id": "onoff.charge_port_off",
         "title": {
-          "en": "Close charge port"
+          "en": "Close charge port",
+          "nl": "Sluit laadpoort",
+          "da": "Luk ladeporten",
+          "de": "Ladeanschluss schließen",
+          "es": "Cerrar puerto de carga",
+          "fr": "Fermer le port de charge",
+          "it": "Chiudi porta di ricarica",
+          "no": "Lukk ladeporten",
+          "sv": "Stäng laddningsporten",
+          "pl": "Zamknij port ładowania",
+          "ru": "Закрыть порт зарядки",
+          "ko": "충전 포트 닫기",
+          "ar": "اغلق منفذ الشحن"
         },
         "args": [
           {
@@ -1224,7 +2820,19 @@
       {
         "id": "onoff.charge_port_toggle",
         "title": {
-          "en": "Toggle charge port"
+          "en": "Toggle charge port",
+          "nl": "Wissel laadpoort",
+          "da": "Skift ladeporten",
+          "de": "Ladeanschluss umschalten",
+          "es": "Cambiar puerto de carga",
+          "fr": "Basculer le port de charge",
+          "it": "Attiva/disattiva porta di ricarica",
+          "no": "Veksle ladeporten",
+          "sv": "Växla laddningsporten",
+          "pl": "Przełącz port ładowania",
+          "ru": "Переключить порт зарядки",
+          "ko": "충전 포트 전환",
+          "ar": "تبديل منفذ الشحن"
         },
         "args": [
           {
@@ -1237,7 +2845,19 @@
       {
         "id": "onoff.sentry_on",
         "title": {
-          "en": "Enable sentry mode"
+          "en": "Enable sentry mode",
+          "nl": "Schakel bewakingsmodus in",
+          "da": "Aktiver sentineltilstand",
+          "de": "Wächtermodus aktivieren",
+          "es": "Activar modo centinela",
+          "fr": "Activer le mode sentinelle",
+          "it": "Attiva modalità sentinella",
+          "no": "Aktiver vaktmodus",
+          "sv": "Aktivera vaktläget",
+          "pl": "Włącz tryb strażnika",
+          "ru": "Включить режим охраны",
+          "ko": "센트리 모드 활성화",
+          "ar": "تفعيل وضع الحراسة"
         },
         "args": [
           {
@@ -1250,7 +2870,19 @@
       {
         "id": "onoff.sentry_off",
         "title": {
-          "en": "Disable sentry mode"
+          "en": "Disable sentry mode",
+          "nl": "Schakel bewakingsmodus uit",
+          "da": "Deaktiver sentineltilstand",
+          "de": "Wächtermodus deaktivieren",
+          "es": "Desactivar modo centinela",
+          "fr": "Désactiver le mode sentinelle",
+          "it": "Disattiva modalità sentinella",
+          "no": "Deaktiver vaktmodus",
+          "sv": "Avaktivera vaktläget",
+          "pl": "Wyłącz tryb strażnika",
+          "ru": "Отключить режим охраны",
+          "ko": "센트리 모드 비활성화",
+          "ar": "تعطيل وضع الحراسة"
         },
         "args": [
           {
@@ -1263,7 +2895,19 @@
       {
         "id": "onoff.sentry_toggle",
         "title": {
-          "en": "Toggle sentry mode"
+          "en": "Toggle sentry mode",
+          "nl": "Wissel bewakingsmodus",
+          "da": "Skift sentineltilstand",
+          "de": "Wächtermodus umschalten",
+          "es": "Cambiar modo centinela",
+          "fr": "Basculer le mode sentinelle",
+          "it": "Attiva/disattiva modalità sentinella",
+          "no": "Veksle vaktmodus",
+          "sv": "Växla vaktläget",
+          "pl": "Przełącz tryb strażnika",
+          "ru": "Переключить режим охраны",
+          "ko": "센트리 모드 전환",
+          "ar": "تبديل وضع الحراسة"
         },
         "args": [
           {
@@ -1276,7 +2920,19 @@
       {
         "id": "onoff.frunk_on",
         "title": {
-          "en": "Open frunk"
+          "en": "Open frunk",
+          "nl": "Open frunk",
+          "da": "Åbn frunken",
+          "de": "Frunk öffnen",
+          "es": "Abrir frunk",
+          "fr": "Ouvrir le coffre avant",
+          "it": "Apri cofono anteriore",
+          "no": "Åpne frunken",
+          "sv": "Öppna frunken",
+          "pl": "Otwórz przedni bagażnik",
+          "ru": "Открыть передний багажник",
+          "ko": "프렁크 열기",
+          "ar": "افتح الصندوق الأمامي"
         },
         "args": [
           {
@@ -1289,7 +2945,19 @@
       {
         "id": "onoff.frunk_off",
         "title": {
-          "en": "Close frunk"
+          "en": "Close frunk",
+          "nl": "Sluit frunk",
+          "da": "Luk frunken",
+          "de": "Frunk schließen",
+          "es": "Cerrar frunk",
+          "fr": "Fermer le coffre avant",
+          "it": "Chiudi cofono anteriore",
+          "no": "Lukk frunken",
+          "sv": "Stäng frunken",
+          "pl": "Zamknij przedni bagażnik",
+          "ru": "Закрыть передний багажник",
+          "ko": "프렁크 닫기",
+          "ar": "اغلق الصندوق الأمامي"
         },
         "args": [
           {
@@ -1302,7 +2970,19 @@
       {
         "id": "onoff.frunk_toggle",
         "title": {
-          "en": "Toggle frunk"
+          "en": "Toggle frunk",
+          "nl": "Wissel frunk",
+          "da": "Skift frunken",
+          "de": "Frunk umschalten",
+          "es": "Cambiar frunk",
+          "fr": "Basculer le coffre avant",
+          "it": "Attiva/disattiva cofono anteriore",
+          "no": "Veksle frunken",
+          "sv": "Växla frunken",
+          "pl": "Przełącz przedni bagażnik",
+          "ru": "Переключить передний багажник",
+          "ko": "프렁크 전환",
+          "ar": "تبديل الصندوق الأمامي"
         },
         "args": [
           {
@@ -1315,7 +2995,19 @@
       {
         "id": "onoff.trunk_on",
         "title": {
-          "en": "Open trunk"
+          "en": "Open trunk",
+          "nl": "Open kofferbak",
+          "da": "Åbn bagagerummet",
+          "de": "Kofferraum öffnen",
+          "es": "Abrir maletero",
+          "fr": "Ouvrir le coffre",
+          "it": "Apri bagagliaio",
+          "no": "Åpne bagasjerommet",
+          "sv": "Öppna bagageutrymmet",
+          "pl": "Otwórz bagażnik",
+          "ru": "Открыть багажник",
+          "ko": "트렁크 열기",
+          "ar": "افتح صندوق السيارة"
         },
         "args": [
           {
@@ -1328,7 +3020,19 @@
       {
         "id": "onoff.trunk_off",
         "title": {
-          "en": "Close trunk"
+          "en": "Close trunk",
+          "nl": "Sluit kofferbak",
+          "da": "Luk bagagerummet",
+          "de": "Kofferraum schließen",
+          "es": "Cerrar maletero",
+          "fr": "Fermer le coffre",
+          "it": "Chiudi bagagliaio",
+          "no": "Lukk bagasjerommet",
+          "sv": "Stäng bagageutrymmet",
+          "pl": "Zamknij bagażnik",
+          "ru": "Закрыть багажник",
+          "ko": "트렁크 닫기",
+          "ar": "اغلق صندوق السيارة"
         },
         "args": [
           {
@@ -1341,7 +3045,19 @@
       {
         "id": "onoff.trunk_toggle",
         "title": {
-          "en": "Toggle trunk"
+          "en": "Toggle trunk",
+          "nl": "Wissel kofferbak",
+          "da": "Skift bagagerummet",
+          "de": "Kofferraum umschalten",
+          "es": "Cambiar maletero",
+          "fr": "Basculer le coffre",
+          "it": "Attiva/disattiva bagagliaio",
+          "no": "Veksle bagasjerommet",
+          "sv": "Växla bagageutrymmet",
+          "pl": "Przełącz bagażnik",
+          "ru": "Переключить багажник",
+          "ko": "트렁크 전환",
+          "ar": "تبديل صندوق السيارة"
         },
         "args": [
           {
@@ -1354,7 +3070,19 @@
       {
         "id": "onoff.guest_mode_on",
         "title": {
-          "en": "Enable guest mode"
+          "en": "Enable guest mode",
+          "nl": "Gastmodus inschakelen",
+          "da": "Aktiver gæstetilstand",
+          "de": "Gastmodus aktivieren",
+          "es": "Activar modo invitado",
+          "fr": "Activer le mode invité",
+          "it": "Attiva modalità ospite",
+          "no": "Aktiver gjestemodus",
+          "sv": "Aktivera gästäget",
+          "pl": "Włącz tryb gościa",
+          "ru": "Включить гостевой режим",
+          "ko": "게스트 모드 활성화",
+          "ar": "تفعيل وضع الضيف"
         },
         "args": [
           {
@@ -1367,7 +3095,19 @@
       {
         "id": "onoff.guest_mode_off",
         "title": {
-          "en": "Disable guest mode"
+          "en": "Disable guest mode",
+          "nl": "Gastmodus uitschakelen",
+          "da": "Deaktiver gæstetilstand",
+          "de": "Gastmodus deaktivieren",
+          "es": "Desactivar modo invitado",
+          "fr": "Désactiver le mode invité",
+          "it": "Disattiva modalità ospite",
+          "no": "Deaktiver gjestemodus",
+          "sv": "Avaktivera gæstäget",
+          "pl": "Wyłącz tryb gościa",
+          "ru": "Отключить гостевой режим",
+          "ko": "게스트 모드 비활성화",
+          "ar": "تعطيل وضع الضيف"
         },
         "args": [
           {
@@ -1380,7 +3120,19 @@
       {
         "id": "onoff.guest_mode_toggle",
         "title": {
-          "en": "Toggle guest mode"
+          "en": "Toggle guest mode",
+          "nl": "Wissel gastmodus",
+          "da": "Skift gæstetilstand",
+          "de": "Gastmodus umschalten",
+          "es": "Cambiar modo invitado",
+          "fr": "Basculer le mode invité",
+          "it": "Attiva/disattiva modalità ospite",
+          "no": "Veksle gjestemodus",
+          "sv": "Växla gästäget",
+          "pl": "Przełącz tryb gościa",
+          "ru": "Переключить гостевой режим",
+          "ko": "게스트 모드 전환",
+          "ar": "تبديل وضع الضيف"
         },
         "args": [
           {
@@ -1443,7 +3195,19 @@
         }
       ],
       "name": {
-        "en": "Powerwall"
+        "en": "Powerwall",
+        "nl": "Powerwall",
+        "da": "Powerwall",
+        "de": "Powerwall",
+        "es": "Powerwall",
+        "fr": "Powerwall",
+        "it": "Powerwall",
+        "no": "Powerwall",
+        "sv": "Powerwall",
+        "pl": "Powerwall",
+        "ru": "Powerwall",
+        "ko": "Powerwall",
+        "ar": "باور وول"
       },
       "class": "battery",
       "ui": {
@@ -1464,27 +3228,87 @@
       "capabilitiesOptions": {
         "meter_power.charged": {
           "title": {
-            "en": "Charged Energy"
+            "en": "Charged Energy",
+            "nl": "Opgeladen Energie",
+            "da": "Opladet Energi",
+            "de": "Geladene Energie",
+            "es": "Energía Cargada",
+            "fr": "Énergie Chargée",
+            "it": "Energia Caricata",
+            "no": "Ladet Energi",
+            "sv": "Laddad Energi",
+            "pl": "Naładowana Energia",
+            "ru": "Заряженная Энергия",
+            "ko": "충전된 에너지",
+            "ar": "الطاقة المشحونة"
           }
         },
         "meter_power.discharged": {
           "title": {
-            "en": "Discharged Energy"
+            "en": "Discharged Energy",
+            "nl": "Ontladen Energie",
+            "da": "Afledt Energi",
+            "de": "Entladene Energie",
+            "es": "Energía Descargada",
+            "fr": "Énergie Déchargée",
+            "it": "Energia Scaricata",
+            "no": "Utladet Energi",
+            "sv": "Urladdad Energi",
+            "pl": "Rozładowana Energia",
+            "ru": "Разряженная Энергия",
+            "ko": "방전된 에너지",
+            "ar": "الطاقة المفرغة"
           }
         },
         "onoff.charge_grid": {
           "title": {
-            "en": "Charge From Grid"
+            "en": "Charge From Grid",
+            "nl": "Laden van Net",
+            "da": "Lad Fra Net",
+            "de": "Laden Aus Dem Netz",
+            "es": "Cargar Desde La Red",
+            "fr": "Charger Depuis Le Réseau",
+            "it": "Carica Dalla Rete",
+            "no": "Lad Fra Nettet",
+            "sv": "Ladda Från Nätet",
+            "pl": "Ładowanie Z Sieci",
+            "ru": "Зарядка От Сети",
+            "ko": "그리드에서 충전",
+            "ar": "الشحن من الشبكة"
           }
         },
         "onoff.storm": {
           "title": {
-            "en": "Storm Watch"
+            "en": "Storm Watch",
+            "nl": "Storm Waarschuwing",
+            "da": "Storm Vagt",
+            "de": "Sturmwache",
+            "es": "Vigilancia de Tormentas",
+            "fr": "Surveillance Tempête",
+            "it": "Monitoraggio Temporale",
+            "no": "Stormvakt",
+            "sv": "Stormbevakning",
+            "pl": "Monitoring Burzy",
+            "ru": "Штормовое Предупреждение",
+            "ko": "폭풍 감시",
+            "ar": "مراقبة العاصفة"
           }
         },
         "alarm_generic.storm": {
           "title": {
-            "en": "Storm Watch Active"
+            "en": "Storm Watch Active",
+            "nl": "Stormwaarschuwing Actief",
+            "da": "Storm Vagt Aktiv",
+            "de": "Sturmwache Aktiv",
+            "es": "Vigilancia de Tormentas Activa",
+            "fr": "Surveillance Tempête Active",
+            "it": "Monitoraggio Temporale Attivo",
+            "no": "Stormvakt Aktiv",
+            "sv": "Stormbevakning Aktiv",
+            "pl": "Monitoring Burzy Aktywny",
+            "ru": "Штормовое Предупреждение Активно",
+            "ko": "폭풍 감시 활성",
+            "ar": "مراقبة العاصفة نشطة"
           }
         }
       },
@@ -1545,7 +3369,19 @@
         }
       ],
       "name": {
-        "en": "Energy Gateway"
+        "en": "Energy Gateway",
+        "nl": "Energiepoort",
+        "da": "Energi Gateway",
+        "de": "Energietor",
+        "es": "Puerta de Energía",
+        "fr": "Passerelle Énergétique",
+        "it": "Gateway Energetico",
+        "no": "Energibro",
+        "sv": "Energigateway",
+        "pl": "Przejście Energetyczne",
+        "ru": "Энергетический шлюз",
+        "ko": "에너지 게이트웨이",
+        "ar": "بوابة الطاقة"
       },
       "class": "sensor",
       "ui": {
@@ -1562,35 +3398,119 @@
       "capabilitiesOptions": {
         "meter_power.imported": {
           "title": {
-            "en": "Imported Energy"
+            "en": "Imported Energy",
+            "nl": "Geïmporteerde Energie",
+            "da": "Importeret Energi",
+            "de": "Importierte Energie",
+            "es": "Energía Importada",
+            "fr": "Énergie Importée",
+            "it": "Energia Importata",
+            "no": "Importert Energi",
+            "sv": "Importerad Energi",
+            "pl": "Energia Importowana",
+            "ru": "Импортированная энергия",
+            "ko": "수입 에너지",
+            "ar": "الطاقة المستوردة"
           }
         },
         "meter_power.exported": {
           "title": {
-            "en": "Exported Energy"
+            "en": "Exported Energy",
+            "nl": "Geëxporteerde Energie",
+            "da": "Eksporteret Energi",
+            "de": "Exportierte Energie",
+            "es": "Energía Exportada",
+            "fr": "Énergie Exportée",
+            "it": "Energia Esportata",
+            "no": "Eksportert Energi",
+            "sv": "Exporterad Energi",
+            "pl": "Energia Eksportowana",
+            "ru": "Экспортированная энергия",
+            "ko": "수출 에너지",
+            "ar": "الطاقة المصدرة"
           }
         },
         "measure_power": {
           "title": {
-            "en": "Grid Power"
+            "en": "Grid Power",
+            "nl": "Netspanning",
+            "da": "Netstrøm",
+            "de": "Netzstrom",
+            "es": "Energía de Red",
+            "fr": "Puissance Réseau",
+            "it": "Energia a Rete",
+            "no": "Netto Strøm",
+            "sv": "Nätström",
+            "pl": "Energia Sieciowa",
+            "ru": "Сетевая мощность",
+            "ko": "그리드 전력",
+            "ar": "الطاقة الشبكية"
           }
         },
         "measure_power.load": {
           "title": {
-            "en": "Load Power"
+            "en": "Load Power",
+            "nl": "Belastingsvermogen",
+            "da": "Belastningseffekt",
+            "de": "Lastwechsel",
+            "es": "Potencia de Carga",
+            "fr": "Puissance de Charge",
+            "it": "Potenza di Carico",
+            "no": "Last Effekt",
+            "sv": "Lastkraft",
+            "pl": "Moc Obciążenia",
+            "ru": "Нагрузка мощности",
+            "ko": "부하 전력",
+            "ar": "طاقة الحمل"
           },
           "units": {
-            "en": "W"
+            "en": "W",
+            "nl": "W",
+            "da": "W",
+            "de": "W",
+            "es": "W",
+            "fr": "W",
+            "it": "W",
+            "no": "W",
+            "sv": "W",
+            "pl": "W",
+            "ru": "Вт",
+            "ko": "W",
+            "ar": "و"
           }
         },
         "alarm_generic.off_grid": {
           "title": {
-            "en": "Grid Status"
+            "en": "Grid Status",
+            "nl": "Netwerkstatus",
+            "da": "Netværksstatus",
+            "de": "Netzstatus",
+            "es": "Estado de la Red",
+            "fr": "Statut du Réseau",
+            "it": "Stato della Rete",
+            "no": "Nettstatus",
+            "sv": "Nätverksstatus",
+            "pl": "Status Sieci",
+            "ru": "Состояние сети",
+            "ko": "전력망 상태",
+            "ar": "حالة الشبكة"
           }
         },
         "alarm_generic.island": {
           "title": {
-            "en": "Island Status"
+            "en": "Island Status",
+            "nl": "Eilandstatus",
+            "da": "Østatus",
+            "de": "Inselstatus",
+            "es": "Estado de Isla",
+            "fr": "Statut de l'Île",
+            "it": "Stato dell'Isola",
+            "no": "Øyestatus",
+            "sv": "Östatus",
+            "pl": "Status Wyspy",
+            "ru": "Островной статус",
+            "ko": "섬 상태",
+            "ar": "حالة الجزيرة"
           }
         }
       },
@@ -1651,7 +3571,19 @@
         }
       ],
       "name": {
-        "en": "Solar Panel"
+        "en": "Solar Panel",
+        "nl": "Zonnepaneel",
+        "da": "Solpanel",
+        "de": "Solarmodul",
+        "es": "Panel Solar",
+        "fr": "Panneau Solaire",
+        "it": "Pannello Solare",
+        "no": "Solcellepanel",
+        "sv": "Solpanel",
+        "pl": "Panel Słoneczny",
+        "ru": "Солнечная панель",
+        "ko": "태양광 패널",
+        "ar": "اللوح الشمسي"
       },
       "class": "solarpanel",
       "ui": {
@@ -1716,7 +3648,19 @@
         }
       ],
       "name": {
-        "en": "Tesla Vehicle"
+        "en": "Tesla Vehicle",
+        "nl": "Tesla Voertuig",
+        "da": "Tesla Køretøj",
+        "de": "Tesla Fahrzeug",
+        "es": "Vehículo Tesla",
+        "fr": "Véhicule Tesla",
+        "it": "Veicolo Tesla",
+        "no": "Tesla Kjøretøy",
+        "sv": "Tesla Fordon",
+        "pl": "Pojazd Tesla",
+        "ru": "Транспорт Tesla",
+        "ko": "테슬라 차량",
+        "ar": "مركبة تسلا"
       },
       "class": "car",
       "ui": {
@@ -1792,7 +3736,19 @@
       "capabilitiesOptions": {
         "measure_distance.range": {
           "title": {
-            "en": "Range"
+            "en": "Range",
+            "nl": "Bereik",
+            "da": "Rækkevidde",
+            "de": "Reichweite",
+            "es": "Autonomía",
+            "fr": "Portée",
+            "it": "Raggio",
+            "no": "Rekkevidde",
+            "sv": "Räckvidd",
+            "pl": "Zasięg",
+            "ru": "Запас хода",
+            "ko": "주행 거리",
+            "ar": "المدى"
           },
           "units": {
             "en": "km"
@@ -1800,7 +3756,19 @@
         },
         "measure_distance.odometer": {
           "title": {
-            "en": "Odometer"
+            "en": "Odometer",
+            "nl": "Kilometerteller",
+            "da": "Kilometertæller",
+            "de": "Kilometerzähler",
+            "es": "Odómetro",
+            "fr": "Odomètre",
+            "it": "Contachilometri",
+            "no": "Kilometerteller",
+            "sv": "Odometer",
+            "pl": "Licznik kilometrów",
+            "ru": "Одометр",
+            "ko": "주행 거리계",
+            "ar": "عداد المسافات"
           },
           "units": {
             "en": "km"
@@ -1808,213 +3776,705 @@
         },
         "measure_speed": {
           "title": {
-            "en": "Speed"
+            "en": "Speed",
+            "nl": "Snelheid",
+            "da": "Hastighed",
+            "de": "Geschwindigkeit",
+            "es": "Velocidad",
+            "fr": "Vitesse",
+            "it": "Velocità",
+            "no": "Fart",
+            "sv": "Hastighet",
+            "pl": "Prędkość",
+            "ru": "Скорость",
+            "ko": "속도",
+            "ar": "السرعة"
           }
         },
         "measure_temperature.outside": {
           "title": {
-            "en": "Outside Temperature"
+            "en": "Outside Temperature",
+            "nl": "Buitentemperatuur",
+            "da": "Udendørstemperatur",
+            "de": "Außentemperatur",
+            "es": "Temperatura Exterior",
+            "fr": "Température extérieure",
+            "it": "Temperatura esterna",
+            "no": "Utetemperatur",
+            "sv": "Utetemperatur",
+            "pl": "Temperatura na zewnątrz",
+            "ru": "Температура снаружи",
+            "ko": "외부 온도",
+            "ar": "درجة حرارة الخارج"
           }
         },
         "onoff.charge_port": {
           "title": {
-            "en": "Charge Port Door"
+            "en": "Charge Port Door",
+            "nl": "Laadpoortdeur",
+            "da": "Ladeportdør",
+            "de": "Ladeporttür",
+            "es": "Puerta del puerto de carga",
+            "fr": "Porte de la prise de charge",
+            "it": "Porta di ricarica",
+            "no": "Ladeportdør",
+            "sv": "Laddportsdörr",
+            "pl": "Drzwi portu ładowania",
+            "ru": "Дверца порта зарядки",
+            "ko": "충전 포트 도어",
+            "ar": "باب منفذ الشحن"
           }
         },
         "evcharger_charging": {
           "title": {
-            "en": "Charging"
+            "en": "Charging",
+            "nl": "Opladen",
+            "da": "Lader",
+            "de": "Laden",
+            "es": "Cargando",
+            "fr": "En charge",
+            "it": "In carica",
+            "no": "Lader",
+            "sv": "Laddar",
+            "pl": "Ładowanie",
+            "ru": "Зарядка",
+            "ko": "충전 중",
+            "ar": "جار الشحن"
           }
         },
         "onoff.sentry": {
           "title": {
-            "en": "Sentry Mode"
+            "en": "Sentry Mode",
+            "nl": "Bewakingsmodus",
+            "da": "Vagtfunktion",
+            "de": "Wächtermodus",
+            "es": "Modo Centinela",
+            "fr": "Mode Sentinelle",
+            "it": "Modalità Sentinella",
+            "no": "Vaktmodus",
+            "sv": "Bevakningsläge",
+            "pl": "Tryb straży",
+            "ru": "Режим сторожа",
+            "ko": "감시 모드",
+            "ar": "وضع الحراسة"
           }
         },
         "onoff.defrost": {
           "title": {
-            "en": "Defrost"
+            "en": "Defrost",
+            "nl": "Ontdooien",
+            "da": "Aftøning",
+            "de": "Enteisen",
+            "es": "Descongelar",
+            "fr": "Dégivrage",
+            "it": "Sbrinamento",
+            "no": "Avfrosting",
+            "sv": "Avfrostning",
+            "pl": "Odmrażanie",
+            "ru": "Разморозка",
+            "ko": "제상",
+            "ar": "إزالة الصقيع"
           }
         },
         "locked.charge_latch": {
           "title": {
-            "en": "Charge Port Latch"
+            "en": "Charge Port Latch",
+            "nl": "Laadpoortvergrendeling",
+            "da": "Ladelås",
+            "de": "Ladeanschluss",
+            "es": "Pestillo del puerto de carga",
+            "fr": "Verrouillage du port de charge",
+            "it": "Fermo del portello di carica",
+            "no": "Ladelås",
+            "sv": "Laddportspärr",
+            "pl": "Zatrzask portu ładowania",
+            "ru": "Засов порта зарядки",
+            "ko": "충전 포트 래치",
+            "ar": "مزلاج منفذ الشحن"
           }
         },
         "seat_heater.front_left": {
           "title": {
-            "en": "Seat Heater (Front Left)"
+            "en": "Seat Heater (Front Left)",
+            "nl": "Stoelverwarmer (Voor Links)",
+            "da": "Sædevarmer (Foran Venstre)",
+            "de": "Sitzheizung (Vorne Links)",
+            "es": "Calefacción del Asiento (Delantero Izquierdo)",
+            "fr": "Chauffage de siège (Avant Gauche)",
+            "it": "Riscaldamento Sedile (Anteriore Sinistra)",
+            "no": "Setevarmer (Foran Venstre)",
+            "sv": "Sätesvärmare (Främre Vänster)",
+            "pl": "Podgrzewanie Siedzenia (Przód Lewy)",
+            "ru": "Подогрев сиденья (Переднее левое)",
+            "ko": "시트 히터 (앞 왼쪽)",
+            "ar": "مدفأة المقعد (أمام يسار)"
           }
         },
         "seat_heater.front_right": {
           "title": {
-            "en": "Seat Heater (Front Right)"
+            "en": "Seat Heater (Front Right)",
+            "nl": "Stoelverwarmer (Voor Rechts)",
+            "da": "Sædevarmer (Foran Højre)",
+            "de": "Sitzheizung (Vorne Rechts)",
+            "es": "Calefacción del Asiento (Delantero Derecho)",
+            "fr": "Chauffage de siège (Avant Droit)",
+            "it": "Riscaldamento Sedile (Anteriore Destra)",
+            "no": "Setevarmer (Foran Høyre)",
+            "sv": "Sätesvärmare (Främre Höger)",
+            "pl": "Podgrzewanie Siedzenia (Przód Prawy)",
+            "ru": "Подогрев сиденья (Переднее правое)",
+            "ko": "시트 히터 (앞 오른쪽)",
+            "ar": "مدفأة المقعد (أمام يمين)"
           }
         },
         "onoff.frunk": {
           "title": {
-            "en": "Frunk"
+            "en": "Frunk",
+            "nl": "Frunk",
+            "da": "Frunk",
+            "de": "Frunk",
+            "es": "Frunk",
+            "fr": "Frunk",
+            "it": "Frunk",
+            "no": "Frunk",
+            "sv": "Frunk",
+            "pl": "Frunk",
+            "ru": "Франк",
+            "ko": "프렁크",
+            "ar": "Frunk"
           }
         },
         "onoff.trunk": {
           "title": {
-            "en": "Trunk"
+            "en": "Trunk",
+            "nl": "Kofferbak",
+            "da": "Bagagerum",
+            "de": "Kofferraum",
+            "es": "Baúl",
+            "fr": "Coffre",
+            "it": "Baule",
+            "no": "Bagasjerom",
+            "sv": "Bagageutrymme",
+            "pl": "Bagażnik",
+            "ru": "Багажник",
+            "ko": "트렁크",
+            "ar": "صندوق السيارة"
           }
         },
         "alarm_contact.fl": {
           "title": {
-            "en": "Door (Front Left)"
+            "en": "Door (Front Left)",
+            "nl": "Deur (Voor Links)",
+            "da": "Dør (Foran Venstre)",
+            "de": "Tür (Vorne Links)",
+            "es": "Puerta (Delantera Izquierda)",
+            "fr": "Porte (Avant Gauche)",
+            "it": "Porta (Anteriore Sinistra)",
+            "no": "Dør (Foran Venstre)",
+            "sv": "Dörr (Främre Vänster)",
+            "pl": "Drzwi (Przód Lewy)",
+            "ru": "Дверь (Передняя левая)",
+            "ko": "문 (앞 왼쪽)",
+            "ar": "باب (أمام يسار)"
           }
         },
         "alarm_contact.fr": {
           "title": {
-            "en": "Door (Front Right)"
+            "en": "Door (Front Right)",
+            "nl": "Deur (Voor Rechts)",
+            "da": "Dør (Foran Højre)",
+            "de": "Tür (Vorne Rechts)",
+            "es": "Puerta (Delantera Derecha)",
+            "fr": "Porte (Avant Droit)",
+            "it": "Porta (Anteriore Destra)",
+            "no": "Dør (Foran Høyre)",
+            "sv": "Dörr (Främre Höger)",
+            "pl": "Drzwi (Przód Prawy)",
+            "ru": "Дверь (Передняя правая)",
+            "ko": "문 (앞 오른쪽)",
+            "ar": "باب (أمام يمين)"
           }
         },
         "alarm_contact.rl": {
           "title": {
-            "en": "Door (Rear Left)"
+            "en": "Door (Rear Left)",
+            "nl": "Deur (Achter Links)",
+            "da": "Dør (Bag Venstre)",
+            "de": "Tür (Hinten links)",
+            "es": "Puerta (Trasera Izquierda)",
+            "fr": "Porte (Arrière Gauche)",
+            "it": "Porta (Posteriore Sinistra)",
+            "no": "Dør (Bak Venstre)",
+            "sv": "Dörr (Bakre Vänster)",
+            "pl": "Drzwi (Tył Lewy)",
+            "ru": "Дверь (Задняя левая)",
+            "ko": "문 (뒤 왼쪽)",
+            "ar": "باب (خلف يسار)"
           }
         },
         "alarm_contact.rr": {
           "title": {
-            "en": "Door (Rear Right)"
+            "en": "Door (Rear Right)",
+            "nl": "Deur (Achter Rechts)",
+            "da": "Dør (Bag Højre)",
+            "de": "Tür (Hinten rechts)",
+            "es": "Puerta (Trasera Derecha)",
+            "fr": "Porte (Arrière Droit)",
+            "it": "Porta (Posteriore Destra)",
+            "no": "Dør (Bak Høyre)",
+            "sv": "Dörr (Bakre Höger)",
+            "pl": "Drzwi (Tył Prawy)",
+            "ru": "Дверь (Задняя правая)",
+            "ko": "문 (뒤 오른쪽)",
+            "ar": "باب (خلف يمين)"
           }
         },
         "button.flash": {
           "title": {
-            "en": "Flash Lights"
+            "en": "Flash Lights",
+            "nl": "Koplampen Knipperen",
+            "da": "Blinklys",
+            "de": "Lichter An/Aus",
+            "es": "Luces Flash",
+            "fr": "Clignoter",
+            "it": "Lampeggia Luci",
+            "no": "Blinklys",
+            "sv": "Blinklyktor",
+            "pl": "Światła Migające",
+            "ru": "Мигать фарами",
+            "ko": "전조등 깜빡임",
+            "ar": "الأضواء الوميض"
           }
         },
         "button.honk": {
           "title": {
-            "en": "Honk Horn"
+            "en": "Honk Horn",
+            "nl": "Toeter",
+            "da": "Tudehorn",
+            "de": "Hupen",
+            "es": "Tocar Bocina",
+            "fr": "Klaxonner",
+            "it": "Suona Clacson",
+            "no": "Tut i hornet",
+            "sv": "Tuta med horn",
+            "pl": "Zatrąbić",
+            "ru": "Сигналить",
+            "ko": "경적 울리기",
+            "ar": "اطلاق البوق"
           }
         },
         "button.keyless": {
           "title": {
-            "en": "Keyless Driving"
+            "en": "Keyless Driving",
+            "nl": "Sleutellos Rijden",
+            "da": "Nøglefri Kørsel",
+            "de": "Schlüsselloses Fahren",
+            "es": "Conducción Sin Llave",
+            "fr": "Conduite sans clé",
+            "it": "Guida senza chiavi",
+            "no": "Nøkkelfri Kjøre",
+            "sv": "Nyckelfri Körning",
+            "pl": "Jazda Bezzamkowa",
+            "ru": "Бесключевой доступ",
+            "ko": "키 없는 주행",
+            "ar": "القيادة بدون مفتاح"
           }
         },
         "button.homelink": {
           "title": {
-            "en": "HomeLink"
+            "en": "HomeLink",
+            "nl": "HomeLink",
+            "da": "HomeLink",
+            "de": "HomeLink",
+            "es": "HomeLink",
+            "fr": "HomeLink",
+            "it": "HomeLink",
+            "no": "HomeLink",
+            "sv": "HomeLink",
+            "pl": "HomeLink",
+            "ru": "HomeLink",
+            "ko": "홈링크",
+            "ar": "هوملينك"
           }
         },
         "button.wakeup": {
           "title": {
-            "en": "Wake Up"
+            "en": "Wake Up",
+            "nl": "Wakker worden",
+            "da": "Vågn op",
+            "de": "Aufwachen",
+            "es": "Despierta",
+            "fr": "Se réveiller",
+            "it": "Svegliati",
+            "no": "Våkne opp",
+            "sv": "Vakna",
+            "pl": "Budzenie",
+            "ru": "Проснуться",
+            "ko": "깨우기",
+            "ar": "استيقظ"
           }
         },
         "windowcoverings_closed": {
           "title": {
-            "en": "Windows"
+            "en": "Windows",
+            "nl": "Ramen",
+            "da": "Vinduer",
+            "de": "Fenster",
+            "es": "Ventanillas",
+            "fr": "Fenêtres",
+            "it": "Finestre",
+            "no": "Vinduer",
+            "sv": "Fönster",
+            "pl": "Okna",
+            "ru": "Окна",
+            "ko": "창문",
+            "ar": "النوافذ"
           }
         },
         "speaker_track": {
           "title": {
-            "en": "Track"
+            "en": "Track",
+            "nl": "Track",
+            "da": "Spor",
+            "de": "Titel",
+            "es": "Pista",
+            "fr": "Piste",
+            "it": "Brano",
+            "no": "Spor",
+            "sv": "Låt",
+            "pl": "Utwór",
+            "ru": "Трек",
+            "ko": "트랙",
+            "ar": "المسار"
           }
         },
         "speaker_artist": {
           "title": {
-            "en": "Artist"
+            "en": "Artist",
+            "nl": "Artiest",
+            "da": "Kunstner",
+            "de": "Künstler",
+            "es": "Artista",
+            "fr": "Artiste",
+            "it": "Artista",
+            "no": "Kunstner",
+            "sv": "Artist",
+            "pl": "Artysta",
+            "ru": "Исполнитель",
+            "ko": "아티스트",
+            "ar": "الفنان"
           }
         },
         "speaker_album": {
           "title": {
-            "en": "Album"
+            "en": "Album",
+            "nl": "Album",
+            "da": "Album",
+            "de": "Album",
+            "es": "Álbum",
+            "fr": "Album",
+            "it": "Album",
+            "no": "Album",
+            "sv": "Album",
+            "pl": "Album",
+            "ru": "Альбом",
+            "ko": "앨범",
+            "ar": "الألبوم"
           }
         },
         "measure_pressure.fl": {
           "title": {
-            "en": "Tire Pressure (Front Left)"
+            "en": "Tire Pressure (Front Left)",
+            "nl": "Bandenspanning (Voor Links)",
+            "da": "Dæktryk (Forreste Venstre)",
+            "de": "Reifendruck (Vorne Links)",
+            "es": "Presión de los Neumáticos (Delantera Izquierda)",
+            "fr": "Pression des pneus (Avant Gauche)",
+            "it": "Pressione Pneumatici (Anteriore Sinistra)",
+            "no": "Dekktrykk (Foran Venstre)",
+            "sv": "Däckstryck (Främre Vänster)",
+            "pl": "Ciśnienie w oponach (Przód Lewy)",
+            "ru": "Давление в шинах (Передняя левая)",
+            "ko": "타이어 압력 (앞 왼쪽)",
+            "ar": "ضغط الإطارات (أمام يسار)"
           }
         },
         "measure_pressure.fr": {
           "title": {
-            "en": "Tire Pressure (Front Right)"
+            "en": "Tire Pressure (Front Right)",
+            "nl": "Bandenspanning (Voor Rechts)",
+            "da": "Dæktryk (Forreste Højre)",
+            "de": "Reifendruck (Vorne Rechts)",
+            "es": "Presión de los Neumáticos (Delantera Derecha)",
+            "fr": "Pression des pneus (Avant Droit)",
+            "it": "Pressione Pneumatici (Anteriore Destra)",
+            "no": "Dekktrykk (Foran Høyre)",
+            "sv": "Däckstryck (Främre Höger)",
+            "pl": "Ciśnienie w oponach (Przód Prawy)",
+            "ru": "Давление в шинах (Передняя правая)",
+            "ko": "타이어 압력 (앞 오른쪽)",
+            "ar": "ضغط الإطارات (أمام يمين)"
           }
         },
         "measure_pressure.rl": {
           "title": {
-            "en": "Tire Pressure (Rear Left)"
+            "en": "Tire Pressure (Rear Left)",
+            "nl": "Bandenspanning (Achter Links)",
+            "da": "Dæktryk (Bageste Venstre)",
+            "de": "Reifendruck (Hinten links)",
+            "es": "Presión de los Neumáticos (Trasera Izquierda)",
+            "fr": "Pression des pneus (Arrière Gauche)",
+            "it": "Pressione Pneumatici (Posteriore Sinistra)",
+            "no": "Dekktrykk (Bak Venstre)",
+            "sv": "Däckstryck (Bakre Vänster)",
+            "pl": "Ciśnienie w oponach (Tył Lewy)",
+            "ru": "Давление в шинах (Задняя левая)",
+            "ko": "타이어 압력 (뒤 왼쪽)",
+            "ar": "ضغط الإطارات (خلف يسار)"
           }
         },
         "measure_pressure.rr": {
           "title": {
-            "en": "Tire Pressure (Rear Right)"
+            "en": "Tire Pressure (Rear Right)",
+            "nl": "Bandenspanning (Achter Rechts)",
+            "da": "Dæktryk (Bageste Højre)",
+            "de": "Reifendruck (Hinten rechts)",
+            "es": "Presión de los Neumáticos (Trasera Derecha)",
+            "fr": "Pression des pneus (Arrière Droit)",
+            "it": "Pressione Pneumatici (Posteriore Destra)",
+            "no": "Dekktrykk (Bak Høyre)",
+            "sv": "Däckstryck (Bakre Höger)",
+            "pl": "Ciśnienie w oponach (Tył Prawy)",
+            "ru": "Давление в шинах (Задняя правая)",
+            "ko": "타이어 압력 (뒤 오른쪽)",
+            "ar": "ضغط الإطارات (خلف يمين)"
           }
         },
         "seat_heater.rear_left": {
           "title": {
-            "en": "Seat Heater (Rear Left)"
+            "en": "Seat Heater (Rear Left)",
+            "nl": "Stoelverwarmer (Achter Links)",
+            "da": "Sædevarmer (Bag Venstre)",
+            "de": "Sitzheizung (Hinten links)",
+            "es": "Calefacción del Asiento (Trasera Izquierda)",
+            "fr": "Chauffage de siège (Arrière Gauche)",
+            "it": "Riscaldamento Sedile (Posteriore Sinistra)",
+            "no": "Setevarmer (Bak Venstre)",
+            "sv": "Sätesvärmare (Bakre Vänster)",
+            "pl": "Podgrzewanie Siedzenia (Tył Lewy)",
+            "ru": "Подогрев сиденья (Заднее левое)",
+            "ko": "시트 히터 (뒤 왼쪽)",
+            "ar": "مدفأة المقعد (خلف يسار)"
           }
         },
         "seat_heater.rear_right": {
           "title": {
-            "en": "Seat Heater (Rear Right)"
+            "en": "Seat Heater (Rear Right)",
+            "nl": "Stoelverwarmer (Achter Rechts)",
+            "da": "Sædevarmer (Bag Højre)",
+            "de": "Sitzheizung (Hinten rechts)",
+            "es": "Calefacción del Asiento (Trasera Derecha)",
+            "fr": "Chauffage de siège (Arrière Droit)",
+            "it": "Riscaldamento Sedile (Posteriore Destra)",
+            "no": "Setevarmer (Bak Høyre)",
+            "sv": "Sätesvärmare (Bakre Höger)",
+            "pl": "Podgrzewanie Siedzenia (Tył Prawy)",
+            "ru": "Подогрев сиденья (Заднее правое)",
+            "ko": "시트 히터 (뒤 오른쪽)",
+            "ar": "مدفأة المقعد (خلف يمين)"
           }
         },
         "seat_heater.rear_center": {
           "title": {
-            "en": "Seat Heater (Rear Center)"
+            "en": "Seat Heater (Rear Center)",
+            "nl": "Stoelverwarmer (Achter Midden)",
+            "da": "Sædevarmer (Bag Midt)",
+            "de": "Sitzheizung (Hinten Mitte)",
+            "es": "Calefacción del Asiento (Trasera Central)",
+            "fr": "Chauffage de siège (Arrière Centre)",
+            "it": "Riscaldamento Sedile (Posteriore Centro)",
+            "no": "Setevarmer (Bak Midten)",
+            "sv": "Sätesvärmare (Bakre Mitten)",
+            "pl": "Podgrzewanie Siedzenia (Tył Środkowy)",
+            "ru": "Подогрев сиденья (Заднее среднее)",
+            "ko": "시트 히터 (뒤 중앙)",
+            "ar": "مدفأة المقعد (خلف وسط)"
           }
         },
         "seat_cooler.front_left": {
           "title": {
-            "en": "Seat Cooler (Front Left)"
+            "en": "Seat Cooler (Front Left)",
+            "nl": "Stoelkoeler (Voor Links)",
+            "da": "Sædekøler (Foran Venstre)",
+            "de": "Sitzkühlung (Vorne Links)",
+            "es": "Enfriador del Asiento (Delantera Izquierda)",
+            "fr": "Refroidisseur de siège (Avant Gauche)",
+            "it": "Raffreddamento Sedile (Anteriore Sinistra)",
+            "no": "Setekjøler (Foran Venstre)",
+            "sv": "Säteskylare (Främre Vänster)",
+            "pl": "Chłodzenie Siedzenia (Przód Lewy)",
+            "ru": "Охладитель сиденья (Переднее левое)",
+            "ko": "시트 쿨러 (앞 왼쪽)",
+            "ar": "مبرد المقعد (أمام يسار)"
           }
         },
         "seat_cooler.front_right": {
           "title": {
-            "en": "Seat Cooler (Front Right)"
+            "en": "Seat Cooler (Front Right)",
+            "nl": "Stoelkoeler (Voor Rechts)",
+            "da": "Sædekøler (Foran Højre)",
+            "de": "Sitzkühlung (Vorne Rechts)",
+            "es": "Enfriador del Asiento (Delantera Derecha)",
+            "fr": "Refroidisseur de siège (Avant Droit)",
+            "it": "Raffreddamento Sedile (Anteriore Destra)",
+            "no": "Setekjøler (Foran Høyre)",
+            "sv": "Säteskylare (Främre Höger)",
+            "pl": "Chłodzenie Siedzenia (Przód Prawy)",
+            "ru": "Охладитель сиденья (Переднее правое)",
+            "ko": "시트 쿨러 (앞 오른쪽)",
+            "ar": "مبرد المقعد (أمام يمين)"
           }
         },
         "onoff.guest_mode": {
           "title": {
-            "en": "Guest Mode"
+            "en": "Guest Mode",
+            "nl": "Gastmodus",
+            "da": "Gæstemodus",
+            "de": "Gastmodus",
+            "es": "Modo Invitado",
+            "fr": "Mode Invité",
+            "it": "Modalità Ospite",
+            "no": "Gjestemodus",
+            "sv": "Gästläge",
+            "pl": "Tryb Gościa",
+            "ru": "Гостевой режим",
+            "ko": "손님 모드",
+            "ar": "وضع الضيف"
           }
         },
         "thermostat_mode": {
           "title": {
-            "en": "Climate"
+            "en": "Climate",
+            "nl": "Klimaat",
+            "da": "Klima",
+            "de": "Klima",
+            "es": "Clima",
+            "fr": "Climat",
+            "it": "Clima",
+            "no": "Klima",
+            "sv": "Klimat",
+            "pl": "Klimat",
+            "ru": "Климат",
+            "ko": "기후",
+            "ar": "المناخ"
           },
           "values": [
             {
               "id": "off",
               "title": {
-                "en": "Off"
+                "en": "Off",
+                "nl": "Uit",
+                "da": "Fra",
+                "de": "Aus",
+                "es": "Apagado",
+                "fr": "Éteint",
+                "it": "Spento",
+                "no": "Av",
+                "sv": "Av",
+                "pl": "Wył.",
+                "ru": "Выключено",
+                "ko": "꺼짐",
+                "ar": "إيقاف"
               }
             },
             {
               "id": "auto",
               "title": {
-                "en": "Automatic"
+                "en": "Automatic",
+                "nl": "Automatisch",
+                "da": "Automatisk",
+                "de": "Automatisch",
+                "es": "Automático",
+                "fr": "Automatique",
+                "it": "Automatico",
+                "no": "Automatisk",
+                "sv": "Automatisk",
+                "pl": "Automatyczny",
+                "ru": "Автоматический",
+                "ko": "자동",
+                "ar": "تلقائي"
               }
             },
             {
               "id": "defrost",
               "title": {
-                "en": "Defrost"
+                "en": "Defrost",
+                "nl": "Ontdooien",
+                "da": "Aftøning",
+                "de": "Enteisen",
+                "es": "Descongelar",
+                "fr": "Dégivrer",
+                "it": "Disgelo",
+                "no": "Avfrost",
+                "sv": "Avfrostning",
+                "pl": "Odmrażanie",
+                "ru": "Разморозка",
+                "ko": "제상",
+                "ar": "إزالة الصقيع"
               }
             },
             {
               "id": "keep_mode",
               "title": {
-                "en": "Keep Mode"
+                "en": "Keep Mode",
+                "nl": "Bewaarmodus",
+                "da": "Bevar tilstand",
+                "de": "Haltemodus",
+                "es": "Modo de reserva",
+                "fr": "Mode de maintien",
+                "it": "Modalità conserva",
+                "no": "Bevar modus",
+                "sv": "Bibehåll läge",
+                "pl": "Tryb zachowania",
+                "ru": "Режим поддержания",
+                "ko": "유지 모드",
+                "ar": "وضع الاحتفاظ"
               }
             },
             {
               "id": "dog_mode",
               "title": {
-                "en": "Dog Mode"
+                "en": "Dog Mode",
+                "nl": "Hondenmodus",
+                "da": "Hundetilstand",
+                "de": "Hundemodus",
+                "es": "Modo Perro",
+                "fr": "Mode chien",
+                "it": "Modalità cane",
+                "no": "Hundemodus",
+                "sv": "Hundläge",
+                "pl": "Tryb psa",
+                "ru": "Режим для собаки",
+                "ko": "강아지 모드",
+                "ar": "وضع الكلب"
               }
             },
             {
               "id": "camp_mode",
               "title": {
-                "en": "Camp Mode"
+                "en": "Camp Mode",
+                "nl": "Campingmodus",
+                "da": "Campingtilstand",
+                "de": "Campingmodus",
+                "es": "Modo de campamento",
+                "fr": "Mode camping",
+                "it": "Modalità campeggio",
+                "no": "Campingmodus",
+                "sv": "Campingläge",
+                "pl": "Tryb kempingowy",
+                "ru": "Режим кемпинга",
+                "ko": "캠프 모드",
+                "ar": "وضع التخييم"
               }
             }
           ]
@@ -2095,7 +4555,19 @@
     "allow_export": {
       "type": "enum",
       "title": {
-        "en": "Allow Export"
+        "en": "Allow Export",
+        "nl": "Exporteren Toestaan",
+        "da": "Tillad Eksport",
+        "de": "Export Erlauben",
+        "es": "Permitir Exportación",
+        "fr": "Permettre l'Exportation",
+        "it": "Consenti Esportazione",
+        "no": "Tillat Eksport",
+        "sv": "Tillåt Export",
+        "pl": "Zezwalaj na Eksport",
+        "ru": "Разрешить Экспорт",
+        "ko": "내보내기 허용",
+        "ar": "السماح بالتصدير"
       },
       "getable": true,
       "setable": true,
@@ -2104,19 +4576,55 @@
         {
           "id": "battery_ok",
           "title": {
-            "en": "Battery and Solar"
+            "en": "Battery and Solar",
+            "nl": "Batterij en Zonne-energie",
+            "da": "Batteri og Solceller",
+            "de": "Batterie und Solar",
+            "es": "Batería y Solar",
+            "fr": "Batterie et Solaire",
+            "it": "Batteria e Solare",
+            "no": "Batteri og Solenergi",
+            "sv": "Batteri och Solenergi",
+            "pl": "Bateria i Energia Słoneczna",
+            "ru": "Батарея и Солнечная Энергия",
+            "ko": "배터리 및 태양광",
+            "ar": "البطارية والطاقة الشمسية"
           }
         },
         {
           "id": "pv_only",
           "title": {
-            "en": "Solar Only"
+            "en": "Solar Only",
+            "nl": "Alleen Zonne-energie",
+            "da": "Kun Solceller",
+            "de": "Nur Solar",
+            "es": "Solo Solar",
+            "fr": "Solaire Uniquement",
+            "it": "Solo Solare",
+            "no": "Kun Solenergi",
+            "sv": "Endast Solenergi",
+            "pl": "Tylko Energia Słoneczna",
+            "ru": "Только Солнечная Энергия",
+            "ko": "태양광 만",
+            "ar": "الطاقة الشمسية فقط"
           }
         },
         {
           "id": "never",
           "title": {
-            "en": "Never"
+            "en": "Never",
+            "nl": "Nooit",
+            "da": "Aldrig",
+            "de": "Nie",
+            "es": "Nunca",
+            "fr": "Jamais",
+            "it": "Mai",
+            "no": "Aldri",
+            "sv": "Aldrig",
+            "pl": "Nigdy",
+            "ru": "Никогда",
+            "ko": "절대",
+            "ar": "أبدا"
           }
         }
       ]
@@ -2124,13 +4632,37 @@
     "backup_reserve": {
       "type": "number",
       "title": {
-        "en": "Backup Reserve"
+        "en": "Backup Reserve",
+        "nl": "Backupreserve",
+        "da": "Backupreserve",
+        "de": "Backupreserve",
+        "es": "Reserva de respaldo",
+        "fr": "Réserve de secours",
+        "it": "Riserva di backup",
+        "no": "Backupreserve",
+        "sv": "Backupreserv",
+        "pl": "Rezerwa zapasowa",
+        "ru": "Резервный запас",
+        "ko": "백업 예비",
+        "ar": "النسخ الاحتياطي الاحتياطي"
       },
       "getable": true,
       "setable": true,
       "uiComponent": "slider",
       "units": {
-        "en": "%"
+        "en": "%",
+        "nl": "%",
+        "da": "%",
+        "de": "%",
+        "es": "%",
+        "fr": "%",
+        "it": "%",
+        "no": "%",
+        "sv": "%",
+        "pl": "%",
+        "ru": "%",
+        "ko": "%",
+        "ar": "%"
       },
       "min": 0,
       "max": 1,
@@ -2140,7 +4672,19 @@
     "cellular_connected": {
       "type": "boolean",
       "title": {
-        "en": "Cellular Connected"
+        "en": "Cellular Connected",
+        "nl": "Mobiel Verbonden",
+        "da": "Mobiltilsluttet",
+        "de": "Mobil verbunden",
+        "es": "Conectado a la red móvil",
+        "fr": "Cellulaire Connecté",
+        "it": "Connesso alla rete cellulare",
+        "no": "Mobil tilkoblet",
+        "sv": "Mobilansluten",
+        "pl": "Połączenie komórkowe",
+        "ru": "Подключено к сотовой сети",
+        "ko": "셀룰러 연결됨",
+        "ar": "متصل بشبكة خلوية"
       },
       "getable": true,
       "setable": false,
@@ -2149,13 +4693,37 @@
     "charge_limit": {
       "type": "number",
       "title": {
-        "en": "Charge Limit"
+        "en": "Charge Limit",
+        "nl": "Oplaadlimiet",
+        "da": "Opladningsgrænse",
+        "de": "Ladegrenze",
+        "es": "Límite de carga",
+        "fr": "Limite de charge",
+        "it": "Limite di carica",
+        "no": "Ladegrense",
+        "sv": "Laddgräns",
+        "pl": "Limit ładowania",
+        "ru": "Предел зарядки",
+        "ko": "충전 한도",
+        "ar": "حد الشحن"
       },
       "getable": true,
       "setable": true,
       "uiComponent": "slider",
       "units": {
-        "en": "%"
+        "en": "%",
+        "nl": "%",
+        "da": "%",
+        "de": "%",
+        "es": "%",
+        "fr": "%",
+        "it": "%",
+        "no": "%",
+        "sv": "%",
+        "pl": "%",
+        "ru": "%",
+        "ko": "%",
+        "ar": "%"
       },
       "min": 0,
       "max": 1,
@@ -2165,13 +4733,37 @@
     "charging_amps": {
       "type": "number",
       "title": {
-        "en": "Charging Amps"
+        "en": "Charging Amps",
+        "nl": "Oplaadstroo",
+        "da": "Ladeforstærkere",
+        "de": "Ladestrom",
+        "es": "Amperios de carga",
+        "fr": "Ampères de charge",
+        "it": "Ampere di carica",
+        "no": "Ladestrøm",
+        "sv": "Laddningsampere",
+        "pl": "Ampery ładowania",
+        "ru": "Зарядный ток",
+        "ko": "충전 앰프",
+        "ar": "أمبير الشحن"
       },
       "getable": true,
       "setable": true,
       "uiComponent": "slider",
       "units": {
-        "en": "A"
+        "en": "A",
+        "nl": "A",
+        "da": "A",
+        "de": "A",
+        "es": "A",
+        "fr": "A",
+        "it": "A",
+        "no": "A",
+        "sv": "A",
+        "pl": "A",
+        "ru": "А",
+        "ko": "A",
+        "ar": "أ"
       },
       "min": 0,
       "max": 48,
@@ -2181,7 +4773,19 @@
     "connected_vehicle": {
       "type": "string",
       "title": {
-        "en": "Connected Vehicle"
+        "en": "Connected Vehicle",
+        "nl": "Verbonden Voertuig",
+        "da": "Forbundet Køretøj",
+        "de": "Verbundenes Fahrzeug",
+        "es": "Vehículo Conectado",
+        "fr": "Véhicule Connecté",
+        "it": "Veicolo Connesso",
+        "no": "Tilkoblet Kjøretøy",
+        "sv": "Anslutet Fordon",
+        "pl": "Połączony Pojazd",
+        "ru": "Подключенное Транспортное Средство",
+        "ko": "연결된 차량",
+        "ar": "المركبة المتصلة"
       },
       "getable": true,
       "setable": false,
@@ -2191,7 +4795,19 @@
     "gear": {
       "type": "enum",
       "title": {
-        "en": "Gear"
+        "en": "Gear",
+        "nl": "Versnelling",
+        "da": "Gear",
+        "de": "Gang",
+        "es": "Marcha",
+        "fr": "Vitesse",
+        "it": "Marcia",
+        "no": "Gir",
+        "sv": "Växel",
+        "pl": "Bieg",
+        "ru": "Передача",
+        "ko": "기어",
+        "ar": "السرعة"
       },
       "getable": true,
       "setable": false,
@@ -2200,25 +4816,73 @@
         {
           "id": "P",
           "title": {
-            "en": "Park"
+            "en": "Park",
+            "nl": "Parkeren",
+            "da": "Parkering",
+            "de": "Parken",
+            "es": "Estacionar",
+            "fr": "Stationner",
+            "it": "Parcheggio",
+            "no": "Parkere",
+            "sv": "Parkera",
+            "pl": "Parking",
+            "ru": "Парковка",
+            "ko": "주차",
+            "ar": "توقف"
           }
         },
         {
           "id": "R",
           "title": {
-            "en": "Reverse"
+            "en": "Reverse",
+            "nl": "Achteruit",
+            "da": "Bakke",
+            "de": "Rückwärts",
+            "es": "Reversa",
+            "fr": "Marche arrière",
+            "it": "Retromarcia",
+            "no": "Revers",
+            "sv": "Backa",
+            "pl": "Wsteczny",
+            "ru": "Задний ход",
+            "ko": "후진",
+            "ar": "عكس"
           }
         },
         {
           "id": "N",
           "title": {
-            "en": "Neutral"
+            "en": "Neutral",
+            "nl": "Neutraal",
+            "da": "Neutral",
+            "de": "Neutral",
+            "es": "Neutral",
+            "fr": "Neutre",
+            "it": "Folle",
+            "no": "Nøytral",
+            "sv": "Neutral",
+            "pl": "Neutralny",
+            "ru": "Нейтраль",
+            "ko": "중립",
+            "ar": "محايد"
           }
         },
         {
           "id": "D",
           "title": {
-            "en": "Drive"
+            "en": "Drive",
+            "nl": "Rijden",
+            "da": "Kør",
+            "de": "Fahren",
+            "es": "Conducir",
+            "fr": "Conduire",
+            "it": "Guida",
+            "no": "Kjøre",
+            "sv": "Köra",
+            "pl": "Jazda",
+            "ru": "Движение",
+            "ko": "주행",
+            "ar": "قيادة"
           }
         }
       ]
@@ -2226,33 +4890,93 @@
     "measure_pressure": {
       "type": "number",
       "title": {
-        "en": "Tire Pressure"
+        "en": "Tire Pressure",
+        "nl": "Bandenspanning",
+        "da": "Dæktryk",
+        "de": "Reifendruck",
+        "es": "Presión de los neumáticos",
+        "fr": "Pression des pneus",
+        "it": "Pressione dei pneumatici",
+        "no": "Dekktrykk",
+        "sv": "Däcktryck",
+        "pl": "Ciśnienie w oponach",
+        "ru": "Давление в шинах",
+        "ko": "타이어 압력",
+        "ar": "ضغط الإطارات"
       },
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
       "units": {
-        "en": "bar"
+        "en": "bar",
+        "nl": "bar",
+        "da": "bar",
+        "de": "bar",
+        "es": "bar",
+        "fr": "bar",
+        "it": "bar",
+        "no": "bar",
+        "sv": "bar",
+        "pl": "bar",
+        "ru": "бар",
+        "ko": "바",
+        "ar": "بار"
       },
       "decimals": 1
     },
     "minutes_to_arrival": {
       "type": "number",
       "title": {
-        "en": "Minutes to Arrival"
+        "en": "Minutes to Arrival",
+        "nl": "Minuten tot aankomst",
+        "da": "Minutter til ankomst",
+        "de": "Minuten bis zur Ankunft",
+        "es": "Minutos para la llegada",
+        "fr": "Minutes avant l'arrivée",
+        "it": "Minuti all'arrivo",
+        "no": "Minutter til ankomst",
+        "sv": "Minuter till ankomst",
+        "pl": "Minuty do przyjazdu",
+        "ru": "Минут до прибытия",
+        "ko": "도착까지 분",
+        "ar": "الدقائق حتى الوصول"
       },
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
       "units": {
-        "en": "min"
+        "en": "min",
+        "nl": "min",
+        "da": "min",
+        "de": "min",
+        "es": "min",
+        "fr": "min",
+        "it": "min",
+        "no": "min",
+        "sv": "min",
+        "pl": "min",
+        "ru": "мин",
+        "ko": "분",
+        "ar": "دقيقة"
       },
       "decimals": 0
     },
     "navigation_destination": {
       "type": "string",
       "title": {
-        "en": "Navigation Destination"
+        "en": "Navigation Destination",
+        "nl": "Navigatiebestemming",
+        "da": "Navigationsdestination",
+        "de": "Navigationsziel",
+        "es": "Destino de navegación",
+        "fr": "Destination de navigation",
+        "it": "Destinazione di navigazione",
+        "no": "Navigasjonsdestinasjon",
+        "sv": "Navigationsdestination",
+        "pl": "Cel nawigacji",
+        "ru": "Цель навигации",
+        "ko": "탐색 목적지",
+        "ar": "وجهة التنقل"
       },
       "getable": true,
       "setable": false,
@@ -2261,7 +4985,19 @@
     "operation_mode": {
       "type": "enum",
       "title": {
-        "en": "Operation Mode"
+        "en": "Operation Mode",
+        "nl": "Bedrijfsmodus",
+        "da": "Driftstilstand",
+        "de": "Betriebsmodus",
+        "es": "Modo de Operación",
+        "fr": "Mode de Fonctionnement",
+        "it": "Modalità Operativa",
+        "no": "Driftsmodus",
+        "sv": "Driftsläge",
+        "pl": "Tryb Operacyjny",
+        "ru": "Режим Работы",
+        "ko": "운영 모드",
+        "ar": "وضع التشغيل"
       },
       "getable": true,
       "setable": true,
@@ -2270,19 +5006,55 @@
         {
           "id": "self_consumption",
           "title": {
-            "en": "Self Consumption"
+            "en": "Self Consumption",
+            "nl": "Zelfverbruik",
+            "da": "Eget Forbrug",
+            "de": "Eigenverbrauch",
+            "es": "Autoconsumo",
+            "fr": "Autoconsommation",
+            "it": "Autoconsumo",
+            "no": "Egenforbruk",
+            "sv": "Självförbrukning",
+            "pl": "Samo konsumowanie",
+            "ru": "Собственное Потребление",
+            "ko": "자체 소비",
+            "ar": "الاستهلاك الذاتي"
           }
         },
         {
           "id": "backup",
           "title": {
-            "en": "Backup"
+            "en": "Backup",
+            "nl": "Backup",
+            "da": "Backup",
+            "de": "Backup",
+            "es": "Respaldo",
+            "fr": "Sauvegarde",
+            "it": "Backup",
+            "no": "Backup",
+            "sv": "Backup",
+            "pl": "Kopia Zapasowa",
+            "ru": "Резервное Копирование",
+            "ko": "백업",
+            "ar": "نسخ احتياطي"
           }
         },
         {
           "id": "autonomous",
           "title": {
-            "en": "Autonomous"
+            "en": "Autonomous",
+            "nl": "Autonoom",
+            "da": "Autonomt",
+            "de": "Autonom",
+            "es": "Autónomo",
+            "fr": "Autonome",
+            "it": "Autonomo",
+            "no": "Autonom",
+            "sv": "Autonom",
+            "pl": "Autonomiczny",
+            "ru": "Автономный",
+            "ko": "자율적인",
+            "ar": "مستقل"
           }
         }
       ]
@@ -2290,7 +5062,19 @@
     "seat_cooler": {
       "type": "enum",
       "title": {
-        "en": "Seat Cooler"
+        "en": "Seat Cooler",
+        "nl": "Stoelkoeler",
+        "da": "Sædekøler",
+        "de": "Sitzkühler",
+        "es": "Enfriador de Asiento",
+        "fr": "Refroidisseur de Siège",
+        "it": "Raffreddatore di Sedile",
+        "no": "Setekjøler",
+        "sv": "Säteskylare",
+        "pl": "Chłodnica Siedzeń",
+        "ru": "Охладитель Сиденья",
+        "ko": "시트 쿨러",
+        "ar": "مبرد المقعد"
       },
       "getable": true,
       "setable": true,
@@ -2299,25 +5083,73 @@
         {
           "id": "0",
           "title": {
-            "en": "Off"
+            "en": "Off",
+            "nl": "Uit",
+            "da": "Slukket",
+            "de": "Aus",
+            "es": "Apagado",
+            "fr": "Éteint",
+            "it": "Spento",
+            "no": "Av",
+            "sv": "Av",
+            "pl": "Wyłączony",
+            "ru": "Выкл",
+            "ko": "끔",
+            "ar": "إيقاف"
           }
         },
         {
           "id": "1",
           "title": {
-            "en": "Low"
+            "en": "Low",
+            "nl": "Laag",
+            "da": "Lav",
+            "de": "Niedrig",
+            "es": "Bajo",
+            "fr": "Bas",
+            "it": "Basso",
+            "no": "Lav",
+            "sv": "Låg",
+            "pl": "Niski",
+            "ru": "Низкий",
+            "ko": "낮음",
+            "ar": "منخفض"
           }
         },
         {
           "id": "2",
           "title": {
-            "en": "Medium"
+            "en": "Medium",
+            "nl": "Middel",
+            "da": "Mellem",
+            "de": "Mittel",
+            "es": "Medio",
+            "fr": "Moyen",
+            "it": "Medio",
+            "no": "Middels",
+            "sv": "Medel",
+            "pl": "Średni",
+            "ru": "Средний",
+            "ko": "중간",
+            "ar": "متوسط"
           }
         },
         {
           "id": "3",
           "title": {
-            "en": "High"
+            "en": "High",
+            "nl": "Hoog",
+            "da": "Høj",
+            "de": "Hoch",
+            "es": "Alto",
+            "fr": "Élevé",
+            "it": "Alto",
+            "no": "Høy",
+            "sv": "Hög",
+            "pl": "Wysoki",
+            "ru": "Высокий",
+            "ko": "높음",
+            "ar": "مرتفع"
           }
         }
       ]
@@ -2325,7 +5157,19 @@
     "seat_heater": {
       "type": "enum",
       "title": {
-        "en": "Seat Heater"
+        "en": "Seat Heater",
+        "nl": "Stoelverwarming",
+        "da": "Sædevarmer",
+        "de": "Sitzheizung",
+        "es": "Calefacción de asiento",
+        "fr": "Chauffage de siège",
+        "it": "Riscaldamento del sedile",
+        "no": "Setevarmer",
+        "sv": "Sittvärmare",
+        "pl": "Podgrzewanie siedzenia",
+        "ru": "Подогрев сиденья",
+        "ko": "좌석 히터",
+        "ar": "مسخن المقعد"
       },
       "getable": true,
       "setable": true,
@@ -2334,25 +5178,73 @@
         {
           "id": "0",
           "title": {
-            "en": "Off"
+            "en": "Off",
+            "nl": "Uit",
+            "da": "Fra",
+            "de": "Aus",
+            "es": "Apagado",
+            "fr": "Éteint",
+            "it": "Spento",
+            "no": "Av",
+            "sv": "Av",
+            "pl": "Wyłączone",
+            "ru": "Выключено",
+            "ko": "끄기",
+            "ar": "إيقاف"
           }
         },
         {
           "id": "1",
           "title": {
-            "en": "Low"
+            "en": "Low",
+            "nl": "Laag",
+            "da": "Lav",
+            "de": "Niedrig",
+            "es": "Bajo",
+            "fr": "Faible",
+            "it": "Basso",
+            "no": "Lav",
+            "sv": "Låg",
+            "pl": "Niski",
+            "ru": "Низкий",
+            "ko": "낮음",
+            "ar": "منخفض"
           }
         },
         {
           "id": "2",
           "title": {
-            "en": "Medium"
+            "en": "Medium",
+            "nl": "Middel",
+            "da": "Mellem",
+            "de": "Mittel",
+            "es": "Medio",
+            "fr": "Moyen",
+            "it": "Medio",
+            "no": "Middels",
+            "sv": "Medium",
+            "pl": "Średni",
+            "ru": "Средний",
+            "ko": "중간",
+            "ar": "متوسط"
           }
         },
         {
           "id": "3",
           "title": {
-            "en": "High"
+            "en": "High",
+            "nl": "Hoog",
+            "da": "Høj",
+            "de": "Hoch",
+            "es": "Alto",
+            "fr": "Élevé",
+            "it": "Alto",
+            "no": "Høy",
+            "sv": "Hög",
+            "pl": "Wysoki",
+            "ru": "Высокий",
+            "ko": "높음",
+            "ar": "مرتفع"
           }
         }
       ]
@@ -2360,7 +5252,19 @@
     "steering_wheel_heater": {
       "type": "enum",
       "title": {
-        "en": "Steering Wheel Heater"
+        "en": "Steering Wheel Heater",
+        "nl": "Stuurverwarming",
+        "da": "Ratvarmer",
+        "de": "Lenkradheizung",
+        "es": "Calentador de volante",
+        "fr": "Chauffe-volant",
+        "it": "Riscaldatore del volante",
+        "no": "Rattvarmer",
+        "sv": "Rattvärmare",
+        "pl": "Podgrzewanie kierownicy",
+        "ru": "Подогрев руля",
+        "ko": "스티어링 휠 히터",
+        "ar": "مدفأة عجلة القيادة"
       },
       "getable": true,
       "setable": true,
@@ -2369,19 +5273,55 @@
         {
           "id": "0",
           "title": {
-            "en": "Off"
+            "en": "Off",
+            "nl": "Uit",
+            "da": "Fra",
+            "de": "Aus",
+            "es": "Apagado",
+            "fr": "Éteint",
+            "it": "Spento",
+            "no": "Av",
+            "sv": "Av",
+            "pl": "Wyłączony",
+            "ru": "Выкл.",
+            "ko": "꺼짐",
+            "ar": "إيقاف"
           }
         },
         {
           "id": "1",
           "title": {
-            "en": "Low"
+            "en": "Low",
+            "nl": "Laag",
+            "da": "Lav",
+            "de": "Niedrig",
+            "es": "Bajo",
+            "fr": "Bas",
+            "it": "Basso",
+            "no": "Lav",
+            "sv": "Låg",
+            "pl": "Niski",
+            "ru": "Низко",
+            "ko": "낮음",
+            "ar": "منخفض"
           }
         },
         {
           "id": "3",
           "title": {
-            "en": "High"
+            "en": "High",
+            "nl": "Hoog",
+            "da": "Høj",
+            "de": "Hoch",
+            "es": "Alto",
+            "fr": "Élevé",
+            "it": "Alto",
+            "no": "Høy",
+            "sv": "Hög",
+            "pl": "Wysoki",
+            "ru": "Высоко",
+            "ko": "높음",
+            "ar": "مرتفع"
           }
         }
       ]
@@ -2389,20 +5329,56 @@
     "time_to_full_charge": {
       "type": "number",
       "title": {
-        "en": "Time to Full Charge"
+        "en": "Time to Full Charge",
+        "nl": "Tijd tot Volledige Lading",
+        "da": "Tid til fuld opladning",
+        "de": "Zeit bis zur vollständigen Aufladung",
+        "es": "Tiempo para carga completa",
+        "fr": "Temps jusqu'à charge complète",
+        "it": "Tempo per la carica completa",
+        "no": "Tid til full lading",
+        "sv": "Tid till full laddning",
+        "pl": "Czas do pełnego naładowania",
+        "ru": "Время до полной зарядки",
+        "ko": "완전 충전까지의 시간",
+        "ar": "الوقت حتى الشحن الكامل"
       },
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
       "units": {
-        "en": "min"
+        "en": "min",
+        "nl": "min",
+        "da": "min",
+        "de": "min",
+        "es": "min",
+        "fr": "min",
+        "it": "min",
+        "no": "min",
+        "sv": "min",
+        "pl": "min",
+        "ru": "мин",
+        "ko": "분",
+        "ar": "دقيقة"
       },
       "decimals": 0
     },
     "vehicle_state": {
       "type": "enum",
       "title": {
-        "en": "Vehicle State"
+        "en": "Vehicle State",
+        "nl": "Voertuigstatus",
+        "da": "Køretøjsstatus",
+        "de": "Fahrzeugstatus",
+        "es": "Estado del vehículo",
+        "fr": "État du véhicule",
+        "it": "Stato del veicolo",
+        "no": "Kjøretøytilstand",
+        "sv": "Fordonstatus",
+        "pl": "Stan pojazdu",
+        "ru": "Состояние транспортного средства",
+        "ko": "차량 상태",
+        "ar": "حالة المركبة"
       },
       "getable": true,
       "setable": false,
@@ -2411,19 +5387,55 @@
         {
           "id": "online",
           "title": {
-            "en": "Online"
+            "en": "Online",
+            "nl": "Online",
+            "da": "Online",
+            "de": "Online",
+            "es": "En línea",
+            "fr": "En ligne",
+            "it": "Online",
+            "no": "Online",
+            "sv": "Online",
+            "pl": "Online",
+            "ru": "Онлайн",
+            "ko": "온라인",
+            "ar": "متصل"
           }
         },
         {
           "id": "offline",
           "title": {
-            "en": "Offline"
+            "en": "Offline",
+            "nl": "Offline",
+            "da": "Offline",
+            "de": "Offline",
+            "es": "Desconectado",
+            "fr": "Hors ligne",
+            "it": "Offline",
+            "no": "Frakoblet",
+            "sv": "Offline",
+            "pl": "Offline",
+            "ru": "Оффлайн",
+            "ko": "오프라인",
+            "ar": "غير متصل"
           }
         },
         {
           "id": "asleep",
           "title": {
-            "en": "Asleep"
+            "en": "Asleep",
+            "nl": "Slapend",
+            "da": "Sover",
+            "de": "Schlafend",
+            "es": "Dormido",
+            "fr": "Endormi",
+            "it": "Addormentato",
+            "no": "Sovende",
+            "sv": "Sover",
+            "pl": "Śpiący",
+            "ru": "Спящий",
+            "ko": "잠든",
+            "ar": "نائم"
           }
         }
       ]
@@ -2431,7 +5443,19 @@
     "wifi_connected": {
       "type": "boolean",
       "title": {
-        "en": "WiFi Connected"
+        "en": "WiFi Connected",
+        "nl": "WiFi Verbonden",
+        "da": "WiFi Forbundet",
+        "de": "WLAN Verbunden",
+        "es": "WiFi Conectado",
+        "fr": "WiFi Connecté",
+        "it": "WiFi Connesso",
+        "no": "WiFi Tilkoblet",
+        "sv": "WiFi Ansluten",
+        "pl": "WiFi Połączono",
+        "ru": "WiFi Подключено",
+        "ko": "WiFi 연결됨",
+        "ar": "واي فاي متصل"
       },
       "getable": true,
       "setable": false,

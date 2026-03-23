@@ -1,12 +1,48 @@
 {
   "title": {
-    "en": "The backup reserve has changed"
+    "en": "The backup reserve has changed",
+    "nl": "De back-upreserve is gewijzigd",
+    "da": "Backupreserven er ændret",
+    "de": "Die Sicherungsreserve hat sich geändert",
+    "es": "La reserva de respaldo ha cambiado",
+    "fr": "La réserve de sauvegarde a changé",
+    "it": "La riserva di backup è cambiata",
+    "no": "Sikkerhetsreserven har endret seg",
+    "sv": "Säkerhetsreserven har ändrats",
+    "pl": "Rezerwa kopii zapasowej została zmieniona",
+    "ru": "Резервная копия изменилась",
+    "ko": "백업 예비가 변경되었습니다",
+    "ar": "تم تغيير احتياطي النسخ الاحتياطي"
   },
   "titleFormatted": {
-    "en": "The backup reserve has changed on [[device]]"
+    "en": "The backup reserve has changed on [[device]]",
+    "nl": "De back-upreserve is veranderd op [[device]]",
+    "da": "Backupreserven er ændret på [[device]]",
+    "de": "Die Sicherungsreserve hat sich auf [[device]] geändert",
+    "es": "La reserva de respaldo ha cambiado en [[device]]",
+    "fr": "La réserve de sauvegarde a changé sur [[device]]",
+    "it": "La riserva di backup è cambiata su [[device]]",
+    "no": "Sikkerhetsreserven har endret seg på [[device]]",
+    "sv": "Säkerhetsreserven har ändrats på [[device]]",
+    "pl": "Rezerwa kopii zapasowej została zmieniona na [[device]]",
+    "ru": "Резервная копия изменилась на [[device]]",
+    "ko": "[[device]]에서 백업 예비가 변경되었습니다",
+    "ar": "تم تغيير احتياطي النسخ الاحتياطي على [[device]]"
   },
   "hint": {
-    "en": "This card triggers when the backup reserve percentage changes."
+    "en": "This card triggers when the backup reserve percentage changes.",
+    "nl": "Deze kaart wordt geactiveerd wanneer het percentage back-upreserve verandert.",
+    "da": "Dette kort udløses, når procentdelen af backupreserven ændres.",
+    "de": "Diese Karte wird ausgelöst, wenn sich der Prozentsatz der Sicherungsreserve ändert.",
+    "es": "Esta tarjeta se activa cuando cambia el porcentaje de reserva de respaldo.",
+    "fr": "Cette carte se déclenche lorsque le pourcentage de la réserve de sauvegarde change.",
+    "it": "Questa scheda si attiva quando cambia la percentuale della riserva di backup.",
+    "no": "Dette kortet trigges når sikkerhetsreserveprosenten endres.",
+    "sv": "Detta kort utlöses när säkerhetsreservens procentsats ändras.",
+    "pl": "Ta karta jest wyzwalana, gdy zmienia się procent rezerwy kopii zapasowej.",
+    "ru": "Эта карта срабатывает, когда изменяется процент резервного копирования.",
+    "ko": "백업 예비 비율이 변경되면 이 카드가 활성화됩니다.",
+    "ar": "تُفعّل هذه البطاقة عند تغير نسبة احتياطي النسخ الاحتياطي."
   },
   "args": [
     {
@@ -14,7 +50,19 @@
       "name": "device",
       "filter": "capabilities=backup_reserve",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
       }
     }
   ],
@@ -23,7 +71,19 @@
       "name": "backup_reserve",
       "type": "number",
       "title": {
-        "en": "Reserve"
+        "en": "Reserve",
+        "nl": "Reserve",
+        "da": "Reserve",
+        "de": "Reserve",
+        "es": "Reserva",
+        "fr": "Réserve",
+        "it": "Riserva",
+        "no": "Reserve",
+        "sv": "Reserv",
+        "pl": "Rezerwa",
+        "ru": "Резерв",
+        "ko": "예비",
+        "ar": "احتياطي"
       },
       "example": {
         "en": "20"

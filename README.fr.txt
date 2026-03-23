@@ -1,0 +1,9 @@
+Teslemetry simplifie l'accès à vos produits Tesla, fournit des données en temps réel de vos véhicules Tesla et intègre ces données dans des plateformes comme Homey.
+
+Contrôlez vos véhicules avec les réglages climatiques, la gestion de la charge, les fonctionnalités de sécurité (verrouillage/déverrouillage, mode sentinelle), et plus encore. Surveillez les sites énergétiques avec des données en temps réel sur le flux d'énergie et le mode de fonctionnement. Suivez l'état de charge du Wall Connector et la consommation d'énergie. Toutes les données des véhicules se mettent à jour en temps réel via Fleet Telemetry sans besoin de sondage.
+
+Pour commencer, vous aurez besoin d'un compte Teslemetry avec un abonnement actif. Connectez-vous à teslemetry.com/console et assurez-vous de votre configuration. Ensuite, installez cette application sur votre Homey et ajoutez vos produits Tesla grâce à l'assistant d'appairage utilisant l'authentification OAuth.
+
+La consommation d'énergie du Wall Connector est suivie par défaut et apparaît sur le tableau de bord énergétique de Homey. Comme l'API de Tesla ne rapporte l'énergie qu'une fois la session de charge terminée, les données d'énergie ne seront pas mises à jour en temps réel pendant une charge. Pour des données énergétiques locales en temps réel, l'application "Tesla Power Connect" est recommandée. Si vous utilisez les deux, vous pouvez exclure l'appareil Teslemetry du tableau de bord énergétique dans les réglages d'énergie de l'appareil pour éviter le double comptage.
+
+Les véhicules anciens qui ne prennent pas en charge Fleet Telemetry ne sont pas pris en charge par cette application pour le moment.

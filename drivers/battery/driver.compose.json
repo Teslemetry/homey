@@ -1,9 +1,23 @@
 {
   "name": {
-    "en": "Powerwall"
+    "en": "Powerwall",
+    "nl": "Powerwall",
+    "da": "Powerwall",
+    "de": "Powerwall",
+    "es": "Powerwall",
+    "fr": "Powerwall",
+    "it": "Powerwall",
+    "no": "Powerwall",
+    "sv": "Powerwall",
+    "pl": "Powerwall",
+    "ru": "Powerwall",
+    "ko": "Powerwall",
+    "ar": "باور وول"
   },
   "class": "battery",
-  "$extends": ["teslemetry"],
+  "$extends": [
+    "teslemetry"
+  ],
   "ui": {
     "quickAction": false
   },
@@ -21,19 +35,89 @@
   ],
   "capabilitiesOptions": {
     "meter_power.charged": {
-      "title": { "en": "Charged Energy" }
+      "title": {
+        "en": "Charged Energy",
+        "nl": "Opgeladen Energie",
+        "da": "Opladet Energi",
+        "de": "Geladene Energie",
+        "es": "Energía Cargada",
+        "fr": "Énergie Chargée",
+        "it": "Energia Caricata",
+        "no": "Ladet Energi",
+        "sv": "Laddad Energi",
+        "pl": "Naładowana Energia",
+        "ru": "Заряженная Энергия",
+        "ko": "충전된 에너지",
+        "ar": "الطاقة المشحونة"
+      }
     },
     "meter_power.discharged": {
-      "title": { "en": "Discharged Energy" }
+      "title": {
+        "en": "Discharged Energy",
+        "nl": "Ontladen Energie",
+        "da": "Afledt Energi",
+        "de": "Entladene Energie",
+        "es": "Energía Descargada",
+        "fr": "Énergie Déchargée",
+        "it": "Energia Scaricata",
+        "no": "Utladet Energi",
+        "sv": "Urladdad Energi",
+        "pl": "Rozładowana Energia",
+        "ru": "Разряженная Энергия",
+        "ko": "방전된 에너지",
+        "ar": "الطاقة المفرغة"
+      }
     },
     "onoff.charge_grid": {
-      "title": { "en": "Charge From Grid" }
+      "title": {
+        "en": "Charge From Grid",
+        "nl": "Laden van Net",
+        "da": "Lad Fra Net",
+        "de": "Laden Aus Dem Netz",
+        "es": "Cargar Desde La Red",
+        "fr": "Charger Depuis Le Réseau",
+        "it": "Carica Dalla Rete",
+        "no": "Lad Fra Nettet",
+        "sv": "Ladda Från Nätet",
+        "pl": "Ładowanie Z Sieci",
+        "ru": "Зарядка От Сети",
+        "ko": "그리드에서 충전",
+        "ar": "الشحن من الشبكة"
+      }
     },
     "onoff.storm": {
-      "title": { "en": "Storm Watch" }
+      "title": {
+        "en": "Storm Watch",
+        "nl": "Storm Waarschuwing",
+        "da": "Storm Vagt",
+        "de": "Sturmwache",
+        "es": "Vigilancia de Tormentas",
+        "fr": "Surveillance Tempête",
+        "it": "Monitoraggio Temporale",
+        "no": "Stormvakt",
+        "sv": "Stormbevakning",
+        "pl": "Monitoring Burzy",
+        "ru": "Штормовое Предупреждение",
+        "ko": "폭풍 감시",
+        "ar": "مراقبة العاصفة"
+      }
     },
     "alarm_generic.storm": {
-      "title": { "en": "Storm Watch Active" }
+      "title": {
+        "en": "Storm Watch Active",
+        "nl": "Stormwaarschuwing Actief",
+        "da": "Storm Vagt Aktiv",
+        "de": "Sturmwache Aktiv",
+        "es": "Vigilancia de Tormentas Activa",
+        "fr": "Surveillance Tempête Active",
+        "it": "Monitoraggio Temporale Attivo",
+        "no": "Stormvakt Aktiv",
+        "sv": "Stormbevakning Aktiv",
+        "pl": "Monitoring Burzy Aktywny",
+        "ru": "Штормовое Предупреждение Активно",
+        "ko": "폭풍 감시 활성",
+        "ar": "مراقبة العاصفة نشطة"
+      }
     }
   },
   "energy": {

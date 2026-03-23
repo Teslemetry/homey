@@ -1,0 +1,9 @@
+{
+  "error": {
+    "invalid_token": "Ogiltig token. Försök igen.",
+    "invalid_refresh_token": "Ogiltig uppdateringstoken. Vänligen autentisera om.",
+    "subscription_required": "Prenumeration krävs. Vänligen kontrollera din Teslemetry-prenumeration.",
+    "could_not_wake_vehicle": "Fordonet vaknade inte. Försök igen.",
+    "insufficient_credits": "Otillräckliga kommandokrediter. Vänligen köp fler krediter för att köra kommandon."
+  }
+}

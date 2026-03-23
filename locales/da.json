@@ -1,0 +1,9 @@
+{
+  "error": {
+    "invalid_token": "Ugyldigt token. Prøv venligst igen.",
+    "invalid_refresh_token": "Ugyldigt fornyelsestoken. Venligst godkend igen.",
+    "subscription_required": "Abonnement kræves. Venligst tjek dit Teslemetry abonnement.",
+    "could_not_wake_vehicle": "Køretøjet vågnede ikke op. Prøv venligst igen.",
+    "insufficient_credits": "Utilstrækkelige kommandokreditter. Køb venligst flere kreditter for at køre kommandoer."
+  }
+}

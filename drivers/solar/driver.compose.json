@@ -1,13 +1,30 @@
 {
   "name": {
-    "en": "Solar Panel"
+    "en": "Solar Panel",
+    "nl": "Zonnepaneel",
+    "da": "Solpanel",
+    "de": "Solarmodul",
+    "es": "Panel Solar",
+    "fr": "Panneau Solaire",
+    "it": "Pannello Solare",
+    "no": "Solcellepanel",
+    "sv": "Solpanel",
+    "pl": "Panel Słoneczny",
+    "ru": "Солнечная панель",
+    "ko": "태양광 패널",
+    "ar": "اللوح الشمسي"
   },
   "class": "solarpanel",
-  "$extends": ["teslemetry"],
+  "$extends": [
+    "teslemetry"
+  ],
   "ui": {
     "quickAction": false
   },
-  "capabilities": ["measure_power", "meter_power"],
+  "capabilities": [
+    "measure_power",
+    "meter_power"
+  ],
   "energy": {
     "meterPowerExportedCapability": "meter_power"
   }

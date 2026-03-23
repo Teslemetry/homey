@@ -1,7 +1,19 @@
 {
   "type": "enum",
   "title": {
-    "en": "Vehicle State"
+    "en": "Vehicle State",
+    "nl": "Voertuigstatus",
+    "da": "Køretøjsstatus",
+    "de": "Fahrzeugstatus",
+    "es": "Estado del vehículo",
+    "fr": "État du véhicule",
+    "it": "Stato del veicolo",
+    "no": "Kjøretøytilstand",
+    "sv": "Fordonstatus",
+    "pl": "Stan pojazdu",
+    "ru": "Состояние транспортного средства",
+    "ko": "차량 상태",
+    "ar": "حالة المركبة"
   },
   "getable": true,
   "setable": false,
@@ -10,19 +22,55 @@
     {
       "id": "online",
       "title": {
-        "en": "Online"
+        "en": "Online",
+        "nl": "Online",
+        "da": "Online",
+        "de": "Online",
+        "es": "En línea",
+        "fr": "En ligne",
+        "it": "Online",
+        "no": "Online",
+        "sv": "Online",
+        "pl": "Online",
+        "ru": "Онлайн",
+        "ko": "온라인",
+        "ar": "متصل"
       }
     },
     {
       "id": "offline",
       "title": {
-        "en": "Offline"
+        "en": "Offline",
+        "nl": "Offline",
+        "da": "Offline",
+        "de": "Offline",
+        "es": "Desconectado",
+        "fr": "Hors ligne",
+        "it": "Offline",
+        "no": "Frakoblet",
+        "sv": "Offline",
+        "pl": "Offline",
+        "ru": "Оффлайн",
+        "ko": "오프라인",
+        "ar": "غير متصل"
       }
     },
     {
       "id": "asleep",
       "title": {
-        "en": "Asleep"
+        "en": "Asleep",
+        "nl": "Slapend",
+        "da": "Sover",
+        "de": "Schlafend",
+        "es": "Dormido",
+        "fr": "Endormi",
+        "it": "Addormentato",
+        "no": "Sovende",
+        "sv": "Sover",
+        "pl": "Śpiący",
+        "ru": "Спящий",
+        "ko": "잠든",
+        "ar": "نائم"
       }
     }
   ]

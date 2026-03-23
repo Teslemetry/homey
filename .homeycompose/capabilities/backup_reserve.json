@@ -1,13 +1,37 @@
 {
   "type": "number",
   "title": {
-    "en": "Backup Reserve"
+    "en": "Backup Reserve",
+    "nl": "Backupreserve",
+    "da": "Backupreserve",
+    "de": "Backupreserve",
+    "es": "Reserva de respaldo",
+    "fr": "Réserve de secours",
+    "it": "Riserva di backup",
+    "no": "Backupreserve",
+    "sv": "Backupreserv",
+    "pl": "Rezerwa zapasowa",
+    "ru": "Резервный запас",
+    "ko": "백업 예비",
+    "ar": "النسخ الاحتياطي الاحتياطي"
   },
   "getable": true,
   "setable": true,
   "uiComponent": "slider",
   "units": {
-    "en": "%"
+    "en": "%",
+    "nl": "%",
+    "da": "%",
+    "de": "%",
+    "es": "%",
+    "fr": "%",
+    "it": "%",
+    "no": "%",
+    "sv": "%",
+    "pl": "%",
+    "ru": "%",
+    "ko": "%",
+    "ar": "%"
   },
   "min": 0,
   "max": 1,

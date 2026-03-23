@@ -1,7 +1,19 @@
 {
   "type": "enum",
   "title": {
-    "en": "Seat Cooler"
+    "en": "Seat Cooler",
+    "nl": "Stoelkoeler",
+    "da": "Sædekøler",
+    "de": "Sitzkühler",
+    "es": "Enfriador de Asiento",
+    "fr": "Refroidisseur de Siège",
+    "it": "Raffreddatore di Sedile",
+    "no": "Setekjøler",
+    "sv": "Säteskylare",
+    "pl": "Chłodnica Siedzeń",
+    "ru": "Охладитель Сиденья",
+    "ko": "시트 쿨러",
+    "ar": "مبرد المقعد"
   },
   "getable": true,
   "setable": true,
@@ -10,25 +22,73 @@
     {
       "id": "0",
       "title": {
-        "en": "Off"
+        "en": "Off",
+        "nl": "Uit",
+        "da": "Slukket",
+        "de": "Aus",
+        "es": "Apagado",
+        "fr": "Éteint",
+        "it": "Spento",
+        "no": "Av",
+        "sv": "Av",
+        "pl": "Wyłączony",
+        "ru": "Выкл",
+        "ko": "끔",
+        "ar": "إيقاف"
       }
     },
     {
       "id": "1",
       "title": {
-        "en": "Low"
+        "en": "Low",
+        "nl": "Laag",
+        "da": "Lav",
+        "de": "Niedrig",
+        "es": "Bajo",
+        "fr": "Bas",
+        "it": "Basso",
+        "no": "Lav",
+        "sv": "Låg",
+        "pl": "Niski",
+        "ru": "Низкий",
+        "ko": "낮음",
+        "ar": "منخفض"
       }
     },
     {
       "id": "2",
       "title": {
-        "en": "Medium"
+        "en": "Medium",
+        "nl": "Middel",
+        "da": "Mellem",
+        "de": "Mittel",
+        "es": "Medio",
+        "fr": "Moyen",
+        "it": "Medio",
+        "no": "Middels",
+        "sv": "Medel",
+        "pl": "Średni",
+        "ru": "Средний",
+        "ko": "중간",
+        "ar": "متوسط"
       }
     },
     {
       "id": "3",
       "title": {
-        "en": "High"
+        "en": "High",
+        "nl": "Hoog",
+        "da": "Høj",
+        "de": "Hoch",
+        "es": "Alto",
+        "fr": "Élevé",
+        "it": "Alto",
+        "no": "Høy",
+        "sv": "Hög",
+        "pl": "Wysoki",
+        "ru": "Высокий",
+        "ko": "높음",
+        "ar": "مرتفع"
       }
     }
   ]

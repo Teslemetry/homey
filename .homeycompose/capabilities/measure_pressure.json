@@ -1,13 +1,37 @@
 {
   "type": "number",
   "title": {
-    "en": "Tire Pressure"
+    "en": "Tire Pressure",
+    "nl": "Bandenspanning",
+    "da": "Dæktryk",
+    "de": "Reifendruck",
+    "es": "Presión de los neumáticos",
+    "fr": "Pression des pneus",
+    "it": "Pressione dei pneumatici",
+    "no": "Dekktrykk",
+    "sv": "Däcktryck",
+    "pl": "Ciśnienie w oponach",
+    "ru": "Давление в шинах",
+    "ko": "타이어 압력",
+    "ar": "ضغط الإطارات"
   },
   "getable": true,
   "setable": false,
   "uiComponent": "sensor",
   "units": {
-    "en": "bar"
+    "en": "bar",
+    "nl": "bar",
+    "da": "bar",
+    "de": "bar",
+    "es": "bar",
+    "fr": "bar",
+    "it": "bar",
+    "no": "bar",
+    "sv": "bar",
+    "pl": "bar",
+    "ru": "бар",
+    "ko": "바",
+    "ar": "بار"
   },
   "decimals": 1
 }

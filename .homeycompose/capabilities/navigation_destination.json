@@ -1,7 +1,19 @@
 {
   "type": "string",
   "title": {
-    "en": "Navigation Destination"
+    "en": "Navigation Destination",
+    "nl": "Navigatiebestemming",
+    "da": "Navigationsdestination",
+    "de": "Navigationsziel",
+    "es": "Destino de navegación",
+    "fr": "Destination de navigation",
+    "it": "Destinazione di navigazione",
+    "no": "Navigasjonsdestinasjon",
+    "sv": "Navigationsdestination",
+    "pl": "Cel nawigacji",
+    "ru": "Цель навигации",
+    "ko": "탐색 목적지",
+    "ar": "وجهة التنقل"
   },
   "getable": true,
   "setable": false,

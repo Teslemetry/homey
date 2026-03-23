@@ -1,12 +1,48 @@
 {
   "title": {
-    "en": "The steering wheel heater level has changed"
+    "en": "The steering wheel heater level has changed",
+    "nl": "Het stuurverwarmingsniveau is gewijzigd",
+    "da": "Ratvarmeniveauet er ændret",
+    "de": "Die Lenkradheizstufe hat sich geändert",
+    "es": "El nivel del calefactor del volante ha cambiado",
+    "fr": "Le niveau du chauffage du volant a changé",
+    "it": "Il livello del riscaldatore del volante è cambiato",
+    "no": "Rattvarmernivået er endret",
+    "sv": "Rattvärmenivån har ändrats",
+    "pl": "Poziom grzania kierownicy został zmieniony",
+    "ru": "Уровень подогрева рулевого колеса изменился",
+    "ko": "스티어링 휠 히터 레벨이 변경되었습니다",
+    "ar": "تم تغيير مستوى سخان عجلة القيادة"
   },
   "titleFormatted": {
-    "en": "The steering wheel heater level has changed on [[device]]"
+    "en": "The steering wheel heater level has changed on [[device]]",
+    "nl": "Het stuurverwarmingsniveau is gewijzigd op [[device]]",
+    "da": "Ratvarmeniveauet er ændret på [[device]]",
+    "de": "Die Lenkradheizstufe hat sich auf [[device]] geändert",
+    "es": "El nivel del calefactor del volante ha cambiado en [[device]]",
+    "fr": "Le niveau du chauffage du volant a changé sur [[device]]",
+    "it": "Il livello del riscaldatore del volante è cambiato su [[device]]",
+    "no": "Rattvarmernivået er endret på [[device]]",
+    "sv": "Rattvärmenivån har ändrats på [[device]]",
+    "pl": "Poziom grzania kierownicy został zmieniony na [[device]]",
+    "ru": "Уровень подогрева рулевого колеса изменился на [[device]]",
+    "ko": "스티어링 휠 히터 레벨이 [[device]]에서 변경되었습니다",
+    "ar": "تم تغيير مستوى سخان عجلة القيادة على [[device]]"
   },
   "hint": {
-    "en": "This card triggers when the steering wheel heater level changes."
+    "en": "This card triggers when the steering wheel heater level changes.",
+    "nl": "Deze kaart wordt geactiveerd wanneer het stuurverwarmingsniveau verandert.",
+    "da": "Dette kort aktiveres, når ratvarmeniveauet ændres.",
+    "de": "Diese Karte wird ausgelöst, wenn sich die Lenkradheizstufe ändert.",
+    "es": "Esta tarjeta se activa cuando cambia el nivel del calefactor del volante.",
+    "fr": "Cette carte se déclenche lorsque le niveau du chauffage du volant change.",
+    "it": "Questa carta si attiva quando il livello del riscaldatore del volante cambia.",
+    "no": "Dette kortet utløses når rattvarmernivået endres.",
+    "sv": "Detta kort utlöses när rattvärmenivån ändras.",
+    "pl": "Ta karta zostaje uruchomiona, gdy poziom grzania kierownicy się zmienia.",
+    "ru": "Эта карта активируется, когда уровень подогрева рулевого колеса меняется.",
+    "ko": "스티어링 휠 히터 레벨이 변경되면 이 카드가 작동합니다.",
+    "ar": "يتم تفعيل هذه البطاقة عند تغيير مستوى سخان عجلة القيادة."
   },
   "args": [
     {
@@ -14,7 +50,19 @@
       "name": "device",
       "filter": "capabilities=steering_wheel_heater",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
       }
     }
   ],
@@ -23,10 +71,34 @@
       "name": "steering_wheel_heater",
       "type": "string",
       "title": {
-        "en": "Level"
+        "en": "Level",
+        "nl": "Niveau",
+        "da": "Niveau",
+        "de": "Stufe",
+        "es": "Nivel",
+        "fr": "Niveau",
+        "it": "Livello",
+        "no": "Nivå",
+        "sv": "Nivå",
+        "pl": "Poziom",
+        "ru": "Уровень",
+        "ko": "레벨",
+        "ar": "المستوى"
       },
       "example": {
-        "en": "High"
+        "en": "High",
+        "nl": "Hoog",
+        "da": "Høj",
+        "de": "Hoch",
+        "es": "Alto",
+        "fr": "Élevé",
+        "it": "Alto",
+        "no": "Høy",
+        "sv": "Hög",
+        "pl": "Wysoki",
+        "ru": "Высокий",
+        "ko": "높음",
+        "ar": "عالي"
       }
     }
   ]

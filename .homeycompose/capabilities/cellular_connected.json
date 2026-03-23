@@ -1,7 +1,19 @@
 {
   "type": "boolean",
   "title": {
-    "en": "Cellular Connected"
+    "en": "Cellular Connected",
+    "nl": "Mobiel Verbonden",
+    "da": "Mobiltilsluttet",
+    "de": "Mobil verbunden",
+    "es": "Conectado a la red móvil",
+    "fr": "Cellulaire Connecté",
+    "it": "Connesso alla rete cellulare",
+    "no": "Mobil tilkoblet",
+    "sv": "Mobilansluten",
+    "pl": "Połączenie komórkowe",
+    "ru": "Подключено к сотовой сети",
+    "ko": "셀룰러 연결됨",
+    "ar": "متصل بشبكة خلوية"
   },
   "getable": true,
   "setable": false,

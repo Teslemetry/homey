@@ -1,9 +1,33 @@
 {
   "title": {
-    "en": "Battery level comparison"
+    "en": "Battery level comparison",
+    "nl": "Batterijniveauvergelijking",
+    "da": "Batteriniveau sammenligning",
+    "de": "Batteriestand Vergleich",
+    "es": "Comparación de nivel de batería",
+    "fr": "Comparaison des niveaux de batterie",
+    "it": "Confronto dei livelli della batteria",
+    "no": "Batterinivå sammenligning",
+    "sv": "Jämförelse av batterinivå",
+    "pl": "Porównanie poziomu baterii",
+    "ru": "Сравнение уровня заряда батареи",
+    "ko": "배터리 수준 비교",
+    "ar": "مقارنة مستوى البطارية"
   },
   "titleFormatted": {
-    "en": "Battery level of [[device]] is above [[percentage]]%"
+    "en": "Battery level of [[device]] is above [[percentage]]%",
+    "nl": "Het batterijniveau van de [[device]] is boven de [[percentage]]%",
+    "da": "Batteriniveauet for [[device]] er over [[percentage]]%",
+    "de": "Batteriestand von [[device]] ist über [[percentage]]%",
+    "es": "El nivel de batería de [[device]] está por encima de [[percentage]]%",
+    "fr": "Le niveau de batterie de [[device]] est supérieur à [[percentage]]%",
+    "it": "Il livello della batteria di [[device]] è superiore a [[percentage]]%",
+    "no": "Batterinivået til [[device]] er over [[percentage]]%",
+    "sv": "Batterinivån för [[device]] är över [[percentage]]%",
+    "pl": "Poziom baterii urządzenia [[device]] jest powyżej [[percentage]]%",
+    "ru": "Уровень заряда батареи устройства [[device]] выше [[percentage]]%",
+    "ko": "[[device]]의 배터리 수준이 [[percentage]]% 이상입니다",
+    "ar": "مستوى بطارية [[device]] أعلى من [[percentage]]%"
   },
   "args": [
     {
@@ -11,14 +35,38 @@
       "name": "device",
       "filter": "capabilities=measure_battery",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "기기",
+        "ar": "جهاز"
       }
     },
     {
       "type": "range",
       "name": "percentage",
       "title": {
-        "en": "Percentage"
+        "en": "Percentage",
+        "nl": "Percentage",
+        "da": "Procentdel",
+        "de": "Prozentsatz",
+        "es": "Porcentaje",
+        "fr": "Pourcentage",
+        "it": "Percentuale",
+        "no": "Prosentandel",
+        "sv": "Procent",
+        "pl": "Procent",
+        "ru": "Процент",
+        "ko": "백분율",
+        "ar": "نسبة مئوية"
       },
       "min": 0,
       "max": 100,

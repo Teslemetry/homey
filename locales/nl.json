@@ -1,0 +1,9 @@
+{
+  "error": {
+    "invalid_token": "Ongeldige token. Probeer het opnieuw.",
+    "invalid_refresh_token": "Ongeldige vernieuw token. Gelieve opnieuw in te loggen.",
+    "subscription_required": "Abonnement vereist. Controleer uw Teslemetry-abonnement.",
+    "could_not_wake_vehicle": "Voertuig werd niet wakker. Probeer het opnieuw.",
+    "insufficient_credits": "Onvoldoende commando credits. Koop extra credits om commando's uit te voeren."
+  }
+}

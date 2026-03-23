@@ -1,9 +1,23 @@
 {
   "name": {
-    "en": "Energy Gateway"
+    "en": "Energy Gateway",
+    "nl": "Energiepoort",
+    "da": "Energi Gateway",
+    "de": "Energietor",
+    "es": "Puerta de Energía",
+    "fr": "Passerelle Énergétique",
+    "it": "Gateway Energetico",
+    "no": "Energibro",
+    "sv": "Energigateway",
+    "pl": "Przejście Energetyczne",
+    "ru": "Энергетический шлюз",
+    "ko": "에너지 게이트웨이",
+    "ar": "بوابة الطاقة"
   },
   "class": "sensor",
-  "$extends": ["teslemetry"],
+  "$extends": [
+    "teslemetry"
+  ],
   "ui": {
     "quickAction": false
   },
@@ -17,23 +31,121 @@
   ],
   "capabilitiesOptions": {
     "meter_power.imported": {
-      "title": { "en": "Imported Energy" }
+      "title": {
+        "en": "Imported Energy",
+        "nl": "Geïmporteerde Energie",
+        "da": "Importeret Energi",
+        "de": "Importierte Energie",
+        "es": "Energía Importada",
+        "fr": "Énergie Importée",
+        "it": "Energia Importata",
+        "no": "Importert Energi",
+        "sv": "Importerad Energi",
+        "pl": "Energia Importowana",
+        "ru": "Импортированная энергия",
+        "ko": "수입 에너지",
+        "ar": "الطاقة المستوردة"
+      }
     },
     "meter_power.exported": {
-      "title": { "en": "Exported Energy" }
+      "title": {
+        "en": "Exported Energy",
+        "nl": "Geëxporteerde Energie",
+        "da": "Eksporteret Energi",
+        "de": "Exportierte Energie",
+        "es": "Energía Exportada",
+        "fr": "Énergie Exportée",
+        "it": "Energia Esportata",
+        "no": "Eksportert Energi",
+        "sv": "Exporterad Energi",
+        "pl": "Energia Eksportowana",
+        "ru": "Экспортированная энергия",
+        "ko": "수출 에너지",
+        "ar": "الطاقة المصدرة"
+      }
     },
     "measure_power": {
-      "title": { "en": "Grid Power" }
+      "title": {
+        "en": "Grid Power",
+        "nl": "Netspanning",
+        "da": "Netstrøm",
+        "de": "Netzstrom",
+        "es": "Energía de Red",
+        "fr": "Puissance Réseau",
+        "it": "Energia a Rete",
+        "no": "Netto Strøm",
+        "sv": "Nätström",
+        "pl": "Energia Sieciowa",
+        "ru": "Сетевая мощность",
+        "ko": "그리드 전력",
+        "ar": "الطاقة الشبكية"
+      }
     },
     "measure_power.load": {
-      "title": { "en": "Load Power" },
-      "units": { "en": "W" }
+      "title": {
+        "en": "Load Power",
+        "nl": "Belastingsvermogen",
+        "da": "Belastningseffekt",
+        "de": "Lastwechsel",
+        "es": "Potencia de Carga",
+        "fr": "Puissance de Charge",
+        "it": "Potenza di Carico",
+        "no": "Last Effekt",
+        "sv": "Lastkraft",
+        "pl": "Moc Obciążenia",
+        "ru": "Нагрузка мощности",
+        "ko": "부하 전력",
+        "ar": "طاقة الحمل"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "da": "W",
+        "de": "W",
+        "es": "W",
+        "fr": "W",
+        "it": "W",
+        "no": "W",
+        "sv": "W",
+        "pl": "W",
+        "ru": "Вт",
+        "ko": "W",
+        "ar": "و"
+      }
     },
     "alarm_generic.off_grid": {
-      "title": { "en": "Grid Status" }
+      "title": {
+        "en": "Grid Status",
+        "nl": "Netwerkstatus",
+        "da": "Netværksstatus",
+        "de": "Netzstatus",
+        "es": "Estado de la Red",
+        "fr": "Statut du Réseau",
+        "it": "Stato della Rete",
+        "no": "Nettstatus",
+        "sv": "Nätverksstatus",
+        "pl": "Status Sieci",
+        "ru": "Состояние сети",
+        "ko": "전력망 상태",
+        "ar": "حالة الشبكة"
+      }
     },
     "alarm_generic.island": {
-      "title": { "en": "Island Status" }
+      "title": {
+        "en": "Island Status",
+        "nl": "Eilandstatus",
+        "da": "Østatus",
+        "de": "Inselstatus",
+        "es": "Estado de Isla",
+        "fr": "Statut de l'Île",
+        "it": "Stato dell'Isola",
+        "no": "Øyestatus",
+        "sv": "Östatus",
+        "pl": "Status Wyspy",
+        "ru": "Островной статус",
+        "ko": "섬 상태",
+        "ar": "حالة الجزيرة"
+      }
     }
   },
   "energy": {

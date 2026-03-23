@@ -1,12 +1,48 @@
 {
   "title": {
-    "en": "Wake up vehicle"
+    "en": "Wake up vehicle",
+    "nl": "Maak voertuig wakker",
+    "da": "Væk køretøj",
+    "de": "Fahrzeug aufwecken",
+    "es": "Despertar vehículo",
+    "fr": "Réveiller le véhicule",
+    "it": "Sveglia il veicolo",
+    "no": "Vekk kjøretøy",
+    "sv": "Väck fordon",
+    "pl": "Obudź pojazd",
+    "ru": "Разбудить транспортное средство",
+    "ko": "차량 깨우기",
+    "ar": "إيقاظ المركبة"
   },
   "titleFormatted": {
-    "en": "Wake up [[device]]"
+    "en": "Wake up [[device]]",
+    "nl": "Maak [[device]] wakker",
+    "da": "Væk [[device]]",
+    "de": "Wecke [[device]]",
+    "es": "Despertar [[device]]",
+    "fr": "Réveiller [[device]]",
+    "it": "Sveglia [[device]]",
+    "no": "Vekk [[device]]",
+    "sv": "Väck [[device]]",
+    "pl": "Obudź [[device]]",
+    "ru": "Разбудить [[device]]",
+    "ko": "[[device]] 깨우기",
+    "ar": "إيقاظ [[device]]"
   },
   "hint": {
-    "en": "Wake up the vehicle from sleep mode."
+    "en": "Wake up the vehicle from sleep mode.",
+    "nl": "Maak het voertuig wakker uit de slaapstand.",
+    "da": "Væk køretøjet fra dvaletilstand.",
+    "de": "Wecken Sie das Fahrzeug aus dem Schlafmodus.",
+    "es": "Despierta el vehículo del modo de suspensión.",
+    "fr": "Réveillez le véhicule du mode veille.",
+    "it": "Sveglia il veicolo dalla modalità sleep.",
+    "no": "Vekk kjøretøyet fra dvalemodus.",
+    "sv": "Väck fordonet från viloläge.",
+    "pl": "Obudź pojazd z trybu uśpienia.",
+    "ru": "Разбудить транспортное средство из спящего режима.",
+    "ko": "차량을 절전 모드에서 깨우세요.",
+    "ar": "إيقاظ المركبة من وضع السكون."
   },
   "args": [
     {
@@ -14,7 +50,19 @@
       "name": "device",
       "filter": "capabilities=button.wakeup",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
       }
     }
   ]

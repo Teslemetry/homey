@@ -1,12 +1,48 @@
 {
   "title": {
-    "en": "Start keyless driving"
+    "en": "Start keyless driving",
+    "nl": "Start met sleutelloos rijden",
+    "da": "Start nøglefri kørsel",
+    "de": "Schlüsselloses Fahren starten",
+    "es": "Comenzar conducción sin llave",
+    "fr": "Démarrer la conduite sans clé",
+    "it": "Avvia la guida senza chiave",
+    "no": "Start nøkkelfri kjøring",
+    "sv": "Starta nyckellös körning",
+    "pl": "Rozpocznij jazdę bez kluczyka",
+    "ru": "Начать безключевое вождение",
+    "ko": "키 없는 운전 시작",
+    "ar": "ابدأ القيادة بدون مفتاح"
   },
   "titleFormatted": {
-    "en": "Start keyless driving on [[device]]"
+    "en": "Start keyless driving on [[device]]",
+    "nl": "Start met sleutelloos rijden op [[device]]",
+    "da": "Start nøglefri kørsel på [[device]]",
+    "de": "Schlüsselloses Fahren starten auf [[device]]",
+    "es": "Comenzar conducción sin llave en [[device]]",
+    "fr": "Démarrer la conduite sans clé sur [[device]]",
+    "it": "Avvia la guida senza chiave su [[device]]",
+    "no": "Start nøkkelfri kjøring på [[device]]",
+    "sv": "Starta nyckellös körning på [[device]]",
+    "pl": "Rozpocznij jazdę bez kluczyka na [[device]]",
+    "ru": "Начать безключевое вождение на [[device]]",
+    "ko": "[[device]]에서 키 없는 운전 시작",
+    "ar": "ابدأ القيادة بدون مفتاح على [[device]]"
   },
   "hint": {
-    "en": "Enable keyless driving for the vehicle."
+    "en": "Enable keyless driving for the vehicle.",
+    "nl": "Schakel sleutelloos rijden in voor het voertuig.",
+    "da": "Aktiver nøglefri kørsel for køretøjet.",
+    "de": "Schlüsselloses Fahren für das Fahrzeug aktivieren.",
+    "es": "Habilitar la conducción sin llave para el vehículo.",
+    "fr": "Activer la conduite sans clé pour le véhicule.",
+    "it": "Abilita la guida senza chiave per il veicolo.",
+    "no": "Aktiver nøkkelfri kjøring for kjøretøyet.",
+    "sv": "Aktivera nyckellös körning för fordonet.",
+    "pl": "Włącz jazdę bez kluczyka dla pojazdu.",
+    "ru": "Включить безключевое вождение для автомобиля.",
+    "ko": "차량에 대한 키 없는 운전 활성화.",
+    "ar": "تمكين القيادة بدون مفتاح للمركبة."
   },
   "args": [
     {
@@ -14,7 +50,19 @@
       "name": "device",
       "filter": "capabilities=button.keyless",
       "title": {
-        "en": "Device"
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
       }
     }
   ]

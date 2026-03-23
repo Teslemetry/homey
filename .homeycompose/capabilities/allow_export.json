@@ -1,7 +1,19 @@
 {
   "type": "enum",
   "title": {
-    "en": "Allow Export"
+    "en": "Allow Export",
+    "nl": "Exporteren Toestaan",
+    "da": "Tillad Eksport",
+    "de": "Export Erlauben",
+    "es": "Permitir Exportación",
+    "fr": "Permettre l'Exportation",
+    "it": "Consenti Esportazione",
+    "no": "Tillat Eksport",
+    "sv": "Tillåt Export",
+    "pl": "Zezwalaj na Eksport",
+    "ru": "Разрешить Экспорт",
+    "ko": "내보내기 허용",
+    "ar": "السماح بالتصدير"
   },
   "getable": true,
   "setable": true,
@@ -10,19 +22,55 @@
     {
       "id": "battery_ok",
       "title": {
-        "en": "Battery and Solar"
+        "en": "Battery and Solar",
+        "nl": "Batterij en Zonne-energie",
+        "da": "Batteri og Solceller",
+        "de": "Batterie und Solar",
+        "es": "Batería y Solar",
+        "fr": "Batterie et Solaire",
+        "it": "Batteria e Solare",
+        "no": "Batteri og Solenergi",
+        "sv": "Batteri och Solenergi",
+        "pl": "Bateria i Energia Słoneczna",
+        "ru": "Батарея и Солнечная Энергия",
+        "ko": "배터리 및 태양광",
+        "ar": "البطارية والطاقة الشمسية"
       }
     },
     {
       "id": "pv_only",
       "title": {
-        "en": "Solar Only"
+        "en": "Solar Only",
+        "nl": "Alleen Zonne-energie",
+        "da": "Kun Solceller",
+        "de": "Nur Solar",
+        "es": "Solo Solar",
+        "fr": "Solaire Uniquement",
+        "it": "Solo Solare",
+        "no": "Kun Solenergi",
+        "sv": "Endast Solenergi",
+        "pl": "Tylko Energia Słoneczna",
+        "ru": "Только Солнечная Энергия",
+        "ko": "태양광 만",
+        "ar": "الطاقة الشمسية فقط"
       }
     },
     {
       "id": "never",
       "title": {
-        "en": "Never"
+        "en": "Never",
+        "nl": "Nooit",
+        "da": "Aldrig",
+        "de": "Nie",
+        "es": "Nunca",
+        "fr": "Jamais",
+        "it": "Mai",
+        "no": "Aldri",
+        "sv": "Aldrig",
+        "pl": "Nigdy",
+        "ru": "Никогда",
+        "ko": "절대",
+        "ar": "أبدا"
       }
     }
   ]

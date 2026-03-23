@@ -1,7 +1,19 @@
 {
   "type": "enum",
   "title": {
-    "en": "Operation Mode"
+    "en": "Operation Mode",
+    "nl": "Bedrijfsmodus",
+    "da": "Driftstilstand",
+    "de": "Betriebsmodus",
+    "es": "Modo de Operación",
+    "fr": "Mode de Fonctionnement",
+    "it": "Modalità Operativa",
+    "no": "Driftsmodus",
+    "sv": "Driftsläge",
+    "pl": "Tryb Operacyjny",
+    "ru": "Режим Работы",
+    "ko": "운영 모드",
+    "ar": "وضع التشغيل"
   },
   "getable": true,
   "setable": true,
@@ -10,19 +22,55 @@
     {
       "id": "self_consumption",
       "title": {
-        "en": "Self Consumption"
+        "en": "Self Consumption",
+        "nl": "Zelfverbruik",
+        "da": "Eget Forbrug",
+        "de": "Eigenverbrauch",
+        "es": "Autoconsumo",
+        "fr": "Autoconsommation",
+        "it": "Autoconsumo",
+        "no": "Egenforbruk",
+        "sv": "Självförbrukning",
+        "pl": "Samo konsumowanie",
+        "ru": "Собственное Потребление",
+        "ko": "자체 소비",
+        "ar": "الاستهلاك الذاتي"
       }
     },
     {
       "id": "backup",
       "title": {
-        "en": "Backup"
+        "en": "Backup",
+        "nl": "Backup",
+        "da": "Backup",
+        "de": "Backup",
+        "es": "Respaldo",
+        "fr": "Sauvegarde",
+        "it": "Backup",
+        "no": "Backup",
+        "sv": "Backup",
+        "pl": "Kopia Zapasowa",
+        "ru": "Резервное Копирование",
+        "ko": "백업",
+        "ar": "نسخ احتياطي"
       }
     },
     {
       "id": "autonomous",
       "title": {
-        "en": "Autonomous"
+        "en": "Autonomous",
+        "nl": "Autonoom",
+        "da": "Autonomt",
+        "de": "Autonom",
+        "es": "Autónomo",
+        "fr": "Autonome",
+        "it": "Autonomo",
+        "no": "Autonom",
+        "sv": "Autonom",
+        "pl": "Autonomiczny",
+        "ru": "Автономный",
+        "ko": "자율적인",
+        "ar": "مستقل"
       }
     }
   ]
