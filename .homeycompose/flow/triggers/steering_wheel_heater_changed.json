@@ -1,9 +1,9 @@
 {
   "title": {
-    "en": "Steering wheel heater changed"
+    "en": "The steering wheel heater level has changed"
   },
   "titleFormatted": {
-    "en": "Steering wheel heater changed on [[device]]"
+    "en": "The steering wheel heater level has changed on [[device]]"
   },
   "hint": {
     "en": "This card triggers when the steering wheel heater level changes."

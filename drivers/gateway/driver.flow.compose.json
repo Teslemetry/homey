@@ -2,19 +2,19 @@
   "triggers": [
     {
       "id": "alarm_generic.off_grid_true",
-      "title": { "en": "Grid power lost" }
+      "title": { "en": "Grid power has been lost" }
     },
     {
       "id": "alarm_generic.off_grid_false",
-      "title": { "en": "Grid power restored" }
+      "title": { "en": "Grid power has been restored" }
     },
     {
       "id": "alarm_generic.island_true",
-      "title": { "en": "Island mode activated" }
+      "title": { "en": "Island mode has been activated" }
     },
     {
       "id": "alarm_generic.island_false",
-      "title": { "en": "Island mode deactivated" }
+      "title": { "en": "Island mode has been deactivated" }
     }
   ],
   "conditions": [

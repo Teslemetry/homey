@@ -22,7 +22,7 @@
     "en": "Teslemetry"
   },
   "description": {
-    "en": "Adds support for Tesla vehicles and energy products through Teslemetry"
+    "en": "Simple and secure access to the Tesla Fleet API and real-time Tesla Fleet Telemetry"
   },
   "category": [
     "energy"
@@ -49,10 +49,10 @@
     "triggers": [
       {
         "title": {
-          "en": "Allow export changed"
+          "en": "The export setting has changed"
         },
         "titleFormatted": {
-          "en": "Allow export changed on [[device]]"
+          "en": "The export setting has changed on [[device]]"
         },
         "hint": {
           "en": "This card triggers when the export setting changes."
@@ -83,10 +83,10 @@
       },
       {
         "title": {
-          "en": "Backup reserve changed"
+          "en": "The backup reserve has changed"
         },
         "titleFormatted": {
-          "en": "Backup reserve changed on [[device]]"
+          "en": "The backup reserve has changed on [[device]]"
         },
         "hint": {
           "en": "This card triggers when the backup reserve percentage changes."
@@ -117,10 +117,10 @@
       },
       {
         "title": {
-          "en": "Operation mode changed"
+          "en": "The operation mode has changed"
         },
         "titleFormatted": {
-          "en": "Operation mode changed on [[device]]"
+          "en": "The operation mode has changed on [[device]]"
         },
         "hint": {
           "en": "This card triggers when the operation mode changes."
@@ -151,10 +151,10 @@
       },
       {
         "title": {
-          "en": "Steering wheel heater changed"
+          "en": "The steering wheel heater level has changed"
         },
         "titleFormatted": {
-          "en": "Steering wheel heater changed on [[device]]"
+          "en": "The steering wheel heater level has changed on [[device]]"
         },
         "hint": {
           "en": "This card triggers when the steering wheel heater level changes."
@@ -186,7 +186,7 @@
       {
         "id": "onoff.charge_grid_true",
         "title": {
-          "en": "Charge from grid enabled"
+          "en": "Charge from grid has been enabled"
         },
         "args": [
           {
@@ -199,7 +199,7 @@
       {
         "id": "onoff.charge_grid_false",
         "title": {
-          "en": "Charge from grid disabled"
+          "en": "Charge from grid has been disabled"
         },
         "args": [
           {
@@ -212,7 +212,7 @@
       {
         "id": "onoff.storm_true",
         "title": {
-          "en": "Storm watch enabled"
+          "en": "Storm watch has been enabled"
         },
         "args": [
           {
@@ -225,7 +225,7 @@
       {
         "id": "onoff.storm_false",
         "title": {
-          "en": "Storm watch disabled"
+          "en": "Storm watch has been disabled"
         },
         "args": [
           {
@@ -238,7 +238,7 @@
       {
         "id": "alarm_generic.storm_true",
         "title": {
-          "en": "Storm watch alert activated"
+          "en": "The storm watch alert has been activated"
         },
         "args": [
           {
@@ -251,7 +251,7 @@
       {
         "id": "alarm_generic.storm_false",
         "title": {
-          "en": "Storm watch alert deactivated"
+          "en": "The storm watch alert has been deactivated"
         },
         "args": [
           {
@@ -264,7 +264,7 @@
       {
         "id": "alarm_generic.off_grid_true",
         "title": {
-          "en": "Grid power lost"
+          "en": "Grid power has been lost"
         },
         "args": [
           {
@@ -277,7 +277,7 @@
       {
         "id": "alarm_generic.off_grid_false",
         "title": {
-          "en": "Grid power restored"
+          "en": "Grid power has been restored"
         },
         "args": [
           {
@@ -290,7 +290,7 @@
       {
         "id": "alarm_generic.island_true",
         "title": {
-          "en": "Island mode activated"
+          "en": "Island mode has been activated"
         },
         "args": [
           {
@@ -303,7 +303,7 @@
       {
         "id": "alarm_generic.island_false",
         "title": {
-          "en": "Island mode deactivated"
+          "en": "Island mode has been deactivated"
         },
         "args": [
           {
@@ -316,7 +316,7 @@
       {
         "id": "onoff.charge_port_true",
         "title": {
-          "en": "Charge port opened"
+          "en": "The charge port has opened"
         },
         "args": [
           {
@@ -329,7 +329,7 @@
       {
         "id": "onoff.charge_port_false",
         "title": {
-          "en": "Charge port closed"
+          "en": "The charge port has closed"
         },
         "args": [
           {
@@ -342,7 +342,7 @@
       {
         "id": "onoff.sentry_true",
         "title": {
-          "en": "Sentry mode enabled"
+          "en": "Sentry mode has been enabled"
         },
         "args": [
           {
@@ -355,7 +355,7 @@
       {
         "id": "onoff.sentry_false",
         "title": {
-          "en": "Sentry mode disabled"
+          "en": "Sentry mode has been disabled"
         },
         "args": [
           {
@@ -368,7 +368,7 @@
       {
         "id": "onoff.frunk_true",
         "title": {
-          "en": "Frunk opened"
+          "en": "The frunk has opened"
         },
         "args": [
           {
@@ -381,7 +381,7 @@
       {
         "id": "onoff.frunk_false",
         "title": {
-          "en": "Frunk closed"
+          "en": "The frunk has closed"
         },
         "args": [
           {
@@ -394,7 +394,7 @@
       {
         "id": "onoff.trunk_true",
         "title": {
-          "en": "Trunk opened"
+          "en": "The trunk has opened"
         },
         "args": [
           {
@@ -407,7 +407,7 @@
       {
         "id": "onoff.trunk_false",
         "title": {
-          "en": "Trunk closed"
+          "en": "The trunk has closed"
         },
         "args": [
           {
@@ -420,7 +420,7 @@
       {
         "id": "onoff.guest_mode_true",
         "title": {
-          "en": "Guest mode enabled"
+          "en": "Guest mode has been enabled"
         },
         "args": [
           {
@@ -433,7 +433,7 @@
       {
         "id": "onoff.guest_mode_false",
         "title": {
-          "en": "Guest mode disabled"
+          "en": "Guest mode has been disabled"
         },
         "args": [
           {
@@ -446,7 +446,7 @@
       {
         "id": "locked.charge_latch_true",
         "title": {
-          "en": "Charge port latch engaged"
+          "en": "The charge port latch has engaged"
         },
         "args": [
           {
@@ -459,7 +459,7 @@
       {
         "id": "locked.charge_latch_false",
         "title": {
-          "en": "Charge port latch disengaged"
+          "en": "The charge port latch has disengaged"
         },
         "args": [
           {
@@ -472,7 +472,7 @@
       {
         "id": "alarm_contact.fl_true",
         "title": {
-          "en": "Front left door opened"
+          "en": "The front left door has opened"
         },
         "args": [
           {
@@ -485,7 +485,7 @@
       {
         "id": "alarm_contact.fl_false",
         "title": {
-          "en": "Front left door closed"
+          "en": "The front left door has closed"
         },
         "args": [
           {
@@ -498,7 +498,7 @@
       {
         "id": "alarm_contact.fr_true",
         "title": {
-          "en": "Front right door opened"
+          "en": "The front right door has opened"
         },
         "args": [
           {
@@ -511,7 +511,7 @@
       {
         "id": "alarm_contact.fr_false",
         "title": {
-          "en": "Front right door closed"
+          "en": "The front right door has closed"
         },
         "args": [
           {
@@ -524,7 +524,7 @@
       {
         "id": "alarm_contact.rl_true",
         "title": {
-          "en": "Rear left door opened"
+          "en": "The rear left door has opened"
         },
         "args": [
           {
@@ -537,7 +537,7 @@
       {
         "id": "alarm_contact.rl_false",
         "title": {
-          "en": "Rear left door closed"
+          "en": "The rear left door has closed"
         },
         "args": [
           {
@@ -550,7 +550,7 @@
       {
         "id": "alarm_contact.rr_true",
         "title": {
-          "en": "Rear right door opened"
+          "en": "The rear right door has opened"
         },
         "args": [
           {
@@ -563,7 +563,7 @@
       {
         "id": "alarm_contact.rr_false",
         "title": {
-          "en": "Rear right door closed"
+          "en": "The rear right door has closed"
         },
         "args": [
           {

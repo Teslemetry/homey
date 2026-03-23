@@ -1,9 +1,9 @@
 {
   "title": {
-    "en": "Operation mode changed"
+    "en": "The operation mode has changed"
   },
   "titleFormatted": {
-    "en": "Operation mode changed on [[device]]"
+    "en": "The operation mode has changed on [[device]]"
   },
   "hint": {
     "en": "This card triggers when the operation mode changes."

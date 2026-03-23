@@ -14,18 +14,14 @@
   "version": "1.0.0",
   "compatibility": ">=12.4.5",
   "sdk": 3,
-  "platforms": [
-    "local"
-  ],
+  "platforms": ["local"],
   "name": {
     "en": "Teslemetry"
   },
   "description": {
-    "en": "Adds support for Tesla vehicles and energy products through Teslemetry"
+    "en": "Simple and secure access to the Tesla Fleet API and real-time Tesla Fleet Telemetry"
   },
-  "category": [
-    "energy"
-  ],
+  "category": ["energy"],
   "permissions": [],
   "images": {
     "small": "/assets/images/small.png",

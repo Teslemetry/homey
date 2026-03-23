@@ -2,27 +2,27 @@
   "triggers": [
     {
       "id": "onoff.charge_grid_true",
-      "title": { "en": "Charge from grid enabled" }
+      "title": { "en": "Charge from grid has been enabled" }
     },
     {
       "id": "onoff.charge_grid_false",
-      "title": { "en": "Charge from grid disabled" }
+      "title": { "en": "Charge from grid has been disabled" }
     },
     {
       "id": "onoff.storm_true",
-      "title": { "en": "Storm watch enabled" }
+      "title": { "en": "Storm watch has been enabled" }
     },
     {
       "id": "onoff.storm_false",
-      "title": { "en": "Storm watch disabled" }
+      "title": { "en": "Storm watch has been disabled" }
     },
     {
       "id": "alarm_generic.storm_true",
-      "title": { "en": "Storm watch alert activated" }
+      "title": { "en": "The storm watch alert has been activated" }
     },
     {
       "id": "alarm_generic.storm_false",
-      "title": { "en": "Storm watch alert deactivated" }
+      "title": { "en": "The storm watch alert has been deactivated" }
     }
   ],
   "conditions": [

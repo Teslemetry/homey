@@ -1,9 +1,9 @@
 {
   "title": {
-    "en": "Backup reserve changed"
+    "en": "The backup reserve has changed"
   },
   "titleFormatted": {
-    "en": "Backup reserve changed on [[device]]"
+    "en": "The backup reserve has changed on [[device]]"
   },
   "hint": {
     "en": "This card triggers when the backup reserve percentage changes."

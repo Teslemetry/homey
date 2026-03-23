@@ -1,9 +1,9 @@
 {
   "title": {
-    "en": "Allow export changed"
+    "en": "The export setting has changed"
   },
   "titleFormatted": {
-    "en": "Allow export changed on [[device]]"
+    "en": "The export setting has changed on [[device]]"
   },
   "hint": {
     "en": "This card triggers when the export setting changes."
