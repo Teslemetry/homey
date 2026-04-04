@@ -18,7 +18,7 @@
     "size": "du -sh .homeybuild"
   },
   "dependencies": {
-    "@teslemetry/api": "^0.6.12",
+    "@teslemetry/api": "^0.6.13",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
@@ -28,7 +28,7 @@
     "@types/source-map-support": "^0.5.10",
     "eslint": "^7.32.0",
     "eslint-config-athom": "^3.1.5",
-    "homey": "^3.12.0",
+    "homey": "^4.1.1",
     "typescript": "^5.9.3"
   }
 }
