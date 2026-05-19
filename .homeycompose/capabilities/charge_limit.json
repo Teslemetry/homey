@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/charge_limit.svg",
   "type": "number",
   "title": {
     "en": "Charge Limit",

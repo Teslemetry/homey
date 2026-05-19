@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/cellular_connected.svg",
   "type": "boolean",
   "title": {
     "en": "Cellular Connected",

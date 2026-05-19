@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/wifi_connected.svg",
   "type": "boolean",
   "title": {
     "en": "WiFi Connected",

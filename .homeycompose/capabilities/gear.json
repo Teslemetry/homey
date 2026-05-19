@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/gear.svg",
   "type": "enum",
   "title": {
     "en": "Gear",

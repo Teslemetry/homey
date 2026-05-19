@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/steering_wheel_heater.svg",
   "type": "enum",
   "title": {
     "en": "Steering Wheel Heater",

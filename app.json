@@ -4553,6 +4553,7 @@
   ],
   "capabilities": {
     "allow_export": {
+      "icon": "/assets/capabilities/allow_export.svg",
       "type": "enum",
       "title": {
         "en": "Allow Export",
@@ -4630,6 +4631,7 @@
       ]
     },
     "backup_reserve": {
+      "icon": "/assets/capabilities/backup_reserve.svg",
       "type": "number",
       "title": {
         "en": "Backup Reserve",
@@ -4670,6 +4672,7 @@
       "step": 0.01
     },
     "cellular_connected": {
+      "icon": "/assets/capabilities/cellular_connected.svg",
       "type": "boolean",
       "title": {
         "en": "Cellular Connected",
@@ -4691,6 +4694,7 @@
       "uiComponent": "sensor"
     },
     "charge_limit": {
+      "icon": "/assets/capabilities/charge_limit.svg",
       "type": "number",
       "title": {
         "en": "Charge Limit",
@@ -4731,6 +4735,7 @@
       "step": 0.01
     },
     "charging_amps": {
+      "icon": "/assets/capabilities/charging_amps.svg",
       "type": "number",
       "title": {
         "en": "Charging Amps",
@@ -4793,6 +4798,7 @@
       "icon": "/assets/icon.svg"
     },
     "gear": {
+      "icon": "/assets/capabilities/gear.svg",
       "type": "enum",
       "title": {
         "en": "Gear",
@@ -4888,6 +4894,7 @@
       ]
     },
     "measure_pressure": {
+      "icon": "/assets/capabilities/measure_pressure.svg",
       "type": "number",
       "title": {
         "en": "Tire Pressure",
@@ -4925,6 +4932,7 @@
       "decimals": 1
     },
     "minutes_to_arrival": {
+      "icon": "/assets/capabilities/minutes_to_arrival.svg",
       "type": "number",
       "title": {
         "en": "Minutes to Arrival",
@@ -4962,6 +4970,7 @@
       "decimals": 0
     },
     "navigation_destination": {
+      "icon": "/assets/capabilities/navigation_destination.svg",
       "type": "string",
       "title": {
         "en": "Navigation Destination",
@@ -4983,6 +4992,7 @@
       "uiComponent": "sensor"
     },
     "operation_mode": {
+      "icon": "/assets/capabilities/operation_mode.svg",
       "type": "enum",
       "title": {
         "en": "Operation Mode",
@@ -5060,6 +5070,7 @@
       ]
     },
     "seat_cooler": {
+      "icon": "/assets/capabilities/seat_cooler.svg",
       "type": "enum",
       "title": {
         "en": "Seat Cooler",
@@ -5155,6 +5166,7 @@
       ]
     },
     "seat_heater": {
+      "icon": "/assets/capabilities/seat_heater.svg",
       "type": "enum",
       "title": {
         "en": "Seat Heater",
@@ -5250,6 +5262,7 @@
       ]
     },
     "steering_wheel_heater": {
+      "icon": "/assets/capabilities/steering_wheel_heater.svg",
       "type": "enum",
       "title": {
         "en": "Steering Wheel Heater",
@@ -5327,6 +5340,7 @@
       ]
     },
     "time_to_full_charge": {
+      "icon": "/assets/capabilities/time_to_full_charge.svg",
       "type": "number",
       "title": {
         "en": "Time to Full Charge",
@@ -5364,6 +5378,7 @@
       "decimals": 0
     },
     "vehicle_state": {
+      "icon": "/assets/capabilities/vehicle_state.svg",
       "type": "enum",
       "title": {
         "en": "Vehicle State",
@@ -5441,6 +5456,7 @@
       ]
     },
     "wifi_connected": {
+      "icon": "/assets/capabilities/wifi_connected.svg",
       "type": "boolean",
       "title": {
         "en": "WiFi Connected",

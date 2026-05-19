@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/charging_amps.svg",
   "type": "number",
   "title": {
     "en": "Charging Amps",

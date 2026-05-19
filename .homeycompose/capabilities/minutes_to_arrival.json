@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/minutes_to_arrival.svg",
   "type": "number",
   "title": {
     "en": "Minutes to Arrival",

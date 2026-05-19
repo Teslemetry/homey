@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/backup_reserve.svg",
   "type": "number",
   "title": {
     "en": "Backup Reserve",

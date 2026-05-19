@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/measure_pressure.svg",
   "type": "number",
   "title": {
     "en": "Tire Pressure",

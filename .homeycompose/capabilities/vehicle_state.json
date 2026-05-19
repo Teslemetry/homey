@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/vehicle_state.svg",
   "type": "enum",
   "title": {
     "en": "Vehicle State",

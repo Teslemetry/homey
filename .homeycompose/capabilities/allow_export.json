@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/allow_export.svg",
   "type": "enum",
   "title": {
     "en": "Allow Export",

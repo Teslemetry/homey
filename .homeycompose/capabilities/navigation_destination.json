@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/navigation_destination.svg",
   "type": "string",
   "title": {
     "en": "Navigation Destination",

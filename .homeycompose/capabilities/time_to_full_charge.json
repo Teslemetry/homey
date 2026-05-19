@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/time_to_full_charge.svg",
   "type": "number",
   "title": {
     "en": "Time to Full Charge",

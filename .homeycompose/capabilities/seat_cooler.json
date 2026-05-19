@@ -1,4 +1,5 @@
 {
+  "icon": "/assets/capabilities/seat_cooler.svg",
   "type": "enum",
   "title": {
     "en": "Seat Cooler",
