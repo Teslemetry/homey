@@ -14,9 +14,7 @@
   "version": "1.0.1",
   "compatibility": ">=12.4.5",
   "sdk": 3,
-  "platforms": [
-    "local"
-  ],
+  "platforms": ["local", "cloud"],
   "name": {
     "en": "Teslemetry",
     "nl": "Teslemetry",
@@ -47,9 +45,7 @@
     "ko": "Tesla Fleet API 및 실시간 Tesla Fleet Telemetry에 간단하고 안전하게 액세스",
     "ar": "وصول بسيط وآمن إلى API أسطول Tesla وTelemetry أسطول Tesla في الوقت الفعلي"
   },
-  "category": [
-    "energy"
-  ],
+  "category": ["energy"],
   "permissions": [],
   "images": {
     "small": "/assets/images/small.png",
