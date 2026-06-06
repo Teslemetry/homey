@@ -23,12 +23,9 @@ export default class WallConnecter extends TeslemetryDevice {
     }
     this.din = this.getData().din;
 
-    this.pollingCleanup = [
-      this.site.api.requestPolling("liveStatus"),
-      this.site.api.requestPolling("chargeHistory"),
-    ];
-
-    this.site.api.on("liveStatus", ({ response }) => {
+    const onLiveStatus = ({
+      response,
+    }: NonNullable<typeof this.site.api.cache.liveStatus>) => {
       // Get specific Wall Connector
       const data = response?.wall_connectors?.find(
         ({ din }) => this.din === din,
@@ -47,9 +44,11 @@ export default class WallConnecter extends TeslemetryDevice {
 
       // Connected Vehicle
       this.update("connected_vehicle", this.findVin(data.vin));
-    });
+    };
 
-    this.site.api.on("chargeHistory", async (chargeHistory) => {
+    const onChargeHistory = async (
+      chargeHistory: NonNullable<typeof this.site.api.cache.chargeHistory>,
+    ) => {
       if (!chargeHistory.response?.charge_history?.length) return;
 
       let charged = 0;
@@ -68,7 +67,17 @@ export default class WallConnecter extends TeslemetryDevice {
         const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
         await this.updateCumulativeMeter("meter_power", charged / 1000, dateKey);
       }
-    });
+    };
+
+    this.site.api.on("liveStatus", onLiveStatus);
+    this.site.api.on("chargeHistory", onChargeHistory);
+
+    this.pollingCleanup = [
+      this.site.api.requestPolling("liveStatus"),
+      this.site.api.requestPolling("chargeHistory"),
+      () => this.site.api.off("liveStatus", onLiveStatus),
+      () => this.site.api.off("chargeHistory", onChargeHistory),
+    ];
   }
 
   /**
@@ -99,6 +108,7 @@ export default class WallConnecter extends TeslemetryDevice {
   }
 
   async onUninit(): Promise<void> {
+    await super.onUninit();
     this.pollingCleanup.forEach((stop) => stop());
   }
 }

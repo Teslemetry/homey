@@ -18,13 +18,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
       return;
     }
 
-    this.pollingCleanup = [
-      this.site.api.requestPolling("siteInfo"),
-      this.site.api.requestPolling("liveStatus"),
-      this.site.api.requestPolling("energyHistory"),
-    ];
-
-    this.site.api.on("liveStatus", (liveStatus) => {
+    const onLiveStatus = (
+      liveStatus: NonNullable<typeof this.site.api.cache.liveStatus>,
+    ) => {
       const data = liveStatus?.response;
       if (!data) return;
 
@@ -34,9 +30,11 @@ export default class PowerwallDevice extends TeslemetryDevice {
         data.battery_power !== undefined ? data.battery_power * -1 : undefined,
       );
       this.update("alarm_generic.storm", data.storm_mode_active);
-    });
+    };
 
-    this.site.api.on("siteInfo", async (siteInfo) => {
+    const onSiteInfo = async (
+      siteInfo: NonNullable<typeof this.site.api.cache.siteInfo>,
+    ) => {
       const data = siteInfo?.response;
       if (!data) return;
 
@@ -58,9 +56,11 @@ export default class PowerwallDevice extends TeslemetryDevice {
         !data.components.disallow_charge_from_grid_with_solar_installed,
       );
       this.update("onoff.storm", data.user_settings.storm_mode_enabled);
-    });
+    };
 
-    this.site.api.on("energyHistory", async (energyHistory) => {
+    const onEnergyHistory = async (
+      energyHistory: NonNullable<typeof this.site.api.cache.energyHistory>,
+    ) => {
       if (!energyHistory.response?.time_series?.length) return;
 
       const dateKey =
@@ -102,7 +102,20 @@ export default class PowerwallDevice extends TeslemetryDevice {
           dateKey,
         );
       }
-    });
+    };
+
+    this.site.api.on("liveStatus", onLiveStatus);
+    this.site.api.on("siteInfo", onSiteInfo);
+    this.site.api.on("energyHistory", onEnergyHistory);
+
+    this.pollingCleanup = [
+      this.site.api.requestPolling("siteInfo"),
+      this.site.api.requestPolling("liveStatus"),
+      this.site.api.requestPolling("energyHistory"),
+      () => this.site.api.off("liveStatus", onLiveStatus),
+      () => this.site.api.off("siteInfo", onSiteInfo),
+      () => this.site.api.off("energyHistory", onEnergyHistory),
+    ];
 
     // Register capability listeners
     this.registerCapabilityListener("backup_reserve", async (value) => {
@@ -146,6 +159,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
   }
 
   async onUninit(): Promise<void> {
+    await super.onUninit();
     this.pollingCleanup?.forEach((stop) => stop());
   }
 

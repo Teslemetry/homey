@@ -681,6 +681,7 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   async onUninit() {
+    await super.onUninit();
     this.vehicle.sse.data.removeAllListeners();
   }
 

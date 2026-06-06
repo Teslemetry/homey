@@ -10,8 +10,19 @@ export default class TeslemetryDevice extends Homey.Device {
 
   declare driver: TeslemetryDriver;
 
+  /**
+   * Set once the device has been uninitialised/deleted. Guards against
+   * stale, in-flight API callbacks writing to a device Homey no longer
+   * knows about (which throws "Not Found: Device with ID ...").
+   */
+  protected destroyed = false;
+
   async onInit() {
     await this.ensureCapabilities();
+  }
+
+  async onUninit(): Promise<void> {
+    this.destroyed = true;
   }
 
   public async ensureCapabilities() {
@@ -57,6 +68,8 @@ export default class TeslemetryDevice extends Homey.Device {
    * @param value The value from the API
    */
   public async update(capability: string, value: any): Promise<void> {
+    // Skip if the device has been removed
+    if (this.destroyed) return;
     // Check if capability is supported
     if (!this.getCapabilities().includes(capability)) {
       this.log(`Capability ${capability} is not supported`);
@@ -104,11 +117,32 @@ export default class TeslemetryDevice extends Homey.Device {
     throw new Error(error_description);
   };
 
+  /**
+   * Persists a store value, tolerating the device being removed mid-flight.
+   * setStoreValue on a deleted device throws "Not Found: Device with ID ...",
+   * which would otherwise surface as an unhandled rejection from async API
+   * callbacks. Returns false if the write was skipped/failed because the
+   * device is gone.
+   */
+  private async setStore(key: string, value: unknown): Promise<boolean> {
+    if (this.destroyed) return false;
+    try {
+      await this.setStoreValue(key, value);
+      return true;
+    } catch (e) {
+      if (this.destroyed) return false;
+      this.error(e);
+      return false;
+    }
+  }
+
   protected async updateCumulativeMeter(
     capability: string,
     todayTotal: number,
     dateKey: string,
   ): Promise<void> {
+    if (this.destroyed) return;
+
     const storeKey = `meter_${capability}`;
     const lastDate = this.getStoreValue(`${storeKey}_date`) as string | null;
     const lastToday = this.getStoreValue(`${storeKey}_last`) as number | null;
@@ -118,17 +152,17 @@ export default class TeslemetryDevice extends Homey.Device {
     if (offset === null) {
       const current = this.getCapabilityValue(capability) as number | null;
       offset = (current || 0) - todayTotal;
-      await this.setStoreValue(`${storeKey}_offset`, offset);
+      if (!(await this.setStore(`${storeKey}_offset`, offset))) return;
     }
 
     // Day rollover: date changed since last poll
     if (lastDate !== null && dateKey !== lastDate && lastToday !== null) {
       offset += lastToday;
-      await this.setStoreValue(`${storeKey}_offset`, offset);
+      if (!(await this.setStore(`${storeKey}_offset`, offset))) return;
     }
 
-    await this.setStoreValue(`${storeKey}_date`, dateKey);
-    await this.setStoreValue(`${storeKey}_last`, todayTotal);
+    if (!(await this.setStore(`${storeKey}_date`, dateKey))) return;
+    if (!(await this.setStore(`${storeKey}_last`, todayTotal))) return;
     this.update(capability, offset + todayTotal);
   }
 

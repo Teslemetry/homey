@@ -29,12 +29,9 @@ export default class GatewayDevice extends TeslemetryDevice {
       return;
     }
 
-    this.pollingCleanup = [
-      this.site.api.requestPolling("liveStatus"),
-      this.site.api.requestPolling("energyHistory"),
-    ];
-
-    this.site.api.on("liveStatus", (liveStatus) => {
+    const onLiveStatus = (
+      liveStatus: NonNullable<typeof this.site.api.cache.liveStatus>,
+    ) => {
       const data = liveStatus?.response;
       if (!data) return;
 
@@ -48,9 +45,11 @@ export default class GatewayDevice extends TeslemetryDevice {
         "alarm_generic.island",
         islandStatusMap.get(data.island_status),
       );
-    });
+    };
 
-    this.site.api.on("energyHistory", async (energyHistory) => {
+    const onEnergyHistory = async (
+      energyHistory: NonNullable<typeof this.site.api.cache.energyHistory>,
+    ) => {
       if (!energyHistory.response?.time_series?.length) return;
 
       const dateKey =
@@ -92,10 +91,21 @@ export default class GatewayDevice extends TeslemetryDevice {
           dateKey,
         );
       }
-    });
+    };
+
+    this.site.api.on("liveStatus", onLiveStatus);
+    this.site.api.on("energyHistory", onEnergyHistory);
+
+    this.pollingCleanup = [
+      this.site.api.requestPolling("liveStatus"),
+      this.site.api.requestPolling("energyHistory"),
+      () => this.site.api.off("liveStatus", onLiveStatus),
+      () => this.site.api.off("energyHistory", onEnergyHistory),
+    ];
   }
 
   async onUninit(): Promise<void> {
+    await super.onUninit();
     this.pollingCleanup?.forEach((stop) => stop());
   }
 }

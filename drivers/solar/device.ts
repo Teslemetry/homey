@@ -18,18 +18,17 @@ export default class SolarDevice extends TeslemetryDevice {
       return;
     }
 
-    this.pollingCleanup = [
-      this.site.api.requestPolling("liveStatus"),
-      this.site.api.requestPolling("energyHistory"),
-    ];
-
-    this.site.api.on("liveStatus", (liveStatus) => {
+    const onLiveStatus = (
+      liveStatus: NonNullable<typeof this.site.api.cache.liveStatus>,
+    ) => {
       const data = liveStatus?.response;
       if (!data) return;
       this.update("measure_power", data.solar_power);
-    });
+    };
 
-    this.site.api.on("energyHistory", async (energyHistory) => {
+    const onEnergyHistory = async (
+      energyHistory: NonNullable<typeof this.site.api.cache.energyHistory>,
+    ) => {
       if (!energyHistory.response?.time_series?.length) return;
 
       const dateKey =
@@ -51,10 +50,21 @@ export default class SolarDevice extends TeslemetryDevice {
       if (hasGenerated) {
         await this.updateCumulativeMeter("meter_power", generated / 1000, dateKey);
       }
-    });
+    };
+
+    this.site.api.on("liveStatus", onLiveStatus);
+    this.site.api.on("energyHistory", onEnergyHistory);
+
+    this.pollingCleanup = [
+      this.site.api.requestPolling("liveStatus"),
+      this.site.api.requestPolling("energyHistory"),
+      () => this.site.api.off("liveStatus", onLiveStatus),
+      () => this.site.api.off("energyHistory", onEnergyHistory),
+    ];
   }
 
   async onUninit() {
+    await super.onUninit();
     this.pollingCleanup?.forEach((stop) => stop());
   }
 }
