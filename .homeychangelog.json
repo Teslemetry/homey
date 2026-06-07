@@ -40,5 +40,8 @@
   },
   "0.2.1": {
     "en": "Added remaining vehicle icons by Ivo Derksen"
+  },
+  "1.0.2": {
+    "en": "Fixed background errors that could appear after deleting a device, and added Cloud platform."
   }
 }
