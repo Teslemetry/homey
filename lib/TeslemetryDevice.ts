@@ -174,12 +174,25 @@ export default class TeslemetryDevice extends Homey.Device {
    * If the timeout wins, the promise resolves and the action continues in the background.
    */
   protected action(promise: Promise<unknown>): Promise<void> {
+    let timedOut = false;
     const timeout = new Promise<void>((resolve) =>
-      setTimeout(resolve, TeslemetryDevice.ACTION_TIMEOUT),
+      setTimeout(() => {
+        timedOut = true;
+        resolve();
+      }, TeslemetryDevice.ACTION_TIMEOUT),
     );
     const handled = promise.then(() => {}, this.handleApiError);
-    // Prevent unhandled rejection if action fails after timeout
-    handled.catch(() => {});
+    // If the timeout already won the race (flow card reported success), a
+    // later rejection would otherwise vanish silently. Log it prominently
+    // instead of discarding it, since it's the only trace of the failure.
+    handled.catch((error) => {
+      if (timedOut) {
+        this.error(
+          `Action on ${this.getName()} failed after the ${TeslemetryDevice.ACTION_TIMEOUT}ms action timeout had already reported success to the flow:`,
+          error,
+        );
+      }
+    });
     return Promise.race([handled, timeout]);
   }
 }
