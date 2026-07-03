@@ -125,6 +125,20 @@ this.vehicle.api.someCommand()
   .catch(this.handleApiError);
 ```
 
+### Action Timeout (`TeslemetryDevice.action()`)
+
+`action()` races every API command against a fixed 9s `ACTION_TIMEOUT` so flow
+cards don't hang past Homey's own ~10s flow-card timeout. **Do not raise
+`ACTION_TIMEOUT`** — it's deliberately kept just under Homey's built-in cap;
+that's a separate, deferred investigation, not something to tweak in passing.
+
+When the timeout wins the race, the flow card reports success even though the
+real command is still in flight. If that command later rejects, `action()`
+logs it via `this.error(...)` (tagged with the device name and the timeout
+value) instead of discarding it — this is the only trace of a command that
+silently "succeeded" but actually failed, so don't remove or downgrade that
+log when touching this method.
+
 ### Signal-to-Capability Mapping
 
 Some SSE signals use enum strings that need mapping:
