@@ -167,3 +167,32 @@ Use the `update()` method which safely handles unsupported capabilities:
 ```typescript
 this.update("measure_battery", value);  // No-op if capability not present
 ```
+
+### SSE Auth-Failure Handling (`app.ts`)
+
+The `@teslemetry/api` SDK's `TeslemetryStream._connectLoop()` reconnects on
+*every* SSE failure (network blips, 5xx, 401) with the same exponential
+backoff, forever — it never distinguishes a dead token from a transient
+error, and this repo has no way to configure that (no `maxRetries`/
+`onAuthFailure` hook is exposed; it's not something to patch in
+`node_modules`). The only signal available from this app is the SDK's own
+`logger.error("SSE error:", error)` call, so `app.ts`'s `logger.error`
+wrapper parses that specific call for a `401` in the error message.
+
+On a 401: the first one triggers a forced `oauth.refreshToken()` (in case
+our proactive expiry-based refresh missed a token that was revoked early)
+and lets the SDK's normal retry pick up the new token. A **second**
+consecutive 401 — or the forced refresh itself detecting an invalid refresh
+token — means the refresh token is dead, not just expired: `app.ts` stops
+the stream (`cleanup()`), clears the token, and marks every device
+unavailable via `error.invalid_refresh_token`, which surfaces through
+Homey's existing repair flow (same mechanism as
+`TeslemetryDevice.handleApiError`'s `invalid_token`/`subscription_required`
+handling).
+
+The 401 streak resets only on the SDK's `state`/`data`/`errors`/`alerts`/
+`connectivity` events, **not** on `connect` — `TeslemetryStream` emits
+`connect` optimistically before the underlying HTTP request even
+completes, so it fires on every reconnect attempt regardless of whether
+that attempt goes on to fail. Using `connect` to reset the counter would
+silently defeat the whole detection.
