@@ -2,6 +2,7 @@ import sourceMapSupport from 'source-map-support';
 
 import Homey from 'homey';
 import { Products, Teslemetry } from '@teslemetry/api';
+import type { TeslemetryStreamErrorEvent } from '@teslemetry/api';
 import TeslemetryOAuth2Client from './lib/TeslemetryOAuth2Client.js';
 import type { TeslemetryApiError } from './@types/error.d.ts';
 import type VehicleDevice from './drivers/vehicle/device.js';
@@ -9,11 +10,27 @@ import type PowerwallDevice from './drivers/battery/device.js';
 
 sourceMapSupport.install();
 
+// Signal-carrying SSE events that only fire once the stream is genuinely
+// connected and receiving data (unlike the SDK's "connect" event, which
+// fires optimistically before the underlying HTTP request even completes).
+const SSE_DATA_EVENTS = [
+  'state',
+  'data',
+  'errors',
+  'alerts',
+  'connectivity',
+] as const;
+
 export default class TeslemetryApp extends Homey.App {
   public oauth!: TeslemetryOAuth2Client;
   public teslemetry?: Teslemetry;
   public products?: Products;
   private initializationPromise?: Promise<void>;
+
+  // Set once a persistent auth failure has surfaced reauth to the user, so
+  // recovery can restore device availability once the stream reconnects.
+  private reauthSurfaced = false;
+
   private logger = {
     info: (...args: unknown[]) => this.log(...args),
     error: (...args: unknown[]) => this.error(...args),
@@ -165,6 +182,15 @@ export default class TeslemetryApp extends Homey.App {
       .createProducts()
       .catch(this.handleApiError);
 
+    for (const event of SSE_DATA_EVENTS) {
+      this.teslemetry.sse.on(event, () => this.handleSseConnected());
+    }
+    this.teslemetry.sse.on('stream_error', (event) =>
+      this.handleStreamError(event).catch(this.error),
+    );
+    this.teslemetry.sse.on('auth_failure', () =>
+      this.stopSseAndSurfaceReauth(),
+    );
     this.teslemetry.sse.connect();
 
     const vehicleCount = Object.keys(this.products.vehicles).length;
@@ -252,4 +278,65 @@ export default class TeslemetryApp extends Homey.App {
     this.error(error_description);
     throw new Error(error_description);
   };
+
+  /**
+   * Called on every SSE reconnect failure. The stream itself now owns
+   * backoff, auth-failure classification, and the stop-loss policy (see
+   * `auth_failure` below); the only actionable thing left for the app is to
+   * give the stream's single same-attempt retry a token that's actually
+   * fresh, covering a token that was revoked early enough that our
+   * proactive expiry-based refresh wouldn't have caught it.
+   */
+  private async handleStreamError(
+    event: TeslemetryStreamErrorEvent,
+  ): Promise<void> {
+    if (event.status !== 401 && event.status !== 403) return;
+
+    this.log('SSE auth failure; forcing a token refresh before the SDK retries');
+    await this.oauth.refreshToken().catch((refreshError) => {
+      this.error('Token refresh after SSE auth failure failed:', refreshError);
+    });
+    if (!this.oauth.hasValidToken()) {
+      // refreshToken() already determined the refresh token itself is
+      // dead and cleared it - no need to wait for the SDK's own second
+      // consecutive auth failure to surface reauth.
+      this.stopSseAndSurfaceReauth();
+    }
+  }
+
+  /** Restore device availability once the stream proves it's genuinely reconnected. */
+  private handleSseConnected(): void {
+    if (this.reauthSurfaced) {
+      this.reauthSurfaced = false;
+      this.setAllDevicesAvailability(true);
+    }
+  }
+
+  private stopSseAndSurfaceReauth(): void {
+    this.cleanup();
+    this.oauth.clearToken();
+    this.reauthSurfaced = true;
+    this.setAllDevicesAvailability(
+      false,
+      this.homey.__('error.invalid_refresh_token'),
+    );
+  }
+
+  /**
+   * Marks every device across every driver (un)available, mirroring the
+   * per-device auth-failure pattern in TeslemetryDevice.handleApiError so
+   * the reauth need surfaces through Homey's normal repair flow.
+   */
+  private setAllDevicesAvailability(available: boolean, message?: string): void {
+    const drivers = Object.values(this.homey.drivers.getDrivers());
+    for (const driver of drivers) {
+      for (const device of driver.getDevices()) {
+        if (available) {
+          device.setAvailable().catch(this.error);
+        } else {
+          device.setUnavailable(message).catch(this.error);
+        }
+      }
+    }
+  }
 }
