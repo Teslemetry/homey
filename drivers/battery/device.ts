@@ -47,15 +47,15 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.update("operation_mode", data.default_real_mode);
       this.update(
         "allow_export",
-        data.components.customer_preferred_export_rule ??
-          (data.components.non_export_configured ? "never" : "battery_ok"),
+        data.components?.customer_preferred_export_rule ??
+          (data.components?.non_export_configured ? "never" : "battery_ok"),
       );
       this.update(
         "onoff.charge_grid",
         // When this is missing, its allowed
-        !data.components.disallow_charge_from_grid_with_solar_installed,
+        !data.components?.disallow_charge_from_grid_with_solar_installed,
       );
-      this.update("onoff.storm", data.user_settings.storm_mode_enabled);
+      this.update("onoff.storm", data.user_settings?.storm_mode_enabled);
     };
 
     const onEnergyHistory = async (

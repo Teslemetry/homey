@@ -2,6 +2,7 @@ import sourceMapSupport from 'source-map-support';
 
 import Homey from 'homey';
 import { Products, Teslemetry } from '@teslemetry/api';
+import type { TeslemetryStreamErrorEvent } from '@teslemetry/api';
 import TeslemetryOAuth2Client from './lib/TeslemetryOAuth2Client.js';
 import type { TeslemetryApiError } from './@types/error.d.ts';
 import type VehicleDevice from './drivers/vehicle/device.js';
@@ -26,21 +27,13 @@ export default class TeslemetryApp extends Homey.App {
   public products?: Products;
   private initializationPromise?: Promise<void>;
 
-  // Tracks consecutive 401s from the SSE stream so a merely-expired access
-  // token (refresh + retry once) can be told apart from a dead refresh
-  // token (stop reconnecting + surface reauth). Reset once the stream
-  // proves itself genuinely connected again.
-  private sseConsecutive401Count = 0;
+  // Set once a persistent auth failure has surfaced reauth to the user, so
+  // recovery can restore device availability once the stream reconnects.
   private reauthSurfaced = false;
 
   private logger = {
     info: (...args: unknown[]) => this.log(...args),
-    error: (...args: unknown[]) => {
-      this.error(...args);
-      if (args[0] === 'SSE error:') {
-        this.handleSseError(args[1]).catch(this.error);
-      }
-    },
+    error: (...args: unknown[]) => this.error(...args),
     warn: (...args: unknown[]) => this.log(...args),
     debug: (...args: unknown[]) => this.log(...args),
   };
@@ -192,6 +185,12 @@ export default class TeslemetryApp extends Homey.App {
     for (const event of SSE_DATA_EVENTS) {
       this.teslemetry.sse.on(event, () => this.handleSseConnected());
     }
+    this.teslemetry.sse.on('stream_error', (event) =>
+      this.handleStreamError(event).catch(this.error),
+    );
+    this.teslemetry.sse.on('auth_failure', () =>
+      this.stopSseAndSurfaceReauth(),
+    );
     this.teslemetry.sse.connect();
 
     const vehicleCount = Object.keys(this.products.vehicles).length;
@@ -281,48 +280,32 @@ export default class TeslemetryApp extends Homey.App {
   };
 
   /**
-   * Called whenever the SSE stream's own reconnect loop logs an error. Only
-   * 401s are actionable here — the SDK's built-in exponential backoff
-   * already handles every other failure mode (network blips, 5xx, etc).
+   * Called on every SSE reconnect failure. The stream itself now owns
+   * backoff, auth-failure classification, and the stop-loss policy (see
+   * `auth_failure` below); the only actionable thing left for the app is to
+   * give the stream's single same-attempt retry a token that's actually
+   * fresh, covering a token that was revoked early enough that our
+   * proactive expiry-based refresh wouldn't have caught it.
    */
-  private async handleSseError(error: unknown): Promise<void> {
-    const message = error instanceof Error ? error.message : String(error);
-    if (!/\b401\b/.test(message)) return;
+  private async handleStreamError(
+    event: TeslemetryStreamErrorEvent,
+  ): Promise<void> {
+    if (event.status !== 401 && event.status !== 403) return;
 
-    this.sseConsecutive401Count++;
-
-    if (this.sseConsecutive401Count === 1) {
-      // Could just be an access token our proactive expiry check hasn't
-      // caught up to yet. Force a refresh so the next reconnect attempt
-      // (triggered automatically via the 'oauth2:token_saved' handler, or
-      // by the SDK's own retry if the refresh didn't change anything) uses
-      // a genuinely fresh token before we give up.
-      this.log(
-        'SSE got a 401; forcing a token refresh before the next reconnect attempt',
-      );
-      await this.oauth.refreshToken().catch((refreshError) => {
-        this.error('Token refresh after SSE 401 failed:', refreshError);
-      });
-      if (!this.oauth.hasValidToken()) {
-        // refreshToken() already determined the refresh token itself is
-        // dead and cleared it - no point waiting for a second 401.
-        this.stopSseAndSurfaceReauth();
-      }
-      return;
+    this.log('SSE auth failure; forcing a token refresh before the SDK retries');
+    await this.oauth.refreshToken().catch((refreshError) => {
+      this.error('Token refresh after SSE auth failure failed:', refreshError);
+    });
+    if (!this.oauth.hasValidToken()) {
+      // refreshToken() already determined the refresh token itself is
+      // dead and cleared it - no need to wait for the SDK's own second
+      // consecutive auth failure to surface reauth.
+      this.stopSseAndSurfaceReauth();
     }
-
-    // A second consecutive 401, even after a forced token refresh, means
-    // the refresh token is dead rather than the access token merely being
-    // expired. Stop reconnecting instead of spinning forever.
-    this.error(
-      'SSE got a second consecutive 401 after a forced token refresh; stopping reconnects and requesting reauth',
-    );
-    this.stopSseAndSurfaceReauth();
   }
 
-  /** Reset the 401 streak once the SSE stream proves it's genuinely connected. */
+  /** Restore device availability once the stream proves it's genuinely reconnected. */
   private handleSseConnected(): void {
-    this.sseConsecutive401Count = 0;
     if (this.reauthSurfaced) {
       this.reauthSurfaced = false;
       this.setAllDevicesAvailability(true);
@@ -330,7 +313,6 @@ export default class TeslemetryApp extends Homey.App {
   }
 
   private stopSseAndSurfaceReauth(): void {
-    this.sseConsecutive401Count = 0;
     this.cleanup();
     this.oauth.clearToken();
     this.reauthSurfaced = true;

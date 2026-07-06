@@ -13,7 +13,7 @@ export default class PowerwallDriver extends TeslemetryDriver {
       await Promise.all(
         Object.values(products.energySites).map(async (site) => {
           const siteInfo = await site.api.getSiteInfo();
-          if (!siteInfo?.response.components.battery) return null;
+          if (!siteInfo?.response.components?.battery) return null;
 
           return {
             name: `${site.name} Powerwall`,

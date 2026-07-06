@@ -170,29 +170,35 @@ this.update("measure_battery", value);  // No-op if capability not present
 
 ### SSE Auth-Failure Handling (`app.ts`)
 
-The `@teslemetry/api` SDK's `TeslemetryStream._connectLoop()` reconnects on
-*every* SSE failure (network blips, 5xx, 401) with the same exponential
-backoff, forever — it never distinguishes a dead token from a transient
-error, and this repo has no way to configure that (no `maxRetries`/
-`onAuthFailure` hook is exposed; it's not something to patch in
-`node_modules`). The only signal available from this app is the SDK's own
-`logger.error("SSE error:", error)` call, so `app.ts`'s `logger.error`
-wrapper parses that specific call for a `401` in the error message.
+As of `@teslemetry/api` 0.7.0, the SDK's `TeslemetryStream` owns 401/403
+detection, the exponential backoff for transient failures, and the
+stop-loss policy for persistent auth failure — that used to all live in
+this repo as a `logger.error("SSE error:", ...)` string-sniffing hack
+(dead code against the SDK versions it shipped against, since inner
+retries never surfaced that log line for a 401). It now emits two typed
+events on `teslemetry.sse` that `app.ts` subscribes to instead:
 
-On a 401: the first one triggers a forced `oauth.refreshToken()` (in case
-our proactive expiry-based refresh missed a token that was revoked early)
-and lets the SDK's normal retry pick up the new token. A **second**
-consecutive 401 — or the forced refresh itself detecting an invalid refresh
-token — means the refresh token is dead, not just expired: `app.ts` stops
-the stream (`cleanup()`), clears the token, and marks every device
-unavailable via `error.invalid_refresh_token`, which surfaces through
-Homey's existing repair flow (same mechanism as
-`TeslemetryDevice.handleApiError`'s `invalid_token`/`subscription_required`
-handling).
+- `stream_error: { error, status?, retries }` — fires on every failed
+  reconnect attempt, transient or not. `app.ts` only acts when
+  `status` is `401`/`403`: it forces `oauth.refreshToken()` so the SDK's
+  own single same-attempt retry (it re-resolves the auth callback per
+  attempt) gets a token that's actually fresh, covering a token revoked
+  early enough that our proactive expiry-based refresh wouldn't have
+  caught it. If that refresh itself finds the refresh token dead, `app.ts`
+  doesn't wait for a second consecutive failure — it surfaces reauth
+  immediately.
+- `auth_failure` — the SDK's terminal event: it fires once two consecutive
+  401/403s occur and the SDK has already stopped reconnecting
+  (`active = false`). `app.ts` responds by stopping its own state
+  (`cleanup()`), clearing the token, and marking every device unavailable
+  via `error.invalid_refresh_token`, which surfaces through Homey's
+  existing repair flow (same mechanism as
+  `TeslemetryDevice.handleApiError`'s `invalid_token`/`subscription_required`
+  handling).
 
-The 401 streak resets only on the SDK's `state`/`data`/`errors`/`alerts`/
-`connectivity` events, **not** on `connect` — `TeslemetryStream` emits
-`connect` optimistically before the underlying HTTP request even
-completes, so it fires on every reconnect attempt regardless of whether
-that attempt goes on to fail. Using `connect` to reset the counter would
-silently defeat the whole detection.
+Device availability is restored on the SDK's `state`/`data`/`errors`/
+`alerts`/`connectivity` events, **not** on `connect` — `TeslemetryStream`
+still emits `connect` optimistically, before the underlying HTTP request
+even completes (it fires right after constructing the SSE generator, not
+after the first byte), so it fires on every reconnect attempt regardless
+of whether that attempt goes on to fail.
