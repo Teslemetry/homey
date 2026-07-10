@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
+    "lint": "oxlint .",
     "dev": "homey app run",
     "app:run": "homey app run",
     "app:install": "homey app install",
@@ -26,9 +26,8 @@
     "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.12",
     "@types/node": "^24.10.2",
     "@types/source-map-support": "^0.5.10",
-    "eslint": "^7.32.0",
-    "eslint-config-athom": "^3.1.5",
     "homey": "^4.1.1",
+    "oxlint": "^1.73.0",
     "typescript": "^5.9.3"
   }
 }

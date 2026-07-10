@@ -6,7 +6,7 @@ Homey app for Teslemetry. Provides real-time control and monitoring of Tesla veh
 
 ```bash
 npm run build          # Compile TypeScript to .homeybuild/
-npm run lint           # ESLint check
+npm run lint           # oxlint check (see .oxlintrc.json)
 npm run dev            # Run app on local Homey
 npm run app:validate   # Validate app (required before commit)
 ```
@@ -202,3 +202,32 @@ still emits `connect` optimistically, before the underlying HTTP request
 even completes (it fires right after constructing the SSE generator, not
 after the first byte), so it fires on every reconnect attempt regardless
 of whether that attempt goes on to fail.
+
+### Lint (oxlint)
+
+`npm run lint` runs [oxlint](https://oxc.rs) (native Rust/TS parser, no `tsc`
+bridge) instead of ESLint. `.oxlintrc.json` mirrors the rule set and options
+that `eslint-config-athom` actually enforced (verified rule-for-rule against a
+zero-finding baseline before the swap). Two categories of prior ESLint
+coverage have no oxlint equivalent and are not enforced today:
+- Pure formatting rules (`comma-dangle`, `semi`, `quote-props`, spacing rules,
+  etc.) — oxlint deliberately excludes these and expects a formatter (e.g.
+  Prettier) to own them; none is currently installed.
+- A handful of non-formatting rules with no oxlint port: `no-restricted-syntax`
+  (custom for-in/labeled-statement ban), `import/no-extraneous-dependencies`,
+  `import/order`, and most of `eslint-plugin-node`'s CJS-require-focused
+  rules (`node/no-missing-require`, `node/no-deprecated-api`, etc.) — lower
+  impact here since the app is ESM-only.
+
+`@typescript-eslint/recommended` and `eslint-plugin-homey-app`'s rules were
+never actually active pre-migration either: `.eslintrc.json` extended
+`"athom"`, which resolves to `eslint-config-athom`'s `index.js`, not
+`homey-app.js` (the config that adds those). Not a regression from this
+migration.
+
+## Maintaining this file
+
+Keep this file for knowledge useful to almost every future agent session in this project.
+Do not repeat what the codebase already shows; point to the authoritative file or command instead.
+Prefer rewriting or pruning existing entries over appending new ones.
+When updating this file, preserve this bar for all agents and keep entries concise.
