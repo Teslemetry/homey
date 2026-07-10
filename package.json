@@ -28,6 +28,6 @@
     "@types/source-map-support": "^0.5.10",
     "homey": "^4.1.1",
     "oxlint": "^1.73.0",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }
