@@ -225,6 +225,15 @@ never actually active pre-migration either: `.eslintrc.json` extended
 `homey-app.js` (the config that adds those). Not a regression from this
 migration.
 
+### TypeScript version
+
+On TypeScript 7, `tsconfig.json` sets `compilerOptions.types` explicitly to
+`["node", "homey"]`. TS7 dropped automatic inclusion of everything under
+`@types/*` - without this, ambient globals from `@types/node` and
+`@types/homey` (the Homey app SDK types) stop resolving and the build fails.
+If you add a package whose types are only used ambiently (not via an
+explicit `import`), add it to this list.
+
 ## Maintaining this file
 
 Keep this file for knowledge useful to almost every future agent session in this project.

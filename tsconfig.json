@@ -5,6 +5,7 @@
     "outDir": ".homeybuild/",
     "sourceMap": true,
     "typeRoots": ["./node_modules/@types", "./@types"],
+    "types": ["node", "homey"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
   },
