@@ -15,6 +15,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
     } catch (e) {
       this.log("Failed to initialize Powerwall device");
       this.error(e);
+      this.setUnavailable(this.homey.__("error.invalid_refresh_token")).catch(
+        this.error,
+      );
       return;
     }
 

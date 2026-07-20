@@ -5,13 +5,25 @@ Homey app for Teslemetry. Provides real-time control and monitoring of Tesla veh
 ## Commands
 
 ```bash
-npm run build          # Compile TypeScript to .homeybuild/
-npm run lint           # oxlint check (see .oxlintrc.json)
-npm run dev            # Run app on local Homey
-npm run app:validate   # Validate app (required before commit)
+npm run build           # Compile TypeScript to .homeybuild/
+npm test                # Build, then run test/*.test.ts with Node's built-in test runner
+npm run lint            # oxlint check (see .oxlintrc.json)
+npm run dev             # Run app on local Homey
+npm run app:validate    # Validate app (required before commit)
 ```
 
 Always run `npm run app:validate` before committing changes.
+
+### Testing
+
+`npm test` runs against the **compiled output** in `.homeybuild/`, not the
+TypeScript sources directly - Node's native TS support strips types but
+doesn't resolve TS-style `.js`-extension imports to their `.ts` source or
+elide type-only named imports the way `tsc` does, so it can't load the
+source files' full import graph. `test/support/loader.mjs` stubs the
+`homey` SDK import (it only resolves to real classes inside the actual
+Homey runtime) so device/driver classes can be exercised directly via
+their prototypes without a live Homey instance.
 
 ## Architecture
 

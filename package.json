@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "test": "npm run build && node --experimental-loader ./test/support/loader.mjs --test 'test/*.test.ts'",
     "lint": "oxlint .",
     "dev": "homey app run",
     "app:run": "homey app run",
