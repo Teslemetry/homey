@@ -56,9 +56,9 @@ test("refreshToken() clears the stored token on the server's lowercase invalid_r
 
     await assert.rejects(() => client.refreshToken());
 
-    // This is the regression this test guards: before the fix, the
-    // uppercase/lowercase mismatch left clearToken() dead, so the token
-    // (and the settings entry backing it) survived a server rejection.
+    // Guards that a lowercase invalid_refresh_token from the server clears
+    // the token and its backing settings entry; a case mismatch here would
+    // silently leave the dead token in place.
     assert.equal(client.hasValidToken(), false);
     assert.equal(settingsStore.teslemetry_oauth2_token, undefined);
   } finally {
