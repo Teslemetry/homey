@@ -178,9 +178,10 @@ export default class TeslemetryApp extends Homey.App {
         cache: true,
       },
     });
-    this.products = await this.teslemetry
-      .createProducts()
-      .catch(this.handleApiError);
+    // No .catch(this.handleApiError) here: a real API error surfaces via
+    // TeslemetryOAuth2Client's own handleApiError call during token
+    // fetching, which already logs and translates it before rethrowing.
+    this.products = await this.teslemetry.createProducts();
 
     for (const event of SSE_DATA_EVENTS) {
       this.teslemetry.sse.on(event, () => this.handleSseConnected());
@@ -266,7 +267,14 @@ export default class TeslemetryApp extends Homey.App {
     return this.oauth.hasValidToken() && !!this.teslemetry && !!this.products;
   }
 
-  public handleApiError = (apiError: TeslemetryApiError): never => {
+  public handleApiError = (apiError: TeslemetryApiError | Error): never => {
+    // A plain Error means a lower layer already logged and translated it;
+    // JSON.stringify(Error) is "{}" (message/stack aren't enumerable), so
+    // rethrow it as-is instead of re-wrapping it into a blank-message Error.
+    if (apiError instanceof Error) {
+      this.error(`API Error: ${apiError.name}: ${apiError.message}`, apiError.stack);
+      throw apiError;
+    }
     const { error, error_description } = apiError;
     this.error('API Error:', JSON.stringify(apiError));
     const key = `error.${error?.toLowerCase()}`;

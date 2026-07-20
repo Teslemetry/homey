@@ -98,7 +98,14 @@ export default class TeslemetryDevice extends Homey.Device {
     }
   };
 
-  protected handleApiError = (apiError: TeslemetryApiError): never => {
+  protected handleApiError = (apiError: TeslemetryApiError | Error): never => {
+    // A plain Error means a lower layer already logged and translated it;
+    // JSON.stringify(Error) is "{}" (message/stack aren't enumerable), so
+    // rethrow it as-is instead of re-wrapping it into a blank-message Error.
+    if (apiError instanceof Error) {
+      this.error(`API Error: ${apiError.name}: ${apiError.message}`, apiError.stack);
+      throw apiError;
+    }
     const { error, error_description } = apiError;
     this.error("API Error:", JSON.stringify(apiError));
     const key = `error.${error}`;
