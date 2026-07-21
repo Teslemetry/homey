@@ -43,5 +43,8 @@
   },
   "1.0.2": {
     "en": "Fixed background errors that could appear after deleting a device, and added Cloud platform."
+  },
+  "1.0.3": {
+    "en": "Reliability improvements: fixed re-authentication when your Teslemetry token expires, plus internal cleanups."
   }
 }
