@@ -1,4 +1,10 @@
-import { SseData, VehicleDetails } from "@teslemetry/api";
+import {
+  SseConnectivity,
+  SseData,
+  SseState,
+  TeslemetryVehicleStream,
+  VehicleDetails,
+} from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 
 const isBool = (x: any) => typeof x === "boolean";
@@ -57,6 +63,29 @@ export default class VehicleDevice extends TeslemetryDevice {
    */
   private previousDetailedChargeState?: SseData["data"]["DetailedChargeState"];
 
+  private sseCleanup: Array<() => void> = [];
+
+  private readonly onSignal: TeslemetryVehicleStream["onSignal"] = (
+    field,
+    callback,
+  ) => {
+    const off = this.vehicle.sse.onSignal(field, callback);
+    this.sseCleanup.push(off);
+    return off;
+  };
+
+  private readonly handleVehicleState = (value: SseState) => {
+    if (value?.state) this.update("vehicle_state", value.state);
+  };
+
+  private readonly handleConnectivity = (value: SseConnectivity) => {
+    if (value.networkInterface === "WiFi") {
+      this.update("wifi_connected", value.status === "connected");
+    } else if (value.networkInterface === "Cellular") {
+      this.update("cellular_connected", value.status === "connected");
+    }
+  };
+
   async onInit() {
     await super.onInit();
 
@@ -85,69 +114,65 @@ export default class VehicleDevice extends TeslemetryDevice {
     // --- Signals (Incoming Data) ---
 
     // Battery & Range
-    this.vehicle.sse.onSignal("BatteryLevel", (value) =>
+    this.onSignal("BatteryLevel", (value) =>
       this.handleBatteryLevel(value),
     );
-    this.vehicle.sse.onSignal("EstBatteryRange", (value) => {
+    this.onSignal("EstBatteryRange", (value) => {
       if (value !== undefined && value !== null) {
         this.update("measure_distance.range", value * MILES_TO_KILOMETERS);
       }
     });
 
     // Charging
-    this.vehicle.sse.onSignal("DetailedChargeState", (value) =>
+    this.onSignal("DetailedChargeState", (value) =>
       this.handleDetailedChargeState(value),
     );
-    this.vehicle.sse.onSignal("ChargerVoltage", (value) =>
+    this.onSignal("ChargerVoltage", (value) =>
       this.update("measure_voltage", value),
     );
-    this.vehicle.sse.onSignal("ChargeCurrentRequest", (value) =>
+    this.onSignal("ChargeCurrentRequest", (value) =>
       this.update("measure_current", value),
     );
-    this.vehicle.sse.onSignal("ChargeLimitSoc", (value) => {
+    this.onSignal("ChargeLimitSoc", (value) => {
       if (value !== undefined && value !== null) {
         this.update("charge_limit", value / 100);
       }
     });
-    this.vehicle.sse.onSignal("ChargeAmps", (value) =>
-      this.update("charging_amps", value),
-    );
-    this.vehicle.sse.onSignal("TimeToFullCharge", (value) => {
+    this.onSignal("ChargeAmps", (value) => this.update("charging_amps", value));
+    this.onSignal("TimeToFullCharge", (value) => {
       if (value !== undefined && value !== null) {
         this.update("time_to_full_charge", value * 60);
       }
     });
 
     // AC Charging
-    this.vehicle.sse.onSignal("ACChargingEnergyIn", (value) =>
+    this.onSignal("ACChargingEnergyIn", (value) =>
       this.update("meter_power", value),
     );
-    this.vehicle.sse.onSignal("ACChargingPower", (value) =>
+    this.onSignal("ACChargingPower", (value) =>
       this.update("measure_power", value ? value * 1000 : value),
     );
 
     // DC Charging
-    this.vehicle.sse.onSignal("DCChargingEnergyIn", (value) =>
+    this.onSignal("DCChargingEnergyIn", (value) =>
       this.update("meter_power", value),
     );
-    this.vehicle.sse.onSignal("DCChargingPower", (value) =>
+    this.onSignal("DCChargingPower", (value) =>
       this.update("measure_power", value ? value * 1000 : value),
     );
 
     // Lock & Sentry & Security
-    this.vehicle.sse.onSignal("Locked", (value) =>
-      this.update("locked", value),
-    );
-    this.vehicle.sse.onSignal("SentryMode", (value) => {
+    this.onSignal("Locked", (value) => this.update("locked", value));
+    this.onSignal("SentryMode", (value) => {
       this.update("onoff.sentry", value !== "SentryModeStateOff");
       this.update("alarm_motion", value === "SentryModeStatePanic");
     });
 
-    this.vehicle.sse.onSignal("ChargePortLatch", (value) =>
+    this.onSignal("ChargePortLatch", (value) =>
       // 'Engaged' -> Locked?
       this.update("locked.charge_latch", chargePortLatchMap.get(value)),
     );
-    this.vehicle.sse.onSignal("ChargePortDoorOpen", (value) =>
+    this.onSignal("ChargePortDoorOpen", (value) =>
       this.update("onoff.charge_port", value),
     );
 
@@ -191,55 +216,55 @@ export default class VehicleDevice extends TeslemetryDevice {
       return this.update("thermostat_mode", "off");
     };
 
-    this.vehicle.sse.onSignal("HvacPower", (value) =>
+    this.onSignal("HvacPower", (value) =>
       handleThermostatMode("HvacPower", value),
     );
-    this.vehicle.sse.onSignal("DefrostMode", (value) =>
+    this.onSignal("DefrostMode", (value) =>
       handleThermostatMode("DefrostMode", value),
     );
-    this.vehicle.sse.onSignal("ClimateKeeperMode", (value) =>
+    this.onSignal("ClimateKeeperMode", (value) =>
       handleThermostatMode("ClimateKeeperMode", value),
     );
 
-    this.vehicle.sse.onSignal(
+    this.onSignal(
       this.vehicle.metadata.config!.rhd
         ? "HvacRightTemperatureRequest"
         : "HvacLeftTemperatureRequest",
       (value) => this.update("target_temperature", value),
     );
-    this.vehicle.sse.onSignal("InsideTemp", (value) =>
+    this.onSignal("InsideTemp", (value) =>
       this.update("measure_temperature", value),
     );
-    this.vehicle.sse.onSignal("OutsideTemp", (value) =>
+    this.onSignal("OutsideTemp", (value) =>
       this.update("measure_temperature.outside", value),
     );
-    this.vehicle.sse.onSignal("HvacSteeringWheelHeatLevel", (value) =>
+    this.onSignal("HvacSteeringWheelHeatLevel", (value) =>
       this.update("steering_wheel_heater", String(value)),
     );
-    this.vehicle.sse.onSignal("SeatHeaterLeft", (value) =>
+    this.onSignal("SeatHeaterLeft", (value) =>
       this.update("seat_heater.front_left", String(value)),
     );
-    this.vehicle.sse.onSignal("SeatHeaterRight", (value) =>
+    this.onSignal("SeatHeaterRight", (value) =>
       this.update("seat_heater.front_right", String(value)),
     );
-    this.vehicle.sse.onSignal("SeatHeaterRearLeft", (value) =>
+    this.onSignal("SeatHeaterRearLeft", (value) =>
       this.update("seat_heater.rear_left", String(value)),
     );
-    this.vehicle.sse.onSignal("SeatHeaterRearRight", (value) =>
+    this.onSignal("SeatHeaterRearRight", (value) =>
       this.update("seat_heater.rear_right", String(value)),
     );
-    this.vehicle.sse.onSignal("SeatHeaterRearCenter", (value) =>
+    this.onSignal("SeatHeaterRearCenter", (value) =>
       this.update("seat_heater.rear_center", String(value)),
     );
-    this.vehicle.sse.onSignal("ClimateSeatCoolingFrontLeft", (value) =>
+    this.onSignal("ClimateSeatCoolingFrontLeft", (value) =>
       this.update("seat_cooler.front_left", String(value)),
     );
-    this.vehicle.sse.onSignal("ClimateSeatCoolingFrontRight", (value) =>
+    this.onSignal("ClimateSeatCoolingFrontRight", (value) =>
       this.update("seat_cooler.front_right", String(value)),
     );
 
     // Doors & Windows (Assuming Signal names)
-    this.vehicle.sse.onSignal("DoorState", (value) => {
+    this.onSignal("DoorState", (value) => {
       if (isBool(value?.DriverFront)) {
         this.update("alarm_contact.fl", value.DriverFront);
       }
@@ -269,31 +294,31 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("windowcoverings_closed", !anyOpen);
     };
 
-    this.vehicle.sse.onSignal("FdWindow", handleWindow);
-    this.vehicle.sse.onSignal("FpWindow", handleWindow);
-    this.vehicle.sse.onSignal("RdWindow", handleWindow);
-    this.vehicle.sse.onSignal("RpWindow", handleWindow);
+    this.onSignal("FdWindow", handleWindow);
+    this.onSignal("FpWindow", handleWindow);
+    this.onSignal("RdWindow", handleWindow);
+    this.onSignal("RpWindow", handleWindow);
 
     // Tire Pressure (TPMS)
-    this.vehicle.sse.onSignal("TpmsPressureFl", (value) =>
+    this.onSignal("TpmsPressureFl", (value) =>
       this.update(
         "measure_pressure.fl",
         value !== undefined && value !== null ? value * ATM_TO_BAR : value,
       ),
     );
-    this.vehicle.sse.onSignal("TpmsPressureFr", (value) =>
+    this.onSignal("TpmsPressureFr", (value) =>
       this.update(
         "measure_pressure.fr",
         value !== undefined && value !== null ? value * ATM_TO_BAR : value,
       ),
     );
-    this.vehicle.sse.onSignal("TpmsPressureRl", (value) =>
+    this.onSignal("TpmsPressureRl", (value) =>
       this.update(
         "measure_pressure.rl",
         value !== undefined && value !== null ? value * ATM_TO_BAR : value,
       ),
     );
-    this.vehicle.sse.onSignal("TpmsPressureRr", (value) =>
+    this.onSignal("TpmsPressureRr", (value) =>
       this.update(
         "measure_pressure.rr",
         value !== undefined && value !== null ? value * ATM_TO_BAR : value,
@@ -301,17 +326,17 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
 
     // Vehicle Status
-    this.vehicle.sse.onSignal("Odometer", (value) => {
+    this.onSignal("Odometer", (value) => {
       if (value !== undefined && value !== null) {
         this.update("measure_distance.odometer", value * MILES_TO_KILOMETERS);
       }
     });
-    this.vehicle.sse.onSignal("VehicleSpeed", (value) => {
+    this.onSignal("VehicleSpeed", (value) => {
       if (value !== undefined && value !== null) {
         this.update("measure_speed", value * MPH_TO_METERS_PER_SECOND);
       }
     });
-    this.vehicle.sse.onSignal("Gear", (value) => {
+    this.onSignal("Gear", (value) => {
       if (value === "ShiftStateP") this.update("gear", "P");
       else if (value === "ShiftStateR") this.update("gear", "R");
       else if (value === "ShiftStateN") this.update("gear", "N");
@@ -319,32 +344,24 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
 
     // Navigation
-    this.vehicle.sse.onSignal("DestinationName", (value) =>
+    this.onSignal("DestinationName", (value) =>
       this.update("navigation_destination", value ?? ""),
     );
-    this.vehicle.sse.onSignal("MinutesToArrival", (value) =>
+    this.onSignal("MinutesToArrival", (value) =>
       this.update("minutes_to_arrival", value),
     );
 
     // Guest Mode
-    this.vehicle.sse.onSignal("GuestModeEnabled", (value) =>
+    this.onSignal("GuestModeEnabled", (value) =>
       this.update("onoff.guest_mode", value),
     );
 
     // Vehicle State & Connectivity
-    this.vehicle.sse.on("state", (value) => {
-      if (value?.state) this.update("vehicle_state", value.state);
-    });
-    this.vehicle.sse.on("connectivity", (value) => {
-      if (value.networkInterface === "WiFi") {
-        this.update("wifi_connected", value.status === "connected");
-      } else if (value.networkInterface === "Cellular") {
-        this.update("cellular_connected", value.status === "connected");
-      }
-    });
+    this.vehicle.sse.on("state", this.handleVehicleState);
+    this.vehicle.sse.on("connectivity", this.handleConnectivity);
 
     // Media Volume
-    this.vehicle.sse.onSignal("MediaAudioVolume", (value) => {
+    this.onSignal("MediaAudioVolume", (value) => {
       if (value !== undefined && value !== null) {
         const normalizedVolume = value / this.volumeMax;
         this.lastVolume = normalizedVolume;
@@ -354,7 +371,7 @@ export default class VehicleDevice extends TeslemetryDevice {
       }
     });
 
-    this.vehicle.sse.onSignal("MediaAudioVolumeMax", (value) => {
+    this.onSignal("MediaAudioVolumeMax", (value) => {
       if (value !== undefined && value !== null) {
         this.volumeMax = value;
       }
@@ -381,30 +398,30 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("speaker_playing", display && playback);
     };
 
-    this.vehicle.sse.onSignal("MediaPlaybackStatus", handlePlaybackStatus);
-    this.vehicle.sse.onSignal("CenterDisplay", handlePlaybackStatus);
+    this.onSignal("MediaPlaybackStatus", handlePlaybackStatus);
+    this.onSignal("CenterDisplay", handlePlaybackStatus);
 
     // Media Track Information
-    this.vehicle.sse.onSignal("MediaNowPlayingTitle", (value) => {
+    this.onSignal("MediaNowPlayingTitle", (value) => {
       this.update("speaker_track", value ?? "");
     });
 
-    this.vehicle.sse.onSignal("MediaNowPlayingArtist", (value) => {
+    this.onSignal("MediaNowPlayingArtist", (value) => {
       this.update("speaker_artist", value ?? "");
     });
 
-    this.vehicle.sse.onSignal("MediaNowPlayingAlbum", (value) => {
+    this.onSignal("MediaNowPlayingAlbum", (value) => {
       this.update("speaker_album", value ?? "");
     });
 
     // Media Duration and Position (convert ms to seconds)
-    this.vehicle.sse.onSignal("MediaNowPlayingDuration", (value) => {
+    this.onSignal("MediaNowPlayingDuration", (value) => {
       if (value !== undefined && value !== null) {
         this.update("speaker_duration", value / 1000);
       }
     });
 
-    this.vehicle.sse.onSignal("MediaNowPlayingElapsed", (value) => {
+    this.onSignal("MediaNowPlayingElapsed", (value) => {
       if (value !== undefined && value !== null) {
         this.update("speaker_position", value / 1000);
       }
@@ -693,7 +710,10 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   async onUninit() {
     await super.onUninit();
-    this.vehicle.sse.data.removeAllListeners();
+    this.vehicle.sse.off("state", this.handleVehicleState);
+    this.vehicle.sse.off("connectivity", this.handleConnectivity);
+    this.sseCleanup.forEach((off) => off());
+    this.sseCleanup = [];
   }
 
   /**
