@@ -7,6 +7,8 @@ import assert from "node:assert/strict";
 // cannot. test/support/loader.mjs stubs the remaining "homey" import.
 import VehicleDevice from "../.homeybuild/drivers/vehicle/device.js";
 import PowerwallDevice from "../.homeybuild/drivers/battery/device.js";
+import GatewayDevice from "../.homeybuild/drivers/gateway/device.js";
+import SolarDevice from "../.homeybuild/drivers/solar/device.js";
 
 // Built on the real class's prototype chain (not a plain object) so
 // inherited methods like TeslemetryDevice.ensureCapabilities still resolve.
@@ -46,6 +48,28 @@ test("VehicleDevice.onInit marks the device unavailable with a reauth message wh
 test("PowerwallDevice.onInit marks the device unavailable with a reauth message when no site is found", async () => {
   const { stub, setUnavailableCalls } = createDeviceStub(
     PowerwallDevice,
+    "missing-site",
+  );
+
+  await stub.onInit();
+
+  assert.deepEqual(setUnavailableCalls, ["error.invalid_refresh_token"]);
+});
+
+test("GatewayDevice.onInit marks the device unavailable with a reauth message when no site is found", async () => {
+  const { stub, setUnavailableCalls } = createDeviceStub(
+    GatewayDevice,
+    "missing-site",
+  );
+
+  await stub.onInit();
+
+  assert.deepEqual(setUnavailableCalls, ["error.invalid_refresh_token"]);
+});
+
+test("SolarDevice.onInit marks the device unavailable with a reauth message when no site is found", async () => {
+  const { stub, setUnavailableCalls } = createDeviceStub(
+    SolarDevice,
     "missing-site",
   );
 
