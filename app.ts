@@ -104,6 +104,34 @@ export default class TeslemetryApp extends Homey.App {
         },
       );
 
+    this.homey.flow
+      .getActionCard('start_charging')
+      .registerRunListener(async (args: { device: VehicleDevice }) => {
+        await args.device.flowStartCharging();
+      });
+
+    this.homey.flow
+      .getActionCard('stop_charging')
+      .registerRunListener(async (args: { device: VehicleDevice }) => {
+        await args.device.flowStopCharging();
+      });
+
+    this.homey.flow
+      .getActionCard('set_charge_limit')
+      .registerRunListener(
+        async (args: { device: VehicleDevice; percentage: number }) => {
+          await args.device.flowSetChargeLimit(args.percentage);
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('set_charging_amps')
+      .registerRunListener(
+        async (args: { device: VehicleDevice; amps: number }) => {
+          await args.device.flowSetChargingAmps(args.amps);
+        },
+      );
+
     // Battery/Powerwall action cards
     this.homey.flow
       .getActionCard('set_backup_reserve')
@@ -151,6 +179,32 @@ export default class TeslemetryApp extends Homey.App {
           return (
             args.device.getCapabilityValue('measure_battery') >= args.percentage
           );
+        },
+      );
+
+    this.homey.flow
+      .getConditionCard('is_charging')
+      .registerRunListener(async (args: { device: VehicleDevice }) => {
+        return !!args.device.getCapabilityValue('evcharger_charging');
+      });
+
+    this.homey.flow
+      .getConditionCard('is_plugged_in')
+      .registerRunListener(async (args: { device: VehicleDevice }) => {
+        return args.device.isPluggedIn();
+      });
+
+    // Vehicle trigger cards with per-card arguments need a run listener to
+    // decide whether *this* card's threshold was actually crossed; cards
+    // without args default to firing whenever .trigger() is called.
+    this.homey.flow
+      .getDeviceTriggerCard('battery_below')
+      .registerRunListener(
+        async (
+          args: { device: VehicleDevice; percentage: number },
+          state: { previous: number; current: number },
+        ) => {
+          return state.previous >= args.percentage && state.current < args.percentage;
         },
       );
 

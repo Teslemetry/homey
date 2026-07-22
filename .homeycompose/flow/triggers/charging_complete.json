@@ -1,0 +1,18 @@
+{
+  "title": {
+    "en": "Charging is complete"
+  },
+  "titleFormatted": {
+    "en": "Charging is complete on [[device]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=evcharger_charging",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "title": {
+    "en": "Charging has stopped"
+  },
+  "titleFormatted": {
+    "en": "Charging has stopped on [[device]]"
+  },
+  "hint": {
+    "en": "Triggers when charging is interrupted before reaching the charge limit. For charging finishing normally, use \"Charging is complete\"."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=evcharger_charging",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ]
+}

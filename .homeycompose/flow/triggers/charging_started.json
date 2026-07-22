@@ -1,0 +1,18 @@
+{
+  "title": {
+    "en": "Charging has started"
+  },
+  "titleFormatted": {
+    "en": "Charging has started on [[device]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=evcharger_charging",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ]
+}

@@ -180,6 +180,34 @@ Use the `update()` method which safely handles unsupported capabilities:
 this.update("measure_battery", value);  // No-op if capability not present
 ```
 
+### Firing Flow Trigger Cards
+
+Homey does not reliably auto-fire trigger cards for this app's capabilities,
+so every trigger card is fired explicitly from device code - always guarded
+by comparing the old value to the new one, never firing on the first signal
+received (no baseline to compare against) or on a repeated identical value.
+
+- **Simple 1:1 capability-changed cards** (`<capability>_changed`, one card
+  per capability, token name matches the capability): add the capability to
+  `TeslemetryDevice.CHANGE_TRIGGER_CAPABILITIES`. `update()` then fires it
+  automatically whenever `setCapabilityValue` actually changes the value; see
+  `test/capability-change-triggers.test.ts` for the test shape.
+- **Value-specific branching** (a raw signal fans out to several differently
+  named cards depending on the transition, e.g. `charging_started` vs
+  `charging_complete` vs `plugged_in` off the same `DetailedChargeState`
+  signal): track the previous raw value in a private device field and branch
+  in a dedicated handler method, calling
+  `this.homey.flow.getDeviceTriggerCard(id).trigger(this, tokens).catch(this.error)`
+  directly. See `VehicleDevice.handleDetailedChargeState`.
+- **Threshold/argument-gated cards** (a trigger with a per-flow-card numeric
+  argument, e.g. "battery drops below `[[percentage]]`%"): fire on every real
+  value change with a `state` object (`{ previous, current }`) as the third
+  `.trigger()` argument, then register a `registerRunListener` in
+  `app.ts`'s `registerFlowCards()` that compares `args` (the card's
+  configured argument) against `state` to decide whether *that* card's
+  threshold was actually crossed. See `VehicleDevice.handleBatteryLevel` /
+  the `battery_below` listener in `app.ts`.
+
 ### SSE Auth-Failure Handling (`app.ts`)
 
 As of `@teslemetry/api` 0.7.0, the SDK's `TeslemetryStream` owns 401/403
