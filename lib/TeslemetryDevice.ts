@@ -17,6 +17,17 @@ export default class TeslemetryDevice extends Homey.Device {
    */
   protected destroyed = false;
 
+  /**
+   * Capabilities with a declared `*_changed` flow trigger card. The card ID
+   * and token name both match the capability name for each of these.
+   */
+  private static readonly CHANGE_TRIGGER_CAPABILITIES = new Set([
+    "allow_export",
+    "backup_reserve",
+    "operation_mode",
+    "steering_wheel_heater",
+  ]);
+
   async onInit() {
     await this.ensureCapabilities();
   }
@@ -81,9 +92,21 @@ export default class TeslemetryDevice extends Homey.Device {
     if (value === undefined) {
       return;
     }
+    const hasChangeTrigger = TeslemetryDevice.CHANGE_TRIGGER_CAPABILITIES.has(
+      capability,
+    );
+    const previousValue = hasChangeTrigger
+      ? this.getCapabilityValue(capability)
+      : undefined;
     // Set the capability value
     // this.log(`Setting capability ${capability} to ${value}`);
     await this.setCapabilityValue(capability, value).catch(this.error);
+    if (hasChangeTrigger && previousValue !== value) {
+      this.homey.flow
+        .getDeviceTriggerCard(`${capability}_changed`)
+        .trigger(this, { [capability]: value })
+        .catch(this.error);
+    }
   }
 
   protected handleApiResponse = ({ response }: { response: any }): void => {
