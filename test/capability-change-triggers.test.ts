@@ -63,6 +63,42 @@ test("update() fires steering_wheel_heater_changed with a string token", async (
   ]);
 });
 
+test("update() fires allow_export_changed with the new value", async () => {
+  const { stub, triggerCalls } = createDeviceStub({
+    allow_export: "battery_ok",
+  });
+
+  await stub.update("allow_export", "pv_only");
+
+  assert.deepEqual(triggerCalls, [
+    { cardId: "allow_export_changed", tokens: { allow_export: "pv_only" } },
+  ]);
+});
+
+test("update() fires operation_mode_changed with the new value", async () => {
+  const { stub, triggerCalls } = createDeviceStub({
+    operation_mode: "self_consumption",
+  });
+
+  await stub.update("operation_mode", "backup");
+
+  assert.deepEqual(triggerCalls, [
+    { cardId: "operation_mode_changed", tokens: { operation_mode: "backup" } },
+  ]);
+});
+
+test("update() does not fire allow_export_changed or operation_mode_changed when unchanged", async () => {
+  const { stub, triggerCalls } = createDeviceStub({
+    allow_export: "battery_ok",
+    operation_mode: "self_consumption",
+  });
+
+  await stub.update("allow_export", "battery_ok");
+  await stub.update("operation_mode", "self_consumption");
+
+  assert.deepEqual(triggerCalls, []);
+});
+
 test("update() does not fire a trigger card for capabilities with no declared *_changed card", async () => {
   const { stub, triggerCalls } = createDeviceStub({ measure_battery: 50 });
 

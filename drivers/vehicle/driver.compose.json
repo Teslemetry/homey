@@ -214,23 +214,6 @@
         "ar": "وضع الحراسة"
       }
     },
-    "onoff.defrost": {
-      "title": {
-        "en": "Defrost",
-        "nl": "Ontdooien",
-        "da": "Aftøning",
-        "de": "Enteisen",
-        "es": "Descongelar",
-        "fr": "Dégivrage",
-        "it": "Sbrinamento",
-        "no": "Avfrosting",
-        "sv": "Avfrostning",
-        "pl": "Odmrażanie",
-        "ru": "Разморозка",
-        "ko": "제상",
-        "ar": "إزالة الصقيع"
-      }
-    },
     "locked.charge_latch": {
       "title": {
         "en": "Charge Port Latch",
