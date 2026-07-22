@@ -39,11 +39,23 @@ const MILES_TO_KILOMETERS = 1.609344;
 const MPH_TO_METERS_PER_SECOND = 0.44704;
 const ATM_TO_BAR = 1.01325;
 
+const ACTIVE_CHARGE_STATES = new Set<SseData["data"]["DetailedChargeState"]>([
+  "DetailedChargeStateStarting",
+  "DetailedChargeStateCharging",
+]);
+
 export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
   private volumeMax: number = 10.333;
   private muted: boolean = false;
   private lastVolume: number = 0.5;
+
+  /**
+   * The last DetailedChargeState signal value. Not exposed as a capability -
+   * "plugged in" has no Homey capability of its own, so the raw enum is the
+   * only way to detect the Disconnected <-> anything-else transition.
+   */
+  private previousDetailedChargeState?: SseData["data"]["DetailedChargeState"];
 
   async onInit() {
     await super.onInit();
@@ -74,7 +86,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Battery & Range
     this.vehicle.sse.onSignal("BatteryLevel", (value) =>
-      this.update("measure_battery", value),
+      this.handleBatteryLevel(value),
     );
     this.vehicle.sse.onSignal("EstBatteryRange", (value) => {
       if (value !== undefined && value !== null) {
@@ -84,11 +96,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Charging
     this.vehicle.sse.onSignal("DetailedChargeState", (value) =>
-      this.update(
-        "evcharger_charging",
-        value === "DetailedChargeStateStarting" ||
-          value === "DetailedChargeStateCharging",
-      ),
+      this.handleDetailedChargeState(value),
     );
     this.vehicle.sse.onSignal("ChargerVoltage", (value) =>
       this.update("measure_voltage", value),
@@ -688,6 +696,92 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.vehicle.sse.data.removeAllListeners();
   }
 
+  /**
+   * Fires charging_started/complete/stopped and plugged_in/unplugged off
+   * real DetailedChargeState transitions (old != new), mirroring the
+   * TeslemetryDevice.update() *_changed pattern for the cases that need
+   * value-specific branching a single generic capability comparison can't
+   * express.
+   */
+  private handleDetailedChargeState(
+    value: SseData["data"]["DetailedChargeState"],
+  ): void {
+    if (value === undefined || value === null) return;
+    const previous = this.previousDetailedChargeState;
+    this.previousDetailedChargeState = value;
+    this.update("evcharger_charging", ACTIVE_CHARGE_STATES.has(value));
+
+    if (previous === undefined || previous === value) return;
+
+    if (ACTIVE_CHARGE_STATES.has(value) && !ACTIVE_CHARGE_STATES.has(previous)) {
+      this.triggerFlow("charging_started");
+    } else if (value === "DetailedChargeStateComplete") {
+      this.triggerFlow("charging_complete");
+    } else if (value === "DetailedChargeStateStopped") {
+      this.triggerFlow("charging_stopped");
+    }
+
+    if (value === "DetailedChargeStateDisconnected") {
+      this.triggerFlow("unplugged");
+    } else if (previous === "DetailedChargeStateDisconnected") {
+      this.triggerFlow("plugged_in");
+    }
+  }
+
+  /**
+   * Updates measure_battery and fires the threshold-crossing triggers that
+   * depend on it. battery_below carries a per-flow-card numeric argument, so
+   * it always fires with {previous, current} state and lets its
+   * registerRunListener (app.ts) decide whether that specific card's
+   * threshold was actually crossed - charge_limit_reached has no argument,
+   * so the crossing check happens here instead.
+   */
+  private handleBatteryLevel(value: number | undefined | null): void {
+    if (value === undefined || value === null) return;
+    const previous = this.getCapabilityValue("measure_battery") as
+      | number
+      | null;
+    this.update("measure_battery", value);
+    if (previous === null || previous === undefined || previous === value) {
+      return;
+    }
+
+    this.homey.flow
+      .getDeviceTriggerCard("battery_below")
+      .trigger(this, { battery: value }, { previous, current: value })
+      .catch(this.error);
+
+    const chargeLimit = this.getCapabilityValue("charge_limit") as
+      | number
+      | null;
+    if (
+      chargeLimit !== null &&
+      chargeLimit !== undefined &&
+      previous < chargeLimit * 100 &&
+      value >= chargeLimit * 100
+    ) {
+      this.triggerFlow("charge_limit_reached", { battery: value });
+    }
+  }
+
+  private triggerFlow(
+    cardId: string,
+    tokens: Record<string, unknown> = {},
+  ): void {
+    this.homey.flow
+      .getDeviceTriggerCard(cardId)
+      .trigger(this, tokens)
+      .catch(this.error);
+  }
+
+  /** Whether the vehicle currently has a charge cable connected. */
+  public isPluggedIn(): boolean {
+    return (
+      this.previousDetailedChargeState !== undefined &&
+      this.previousDetailedChargeState !== "DetailedChargeStateDisconnected"
+    );
+  }
+
   // Public action methods for Flow cards
   public async flowFlashLights(): Promise<void> {
     await this.action(this.vehicle.api.flashLights());
@@ -727,5 +821,21 @@ export default class VehicleDevice extends TeslemetryDevice {
       default:
         break;
     }
+  }
+
+  public async flowStartCharging(): Promise<void> {
+    await this.action(this.vehicle.api.startCharging());
+  }
+
+  public async flowStopCharging(): Promise<void> {
+    await this.action(this.vehicle.api.stopCharging());
+  }
+
+  public async flowSetChargeLimit(percentage: number): Promise<void> {
+    await this.action(this.vehicle.api.setChargeLimit(Math.round(percentage)));
+  }
+
+  public async flowSetChargingAmps(amps: number): Promise<void> {
+    await this.action(this.vehicle.api.setChargingAmps(amps));
   }
 }

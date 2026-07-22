@@ -274,6 +274,141 @@
       },
       {
         "title": {
+          "en": "Battery level drops below"
+        },
+        "titleFormatted": {
+          "en": "Battery level of [[device]] drops below [[percentage]]%"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=evcharger_charging",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "range",
+            "name": "percentage",
+            "title": {
+              "en": "Percentage"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "labelMultiplier": 1,
+            "labelDecimals": 0
+          }
+        ],
+        "tokens": [
+          {
+            "name": "battery",
+            "type": "number",
+            "title": {
+              "en": "Battery"
+            },
+            "example": {
+              "en": "20"
+            }
+          }
+        ],
+        "id": "battery_below"
+      },
+      {
+        "title": {
+          "en": "The charge limit has been reached"
+        },
+        "titleFormatted": {
+          "en": "[[device]] has reached its charge limit"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=charge_limit",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "battery",
+            "type": "number",
+            "title": {
+              "en": "Battery"
+            },
+            "example": {
+              "en": "80"
+            }
+          }
+        ],
+        "id": "charge_limit_reached"
+      },
+      {
+        "title": {
+          "en": "Charging is complete"
+        },
+        "titleFormatted": {
+          "en": "Charging is complete on [[device]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=evcharger_charging",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "charging_complete"
+      },
+      {
+        "title": {
+          "en": "Charging has started"
+        },
+        "titleFormatted": {
+          "en": "Charging has started on [[device]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=evcharger_charging",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "charging_started"
+      },
+      {
+        "title": {
+          "en": "Charging has stopped"
+        },
+        "titleFormatted": {
+          "en": "Charging has stopped on [[device]]"
+        },
+        "hint": {
+          "en": "Triggers when charging is interrupted before reaching the charge limit. For charging finishing normally, use \"Charging is complete\"."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=evcharger_charging",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "charging_stopped"
+      },
+      {
+        "title": {
           "en": "The operation mode has changed",
           "nl": "De bedieningsmodus is gewijzigd",
           "da": "Driftsindstillingen er ændret",
@@ -380,6 +515,25 @@
       },
       {
         "title": {
+          "en": "The vehicle has been plugged in"
+        },
+        "titleFormatted": {
+          "en": "[[device]] has been plugged in"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=evcharger_charging",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "plugged_in"
+      },
+      {
+        "title": {
           "en": "The steering wheel heater level has changed",
           "nl": "Het stuurverwarmingsniveau is gewijzigd",
           "da": "Ratvarmeniveauet er ændret",
@@ -483,6 +637,25 @@
           }
         ],
         "id": "steering_wheel_heater_changed"
+      },
+      {
+        "title": {
+          "en": "The vehicle has been unplugged"
+        },
+        "titleFormatted": {
+          "en": "[[device]] has been unplugged"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=evcharger_charging",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "unplugged"
       },
       {
         "id": "onoff.charge_grid_true",
@@ -1315,6 +1488,44 @@
           }
         ],
         "id": "battery_level"
+      },
+      {
+        "title": {
+          "en": "Vehicle is !{{charging|not charging}}"
+        },
+        "titleFormatted": {
+          "en": "[[device]] is !{{charging|not charging}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=evcharger_charging",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "is_charging"
+      },
+      {
+        "title": {
+          "en": "Vehicle is !{{plugged in|unplugged}}"
+        },
+        "titleFormatted": {
+          "en": "[[device]] is !{{plugged in|unplugged}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=evcharger_charging",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "is_plugged_in"
       },
       {
         "title": {
@@ -2290,6 +2501,67 @@
       },
       {
         "title": {
+          "en": "Set charge limit"
+        },
+        "titleFormatted": {
+          "en": "Set [[device]] charge limit to [[percentage]]%"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=charge_limit",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "range",
+            "name": "percentage",
+            "title": {
+              "en": "Percentage"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "labelMultiplier": 1,
+            "labelDecimals": 0
+          }
+        ],
+        "id": "set_charge_limit"
+      },
+      {
+        "title": {
+          "en": "Set charging amps"
+        },
+        "titleFormatted": {
+          "en": "Set [[device]] charging amps to [[amps]]A"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=charging_amps",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "amps",
+            "title": {
+              "en": "Amps"
+            },
+            "min": 0,
+            "max": 48,
+            "step": 1
+          }
+        ],
+        "id": "set_charging_amps"
+      },
+      {
+        "title": {
           "en": "Set operation mode",
           "nl": "Instelmodus instellen",
           "da": "Indstil driftsmåde",
@@ -2547,6 +2819,44 @@
           }
         ],
         "id": "set_steering_wheel_heater"
+      },
+      {
+        "title": {
+          "en": "Start charging"
+        },
+        "titleFormatted": {
+          "en": "Start charging [[device]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=evcharger_charging",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "start_charging"
+      },
+      {
+        "title": {
+          "en": "Stop charging"
+        },
+        "titleFormatted": {
+          "en": "Stop charging [[device]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=evcharger_charging",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "stop_charging"
       },
       {
         "title": {

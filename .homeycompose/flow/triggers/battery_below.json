@@ -1,0 +1,43 @@
+{
+  "title": {
+    "en": "Battery level drops below"
+  },
+  "titleFormatted": {
+    "en": "Battery level of [[device]] drops below [[percentage]]%"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=evcharger_charging",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "range",
+      "name": "percentage",
+      "title": {
+        "en": "Percentage"
+      },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "label": "%",
+      "labelMultiplier": 1,
+      "labelDecimals": 0
+    }
+  ],
+  "tokens": [
+    {
+      "name": "battery",
+      "type": "number",
+      "title": {
+        "en": "Battery"
+      },
+      "example": {
+        "en": "20"
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Set charging amps"
+  },
+  "titleFormatted": {
+    "en": "Set [[device]] charging amps to [[amps]]A"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=charging_amps",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "amps",
+      "title": {
+        "en": "Amps"
+      },
+      "min": 0,
+      "max": 48,
+      "step": 1
+    }
+  ]
+}

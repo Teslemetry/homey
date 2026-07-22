@@ -1,0 +1,30 @@
+{
+  "title": {
+    "en": "The charge limit has been reached"
+  },
+  "titleFormatted": {
+    "en": "[[device]] has reached its charge limit"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=charge_limit",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "battery",
+      "type": "number",
+      "title": {
+        "en": "Battery"
+      },
+      "example": {
+        "en": "80"
+      }
+    }
+  ]
+}
