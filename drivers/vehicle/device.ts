@@ -440,87 +440,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Climate
     this.registerCapabilityListener("thermostat_mode", async (value) => {
-      // Handle Climate
-      const climateState =
-        this.vehicle.sse.cache.data?.HvacPower === "HvacPowerStateOn";
-      if (value === "off") {
-        await this.action(
-          this.vehicle.api
-            .stopAutoConditioning()
-            .then(this.handleApiResponse),
-        );
-        return;
-      }
-      if (value === "auto" && !climateState) {
-        await this.action(
-          this.vehicle.api
-            .startAutoConditioning()
-            .then(this.handleApiResponse),
-        );
-        return;
-      } // else climates on, so we need to check which other state to turn off
-
-      // Handle Defrost
-      const defrostValue = defrostModeMap.get(
-        this.vehicle.sse.cache.data?.DefrostMode,
-      );
-      if (value === "defrost") {
-        if (!defrostValue) {
-          await this.action(
-            this.vehicle.api
-              .setPreconditioningMax(true, true)
-              .then(this.handleApiResponse),
-          );
-        }
-        return;
-      }
-      if (defrostValue) {
-        this.action(
-          this.vehicle.api
-            .setPreconditioningMax(false, false)
-            .then(this.handleApiResponse),
-        );
-      }
-
-      // Handle Keeper
-      const climateKeep = this.vehicle.sse.cache.data?.ClimateKeeperMode;
-      switch (value) {
-        case "keep_mode":
-          if (climateKeep !== "ClimateKeeperModeStateOn") {
-            await this.action(
-              this.vehicle.api
-                .setClimateKeeperMode(1)
-                .then(this.handleApiResponse),
-            );
-          }
-          return;
-        case "dog_mode":
-          if (climateKeep !== "ClimateKeeperModeStateDog") {
-            await this.action(
-              this.vehicle.api
-                .setClimateKeeperMode(2)
-                .then(this.handleApiResponse),
-            );
-          }
-          return;
-        case "camp_mode":
-          if (climateKeep !== "ClimateKeeperModeStateParty") {
-            await this.action(
-              this.vehicle.api
-                .setClimateKeeperMode(3)
-                .then(this.handleApiResponse),
-            );
-          }
-          return;
-        default:
-          if (climateKeep !== "ClimateKeeperModeStateOff") {
-            await this.action(
-              this.vehicle.api
-                .setClimateKeeperMode(0)
-                .then(this.handleApiResponse),
-            );
-          }
-      }
+      await this.setThermostatMode(value);
     });
 
     this.registerCapabilityListener("target_temperature", async (value) => {
@@ -802,6 +722,90 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
   }
 
+  /**
+   * Shared by the thermostat_mode capability listener and the
+   * set_climate_mode flow action - both drive the same underlying
+   * climate/defrost/keeper commands off the same target value.
+   */
+  private async setThermostatMode(value: string): Promise<void> {
+    const climateState =
+      this.vehicle.sse.cache.data?.HvacPower === "HvacPowerStateOn";
+    if (value === "off") {
+      await this.action(
+        this.vehicle.api.stopAutoConditioning().then(this.handleApiResponse),
+      );
+      return;
+    }
+    if (value === "auto" && !climateState) {
+      await this.action(
+        this.vehicle.api.startAutoConditioning().then(this.handleApiResponse),
+      );
+      return;
+    } // else climates on, so we need to check which other state to turn off
+
+    // Handle Defrost
+    const defrostValue = defrostModeMap.get(
+      this.vehicle.sse.cache.data?.DefrostMode,
+    );
+    if (value === "defrost") {
+      if (!defrostValue) {
+        await this.action(
+          this.vehicle.api
+            .setPreconditioningMax(true, true)
+            .then(this.handleApiResponse),
+        );
+      }
+      return;
+    }
+    if (defrostValue) {
+      this.action(
+        this.vehicle.api
+          .setPreconditioningMax(false, false)
+          .then(this.handleApiResponse),
+      );
+    }
+
+    // Handle Keeper
+    const climateKeep = this.vehicle.sse.cache.data?.ClimateKeeperMode;
+    switch (value) {
+      case "keep_mode":
+        if (climateKeep !== "ClimateKeeperModeStateOn") {
+          await this.action(
+            this.vehicle.api
+              .setClimateKeeperMode(1)
+              .then(this.handleApiResponse),
+          );
+        }
+        return;
+      case "dog_mode":
+        if (climateKeep !== "ClimateKeeperModeStateDog") {
+          await this.action(
+            this.vehicle.api
+              .setClimateKeeperMode(2)
+              .then(this.handleApiResponse),
+          );
+        }
+        return;
+      case "camp_mode":
+        if (climateKeep !== "ClimateKeeperModeStateParty") {
+          await this.action(
+            this.vehicle.api
+              .setClimateKeeperMode(3)
+              .then(this.handleApiResponse),
+          );
+        }
+        return;
+      default:
+        if (climateKeep !== "ClimateKeeperModeStateOff") {
+          await this.action(
+            this.vehicle.api
+              .setClimateKeeperMode(0)
+              .then(this.handleApiResponse),
+          );
+        }
+    }
+  }
+
   // Public action methods for Flow cards
   public async flowFlashLights(): Promise<void> {
     await this.action(this.vehicle.api.flashLights());
@@ -857,5 +861,25 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   public async flowSetChargingAmps(amps: number): Promise<void> {
     await this.action(this.vehicle.api.setChargingAmps(amps));
+  }
+
+  public async flowNavigateToAddress(address: string): Promise<void> {
+    await this.action(
+      this.vehicle.api
+        .navigationRequest({ value: address })
+        .then(this.handleApiResponse),
+    );
+  }
+
+  public async flowSetCabinTemperature(temperature: number): Promise<void> {
+    await this.action(
+      this.vehicle.api
+        .setTemps(temperature, temperature)
+        .then(this.handleApiResponse),
+    );
+  }
+
+  public async flowSetClimateMode(mode: string): Promise<void> {
+    await this.setThermostatMode(mode);
   }
 }

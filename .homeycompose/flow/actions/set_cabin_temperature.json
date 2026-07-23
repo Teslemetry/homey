@@ -1,0 +1,31 @@
+{
+  "title": {
+    "en": "Set cabin temperature"
+  },
+  "titleFormatted": {
+    "en": "Set [[device]] cabin temperature to [[temperature]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=target_temperature",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "range",
+      "name": "temperature",
+      "title": {
+        "en": "Temperature"
+      },
+      "min": 15,
+      "max": 28,
+      "step": 0.5,
+      "label": "°C",
+      "labelMultiplier": 1,
+      "labelDecimals": 1
+    }
+  ]
+}

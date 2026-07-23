@@ -2291,6 +2291,32 @@
       },
       {
         "title": {
+          "en": "Navigate to address"
+        },
+        "titleFormatted": {
+          "en": "Navigate [[device]] to [[address]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=navigation_destination",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "text",
+            "name": "address",
+            "title": {
+              "en": "Address"
+            }
+          }
+        ],
+        "id": "navigate_to_address"
+      },
+      {
+        "title": {
           "en": "Set allow export",
           "nl": "Export toestaan instellen",
           "da": "Indstil tillad eksport",
@@ -2501,6 +2527,38 @@
       },
       {
         "title": {
+          "en": "Set cabin temperature"
+        },
+        "titleFormatted": {
+          "en": "Set [[device]] cabin temperature to [[temperature]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=target_temperature",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "range",
+            "name": "temperature",
+            "title": {
+              "en": "Temperature"
+            },
+            "min": 15,
+            "max": 28,
+            "step": 0.5,
+            "label": "°C",
+            "labelMultiplier": 1,
+            "labelDecimals": 1
+          }
+        ],
+        "id": "set_cabin_temperature"
+      },
+      {
+        "title": {
           "en": "Set charge limit"
         },
         "titleFormatted": {
@@ -2559,6 +2617,70 @@
           }
         ],
         "id": "set_charging_amps"
+      },
+      {
+        "title": {
+          "en": "Set climate mode"
+        },
+        "titleFormatted": {
+          "en": "Set [[device]] climate mode to [[mode]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=thermostat_mode",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "title": {
+              "en": "Mode"
+            },
+            "values": [
+              {
+                "id": "off",
+                "label": {
+                  "en": "Off"
+                }
+              },
+              {
+                "id": "auto",
+                "label": {
+                  "en": "Automatic"
+                }
+              },
+              {
+                "id": "defrost",
+                "label": {
+                  "en": "Defrost"
+                }
+              },
+              {
+                "id": "keep_mode",
+                "label": {
+                  "en": "Keep mode"
+                }
+              },
+              {
+                "id": "dog_mode",
+                "label": {
+                  "en": "Dog mode"
+                }
+              },
+              {
+                "id": "camp_mode",
+                "label": {
+                  "en": "Camp mode"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "set_climate_mode"
       },
       {
         "title": {
