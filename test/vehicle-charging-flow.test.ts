@@ -38,7 +38,14 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
         stopCharging: recordApiCall("stopCharging"),
         setChargeLimit: recordApiCall("setChargeLimit"),
         setChargingAmps: recordApiCall("setChargingAmps"),
+        navigationRequest: recordApiCall("navigationRequest"),
+        setTemps: recordApiCall("setTemps"),
+        stopAutoConditioning: recordApiCall("stopAutoConditioning"),
+        startAutoConditioning: recordApiCall("startAutoConditioning"),
+        setPreconditioningMax: recordApiCall("setPreconditioningMax"),
+        setClimateKeeperMode: recordApiCall("setClimateKeeperMode"),
       },
+      sse: { cache: { data: {} } },
     },
     getName: () => "Test Vehicle",
     log: () => {},
@@ -329,4 +336,38 @@ test("flowSetChargingAmps calls the SDK setChargingAmps command", async () => {
   await stub.flowSetChargingAmps(16);
 
   assert.deepEqual(apiCalls, [{ method: "setChargingAmps", args: [16] }]);
+});
+
+test("flowNavigateToAddress calls the SDK navigationRequest command with the address", async () => {
+  const { stub, apiCalls } = createDeviceStub();
+
+  await stub.flowNavigateToAddress("1 Main St");
+
+  assert.deepEqual(apiCalls, [
+    { method: "navigationRequest", args: [{ value: "1 Main St" }] },
+  ]);
+});
+
+test("flowSetCabinTemperature calls the SDK setTemps command with the same driver/passenger temperature", async () => {
+  const { stub, apiCalls } = createDeviceStub();
+
+  await stub.flowSetCabinTemperature(21.5);
+
+  assert.deepEqual(apiCalls, [{ method: "setTemps", args: [21.5, 21.5] }]);
+});
+
+test("flowSetClimateMode off calls the SDK stopAutoConditioning command", async () => {
+  const { stub, apiCalls } = createDeviceStub();
+
+  await stub.flowSetClimateMode("off");
+
+  assert.deepEqual(apiCalls, [{ method: "stopAutoConditioning", args: [] }]);
+});
+
+test("flowSetClimateMode dog_mode calls the SDK setClimateKeeperMode command", async () => {
+  const { stub, apiCalls } = createDeviceStub();
+
+  await stub.flowSetClimateMode("dog_mode");
+
+  assert.deepEqual(apiCalls, [{ method: "setClimateKeeperMode", args: [2] }]);
 });

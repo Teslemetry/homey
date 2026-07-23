@@ -1,0 +1,25 @@
+{
+  "title": {
+    "en": "Navigate to address"
+  },
+  "titleFormatted": {
+    "en": "Navigate [[device]] to [[address]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=navigation_destination",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "text",
+      "name": "address",
+      "title": {
+        "en": "Address"
+      }
+    }
+  ]
+}

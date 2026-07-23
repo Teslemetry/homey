@@ -132,6 +132,30 @@ export default class TeslemetryApp extends Homey.App {
         },
       );
 
+    this.homey.flow
+      .getActionCard('navigate_to_address')
+      .registerRunListener(
+        async (args: { device: VehicleDevice; address: string }) => {
+          await args.device.flowNavigateToAddress(args.address);
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('set_cabin_temperature')
+      .registerRunListener(
+        async (args: { device: VehicleDevice; temperature: number }) => {
+          await args.device.flowSetCabinTemperature(args.temperature);
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('set_climate_mode')
+      .registerRunListener(
+        async (args: { device: VehicleDevice; mode: string }) => {
+          await args.device.flowSetClimateMode(args.mode);
+        },
+      );
+
     // Battery/Powerwall action cards
     this.homey.flow
       .getActionCard('set_backup_reserve')

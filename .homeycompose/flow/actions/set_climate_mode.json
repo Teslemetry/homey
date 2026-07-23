@@ -1,0 +1,63 @@
+{
+  "title": {
+    "en": "Set climate mode"
+  },
+  "titleFormatted": {
+    "en": "Set [[device]] climate mode to [[mode]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=thermostat_mode",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "dropdown",
+      "name": "mode",
+      "title": {
+        "en": "Mode"
+      },
+      "values": [
+        {
+          "id": "off",
+          "label": {
+            "en": "Off"
+          }
+        },
+        {
+          "id": "auto",
+          "label": {
+            "en": "Automatic"
+          }
+        },
+        {
+          "id": "defrost",
+          "label": {
+            "en": "Defrost"
+          }
+        },
+        {
+          "id": "keep_mode",
+          "label": {
+            "en": "Keep mode"
+          }
+        },
+        {
+          "id": "dog_mode",
+          "label": {
+            "en": "Dog mode"
+          }
+        },
+        {
+          "id": "camp_mode",
+          "label": {
+            "en": "Camp mode"
+          }
+        }
+      ]
+    }
+  ]
+}
