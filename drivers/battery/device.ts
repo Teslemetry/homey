@@ -59,6 +59,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
         !data.components?.disallow_charge_from_grid_with_solar_installed,
       );
       this.update("onoff.storm", data.user_settings?.storm_mode_enabled);
+      this.update("tariff_plan", data.tariff_id);
     };
 
     const onEnergyHistory = async (

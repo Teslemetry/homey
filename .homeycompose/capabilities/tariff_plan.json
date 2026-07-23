@@ -1,0 +1,22 @@
+{
+  "icon": "/assets/capabilities/tariff_plan.svg",
+  "type": "string",
+  "title": {
+    "en": "Tariff Plan",
+    "nl": "Tariefplan",
+    "da": "Tarifplan",
+    "de": "Tarifplan",
+    "es": "Plan Tarifario",
+    "fr": "Plan Tarifaire",
+    "it": "Piano Tariffario",
+    "no": "Tariffplan",
+    "sv": "Tariffplan",
+    "pl": "Plan Taryfowy",
+    "ru": "Тарифный План",
+    "ko": "요금제",
+    "ar": "خطة التعرفة"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

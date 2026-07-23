@@ -3531,6 +3531,7 @@
         "backup_reserve",
         "onoff.charge_grid",
         "allow_export",
+        "tariff_plan",
         "onoff.storm",
         "alarm_generic.storm",
         "meter_power.charged",
@@ -5632,6 +5633,28 @@
           }
         }
       ]
+    },
+    "tariff_plan": {
+      "icon": "/assets/capabilities/tariff_plan.svg",
+      "type": "string",
+      "title": {
+        "en": "Tariff Plan",
+        "nl": "Tariefplan",
+        "da": "Tarifplan",
+        "de": "Tarifplan",
+        "es": "Plan Tarifario",
+        "fr": "Plan Tarifaire",
+        "it": "Piano Tariffario",
+        "no": "Tariffplan",
+        "sv": "Tariffplan",
+        "pl": "Plan Taryfowy",
+        "ru": "Тарифный План",
+        "ko": "요금제",
+        "ar": "خطة التعرفة"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
     },
     "time_to_full_charge": {
       "icon": "/assets/capabilities/time_to_full_charge.svg",
