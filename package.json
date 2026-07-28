@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "@teslemetry/api": "^0.7.0",
-    "source-map-support": "^0.5.21"
+    "source-map-support": "^0.5.21",
+    "tesla-fleet-api": "github:Teslemetry/node-tesla-fleet-api#78f36b7dcd050d04e2841f1e2891026f813d02e2"
   },
   "devDependencies": {
     "@tsconfig/node16": "^16.1.8",

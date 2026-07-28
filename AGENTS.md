@@ -172,6 +172,36 @@ Homey's energy tab uses `cumulative: true` meter capabilities (`meter_power.*`) 
 
 The Tesla `energyHistory` API returns daily totals (midnight to now, 5-minute intervals). Use `updateCumulativeMeter()` in `TeslemetryDevice` to convert daily totals into monotonically increasing values. It tracks a persistent offset across day boundaries using Homey's device store, detecting day rollover by comparing the date from `time_series[0].timestamp`.
 
+### Grid Tariff Rate (`grid_buy_rate` / `grid_sell_rate`)
+
+The Powerwall driver resolves the live buy/sell grid rate via `getTariffPeriods`
+from the `tesla-fleet-api` package, called from `PowerwallDevice.updateTariffRates`
+off the same `onSiteInfo` handler that maps the site's other fields
+(`siteInfo.response.tariff_content_v2` + `installation_time_zone`).
+
+- `tesla-fleet-api` is pinned to a commit SHA via a `github:` dependency
+  (`Teslemetry/node-tesla-fleet-api`), not a published npm version - as of this
+  writing the helper is merged to that repo's `main` but no npm release
+  contains it yet. Check `npm view tesla-fleet-api versions` before bumping;
+  switch to a real semver range once a release does.
+- `tesla-fleet-api`'s public entry point does not re-export the `TariffContentV2`
+  input type `getTariffPeriods` requires, so it's imported from the package's
+  internal `tesla-fleet-api/dist/types/site_info.js` path instead; `@teslemetry/api`
+  types `tariff_content_v2` as an opaque `{ [key: string]: unknown }`, so passing
+  it to `getTariffPeriods` requires an `as unknown as TariffContentV2` cast.
+- Surfaced as two plain (non-dotted) custom capabilities, `grid_buy_rate` /
+  `grid_sell_rate` - a base capability name may not contain a `.` at all (that's
+  reserved for subcapabilities of an existing base), so this can't reuse the
+  `<capability>.<sub>` pattern from the subcapability section above. There is no
+  Homey system capability for pricing (`measure_price` does not exist despite
+  looking plausible - `homey app validate` is the source of truth, not
+  intuition about what "should" be a standard capability).
+- Currency varies per site and isn't known at compose time, so `units` isn't
+  set in the `.homeycompose/capabilities/*.json` files; `updateTariffRates`
+  sets it at runtime via `setCapabilityOptions` once `getTariffPeriods` reports
+  `currency`, the same runtime-options pattern `VehicleDevice.onInit` uses for
+  `onoff.frunk`/`onoff.trunk`'s `setable`.
+
 ### Capability Updates
 
 Use the `update()` method which safely handles unsupported capabilities:
