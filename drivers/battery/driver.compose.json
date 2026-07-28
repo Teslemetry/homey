@@ -30,6 +30,8 @@
     "allow_export",
     "onoff.storm",
     "alarm_generic.storm",
+    "grid_buy_rate",
+    "grid_sell_rate",
     "meter_power.charged",
     "meter_power.discharged"
   ],

@@ -1,0 +1,23 @@
+{
+  "icon": "/assets/capabilities/grid_sell_rate.svg",
+  "type": "number",
+  "title": {
+    "en": "Sell Rate",
+    "nl": "Verkooptarief",
+    "da": "Salgspris",
+    "de": "Verkaufspreis",
+    "es": "Precio de Venta",
+    "fr": "Prix de Vente",
+    "it": "Prezzo di Vendita",
+    "no": "Salgspris",
+    "sv": "Försäljningspris",
+    "pl": "Cena Sprzedaży",
+    "ru": "Цена Продажи",
+    "ko": "판매 요금",
+    "ar": "سعر البيع"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "decimals": 4
+}

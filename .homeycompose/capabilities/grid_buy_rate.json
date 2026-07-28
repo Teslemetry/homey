@@ -1,0 +1,23 @@
+{
+  "icon": "/assets/capabilities/grid_buy_rate.svg",
+  "type": "number",
+  "title": {
+    "en": "Buy Rate",
+    "nl": "Inkooptarief",
+    "da": "Købspris",
+    "de": "Kaufpreis",
+    "es": "Precio de Compra",
+    "fr": "Prix d'Achat",
+    "it": "Prezzo di Acquisto",
+    "no": "Kjøpspris",
+    "sv": "Inköpspris",
+    "pl": "Cena Zakupu",
+    "ru": "Цена Покупки",
+    "ko": "구매 요금",
+    "ar": "سعر الشراء"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "decimals": 4
+}

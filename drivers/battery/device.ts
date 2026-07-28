@@ -1,4 +1,6 @@
 import { EnergyDetails } from "@teslemetry/api";
+import { getTariffPeriods } from "tesla-fleet-api";
+import type { TariffContentV2 } from "tesla-fleet-api/dist/types/site_info.js";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 
 export default class PowerwallDevice extends TeslemetryDevice {
@@ -59,6 +61,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
         !data.components?.disallow_charge_from_grid_with_solar_installed,
       );
       this.update("onoff.storm", data.user_settings?.storm_mode_enabled);
+      this.updateTariffRates(data.tariff_content_v2, data.installation_time_zone);
     };
 
     const onEnergyHistory = async (
@@ -164,6 +167,32 @@ export default class PowerwallDevice extends TeslemetryDevice {
   async onUninit(): Promise<void> {
     await super.onUninit();
     this.pollingCleanup?.forEach((stop) => stop());
+  }
+
+  private updateTariffRates(
+    tariff: { [key: string]: unknown } | undefined,
+    timeZone: string | undefined,
+  ): void {
+    if (!tariff || !timeZone) return;
+
+    const resolution = getTariffPeriods(tariff as unknown as TariffContentV2, new Date(), {
+      timeZone,
+    });
+    if (!resolution) return;
+
+    this.update("grid_buy_rate", resolution.buy.price ?? undefined);
+    this.update("grid_sell_rate", resolution.sell.price ?? undefined);
+
+    if (resolution.currency) {
+      this.setCapabilityOptions("grid_buy_rate", {
+        ...this.driver.manifest.capabilitiesOptions["grid_buy_rate"],
+        units: resolution.currency,
+      }).catch(this.error);
+      this.setCapabilityOptions("grid_sell_rate", {
+        ...this.driver.manifest.capabilitiesOptions["grid_sell_rate"],
+        units: resolution.currency,
+      }).catch(this.error);
+    }
   }
 
   // Public action methods for Flow cards
