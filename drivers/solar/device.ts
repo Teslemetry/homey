@@ -1,5 +1,10 @@
-import { EnergyDetails } from "@teslemetry/api";
+import { EnergyDetails, SseEnergyTotals, SseLiveStatus } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+
+/** The fields this device reads off the opaque `live_status` SSE payload. */
+interface LiveStatusResponse {
+  solar_power?: number;
+}
 
 export default class SolarDevice extends TeslemetryDevice {
   site!: EnergyDetails;
@@ -21,48 +26,30 @@ export default class SolarDevice extends TeslemetryDevice {
       return;
     }
 
-    const onLiveStatus = (
-      liveStatus: NonNullable<typeof this.site.api.cache.liveStatus>,
-    ) => {
-      const data = liveStatus?.response;
-      if (!data) return;
+    const onLiveStatus = (event: SseLiveStatus) => {
+      const data = event.live_status as LiveStatusResponse;
       this.update("measure_power", data.solar_power);
     };
 
-    const onEnergyHistory = async (
-      energyHistory: NonNullable<typeof this.site.api.cache.energyHistory>,
-    ) => {
-      if (!energyHistory.response?.time_series?.length) return;
-
-      const dateKey =
-        energyHistory.response.time_series[0].timestamp.slice(0, 10);
-
-      let generated = 0;
-      let hasGenerated = false;
-
-      for (const event of energyHistory.response.time_series) {
-        if (
-          event.total_solar_generation !== undefined &&
-          event.total_solar_generation !== null
-        ) {
-          generated += event.total_solar_generation;
-          hasGenerated = true;
-        }
+    const onEnergyTotals = async (event: SseEnergyTotals) => {
+      const { total_solar_generation } = event.totals;
+      if (total_solar_generation === null || total_solar_generation === undefined) {
+        return;
       }
-
-      if (hasGenerated) {
-        await this.updateCumulativeMeter("meter_power", generated / 1000, dateKey);
-      }
+      const dateKey = event.createdAt.slice(0, 10);
+      await this.updateCumulativeMeter(
+        "meter_power",
+        total_solar_generation / 1000,
+        dateKey,
+      );
     };
 
-    this.site.api.on("liveStatus", onLiveStatus);
-    this.site.api.on("energyHistory", onEnergyHistory);
+    this.site.sse.on("live_status", onLiveStatus);
+    this.site.sse.on("energy_totals", onEnergyTotals);
 
     this.pollingCleanup = [
-      this.site.api.requestPolling("liveStatus"),
-      this.site.api.requestPolling("energyHistory"),
-      () => this.site.api.off("liveStatus", onLiveStatus),
-      () => this.site.api.off("energyHistory", onEnergyHistory),
+      () => this.site.sse.off("live_status", onLiveStatus),
+      () => this.site.sse.off("energy_totals", onEnergyTotals),
     ];
   }
 

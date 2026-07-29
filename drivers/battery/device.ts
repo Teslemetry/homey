@@ -1,7 +1,30 @@
-import { EnergyDetails } from "@teslemetry/api";
+import { EnergyDetails, SseEnergyTotals, SseLiveStatus } from "@teslemetry/api";
 import { getTariffPeriods } from "tesla-fleet-api";
 import type { TariffContentV2 } from "tesla-fleet-api/dist/types/site_info.js";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+
+/** The fields this device reads off the merged site_info/tariff_content_v2
+ *  document (`TeslemetryEnergySiteStream.siteInfoDocument`), which is
+ *  otherwise an untyped `Record<string, unknown>`. */
+interface SiteInfoDocument {
+  backup_reserve_percent?: number;
+  default_real_mode?: string;
+  components?: {
+    customer_preferred_export_rule?: string;
+    non_export_configured?: boolean;
+    disallow_charge_from_grid_with_solar_installed?: boolean;
+  };
+  user_settings?: { storm_mode_enabled?: boolean | null };
+  installation_time_zone?: string;
+  tariff_content_v2?: Record<string, unknown> | null;
+}
+
+/** The fields this device reads off the opaque `live_status` SSE payload. */
+interface LiveStatusResponse {
+  percentage_charged?: number;
+  battery_power?: number;
+  storm_mode_active?: boolean;
+}
 
 export default class PowerwallDevice extends TeslemetryDevice {
   site!: EnergyDetails;
@@ -23,11 +46,8 @@ export default class PowerwallDevice extends TeslemetryDevice {
       return;
     }
 
-    const onLiveStatus = (
-      liveStatus: NonNullable<typeof this.site.api.cache.liveStatus>,
-    ) => {
-      const data = liveStatus?.response;
-      if (!data) return;
+    const onLiveStatus = (event: SseLiveStatus) => {
+      const data = event.live_status as LiveStatusResponse;
 
       this.update("measure_battery", data.percentage_charged);
       this.update(
@@ -37,10 +57,10 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.update("alarm_generic.storm", data.storm_mode_active);
     };
 
-    const onSiteInfo = async (
-      siteInfo: NonNullable<typeof this.site.api.cache.siteInfo>,
-    ) => {
-      const data = siteInfo?.response;
+    const applySiteInfo = () => {
+      const data = this.site.sse.siteInfoDocument as
+        | SiteInfoDocument
+        | undefined;
       if (!data) return;
 
       this.update(
@@ -61,66 +81,45 @@ export default class PowerwallDevice extends TeslemetryDevice {
         !data.components?.disallow_charge_from_grid_with_solar_installed,
       );
       this.update("onoff.storm", data.user_settings?.storm_mode_enabled);
-      this.updateTariffRates(data.tariff_content_v2, data.installation_time_zone);
+      this.updateTariffRates(
+        data.tariff_content_v2 ?? undefined,
+        data.installation_time_zone,
+      );
     };
 
-    const onEnergyHistory = async (
-      energyHistory: NonNullable<typeof this.site.api.cache.energyHistory>,
-    ) => {
-      if (!energyHistory.response?.time_series?.length) return;
+    const onEnergyTotals = async (event: SseEnergyTotals) => {
+      const dateKey = event.createdAt.slice(0, 10);
+      const { total_battery_charge, total_battery_discharge } = event.totals;
 
-      const dateKey =
-        energyHistory.response.time_series[0].timestamp.slice(0, 10);
-
-      let charged = 0;
-      let discharged = 0;
-      let hasCharged = false;
-      let hasDischarged = false;
-
-      for (const event of energyHistory.response.time_series) {
-        if (
-          event.total_battery_charge !== undefined &&
-          event.total_battery_charge !== null
-        ) {
-          charged += event.total_battery_charge;
-          hasCharged = true;
-        }
-        if (
-          event.total_battery_discharge !== undefined &&
-          event.total_battery_discharge !== null
-        ) {
-          discharged += event.total_battery_discharge;
-          hasDischarged = true;
-        }
-      }
-
-      if (hasCharged) {
+      if (total_battery_charge !== null && total_battery_charge !== undefined) {
         await this.updateCumulativeMeter(
           "meter_power.charged",
-          charged / 1000,
+          total_battery_charge / 1000,
           dateKey,
         );
       }
-      if (hasDischarged) {
+      if (
+        total_battery_discharge !== null &&
+        total_battery_discharge !== undefined
+      ) {
         await this.updateCumulativeMeter(
           "meter_power.discharged",
-          discharged / 1000,
+          total_battery_discharge / 1000,
           dateKey,
         );
       }
     };
 
-    this.site.api.on("liveStatus", onLiveStatus);
-    this.site.api.on("siteInfo", onSiteInfo);
-    this.site.api.on("energyHistory", onEnergyHistory);
+    this.site.sse.on("live_status", onLiveStatus);
+    this.site.sse.on("site_info", applySiteInfo);
+    this.site.sse.on("tariff_content_v2", applySiteInfo);
+    this.site.sse.on("energy_totals", onEnergyTotals);
 
     this.pollingCleanup = [
-      this.site.api.requestPolling("siteInfo"),
-      this.site.api.requestPolling("liveStatus"),
-      this.site.api.requestPolling("energyHistory"),
-      () => this.site.api.off("liveStatus", onLiveStatus),
-      () => this.site.api.off("siteInfo", onSiteInfo),
-      () => this.site.api.off("energyHistory", onEnergyHistory),
+      () => this.site.sse.off("live_status", onLiveStatus),
+      () => this.site.sse.off("site_info", applySiteInfo),
+      () => this.site.sse.off("tariff_content_v2", applySiteInfo),
+      () => this.site.sse.off("energy_totals", onEnergyTotals),
     ];
 
     // Register capability listeners

@@ -1,5 +1,15 @@
-import { EnergyDetails } from "@teslemetry/api";
+import { EnergyDetails, SseLiveStatus } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+
+/** The fields this device reads off the opaque `live_status` SSE payload. */
+interface LiveStatusResponse {
+  wall_connectors?: Array<{
+    din: string;
+    vin?: string;
+    wall_connector_state: number;
+    wall_connector_power: number;
+  }>;
+}
 
 export default class WallConnecter extends TeslemetryDevice {
   site!: EnergyDetails;
@@ -23,9 +33,8 @@ export default class WallConnecter extends TeslemetryDevice {
     }
     this.din = this.getData().din;
 
-    const onLiveStatus = ({
-      response,
-    }: NonNullable<typeof this.site.api.cache.liveStatus>) => {
+    const onLiveStatus = (event: SseLiveStatus) => {
+      const response = event.live_status as LiveStatusResponse;
       // Get specific Wall Connector
       const data = response?.wall_connectors?.find(
         ({ din }) => this.din === din,
@@ -69,13 +78,12 @@ export default class WallConnecter extends TeslemetryDevice {
       }
     };
 
-    this.site.api.on("liveStatus", onLiveStatus);
+    this.site.sse.on("live_status", onLiveStatus);
     this.site.api.on("chargeHistory", onChargeHistory);
 
     this.pollingCleanup = [
-      this.site.api.requestPolling("liveStatus"),
       this.site.api.requestPolling("chargeHistory"),
-      () => this.site.api.off("liveStatus", onLiveStatus),
+      () => this.site.sse.off("live_status", onLiveStatus),
       () => this.site.api.off("chargeHistory", onChargeHistory),
     ];
   }

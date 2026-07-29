@@ -170,14 +170,18 @@ this.vehicle.sse.onSignal("ChargePortLatch", (value) =>
 
 Homey's energy tab uses `cumulative: true` meter capabilities (`meter_power.*`) to calculate energy flow arrows and history. These values **must be monotonically increasing** (like a utility meter that never resets). If a cumulative meter value decreases, Homey's energy tracking and flow visualization break.
 
-The Tesla `energyHistory` API returns daily totals (midnight to now, 5-minute intervals). Use `updateCumulativeMeter()` in `TeslemetryDevice` to convert daily totals into monotonically increasing values. It tracks a persistent offset across day boundaries using Homey's device store, detecting day rollover by comparing the date from `time_series[0].timestamp`.
+The `energy_totals` SSE event carries per-type daily totals (midnight to now, already summed server-side - not a `time_series` to sum client-side). Use `updateCumulativeMeter()` in `TeslemetryDevice` to convert those daily totals into monotonically increasing values. It tracks a persistent offset across day boundaries using Homey's device store, detecting day rollover by comparing the date derived from the event's `createdAt` (UTC, since `energy_totals` carries no per-site local timestamp).
 
 ### Grid Tariff Rate (`grid_buy_rate` / `grid_sell_rate`)
 
 The Powerwall driver resolves the live buy/sell grid rate via `getTariffPeriods`
-from the `tesla-fleet-api` package, called from `PowerwallDevice.updateTariffRates`
-off the same `onSiteInfo` handler that maps the site's other fields
-(`siteInfo.response.tariff_content_v2` + `installation_time_zone`).
+from the `tesla-fleet-api` package, called from `PowerwallDevice.updateTariffRates`.
+The SSE protocol splits `tariff_content_v2` out of a now-slim `site_info` event
+(a `null` body means the tariff was removed), so `PowerwallDevice` subscribes to
+both `site.sse` `site_info` and `tariff_content_v2` events and, on either, re-reads
+`site.sse.siteInfoDocument` - the SDK's merged view of the last-cached `site_info`
+plus the last-cached `tariff_content_v2` - rather than trying to reassemble the two
+itself.
 
 - `tesla-fleet-api` is pinned to a commit SHA via a `github:` dependency
   (`Teslemetry/node-tesla-fleet-api`), not a published npm version - as of this
@@ -187,8 +191,10 @@ off the same `onSiteInfo` handler that maps the site's other fields
 - `tesla-fleet-api`'s public entry point does not re-export the `TariffContentV2`
   input type `getTariffPeriods` requires, so it's imported from the package's
   internal `tesla-fleet-api/dist/types/site_info.js` path instead; `@teslemetry/api`
-  types `tariff_content_v2` as an opaque `{ [key: string]: unknown }`, so passing
-  it to `getTariffPeriods` requires an `as unknown as TariffContentV2` cast.
+  types both the merged `siteInfoDocument` and the raw `live_status`/`site_info` SSE
+  payloads as opaque `Record<string, unknown>`, so each device declares a local
+  interface for the fields it actually reads and casts to it, and tariff data still
+  needs an `as unknown as TariffContentV2` cast on top for `getTariffPeriods`.
 - Surfaced as two plain (non-dotted) custom capabilities, `grid_buy_rate` /
   `grid_sell_rate` - a base capability name may not contain a `.` at all (that's
   reserved for subcapabilities of an existing base), so this can't reuse the
@@ -266,12 +272,25 @@ events on `teslemetry.sse` that `app.ts` subscribes to instead:
   `TeslemetryDevice.handleApiError`'s `invalid_token`/`subscription_required`
   handling).
 
-Device availability is restored on the SDK's `state`/`data`/`errors`/
-`alerts`/`connectivity` events, **not** on `connect` — `TeslemetryStream`
-still emits `connect` optimistically, before the underlying HTTP request
-even completes (it fires right after constructing the SSE generator, not
-after the first byte), so it fires on every reconnect attempt regardless
-of whether that attempt goes on to fail.
+Device availability is restored on the SDK's `state`/`data`/`connectivity`/
+`live_status` events, **not** on `connect` — `TeslemetryStream` still emits
+`connect` optimistically, before the underlying HTTP request even completes
+(it fires right after constructing the SSE generator, not after the first
+byte), so it fires on every reconnect attempt regardless of whether that
+attempt goes on to fail. `live_status` is included so this also fires for
+accounts with energy sites but no vehicles.
+
+### SSE Topic Selection (`app.ts`)
+
+`Teslemetry`'s `stream.topics` option (added in `@teslemetry/api` 0.10.0)
+selects an exact allowlist of wire events instead of receiving every topic
+the account is eligible for. `app.ts` passes exactly the topics this app's
+devices consume: `state`/`data`/`connectivity` for vehicles (see
+`drivers/vehicle/device.ts`) and `live_status`/`site_info`/
+`tariff_content_v2`/`energy_totals` for energy sites (see
+`drivers/battery|solar|gateway|wall-connector/device.ts`). Adding a signal
+or event the app didn't previously consume from an already-selected topic
+needs no change here; consuming a wire event not in that list does.
 
 ### Lint (oxlint)
 
