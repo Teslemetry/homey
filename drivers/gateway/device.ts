@@ -1,4 +1,4 @@
-import { EnergyDetails } from "@teslemetry/api";
+import { EnergyDetails, SseEnergyTotals, SseLiveStatus } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 
 const gridStatusMap = new Map<any, boolean>([
@@ -11,6 +11,14 @@ const islandStatusMap = new Map<any, boolean>([
   ["off_grid_unintentional", true],
   ["on_grid", false],
 ]);
+
+/** The fields this device reads off the opaque `live_status` SSE payload. */
+interface LiveStatusResponse {
+  grid_power?: number;
+  load_power?: number;
+  grid_status?: string;
+  island_status?: string;
+}
 
 export default class GatewayDevice extends TeslemetryDevice {
   site!: EnergyDetails;
@@ -32,11 +40,8 @@ export default class GatewayDevice extends TeslemetryDevice {
       return;
     }
 
-    const onLiveStatus = (
-      liveStatus: NonNullable<typeof this.site.api.cache.liveStatus>,
-    ) => {
-      const data = liveStatus?.response;
-      if (!data) return;
+    const onLiveStatus = (event: SseLiveStatus) => {
+      const data = event.live_status as LiveStatusResponse;
 
       this.update("measure_power", data.grid_power);
       this.update("measure_power.load", data.load_power);
@@ -50,60 +55,36 @@ export default class GatewayDevice extends TeslemetryDevice {
       );
     };
 
-    const onEnergyHistory = async (
-      energyHistory: NonNullable<typeof this.site.api.cache.energyHistory>,
-    ) => {
-      if (!energyHistory.response?.time_series?.length) return;
+    const onEnergyTotals = async (event: SseEnergyTotals) => {
+      const dateKey = event.createdAt.slice(0, 10);
+      const { grid_energy_imported, total_grid_energy_exported } =
+        event.totals;
 
-      const dateKey =
-        energyHistory.response.time_series[0].timestamp.slice(0, 10);
-
-      let imported = 0;
-      let exported = 0;
-      let hasImported = false;
-      let hasExported = false;
-
-      for (const event of energyHistory.response.time_series) {
-        if (
-          event.grid_energy_imported !== undefined &&
-          event.grid_energy_imported !== null
-        ) {
-          imported += event.grid_energy_imported;
-          hasImported = true;
-        }
-        if (
-          event.total_grid_energy_exported !== undefined &&
-          event.total_grid_energy_exported !== null
-        ) {
-          exported += event.total_grid_energy_exported;
-          hasExported = true;
-        }
-      }
-
-      if (hasImported) {
+      if (grid_energy_imported !== null && grid_energy_imported !== undefined) {
         await this.updateCumulativeMeter(
           "meter_power.imported",
-          imported / 1000,
+          grid_energy_imported / 1000,
           dateKey,
         );
       }
-      if (hasExported) {
+      if (
+        total_grid_energy_exported !== null &&
+        total_grid_energy_exported !== undefined
+      ) {
         await this.updateCumulativeMeter(
           "meter_power.exported",
-          exported / 1000,
+          total_grid_energy_exported / 1000,
           dateKey,
         );
       }
     };
 
-    this.site.api.on("liveStatus", onLiveStatus);
-    this.site.api.on("energyHistory", onEnergyHistory);
+    this.site.sse.on("live_status", onLiveStatus);
+    this.site.sse.on("energy_totals", onEnergyTotals);
 
     this.pollingCleanup = [
-      this.site.api.requestPolling("liveStatus"),
-      this.site.api.requestPolling("energyHistory"),
-      () => this.site.api.off("liveStatus", onLiveStatus),
-      () => this.site.api.off("energyHistory", onEnergyHistory),
+      () => this.site.sse.off("live_status", onLiveStatus),
+      () => this.site.sse.off("energy_totals", onEnergyTotals),
     ];
   }
 

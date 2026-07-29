@@ -28,9 +28,20 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
   const api = Object.assign(new EventEmitter(), {
     requestPolling: () => () => {},
   });
+  // Mirrors TeslemetryEnergySiteStream closely enough for this device:
+  // siteInfoDocument merges the cached site_info/tariff_content_v2 pair, and
+  // on("site_info"/"tariff_content_v2") replays nothing here (tests emit directly).
+  let siteInfoDocument: Record<string, unknown> | undefined;
+  const sse = new EventEmitter();
+  // Object.assign would evaluate a getter defined via object-literal shorthand
+  // immediately and copy its current value instead of the accessor itself, so
+  // this is defined directly on the emitter to stay live across emitSiteInfo calls.
+  Object.defineProperty(sse, "siteInfoDocument", {
+    get: () => siteInfoDocument,
+  });
   const stub = Object.assign(Object.create(PowerwallDevice.prototype), {
     homey: {
-      app: { products: { energySites: { "site-1": { api } } } },
+      app: { products: { energySites: { "site-1": { api, sse } } } },
       __: (key: string) => key,
     },
     driver: {
@@ -47,21 +58,23 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
     log: () => {},
     error: () => {},
   });
-  return { stub, api, capabilities };
+  const emitSiteInfo = (document: Record<string, unknown>) => {
+    siteInfoDocument = document;
+    sse.emit("site_info", { site_id: "site-1", site_info: document });
+  };
+  return { stub, api, sse, capabilities, emitSiteInfo };
 }
 
 test("PowerwallDevice resolves grid_buy_rate/grid_sell_rate from siteInfo's tariff_content_v2", async () => {
-  const { stub, api, capabilities } = createDeviceStub({
+  const { stub, capabilities, emitSiteInfo } = createDeviceStub({
     grid_buy_rate: null,
     grid_sell_rate: null,
   });
   await stub.onInit();
 
-  api.emit("siteInfo", {
-    response: {
-      installation_time_zone: "UTC",
-      tariff_content_v2: SAMPLE_TARIFF,
-    },
+  emitSiteInfo({
+    installation_time_zone: "UTC",
+    tariff_content_v2: SAMPLE_TARIFF,
   });
 
   assert.equal(capabilities.grid_buy_rate, 0.3);
@@ -69,26 +82,26 @@ test("PowerwallDevice resolves grid_buy_rate/grid_sell_rate from siteInfo's tari
 });
 
 test("PowerwallDevice does not touch grid_buy_rate/grid_sell_rate when siteInfo omits the tariff", async () => {
-  const { stub, api, capabilities } = createDeviceStub({
+  const { stub, capabilities, emitSiteInfo } = createDeviceStub({
     grid_buy_rate: 0.3,
     grid_sell_rate: 0.05,
   });
   await stub.onInit();
 
-  api.emit("siteInfo", { response: {} });
+  emitSiteInfo({});
 
   assert.equal(capabilities.grid_buy_rate, 0.3);
   assert.equal(capabilities.grid_sell_rate, 0.05);
 });
 
 test("PowerwallDevice does not touch grid_buy_rate/grid_sell_rate when installation_time_zone is missing", async () => {
-  const { stub, api, capabilities } = createDeviceStub({
+  const { stub, capabilities, emitSiteInfo } = createDeviceStub({
     grid_buy_rate: 0.3,
     grid_sell_rate: 0.05,
   });
   await stub.onInit();
 
-  api.emit("siteInfo", { response: { tariff_content_v2: SAMPLE_TARIFF } });
+  emitSiteInfo({ tariff_content_v2: SAMPLE_TARIFF });
 
   assert.equal(capabilities.grid_buy_rate, 0.3);
   assert.equal(capabilities.grid_sell_rate, 0.05);

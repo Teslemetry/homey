@@ -13,12 +13,22 @@ sourceMapSupport.install();
 // Signal-carrying SSE events that only fire once the stream is genuinely
 // connected and receiving data (unlike the SDK's "connect" event, which
 // fires optimistically before the underlying HTTP request even completes).
-const SSE_DATA_EVENTS = [
+// Includes one energy-site topic (live_status) so this also fires for
+// accounts with energy sites but no vehicles.
+const SSE_DATA_EVENTS = ['state', 'data', 'connectivity', 'live_status'] as const;
+
+// Exact wire topics this app consumes, passed explicitly to the stream so
+// the server only forwards what's actually used - see drivers/vehicle/device.ts
+// for the vehicle signals and drivers/battery|solar|gateway|wall-connector/device.ts
+// for the energy events.
+const SSE_TOPICS = [
   'state',
   'data',
-  'errors',
-  'alerts',
   'connectivity',
+  'live_status',
+  'site_info',
+  'tariff_content_v2',
+  'energy_totals',
 ] as const;
 
 export default class TeslemetryApp extends Homey.App {
@@ -254,6 +264,7 @@ export default class TeslemetryApp extends Homey.App {
       logger: this.logger,
       stream: {
         cache: true,
+        topics: SSE_TOPICS,
       },
     });
     // No .catch(this.handleApiError) here: a real API error surfaces via
