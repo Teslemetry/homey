@@ -74,97 +74,123 @@ export default class TeslemetryApp extends Homey.App {
   }
 
   /**
+   * A saved Flow argument can outlive its device (removed and re-paired
+   * elsewhere); TeslemetryDriver.getDeviceById then resolves it to undefined
+   * instead of crashing the app. Actions must fail loudly and clearly;
+   * conditions/trigger predicates must fail closed instead of silently
+   * no-opping or matching by accident.
+   */
+  private requireFlowDevice<T>(device: T | undefined | null): T {
+    if (!device) {
+      throw new Error(this.homey.__('error.device_removed'));
+    }
+    return device;
+  }
+
+  /**
    * Register Flow card action handlers
    */
   private registerFlowCards(): void {
     // Vehicle action cards
     this.homey.flow
       .getActionCard('flash_lights')
-      .registerRunListener(async (args: { device: VehicleDevice }) => {
-        await args.device.flowFlashLights();
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowFlashLights();
       });
 
     this.homey.flow
       .getActionCard('honk_horn')
-      .registerRunListener(async (args: { device: VehicleDevice }) => {
-        await args.device.flowHonkHorn();
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowHonkHorn();
       });
 
     this.homey.flow
       .getActionCard('keyless_driving')
-      .registerRunListener(async (args: { device: VehicleDevice }) => {
-        await args.device.flowStartKeylessDriving();
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowStartKeylessDriving();
       });
 
     this.homey.flow
       .getActionCard('homelink')
-      .registerRunListener(async (args: { device: VehicleDevice }) => {
-        await args.device.flowTriggerHomelink();
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowTriggerHomelink();
       });
 
     this.homey.flow
       .getActionCard('wake_up')
-      .registerRunListener(async (args: { device: VehicleDevice }) => {
-        await args.device.flowWakeUp();
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowWakeUp();
       });
 
     this.homey.flow
       .getActionCard('set_steering_wheel_heater')
       .registerRunListener(
-        async (args: { device: VehicleDevice; level: string }) => {
-          await args.device.flowSetSteeringWheelHeater(args.level);
+        async (args: { device?: VehicleDevice; level: string }) => {
+          await this.requireFlowDevice(args.device).flowSetSteeringWheelHeater(
+            args.level,
+          );
         },
       );
 
     this.homey.flow
       .getActionCard('start_charging')
-      .registerRunListener(async (args: { device: VehicleDevice }) => {
-        await args.device.flowStartCharging();
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowStartCharging();
       });
 
     this.homey.flow
       .getActionCard('stop_charging')
-      .registerRunListener(async (args: { device: VehicleDevice }) => {
-        await args.device.flowStopCharging();
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowStopCharging();
       });
 
     this.homey.flow
       .getActionCard('set_charge_limit')
       .registerRunListener(
-        async (args: { device: VehicleDevice; percentage: number }) => {
-          await args.device.flowSetChargeLimit(args.percentage);
+        async (args: { device?: VehicleDevice; percentage: number }) => {
+          await this.requireFlowDevice(args.device).flowSetChargeLimit(
+            args.percentage,
+          );
         },
       );
 
     this.homey.flow
       .getActionCard('set_charging_amps')
       .registerRunListener(
-        async (args: { device: VehicleDevice; amps: number }) => {
-          await args.device.flowSetChargingAmps(args.amps);
+        async (args: { device?: VehicleDevice; amps: number }) => {
+          await this.requireFlowDevice(args.device).flowSetChargingAmps(
+            args.amps,
+          );
         },
       );
 
     this.homey.flow
       .getActionCard('navigate_to_address')
       .registerRunListener(
-        async (args: { device: VehicleDevice; address: string }) => {
-          await args.device.flowNavigateToAddress(args.address);
+        async (args: { device?: VehicleDevice; address: string }) => {
+          await this.requireFlowDevice(args.device).flowNavigateToAddress(
+            args.address,
+          );
         },
       );
 
     this.homey.flow
       .getActionCard('set_cabin_temperature')
       .registerRunListener(
-        async (args: { device: VehicleDevice; temperature: number }) => {
-          await args.device.flowSetCabinTemperature(args.temperature);
+        async (args: { device?: VehicleDevice; temperature: number }) => {
+          await this.requireFlowDevice(args.device).flowSetCabinTemperature(
+            args.temperature,
+          );
         },
       );
 
     this.homey.flow
       .getActionCard('set_climate_mode')
       .registerRunListener(
-        async (args: { device: VehicleDevice; mode: string }) => {
-          await args.device.flowSetClimateMode(args.mode);
+        async (args: { device?: VehicleDevice; mode: string }) => {
+          await this.requireFlowDevice(args.device).flowSetClimateMode(
+            args.mode,
+          );
         },
       );
 
@@ -182,8 +208,11 @@ export default class TeslemetryApp extends Homey.App {
       this.homey.flow
         .getActionCard(`seat_heater.${position}_set`)
         .registerRunListener(
-          async (args: { device: VehicleDevice; level: string }) => {
-            await args.device.flowSetSeatHeater(position, args.level);
+          async (args: { device?: VehicleDevice; level: string }) => {
+            await this.requireFlowDevice(args.device).flowSetSeatHeater(
+              position,
+              args.level,
+            );
           },
         );
     }
@@ -193,8 +222,11 @@ export default class TeslemetryApp extends Homey.App {
       this.homey.flow
         .getActionCard(`seat_cooler.${position}_set`)
         .registerRunListener(
-          async (args: { device: VehicleDevice; level: string }) => {
-            await args.device.flowSetSeatCooler(position, args.level);
+          async (args: { device?: VehicleDevice; level: string }) => {
+            await this.requireFlowDevice(args.device).flowSetSeatCooler(
+              position,
+              args.level,
+            );
           },
         );
     }
@@ -203,8 +235,10 @@ export default class TeslemetryApp extends Homey.App {
     this.homey.flow
       .getActionCard('set_backup_reserve')
       .registerRunListener(
-        async (args: { device: PowerwallDevice; percentage: number }) => {
-          await args.device.flowSetBackupReserve(args.percentage);
+        async (args: { device?: PowerwallDevice; percentage: number }) => {
+          await this.requireFlowDevice(args.device).flowSetBackupReserve(
+            args.percentage,
+          );
         },
       );
 
@@ -212,10 +246,12 @@ export default class TeslemetryApp extends Homey.App {
       .getActionCard('set_allow_export')
       .registerRunListener(
         async (args: {
-          device: PowerwallDevice;
+          device?: PowerwallDevice;
           mode: 'battery_ok' | 'pv_only' | 'never';
         }) => {
-          await args.device.flowSetAllowExport(args.mode);
+          await this.requireFlowDevice(args.device).flowSetAllowExport(
+            args.mode,
+          );
         },
       );
 
@@ -223,10 +259,12 @@ export default class TeslemetryApp extends Homey.App {
       .getActionCard('set_operation_mode')
       .registerRunListener(
         async (args: {
-          device: PowerwallDevice;
+          device?: PowerwallDevice;
           mode: 'self_consumption' | 'backup' | 'autonomous';
         }) => {
-          await args.device.flowSetOperationMode(args.mode);
+          await this.requireFlowDevice(args.device).flowSetOperationMode(
+            args.mode,
+          );
         },
       );
 
@@ -234,7 +272,8 @@ export default class TeslemetryApp extends Homey.App {
     this.homey.flow
       .getConditionCard('operation_mode_is')
       .registerRunListener(
-        async (args: { device: PowerwallDevice; mode: string }) => {
+        async (args: { device?: PowerwallDevice; mode: string }) => {
+          if (!args.device) return false;
           return args.device.getCapabilityValue('operation_mode') === args.mode;
         },
       );
@@ -242,7 +281,8 @@ export default class TeslemetryApp extends Homey.App {
     this.homey.flow
       .getConditionCard('battery_level')
       .registerRunListener(
-        async (args: { device: PowerwallDevice; percentage: number }) => {
+        async (args: { device?: PowerwallDevice; percentage: number }) => {
+          if (!args.device) return false;
           return (
             args.device.getCapabilityValue('measure_battery') >= args.percentage
           );
@@ -251,20 +291,23 @@ export default class TeslemetryApp extends Homey.App {
 
     this.homey.flow
       .getConditionCard('is_charging')
-      .registerRunListener(async (args: { device: VehicleDevice }) => {
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        if (!args.device) return false;
         return !!args.device.getCapabilityValue('evcharger_charging');
       });
 
     this.homey.flow
       .getConditionCard('is_plugged_in')
-      .registerRunListener(async (args: { device: VehicleDevice }) => {
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        if (!args.device) return false;
         return args.device.isPluggedIn();
       });
 
     this.homey.flow
       .getConditionCard('tpms_warning_is')
       .registerRunListener(
-        async (args: { device: VehicleDevice; level: string }) => {
+        async (args: { device?: VehicleDevice; level: string }) => {
+          if (!args.device) return false;
           return args.device.getCapabilityValue('tpms_warning') === args.level;
         },
       );
@@ -276,9 +319,10 @@ export default class TeslemetryApp extends Homey.App {
       .getDeviceTriggerCard('battery_below')
       .registerRunListener(
         async (
-          args: { device: VehicleDevice; percentage: number },
+          args: { device?: VehicleDevice; percentage: number },
           state: { previous: number; current: number },
         ) => {
+          if (!args.device) return false;
           return state.previous >= args.percentage && state.current < args.percentage;
         },
       );
@@ -311,7 +355,7 @@ export default class TeslemetryApp extends Homey.App {
     argName: string,
   ): void {
     type ThresholdArgs = {
-      device: SolarDevice | GatewayDevice | PowerwallDevice;
+      device?: SolarDevice | GatewayDevice | PowerwallDevice;
       [key: string]: unknown;
     };
 
@@ -322,6 +366,7 @@ export default class TeslemetryApp extends Homey.App {
           args: ThresholdArgs,
           state: { previous: number; current: number },
         ) => {
+          if (!args.device) return false;
           const threshold = args[argName] as number;
           return state.previous <= threshold && state.current > threshold;
         },
@@ -334,6 +379,7 @@ export default class TeslemetryApp extends Homey.App {
           args: ThresholdArgs,
           state: { previous: number; current: number },
         ) => {
+          if (!args.device) return false;
           const threshold = args[argName] as number;
           return state.previous >= threshold && state.current < threshold;
         },
@@ -342,6 +388,7 @@ export default class TeslemetryApp extends Homey.App {
     this.homey.flow
       .getConditionCard(cardPrefix)
       .registerRunListener(async (args: ThresholdArgs) => {
+        if (!args.device) return false;
         return (
           (args.device.getCapabilityValue(capability) as number) >=
           (args[argName] as number)

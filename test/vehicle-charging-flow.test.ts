@@ -32,6 +32,9 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
         },
       },
     },
+    driver: {
+      getDevices: () => [] as unknown[],
+    },
     vehicle: {
       api: {
         startCharging: recordApiCall("startCharging"),
@@ -58,6 +61,7 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
       capabilities[capability] = value;
     },
   });
+  stub.driver.getDevices = () => [stub];
   return { stub, triggerCalls, apiCalls, capabilities };
 }
 

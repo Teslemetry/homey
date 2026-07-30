@@ -778,10 +778,12 @@ export default class VehicleDevice extends TeslemetryDevice {
       return;
     }
 
-    this.homey.flow
-      .getDeviceTriggerCard("battery_below")
-      .trigger(this, { battery: value }, { previous, current: value })
-      .catch(this.error);
+    if (this.isLive()) {
+      this.homey.flow
+        .getDeviceTriggerCard("battery_below")
+        .trigger(this, { battery: value }, { previous, current: value })
+        .catch(this.error);
+    }
 
     const chargeLimit = this.getCapabilityValue("charge_limit") as
       | number
@@ -800,6 +802,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     cardId: string,
     tokens: Record<string, unknown> = {},
   ): void {
+    if (!this.isLive()) return;
     this.homey.flow
       .getDeviceTriggerCard(cardId)
       .trigger(this, tokens)

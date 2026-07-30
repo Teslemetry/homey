@@ -67,6 +67,7 @@ function createDeviceStub(siteInfoDocument?: Record<string, unknown>) {
     },
     driver: {
       manifest: { capabilities: Object.keys(capabilities), capabilitiesOptions: {} },
+      getDevices: () => [] as unknown[],
     },
     getData: () => ({ id: "site-1" }),
     getCapabilities: () => Object.keys(capabilities),
@@ -88,6 +89,7 @@ function createDeviceStub(siteInfoDocument?: Record<string, unknown>) {
     log: () => {},
     error: () => {},
   });
+  stub.driver.getDevices = () => [stub];
 
   return { stub, sse, api, apiCalls, capabilities, capabilityOptions, capabilityListeners };
 }

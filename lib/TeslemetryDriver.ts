@@ -7,6 +7,40 @@ export default class TeslemetryDriver extends Homey.Driver {
     app: TeslemetryApp;
   };
 
+  private missingDeviceLogAt = new Map<string, number>();
+  private static readonly MISSING_DEVICE_LOG_INTERVAL_MS = 60_000;
+
+  /**
+   * Apps SDK 1.7.0 workaround for a Homey SDK defect: see AGENTS.md for the
+   * rationale. `getDeviceById` is undeclared/private, so the stock
+   * implementation throws synchronously when a saved Flow reference outlives
+   * its device (e.g. removed and re-paired), crashing the app before any
+   * listener runs. Resolving by scanning live runtime instances and
+   * returning undefined instead lets the SDK's own request/reply chain turn
+   * that into an ordinary rejected/false Flow result. Remove once a fixed
+   * SDK ships.
+   */
+  getDeviceById(runtimeId: string): Homey.Device | undefined {
+    const devices = this.getDevices() as Array<
+      Homey.Device & { getId(): string }
+    >;
+    const found = devices.find((device) => device.getId() === runtimeId);
+    if (found) return found;
+
+    const now = Date.now();
+    const lastLoggedAt = this.missingDeviceLogAt.get(runtimeId);
+    if (
+      lastLoggedAt === undefined ||
+      now - lastLoggedAt >= TeslemetryDriver.MISSING_DEVICE_LOG_INTERVAL_MS
+    ) {
+      this.missingDeviceLogAt.set(runtimeId, now);
+      this.error(
+        `getDeviceById: no live device for runtime id ${runtimeId} on driver ${this.id}`,
+      );
+    }
+    return undefined;
+  }
+
   async onPair(session: any) {
     session.setHandler("showView", async (viewId: string) => {
       if (viewId === "login_oauth2") {

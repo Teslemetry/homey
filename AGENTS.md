@@ -22,8 +22,9 @@ doesn't resolve TS-style `.js`-extension imports to their `.ts` source or
 elide type-only named imports the way `tsc` does, so it can't load the
 source files' full import graph. `test/support/loader.mjs` stubs the
 `homey` SDK import (it only resolves to real classes inside the actual
-Homey runtime) so device/driver classes can be exercised directly via
-their prototypes without a live Homey instance.
+Homey runtime) so device/driver/app classes can be exercised directly via
+their prototypes without a live Homey instance; `test/support/homey-stub.js`
+holds the stand-in `Device`/`Driver`/`App` base classes.
 
 ## Architecture
 
@@ -385,6 +386,42 @@ On TypeScript 7, `tsconfig.json` sets `compilerOptions.types` explicitly to
 `@types/homey` (the Homey app SDK types) stop resolving and the build fails.
 If you add a package whose types are only used ambiently (not via an
 explicit `import`), add it to this list.
+
+### Stale Device References (Flow cards)
+
+A saved Flow action/condition/trigger can outlive its device: removing and
+re-pairing the same Tesla site (Powerwall, vehicle, etc.) gives Homey a new
+runtime device ID while this app returns the same `deviceData.id`, so the old
+Flow argument still points at a runtime ID no driver instance has anymore.
+Deserializing that argument calls the Apps SDK's private
+`Driver.getDeviceById`, which throws synchronously *before* any app code
+runs - an uncaught exception at that point can crash the whole `com.teslemetry`
+process, not just fail one Flow card.
+
+Two coordinated guards close this:
+
+- `TeslemetryDriver.getDeviceById` is overridden to resolve by scanning
+  `getDevices()` and comparing runtime `getId()` (not `getDevice({id})`,
+  which compares pairing `deviceData`, not the runtime ID being deserialized
+  here) and returns `undefined` instead of throwing on a miss, rate-limited
+  per missing ID. This is a workaround for an undeclared/private SDK method,
+  not a supported contract - see the comment on the override for the
+  version it targets and re-verify after any Apps SDK bump.
+- Every app-owned Flow run listener in `app.ts` must treat `args.device` as
+  possibly `undefined`: actions call `requireFlowDevice()` to reject with a
+  clear, user-actionable error; conditions and device-trigger predicates
+  return `false`. Never let a stale device silently no-op an action or match
+  a condition/trigger by accident (an undefined check that's skipped reads
+  as success).
+
+Separately, `TeslemetryDevice.isLive()` (`!destroyed` AND still present in
+`driver.getDevices()`) must be checked immediately before every
+`.trigger(this, ...)` call this app makes itself. `destroyed` alone isn't
+enough: the Apps SDK removes a deleted device from the driver's runtime map
+*before* calling `onUninit()`, so a capability write already in flight can
+resume in that gap with `destroyed` still `false`. See
+`test/device-liveness.test.ts` for the real SDK deletion-ordering model (map
+removal first, not a direct early `onUninit()` call).
 
 ## Maintaining this file
 

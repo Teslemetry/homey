@@ -37,6 +37,7 @@ function createDeviceStub(
         capabilities: Object.keys(capabilities),
         capabilitiesOptions: {},
       },
+      getDevices: () => [] as unknown[],
     },
     getData: () => ({ id: "site-1" }),
     getCapabilities: () => Object.keys(capabilities),
@@ -49,6 +50,7 @@ function createDeviceStub(
     error: () => {},
     destroyed: false,
   });
+  stub.driver.getDevices = () => [stub];
 
   return { stub, capabilities, handlers, triggerCalls };
 }
