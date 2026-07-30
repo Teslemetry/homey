@@ -921,6 +921,314 @@
         "ko": "게스트 모드 전환",
         "ar": "تبديل وضع الضيف"
       }
+    },
+    {
+      "id": "seat_heater.front_left_set",
+      "title": {
+        "en": "Set driver seat heater"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "level",
+          "title": {
+            "en": "Level"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Off"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Low"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Medium"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "High"
+              }
+            }
+          ]
+        }
+      ],
+      "titleFormatted": {
+        "en": "Set driver seat heater to [[level]]"
+      }
+    },
+    {
+      "id": "seat_heater.front_right_set",
+      "title": {
+        "en": "Set passenger seat heater"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "level",
+          "title": {
+            "en": "Level"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Off"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Low"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Medium"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "High"
+              }
+            }
+          ]
+        }
+      ],
+      "titleFormatted": {
+        "en": "Set passenger seat heater to [[level]]"
+      }
+    },
+    {
+      "id": "seat_heater.rear_left_set",
+      "title": {
+        "en": "Set rear left seat heater"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "level",
+          "title": {
+            "en": "Level"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Off"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Low"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Medium"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "High"
+              }
+            }
+          ]
+        }
+      ],
+      "titleFormatted": {
+        "en": "Set rear left seat heater to [[level]]"
+      }
+    },
+    {
+      "id": "seat_heater.rear_right_set",
+      "title": {
+        "en": "Set rear right seat heater"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "level",
+          "title": {
+            "en": "Level"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Off"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Low"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Medium"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "High"
+              }
+            }
+          ]
+        }
+      ],
+      "titleFormatted": {
+        "en": "Set rear right seat heater to [[level]]"
+      }
+    },
+    {
+      "id": "seat_heater.rear_center_set",
+      "title": {
+        "en": "Set rear center seat heater"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "level",
+          "title": {
+            "en": "Level"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Off"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Low"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Medium"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "High"
+              }
+            }
+          ]
+        }
+      ],
+      "titleFormatted": {
+        "en": "Set rear center seat heater to [[level]]"
+      }
+    },
+    {
+      "id": "seat_cooler.front_left_set",
+      "title": {
+        "en": "Set driver seat cooler"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "level",
+          "title": {
+            "en": "Level"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Off"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Low"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Medium"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "High"
+              }
+            }
+          ]
+        }
+      ],
+      "titleFormatted": {
+        "en": "Set driver seat cooler to [[level]]"
+      }
+    },
+    {
+      "id": "seat_cooler.front_right_set",
+      "title": {
+        "en": "Set passenger seat cooler"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "level",
+          "title": {
+            "en": "Level"
+          },
+          "values": [
+            {
+              "id": "0",
+              "label": {
+                "en": "Off"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "Low"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "Medium"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "High"
+              }
+            }
+          ]
+        }
+      ],
+      "titleFormatted": {
+        "en": "Set passenger seat cooler to [[level]]"
+      }
     }
   ]
 }

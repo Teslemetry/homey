@@ -43,8 +43,20 @@ export default class GatewayDevice extends TeslemetryDevice {
     const onLiveStatus = (event: SseLiveStatus) => {
       const data = event.live_status as LiveStatusResponse;
 
-      this.update("measure_power", data.grid_power);
-      this.update("measure_power.load", data.load_power);
+      this.updateWithThresholdTriggers(
+        "measure_power",
+        data.grid_power,
+        "grid_power_above",
+        "grid_power_below",
+        "power",
+      );
+      this.updateWithThresholdTriggers(
+        "measure_power.load",
+        data.load_power,
+        "load_power_above",
+        "load_power_below",
+        "power",
+      );
       this.update(
         "alarm_generic.off_grid",
         gridStatusMap.get(data.grid_status),

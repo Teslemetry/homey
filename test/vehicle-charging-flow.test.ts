@@ -44,6 +44,8 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
         startAutoConditioning: recordApiCall("startAutoConditioning"),
         setPreconditioningMax: recordApiCall("setPreconditioningMax"),
         setClimateKeeperMode: recordApiCall("setClimateKeeperMode"),
+        setSeatHeater: recordApiCall("setSeatHeater"),
+        setSeatCooler: recordApiCall("setSeatCooler"),
       },
       sse: { cache: { data: {} } },
     },
@@ -370,4 +372,24 @@ test("flowSetClimateMode dog_mode calls the SDK setClimateKeeperMode command", a
   await stub.flowSetClimateMode("dog_mode");
 
   assert.deepEqual(apiCalls, [{ method: "setClimateKeeperMode", args: [2] }]);
+});
+
+test("flowSetSeatHeater calls the SDK setSeatHeater command with the seat position and numeric level", async () => {
+  const { stub, apiCalls } = createDeviceStub();
+
+  await stub.flowSetSeatHeater("rear_center", "2");
+
+  assert.deepEqual(apiCalls, [
+    { method: "setSeatHeater", args: ["rear_center", 2] },
+  ]);
+});
+
+test("flowSetSeatCooler calls the SDK setSeatCooler command with the seat position and numeric level", async () => {
+  const { stub, apiCalls } = createDeviceStub();
+
+  await stub.flowSetSeatCooler("front_left", "3");
+
+  assert.deepEqual(apiCalls, [
+    { method: "setSeatCooler", args: ["front_left", 3] },
+  ]);
 });

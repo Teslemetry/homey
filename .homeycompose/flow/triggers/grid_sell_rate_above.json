@@ -1,0 +1,40 @@
+{
+  "title": {
+    "en": "Sell rate rises above"
+  },
+  "titleFormatted": {
+    "en": "The sell rate on [[device]] rises above [[rate]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=grid_sell_rate",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "rate",
+      "title": {
+        "en": "Rate"
+      },
+      "min": -10,
+      "max": 10,
+      "step": 0.001
+    }
+  ],
+  "tokens": [
+    {
+      "name": "grid_sell_rate",
+      "type": "number",
+      "title": {
+        "en": "Sell rate"
+      },
+      "example": {
+        "en": "0.12"
+      }
+    }
+  ]
+}

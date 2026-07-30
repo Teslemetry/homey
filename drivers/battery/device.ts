@@ -50,9 +50,12 @@ export default class PowerwallDevice extends TeslemetryDevice {
       const data = event.live_status as LiveStatusResponse;
 
       this.update("measure_battery", data.percentage_charged);
-      this.update(
+      this.updateWithThresholdTriggers(
         "measure_power",
         data.battery_power !== undefined ? data.battery_power * -1 : undefined,
+        "battery_power_above",
+        "battery_power_below",
+        "power",
       );
       this.update("alarm_generic.storm", data.storm_mode_active);
     };
@@ -179,8 +182,20 @@ export default class PowerwallDevice extends TeslemetryDevice {
     });
     if (!resolution) return;
 
-    this.update("grid_buy_rate", resolution.buy.price ?? undefined);
-    this.update("grid_sell_rate", resolution.sell.price ?? undefined);
+    this.updateWithThresholdTriggers(
+      "grid_buy_rate",
+      resolution.buy.price ?? undefined,
+      "grid_buy_rate_above",
+      "grid_buy_rate_below",
+      "grid_buy_rate",
+    );
+    this.updateWithThresholdTriggers(
+      "grid_sell_rate",
+      resolution.sell.price ?? undefined,
+      "grid_sell_rate_above",
+      "grid_sell_rate_below",
+      "grid_sell_rate",
+    );
 
     if (resolution.currency) {
       this.setCapabilityOptions("grid_buy_rate", {

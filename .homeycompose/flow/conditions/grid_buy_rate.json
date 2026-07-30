@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Buy rate comparison"
+  },
+  "titleFormatted": {
+    "en": "The buy rate on [[device]] is above [[rate]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=grid_buy_rate",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "rate",
+      "title": {
+        "en": "Rate"
+      },
+      "min": -10,
+      "max": 10,
+      "step": 0.001
+    }
+  ]
+}

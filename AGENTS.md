@@ -107,6 +107,24 @@ All app-level flow cards in `.homeycompose/flow/` **must** include an `args` ent
 }
 ```
 
+### App-Level vs Driver-Scoped Flow Cards
+
+A capability ID is not unique across drivers (`measure_power` exists on Solar,
+Gateway, and Powerwall). An app-level card's device `filter` matches by
+capability ID alone, so `capabilities=measure_power` would show a Solar
+threshold card on Gateway and Powerwall devices too. When a card must be
+scoped to one exact driver/capability pair, define it in that driver's
+`driver.flow.compose.json` instead - Homey Compose auto-unshifts a `device`
+arg filtered by `driver_id` (see `HomeyCompose.js`'s driver `$flow` merge),
+so the source JSON must not declare its own `device` arg. That auto-injected
+device arg carries no `title`, so a driver-scoped card's `titleFormatted`
+must not reference `[[device]]` (`homey app validate` rejects it) - word the
+sentence around the other args only, e.g. `"Rises above [[watts]] W"`.
+`titleFormatted` is otherwise required by the verified level for any card
+with args beyond `device`, even at driver scope. Capability IDs unique to one
+driver (`grid_buy_rate`, `backup_reserve`) can safely stay app-level with a
+capability filter, matching the existing convention in `.homeycompose/flow/`.
+
 ## Key Patterns
 
 ### Capability Listeners
@@ -253,7 +271,15 @@ received (no baseline to compare against) or on a repeated identical value.
   `app.ts`'s `registerFlowCards()` that compares `args` (the card's
   configured argument) against `state` to decide whether *that* card's
   threshold was actually crossed. See `VehicleDevice.handleBatteryLevel` /
-  the `battery_below` listener in `app.ts`.
+  the `battery_below` listener in `app.ts`. For a numeric *capability* (not
+  a raw signal needing device-specific branching) that needs a paired
+  `<cap>_above`/`<cap>_below` trigger plus a `<cap>` condition, use
+  `TeslemetryDevice.updateWithThresholdTriggers()` instead of writing this by
+  hand per device - it combines `update()` with firing both cards, and
+  `app.ts`'s `registerThresholdCards()` registers the above/below/condition
+  run listeners for a `(cardPrefix, capability, argName)` triple. See the
+  solar/grid/load/battery power and buy/sell tariff rate cards for the
+  pattern end to end.
 
 ### SSE Auth-Failure Handling (`app.ts`)
 

@@ -941,4 +941,18 @@ export default class VehicleDevice extends TeslemetryDevice {
   public async flowSetClimateMode(mode: string): Promise<void> {
     await this.setThermostatMode(mode);
   }
+
+  public async flowSetSeatHeater(
+    seat: "front_left" | "front_right" | "rear_left" | "rear_right" | "rear_center",
+    level: string,
+  ): Promise<void> {
+    await this.action(this.vehicle.api.setSeatHeater(seat, Number(level)));
+  }
+
+  public async flowSetSeatCooler(
+    seat: "front_left" | "front_right",
+    level: string,
+  ): Promise<void> {
+    await this.action(this.vehicle.api.setSeatCooler(seat, Number(level)));
+  }
 }

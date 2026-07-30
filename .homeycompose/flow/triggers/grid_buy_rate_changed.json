@@ -1,0 +1,30 @@
+{
+  "title": {
+    "en": "The buy rate has changed"
+  },
+  "titleFormatted": {
+    "en": "The buy rate has changed on [[device]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=grid_buy_rate",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "grid_buy_rate",
+      "type": "number",
+      "title": {
+        "en": "Buy rate"
+      },
+      "example": {
+        "en": "0.32"
+      }
+    }
+  ]
+}

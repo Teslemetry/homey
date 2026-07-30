@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Sell rate comparison"
+  },
+  "titleFormatted": {
+    "en": "The sell rate on [[device]] is above [[rate]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=grid_sell_rate",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "rate",
+      "title": {
+        "en": "Rate"
+      },
+      "min": -10,
+      "max": 10,
+      "step": 0.001
+    }
+  ]
+}

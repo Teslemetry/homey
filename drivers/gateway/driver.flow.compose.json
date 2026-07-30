@@ -71,6 +71,144 @@
         "ko": "섬 모드가 비활성화되었습니다",
         "ar": "تم إلغاء تفعيل وضع الجزيرة"
       }
+    },
+    {
+      "id": "grid_power_above",
+      "title": {
+        "en": "Grid power rises above"
+      },
+      "hint": {
+        "en": "Positive values mean the home is importing from the grid; negative values mean it's exporting."
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": -20000,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Power (W)"
+          },
+          "example": {
+            "en": "3500"
+          }
+        }
+      ],
+      "titleFormatted": {
+        "en": "Rises above [[watts]] W"
+      }
+    },
+    {
+      "id": "grid_power_below",
+      "title": {
+        "en": "Grid power drops below"
+      },
+      "hint": {
+        "en": "Positive values mean the home is importing from the grid; negative values mean it's exporting."
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": -20000,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Power (W)"
+          },
+          "example": {
+            "en": "3500"
+          }
+        }
+      ],
+      "titleFormatted": {
+        "en": "Drops below [[watts]] W"
+      }
+    },
+    {
+      "id": "load_power_above",
+      "title": {
+        "en": "Load power rises above"
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": 0,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Power (W)"
+          },
+          "example": {
+            "en": "3500"
+          }
+        }
+      ],
+      "titleFormatted": {
+        "en": "Rises above [[watts]] W"
+      }
+    },
+    {
+      "id": "load_power_below",
+      "title": {
+        "en": "Load power drops below"
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": 0,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Power (W)"
+          },
+          "example": {
+            "en": "3500"
+          }
+        }
+      ],
+      "titleFormatted": {
+        "en": "Drops below [[watts]] W"
+      }
     }
   ],
   "conditions": [
@@ -108,6 +246,51 @@
         "ru": "Режим изоляции !{{активен|неактивен}}",
         "ko": "섬 모드가 !{{활성화|비활성화}} 상태입니다",
         "ar": "وضع الجزيرة !{{نشط|غير نشط}}"
+      }
+    },
+    {
+      "id": "grid_power",
+      "title": {
+        "en": "Grid power comparison"
+      },
+      "hint": {
+        "en": "Positive values mean the home is importing from the grid; negative values mean it's exporting."
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": -20000,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "titleFormatted": {
+        "en": "Is above [[watts]] W"
+      }
+    },
+    {
+      "id": "load_power",
+      "title": {
+        "en": "Load power comparison"
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": 0,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "titleFormatted": {
+        "en": "Is above [[watts]] W"
       }
     }
   ]
