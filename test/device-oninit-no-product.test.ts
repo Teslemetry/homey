@@ -45,7 +45,7 @@ test("VehicleDevice.onInit marks the device unavailable with a reauth message wh
   assert.deepEqual(setUnavailableCalls, ["error.invalid_refresh_token"]);
 });
 
-test("PowerwallDevice.onInit marks the device unavailable with a reauth message when no site is found", async () => {
+test("PowerwallDevice.onInit marks the device unavailable with an energy-site-not-found message when no site is found", async () => {
   const { stub, setUnavailableCalls } = createDeviceStub(
     PowerwallDevice,
     "missing-site",
@@ -53,7 +53,7 @@ test("PowerwallDevice.onInit marks the device unavailable with a reauth message 
 
   await stub.onInit();
 
-  assert.deepEqual(setUnavailableCalls, ["error.invalid_refresh_token"]);
+  assert.deepEqual(setUnavailableCalls, ["error.energy_site_not_found"]);
 });
 
 test("GatewayDevice.onInit marks the device unavailable with a reauth message when no site is found", async () => {
