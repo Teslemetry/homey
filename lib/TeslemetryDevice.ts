@@ -113,7 +113,13 @@ export default class TeslemetryDevice extends Homey.Device {
       : undefined;
     // Set the capability value
     // this.log(`Setting capability ${capability} to ${value}`);
-    await this.setCapabilityValue(capability, value).catch(this.error);
+    try {
+      await this.setCapabilityValue(capability, value);
+    } catch (error) {
+      this.error(error);
+      return;
+    }
+    if (this.destroyed) return;
     if (hasChangeTrigger && previousValue !== value) {
       this.homey.flow
         .getDeviceTriggerCard(`${capability}_changed`)
@@ -140,6 +146,7 @@ export default class TeslemetryDevice extends Homey.Device {
     if (value === undefined || value === null) return;
     const previous = this.getCapabilityValue(capability) as number | null;
     await this.update(capability, value);
+    if (this.destroyed) return;
     if (previous === null || previous === undefined || previous === value) {
       return;
     }

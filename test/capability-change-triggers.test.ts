@@ -106,3 +106,36 @@ test("update() does not fire a trigger card for capabilities with no declared *_
 
   assert.deepEqual(triggerCalls, []);
 });
+
+test("update() does not fire a trigger after the device is removed during the capability write", async () => {
+  let resolveWrite!: () => void;
+  const pendingWrite = new Promise<void>((resolve) => {
+    resolveWrite = resolve;
+  });
+  const { stub, triggerCalls } = createDeviceStub({ backup_reserve: 0.2 });
+  stub.setCapabilityValue = async () => pendingWrite;
+
+  const updatePromise = stub.update("backup_reserve", 0.35);
+  await stub.onUninit();
+  resolveWrite();
+  await updatePromise;
+
+  assert.deepEqual(triggerCalls, []);
+});
+
+test("update() logs a rejected capability write and does not fire a trigger", async () => {
+  const writeError = new Error("Not Found: Device with ID powerwall-1");
+  const loggedErrors: unknown[][] = [];
+  const { stub, triggerCalls } = createDeviceStub({ backup_reserve: 0.2 });
+  stub.setCapabilityValue = async () => {
+    throw writeError;
+  };
+  stub.error = (...args: unknown[]) => {
+    loggedErrors.push(args);
+  };
+
+  await stub.update("backup_reserve", 0.35);
+
+  assert.deepEqual(loggedErrors, [[writeError]]);
+  assert.deepEqual(triggerCalls, []);
+});
