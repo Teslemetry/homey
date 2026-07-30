@@ -33,18 +33,17 @@ export default class PowerwallDevice extends TeslemetryDevice {
   async onInit() {
     await super.onInit();
 
-    try {
-      const site = this.homey.app.products?.energySites?.[this.getData().id];
-      if (!site) throw new Error("No site found");
-      this.site = site;
-    } catch (e) {
-      this.log("Failed to initialize Powerwall device");
-      this.error(e);
-      this.setUnavailable(this.homey.__("error.invalid_refresh_token")).catch(
+    const site = this.homey.app.products?.energySites?.[this.getData().id];
+    if (!site) {
+      this.error(
+        `Failed to initialize Powerwall device: energy site not found for id ${this.getData().id}`,
+      );
+      this.setUnavailable(this.homey.__("error.energy_site_not_found")).catch(
         this.error,
       );
       return;
     }
+    this.site = site;
 
     const onLiveStatus = (event: SseLiveStatus) => {
       const data = event.live_status as LiveStatusResponse;
@@ -84,10 +83,14 @@ export default class PowerwallDevice extends TeslemetryDevice {
         !data.components?.disallow_charge_from_grid_with_solar_installed,
       );
       this.update("onoff.storm", data.user_settings?.storm_mode_enabled);
-      this.updateTariffRates(
-        data.tariff_content_v2 ?? undefined,
-        data.installation_time_zone,
-      );
+      try {
+        this.updateTariffRates(
+          data.tariff_content_v2 ?? undefined,
+          data.installation_time_zone,
+        );
+      } catch (e) {
+        this.error("Failed to update Powerwall tariff rates", e);
+      }
     };
 
     const onEnergyTotals = async (event: SseEnergyTotals) => {
@@ -113,19 +116,11 @@ export default class PowerwallDevice extends TeslemetryDevice {
       }
     };
 
+    // Essential behavior: live data and commands. Registered before the
+    // optional site-info/tariff enrichment below so a malformed cached
+    // tariff/timezone can never leave this device without them.
     this.site.sse.on("live_status", onLiveStatus);
-    this.site.sse.on("site_info", applySiteInfo);
-    this.site.sse.on("tariff_content_v2", applySiteInfo);
-    this.site.sse.on("energy_totals", onEnergyTotals);
 
-    this.pollingCleanup = [
-      () => this.site.sse.off("live_status", onLiveStatus),
-      () => this.site.sse.off("site_info", applySiteInfo),
-      () => this.site.sse.off("tariff_content_v2", applySiteInfo),
-      () => this.site.sse.off("energy_totals", onEnergyTotals),
-    ];
-
-    // Register capability listeners
     this.registerCapabilityListener("backup_reserve", async (value) => {
       this.log(
         `Setting backup reserve to ${Math.round(value * 100)} (from ${value})`,
@@ -164,6 +159,26 @@ export default class PowerwallDevice extends TeslemetryDevice {
     this.registerCapabilityListener("onoff.storm", async (value) => {
       return this.action(this.site.api.setStormMode(value));
     });
+
+    this.pollingCleanup = [
+      () => this.site.sse.off("live_status", onLiveStatus),
+    ];
+
+    // Optional enrichment: site_info/tariff_content_v2 replay a cached value
+    // synchronously from `site.sse.on`, and `applySiteInfo` itself never
+    // throws (its only fallible step, tariff resolution, is caught above),
+    // so this can't undo the essential registration above.
+    this.site.sse.on("site_info", applySiteInfo);
+    this.site.sse.on("tariff_content_v2", applySiteInfo);
+    this.site.sse.on("energy_totals", onEnergyTotals);
+
+    this.pollingCleanup.push(
+      () => this.site.sse.off("site_info", applySiteInfo),
+      () => this.site.sse.off("tariff_content_v2", applySiteInfo),
+      () => this.site.sse.off("energy_totals", onEnergyTotals),
+    );
+
+    this.log("Powerwall device initialized: live and command listeners registered");
   }
 
   async onUninit(): Promise<void> {
