@@ -36,8 +36,19 @@ export default class TeslemetryDevice extends Homey.Device {
     this.destroyed = true;
   }
 
+  /**
+   * The capabilities this device instance should have. Defaults to the
+   * driver's full static manifest list; subclasses override to exclude
+   * capabilities that don't apply to this specific device (e.g. a
+   * model-gated feature), since the manifest itself has no per-instance
+   * concept.
+   */
+  protected getExpectedCapabilities(): string[] {
+    return this.driver.manifest.capabilities || [];
+  }
+
   public async ensureCapabilities() {
-    const driverCapabilities = this.driver.manifest.capabilities || [];
+    const driverCapabilities = this.getExpectedCapabilities();
     const deviceCapabilities = this.getCapabilities();
 
     // Remove extra capabilities

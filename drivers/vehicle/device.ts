@@ -6,8 +6,15 @@ import {
   VehicleDetails,
 } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+import isCybertruck from "./model.js";
 
 const isBool = (x: any) => typeof x === "boolean";
+
+/** Capabilities only Cybertruck exposes; excluded from every other model. */
+const CYBERTRUCK_ONLY_CAPABILITIES = new Set([
+  "windowcoverings_closed.tonneau",
+  "windowcoverings_set.tonneau",
+]);
 
 const chargePortLatchMap = new Map<SseData["data"]["ChargePortLatch"], boolean>(
   [
@@ -26,6 +33,15 @@ const windowMap = new Map<SseData["data"]["FdWindow"], boolean>([
   ["WindowStateOpened", true],
   ["WindowStatePartiallyOpen", true],
   ["WindowStateClosed", false],
+]);
+
+const tonneauPositionClosedMap = new Map<
+  SseData["data"]["TonneauPosition"],
+  boolean
+>([
+  ["TonneauPositionStateClosed", true],
+  ["TonneauPositionStatePartiallyOpen", false],
+  ["TonneauPositionStateFullyOpen", false],
 ]);
 
 const centerDisplayMap = new Map<SseData["data"]["CenterDisplay"], boolean>([
@@ -161,6 +177,13 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("measure_power", value ? value * 1000 : value),
     );
 
+    // Lifetime Energy
+    this.onSignal("LifetimeEnergyGainedRegen", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("meter_power.regen", value);
+      }
+    });
+
     // Lock & Sentry & Security
     this.onSignal("Locked", (value) => this.update("locked", value));
     this.onSignal("SentryMode", (value) => {
@@ -224,6 +247,9 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
     this.onSignal("ClimateKeeperMode", (value) =>
       handleThermostatMode("ClimateKeeperMode", value),
+    );
+    this.onSignal("RearDefrostEnabled", (value) =>
+      this.update("alarm_generic.rear_defrost", value),
     );
 
     this.onSignal(
@@ -299,6 +325,19 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.onSignal("RdWindow", handleWindow);
     this.onSignal("RpWindow", handleWindow);
 
+    // Cybertruck Tonneau
+    this.onSignal("TonneauPosition", (value) =>
+      this.update(
+        "windowcoverings_closed.tonneau",
+        tonneauPositionClosedMap.get(value),
+      ),
+    );
+    this.onSignal("TonneauOpenPercent", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("windowcoverings_set.tonneau", value / 100);
+      }
+    });
+
     // Tire Pressure (TPMS)
     this.onSignal("TpmsPressureFl", (value) =>
       this.update(
@@ -341,6 +380,19 @@ export default class VehicleDevice extends TeslemetryDevice {
       else if (value === "ShiftStateR") this.update("gear", "R");
       else if (value === "ShiftStateN") this.update("gear", "N");
       else if (value === "ShiftStateD") this.update("gear", "D");
+    });
+    this.onSignal("MilesSinceReset", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("measure_distance.since_reset", value * MILES_TO_KILOMETERS);
+      }
+    });
+    this.onSignal("SelfDrivingMilesSinceReset", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update(
+          "measure_distance.fsd_since_reset",
+          value * MILES_TO_KILOMETERS,
+        );
+      }
     });
 
     // Navigation
@@ -634,6 +686,13 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.vehicle.sse.off("connectivity", this.handleConnectivity);
     this.sseCleanup.forEach((off) => off());
     this.sseCleanup = [];
+  }
+
+  /** Excludes Cybertruck-only capabilities (e.g. the tonneau cover) for every other model. */
+  protected getExpectedCapabilities(): string[] {
+    const capabilities = super.getExpectedCapabilities();
+    if (isCybertruck(this.getData().vin)) return capabilities;
+    return capabilities.filter((cap) => !CYBERTRUCK_ONLY_CAPABILITIES.has(cap));
   }
 
   /**

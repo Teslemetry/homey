@@ -359,6 +359,78 @@
         "ko": "오른쪽 뒷문이 닫혔습니다",
         "ar": "تم إغلاق الباب الخلفي الأيمن"
       }
+    },
+    {
+      "id": "alarm_generic.rear_defrost_true",
+      "title": {
+        "en": "Rear defrost has turned on",
+        "nl": "Achterruitverwarming is ingeschakeld",
+        "da": "Bagrudeafisning er slået til",
+        "de": "Heckscheibenheizung wurde eingeschaltet",
+        "es": "El desempañador trasero se ha activado",
+        "fr": "Le dégivrage arrière s'est activé",
+        "it": "Lo sbrinamento posteriore si è attivato",
+        "no": "Bakvinduavriming har blitt slått på",
+        "sv": "Bakrutedefrostern har slagits på",
+        "pl": "Odszranianie tylnej szyby zostało włączone",
+        "ru": "Обогрев заднего стекла включен",
+        "ko": "후면 서리 제거가 켜졌습니다",
+        "ar": "تم تشغيل إزالة الصقيع الخلفي"
+      }
+    },
+    {
+      "id": "alarm_generic.rear_defrost_false",
+      "title": {
+        "en": "Rear defrost has turned off",
+        "nl": "Achterruitverwarming is uitgeschakeld",
+        "da": "Bagrudeafisning er slået fra",
+        "de": "Heckscheibenheizung wurde ausgeschaltet",
+        "es": "El desempañador trasero se ha desactivado",
+        "fr": "Le dégivrage arrière s'est désactivé",
+        "it": "Lo sbrinamento posteriore si è disattivato",
+        "no": "Bakvinduavriming har blitt slått av",
+        "sv": "Bakrutedefrostern har stängts av",
+        "pl": "Odszranianie tylnej szyby zostało wyłączone",
+        "ru": "Обогрев заднего стекла выключен",
+        "ko": "후면 서리 제거가 꺼졌습니다",
+        "ar": "تم إيقاف تشغيل إزالة الصقيع الخلفي"
+      }
+    },
+    {
+      "id": "windowcoverings_closed.tonneau_true",
+      "title": {
+        "en": "The tonneau cover has closed",
+        "nl": "De laadbakafdekking is gesloten",
+        "da": "Laddækslet er lukket",
+        "de": "Die Laderaumabdeckung hat sich geschlossen",
+        "es": "La cubierta de la caja se ha cerrado",
+        "fr": "Le couvre-benne s'est fermé",
+        "it": "La copertura del cassone si è chiusa",
+        "no": "Lastromsdekselet har lukket",
+        "sv": "Flakluckan har stängts",
+        "pl": "Pokrywa skrzyni została zamknięta",
+        "ru": "Крышка кузова закрыта",
+        "ko": "적재함 커버가 닫혔습니다",
+        "ar": "تم إغلاق غطاء صندوق الحمولة"
+      }
+    },
+    {
+      "id": "windowcoverings_closed.tonneau_false",
+      "title": {
+        "en": "The tonneau cover has opened",
+        "nl": "De laadbakafdekking is geopend",
+        "da": "Laddækslet er åbnet",
+        "de": "Die Laderaumabdeckung hat sich geöffnet",
+        "es": "La cubierta de la caja se ha abierto",
+        "fr": "Le couvre-benne s'est ouvert",
+        "it": "La copertura del cassone si è aperta",
+        "no": "Lastromsdekselet har åpnet",
+        "sv": "Flakluckan har öppnats",
+        "pl": "Pokrywa skrzyni została otwarta",
+        "ru": "Крышка кузова открыта",
+        "ko": "적재함 커버가 열렸습니다",
+        "ar": "تم فتح غطاء صندوق الحمولة"
+      }
     }
   ],
   "conditions": [
@@ -540,6 +612,42 @@
         "ru": "Правая задняя дверь !{{open|closed}}",
         "ko": "오른쪽 뒷문이 !{{open|closed}}",
         "ar": "الباب الخلفي الأيمن !{{open|closed}}"
+      }
+    },
+    {
+      "id": "alarm_generic.rear_defrost",
+      "title": {
+        "en": "Rear defrost is !{{on|off}}",
+        "nl": "Achterruitverwarming is !{{on|off}}",
+        "da": "Bagrudeafisning er !{{on|off}}",
+        "de": "Heckscheibenheizung ist !{{on|off}}",
+        "es": "El desempañador trasero está !{{on|off}}",
+        "fr": "Le dégivrage arrière est !{{on|off}}",
+        "it": "Lo sbrinamento posteriore è !{{on|off}}",
+        "no": "Bakvinduavriming er !{{on|off}}",
+        "sv": "Bakrutedefrostern är !{{on|off}}",
+        "pl": "Odszranianie tylnej szyby jest !{{on|off}}",
+        "ru": "Обогрев заднего стекла !{{on|off}}",
+        "ko": "후면 서리 제거가 !{{on|off}}",
+        "ar": "إزالة الصقيع الخلفي !{{on|off}}"
+      }
+    },
+    {
+      "id": "windowcoverings_closed.tonneau",
+      "title": {
+        "en": "The tonneau cover is !{{closed|open}}",
+        "nl": "De laadbakafdekking is !{{closed|open}}",
+        "da": "Laddækslet er !{{closed|open}}",
+        "de": "Die Laderaumabdeckung ist !{{closed|open}}",
+        "es": "La cubierta de la caja está !{{closed|open}}",
+        "fr": "Le couvre-benne est !{{closed|open}}",
+        "it": "La copertura del cassone è !{{closed|open}}",
+        "no": "Lastromsdekselet er !{{closed|open}}",
+        "sv": "Flakluckan är !{{closed|open}}",
+        "pl": "Pokrywa skrzyni jest !{{closed|open}}",
+        "ru": "Крышка кузова !{{closed|open}}",
+        "ko": "적재함 커버가 !{{closed|open}}",
+        "ar": "غطاء صندوق الحمولة !{{closed|open}}"
       }
     }
   ],

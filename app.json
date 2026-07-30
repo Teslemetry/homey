@@ -1406,6 +1406,106 @@
             "filter": "driver_id=vehicle"
           }
         ]
+      },
+      {
+        "id": "alarm_generic.rear_defrost_true",
+        "title": {
+          "en": "Rear defrost has turned on",
+          "nl": "Achterruitverwarming is ingeschakeld",
+          "da": "Bagrudeafisning er slået til",
+          "de": "Heckscheibenheizung wurde eingeschaltet",
+          "es": "El desempañador trasero se ha activado",
+          "fr": "Le dégivrage arrière s'est activé",
+          "it": "Lo sbrinamento posteriore si è attivato",
+          "no": "Bakvinduavriming har blitt slått på",
+          "sv": "Bakrutedefrostern har slagits på",
+          "pl": "Odszranianie tylnej szyby zostało włączone",
+          "ru": "Обогрев заднего стекла включен",
+          "ko": "후면 서리 제거가 켜졌습니다",
+          "ar": "تم تشغيل إزالة الصقيع الخلفي"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.rear_defrost_false",
+        "title": {
+          "en": "Rear defrost has turned off",
+          "nl": "Achterruitverwarming is uitgeschakeld",
+          "da": "Bagrudeafisning er slået fra",
+          "de": "Heckscheibenheizung wurde ausgeschaltet",
+          "es": "El desempañador trasero se ha desactivado",
+          "fr": "Le dégivrage arrière s'est désactivé",
+          "it": "Lo sbrinamento posteriore si è disattivato",
+          "no": "Bakvinduavriming har blitt slått av",
+          "sv": "Bakrutedefrostern har stängts av",
+          "pl": "Odszranianie tylnej szyby zostało wyłączone",
+          "ru": "Обогрев заднего стекла выключен",
+          "ko": "후면 서리 제거가 꺼졌습니다",
+          "ar": "تم إيقاف تشغيل إزالة الصقيع الخلفي"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "windowcoverings_closed.tonneau_true",
+        "title": {
+          "en": "The tonneau cover has closed",
+          "nl": "De laadbakafdekking is gesloten",
+          "da": "Laddækslet er lukket",
+          "de": "Die Laderaumabdeckung hat sich geschlossen",
+          "es": "La cubierta de la caja se ha cerrado",
+          "fr": "Le couvre-benne s'est fermé",
+          "it": "La copertura del cassone si è chiusa",
+          "no": "Lastromsdekselet har lukket",
+          "sv": "Flakluckan har stängts",
+          "pl": "Pokrywa skrzyni została zamknięta",
+          "ru": "Крышка кузова закрыта",
+          "ko": "적재함 커버가 닫혔습니다",
+          "ar": "تم إغلاق غطاء صندوق الحمولة"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "windowcoverings_closed.tonneau_false",
+        "title": {
+          "en": "The tonneau cover has opened",
+          "nl": "De laadbakafdekking is geopend",
+          "da": "Laddækslet er åbnet",
+          "de": "Die Laderaumabdeckung hat sich geöffnet",
+          "es": "La cubierta de la caja se ha abierto",
+          "fr": "Le couvre-benne s'est ouvert",
+          "it": "La copertura del cassone si è aperta",
+          "no": "Lastromsdekselet har åpnet",
+          "sv": "Flakluckan har öppnats",
+          "pl": "Pokrywa skrzyni została otwarta",
+          "ru": "Крышка кузова открыта",
+          "ko": "적재함 커버가 열렸습니다",
+          "ar": "تم فتح غطاء صندوق الحمولة"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
       }
     ],
     "conditions": [
@@ -1998,6 +2098,56 @@
           "ru": "Правая задняя дверь !{{open|closed}}",
           "ko": "오른쪽 뒷문이 !{{open|closed}}",
           "ar": "الباب الخلفي الأيمن !{{open|closed}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.rear_defrost",
+        "title": {
+          "en": "Rear defrost is !{{on|off}}",
+          "nl": "Achterruitverwarming is !{{on|off}}",
+          "da": "Bagrudeafisning er !{{on|off}}",
+          "de": "Heckscheibenheizung ist !{{on|off}}",
+          "es": "El desempañador trasero está !{{on|off}}",
+          "fr": "Le dégivrage arrière est !{{on|off}}",
+          "it": "Lo sbrinamento posteriore è !{{on|off}}",
+          "no": "Bakvinduavriming er !{{on|off}}",
+          "sv": "Bakrutedefrostern är !{{on|off}}",
+          "pl": "Odszranianie tylnej szyby jest !{{on|off}}",
+          "ru": "Обогрев заднего стекла !{{on|off}}",
+          "ko": "후면 서리 제거가 !{{on|off}}",
+          "ar": "إزالة الصقيع الخلفي !{{on|off}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "windowcoverings_closed.tonneau",
+        "title": {
+          "en": "The tonneau cover is !{{closed|open}}",
+          "nl": "De laadbakafdekking is !{{closed|open}}",
+          "da": "Laddækslet er !{{closed|open}}",
+          "de": "Die Laderaumabdeckung ist !{{closed|open}}",
+          "es": "La cubierta de la caja está !{{closed|open}}",
+          "fr": "Le couvre-benne est !{{closed|open}}",
+          "it": "La copertura del cassone è !{{closed|open}}",
+          "no": "Lastromsdekselet er !{{closed|open}}",
+          "sv": "Flakluckan är !{{closed|open}}",
+          "pl": "Pokrywa skrzyni jest !{{closed|open}}",
+          "ru": "Крышка кузова !{{closed|open}}",
+          "ko": "적재함 커버가 !{{closed|open}}",
+          "ar": "غطاء صندوق الحمولة !{{closed|open}}"
         },
         "args": [
           {
@@ -4166,7 +4316,13 @@
         "onoff.guest_mode",
         "vehicle_state",
         "wifi_connected",
-        "cellular_connected"
+        "cellular_connected",
+        "measure_distance.since_reset",
+        "measure_distance.fsd_since_reset",
+        "meter_power.regen",
+        "alarm_generic.rear_defrost",
+        "windowcoverings_closed.tonneau",
+        "windowcoverings_set.tonneau"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -4896,6 +5052,115 @@
               }
             }
           ]
+        },
+        "measure_distance.since_reset": {
+          "title": {
+            "en": "Distance Since Reset",
+            "nl": "Afstand Sinds Reset",
+            "da": "Distance Siden Nulstilling",
+            "de": "Strecke Seit Zurücksetzen",
+            "es": "Distancia Desde el Reinicio",
+            "fr": "Distance Depuis la Réinitialisation",
+            "it": "Distanza Dall'Ultimo Ripristino",
+            "no": "Distanse Siden Nullstilling",
+            "sv": "Distans Sedan Återställning",
+            "pl": "Dystans Od Resetu",
+            "ru": "Расстояние с момента сброса",
+            "ko": "재설정 이후 주행 거리",
+            "ar": "المسافة منذ إعادة الضبط"
+          },
+          "units": {
+            "en": "km"
+          }
+        },
+        "measure_distance.fsd_since_reset": {
+          "title": {
+            "en": "FSD Distance Since Reset",
+            "nl": "FSD-afstand Sinds Reset",
+            "da": "FSD-distance Siden Nulstilling",
+            "de": "FSD-Strecke Seit Zurücksetzen",
+            "es": "Distancia FSD Desde el Reinicio",
+            "fr": "Distance FSD Depuis la Réinitialisation",
+            "it": "Distanza FSD Dall'Ultimo Ripristino",
+            "no": "FSD-distanse Siden Nullstilling",
+            "sv": "FSD-distans Sedan Återställning",
+            "pl": "Dystans FSD Od Resetu",
+            "ru": "Расстояние на FSD с момента сброса",
+            "ko": "FSD 재설정 이후 주행 거리",
+            "ar": "مسافة القيادة الذاتية الكاملة منذ إعادة الضبط"
+          },
+          "units": {
+            "en": "km"
+          }
+        },
+        "meter_power.regen": {
+          "title": {
+            "en": "Lifetime Regenerated Energy",
+            "nl": "Levenslang Geregenereerde Energie",
+            "da": "Livstidsregenereret Energi",
+            "de": "Lebenszeit-Rekuperationsenergie",
+            "es": "Energía Regenerada de por Vida",
+            "fr": "Énergie Régénérée à Vie",
+            "it": "Energia Rigenerata Totale",
+            "no": "Livstids Regenerert Energi",
+            "sv": "Livstidsåtervunnen Energi",
+            "pl": "Energia Odzyskana w Całym Okresie Eksploatacji",
+            "ru": "Энергия рекуперации за весь срок службы",
+            "ko": "누적 회생 에너지",
+            "ar": "الطاقة المتجددة مدى الحياة"
+          }
+        },
+        "alarm_generic.rear_defrost": {
+          "title": {
+            "en": "Rear Defrost",
+            "nl": "Achterruitverwarming",
+            "da": "Bagrudeafisning",
+            "de": "Heckscheibenheizung",
+            "es": "Desempañador Trasero",
+            "fr": "Dégivrage Arrière",
+            "it": "Sbrinamento Posteriore",
+            "no": "Bakvinduavriming",
+            "sv": "Bakrutedefroster",
+            "pl": "Odszranianie Tylnej Szyby",
+            "ru": "Обогрев заднего стекла",
+            "ko": "후면 서리 제거",
+            "ar": "إزالة الصقيع الخلفي"
+          }
+        },
+        "windowcoverings_closed.tonneau": {
+          "title": {
+            "en": "Tonneau Cover",
+            "nl": "Laadbakafdekking",
+            "da": "Laddæksel",
+            "de": "Laderaumabdeckung",
+            "es": "Cubierta de la Caja",
+            "fr": "Couvre-benne",
+            "it": "Copertura del Cassone",
+            "no": "Lastromsdeksel",
+            "sv": "Flaklucka",
+            "pl": "Pokrywa Skrzyni",
+            "ru": "Крышка кузова",
+            "ko": "적재함 커버",
+            "ar": "غطاء صندوق الحمولة"
+          }
+        },
+        "windowcoverings_set.tonneau": {
+          "title": {
+            "en": "Tonneau Position",
+            "nl": "Laadbakafdekkingpositie",
+            "da": "Laddækkelposition",
+            "de": "Position der Laderaumabdeckung",
+            "es": "Posición de la Cubierta de la Caja",
+            "fr": "Position du Couvre-benne",
+            "it": "Posizione della Copertura del Cassone",
+            "no": "Posisjon for Lastromsdeksel",
+            "sv": "Flakluckans Position",
+            "pl": "Pozycja Pokrywy Skrzyni",
+            "ru": "Положение крышки кузова",
+            "ko": "적재함 커버 위치",
+            "ar": "موضع غطاء صندوق الحمولة"
+          },
+          "setable": false
         }
       },
       "id": "vehicle"
