@@ -6,8 +6,15 @@ import {
   VehicleDetails,
 } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+import isCybertruck from "./model.js";
 
 const isBool = (x: any) => typeof x === "boolean";
+
+/** Capabilities only Cybertruck exposes; excluded from every other model. */
+const CYBERTRUCK_ONLY_CAPABILITIES = new Set([
+  "windowcoverings_closed.tonneau",
+  "windowcoverings_set.tonneau",
+]);
 
 const chargePortLatchMap = new Map<SseData["data"]["ChargePortLatch"], boolean>(
   [
@@ -679,6 +686,13 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.vehicle.sse.off("connectivity", this.handleConnectivity);
     this.sseCleanup.forEach((off) => off());
     this.sseCleanup = [];
+  }
+
+  /** Excludes Cybertruck-only capabilities (e.g. the tonneau cover) for every other model. */
+  protected getExpectedCapabilities(): string[] {
+    const capabilities = super.getExpectedCapabilities();
+    if (isCybertruck(this.getData().vin)) return capabilities;
+    return capabilities.filter((cap) => !CYBERTRUCK_ONLY_CAPABILITIES.has(cap));
   }
 
   /**

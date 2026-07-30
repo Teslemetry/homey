@@ -1,4 +1,5 @@
 import TeslemetryDriver from "../../lib/TeslemetryDriver.js";
+import isCybertruck from "./model.js";
 
 const icon: Record<string, { icon: string }> = {
   S: { icon: "modelS.svg" },
@@ -27,6 +28,7 @@ export default class VehicleDriver extends TeslemetryDriver {
         .map((data) => {
           const hasSeatCooling = !!data.metadata.config?.has_seat_cooling;
           const rearSeatHeaters = data.metadata.config?.rear_seat_heaters ?? 0;
+          const isCybertruckVin = isCybertruck(data.vin);
 
           // Build capabilities list, excluding unsupported features
           const capabilities = (this.manifest.capabilities as string[]).filter(
@@ -45,6 +47,12 @@ export default class VehicleDriver extends TeslemetryDriver {
               }
               if (cap === "seat_heater.rear_center") {
                 return rearSeatHeaters >= 3;
+              }
+              if (
+                cap === "windowcoverings_closed.tonneau" ||
+                cap === "windowcoverings_set.tonneau"
+              ) {
+                return isCybertruckVin;
               }
               return true;
             },
