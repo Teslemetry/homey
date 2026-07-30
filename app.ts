@@ -261,6 +261,14 @@ export default class TeslemetryApp extends Homey.App {
         return args.device.isPluggedIn();
       });
 
+    this.homey.flow
+      .getConditionCard('tpms_warning_is')
+      .registerRunListener(
+        async (args: { device: VehicleDevice; level: string }) => {
+          return args.device.getCapabilityValue('tpms_warning') === args.level;
+        },
+      );
+
     // Vehicle trigger cards with per-card arguments need a run listener to
     // decide whether *this* card's threshold was actually crossed; cards
     // without args default to firing whenever .trigger() is called.

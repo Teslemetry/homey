@@ -433,148 +433,22 @@
       }
     },
     {
-      "id": "alarm_generic.tpms_soft_fl_true",
+      "id": "tpms_warning_changed",
       "title": {
-        "en": "Tire pressure warning has been raised on the front left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_soft_fl_false",
-      "title": {
-        "en": "Tire pressure warning has cleared on the front left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_soft_fr_true",
-      "title": {
-        "en": "Tire pressure warning has been raised on the front right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_soft_fr_false",
-      "title": {
-        "en": "Tire pressure warning has cleared on the front right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_soft_rl_true",
-      "title": {
-        "en": "Tire pressure warning has been raised on the rear left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_soft_rl_false",
-      "title": {
-        "en": "Tire pressure warning has cleared on the rear left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_soft_rr_true",
-      "title": {
-        "en": "Tire pressure warning has been raised on the rear right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_soft_rr_false",
-      "title": {
-        "en": "Tire pressure warning has cleared on the rear right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_fl_true",
-      "title": {
-        "en": "Tire pressure alert has been raised on the front left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_fl_false",
-      "title": {
-        "en": "Tire pressure alert has cleared on the front left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_fr_true",
-      "title": {
-        "en": "Tire pressure alert has been raised on the front right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_fr_false",
-      "title": {
-        "en": "Tire pressure alert has cleared on the front right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_rl_true",
-      "title": {
-        "en": "Tire pressure alert has been raised on the rear left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_rl_false",
-      "title": {
-        "en": "Tire pressure alert has cleared on the rear left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_rr_true",
-      "title": {
-        "en": "Tire pressure alert has been raised on the rear right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_rr_false",
-      "title": {
-        "en": "Tire pressure alert has cleared on the rear right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_fl_true",
-      "title": {
-        "en": "Tire pressure reading has gone stale on the front left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_fl_false",
-      "title": {
-        "en": "Tire pressure reading is fresh again on the front left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_fr_true",
-      "title": {
-        "en": "Tire pressure reading has gone stale on the front right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_fr_false",
-      "title": {
-        "en": "Tire pressure reading is fresh again on the front right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_rl_true",
-      "title": {
-        "en": "Tire pressure reading has gone stale on the rear left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_rl_false",
-      "title": {
-        "en": "Tire pressure reading is fresh again on the rear left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_rr_true",
-      "title": {
-        "en": "Tire pressure reading has gone stale on the rear right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_rr_false",
-      "title": {
-        "en": "Tire pressure reading is fresh again on the rear right tire"
-      }
+        "en": "The tire pressure warning level has changed"
+      },
+      "tokens": [
+        {
+          "name": "tpms_warning",
+          "type": "string",
+          "title": {
+            "en": "Level"
+          },
+          "example": {
+            "en": "soft"
+          }
+        }
+      ]
     }
   ],
   "conditions": [
@@ -795,76 +669,42 @@
       }
     },
     {
-      "id": "alarm_generic.tpms_soft_fl",
+      "id": "tpms_warning_is",
       "title": {
-        "en": "Tire pressure warning is !{{active|inactive}} on the front left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_soft_fr",
-      "title": {
-        "en": "Tire pressure warning is !{{active|inactive}} on the front right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_soft_rl",
-      "title": {
-        "en": "Tire pressure warning is !{{active|inactive}} on the rear left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_soft_rr",
-      "title": {
-        "en": "Tire pressure warning is !{{active|inactive}} on the rear right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_fl",
-      "title": {
-        "en": "Tire pressure alert is !{{active|inactive}} on the front left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_fr",
-      "title": {
-        "en": "Tire pressure alert is !{{active|inactive}} on the front right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_rl",
-      "title": {
-        "en": "Tire pressure alert is !{{active|inactive}} on the rear left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_hard_rr",
-      "title": {
-        "en": "Tire pressure alert is !{{active|inactive}} on the rear right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_fl",
-      "title": {
-        "en": "Tire pressure reading is !{{stale|fresh}} on the front left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_fr",
-      "title": {
-        "en": "Tire pressure reading is !{{stale|fresh}} on the front right tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_rl",
-      "title": {
-        "en": "Tire pressure reading is !{{stale|fresh}} on the rear left tire"
-      }
-    },
-    {
-      "id": "alarm_generic.tpms_stale_rr",
-      "title": {
-        "en": "Tire pressure reading is !{{stale|fresh}} on the rear right tire"
-      }
+        "en": "Tire pressure warning level is"
+      },
+      "titleFormatted": {
+        "en": "Tire pressure warning level is [[level]]"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "level",
+          "title": {
+            "en": "Level"
+          },
+          "values": [
+            {
+              "id": "off",
+              "label": {
+                "en": "Off"
+              }
+            },
+            {
+              "id": "soft",
+              "label": {
+                "en": "Soft warning"
+              }
+            },
+            {
+              "id": "hard",
+              "label": {
+                "en": "Hard warning"
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "actions": [

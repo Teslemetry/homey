@@ -286,24 +286,26 @@ received (no baseline to compare against) or on a repeated identical value.
   is/isn't condition whenever `update()` changes the value - no
   `registerRunListener` or explicit `.trigger()` call needed, only the manual
   card definitions (subcapabilities still don't get cards generated for you).
-  See `alarm_generic.off_grid`/`.island`/`.rear_defrost`/the per-wheel TPMS
-  warning and freshness alarms/`.fault` on Wall Connector. If a trigger also
-  needs a custom token (e.g. a fault code), don't try to attach it to this
-  auto-fired card - define a separate, explicitly-fired trigger instead (see
-  `wall_connector_fault_code`), since firing the same card manually on top of
-  Homey's automatic firing would double-run any flow built on it.
+  See `alarm_generic.off_grid`/`.island`/`.rear_defrost`/`.fault` on Wall
+  Connector. If a trigger also needs a custom token (e.g. a fault code),
+  don't try to attach it to this auto-fired card - define a separate,
+  explicitly-fired trigger instead (see `wall_connector_fault_code`), since
+  firing the same card manually on top of Homey's automatic firing would
+  double-run any flow built on it.
 
-### TPMS Freshness (`TpmsLastSeenPressureTime*`)
+### TPMS Warning Level (`tpms_warning`)
 
-`TpmsLastSeenPressureTimeFl/Fr/Rl/Rr` report a Unix timestamp that is wrong
-when read directly - formatting it in Pacific Time instead yields the
-vehicle's true local wall-clock reading time (an upstream Tesla API defect).
-`drivers/vehicle/tpms.ts`'s `correctTpmsTimestampMs()` reinterprets those
-wall-clock digits as UTC to recover a value comparable to `Date.now()`, which
-`VehicleDevice` uses to drive the per-wheel `alarm_generic.tpms_stale_*`
-alarms. Staleness must also be re-evaluated on a timer, not only when a new
-signal arrives, since a wheel going quiet is itself the stale condition - the
-timer is `unref()`'d so it doesn't keep the process (or a test run) alive.
+`TpmsSoftWarnings`/`TpmsHardWarnings` are per-tire boolean objects
+(`front_left`/`front_right`/`rear_left`/`rear_right`); `VehicleDevice`
+aggregates both across every tire into a single custom enum capability,
+`tpms_warning` (`off`/`soft`/`hard`, hard beating soft beating off), rather
+than exposing eight separate per-wheel alarms. It's a plain
+`CHANGE_TRIGGER_CAPABILITIES` entry (see `tpms_warning_changed`), not an
+`alarm_generic` subcapability, since it has three states, not two.
+`TpmsLastSeenPressureTimeFl/Fr/Rl/Rr` (a per-tire last-seen timestamp with a
+documented timezone defect - it reports as though the reading time were
+Pacific Time regardless of the vehicle's real timezone) are not currently
+surfaced by this capability or any other.
 
 ### SSE Auth-Failure Handling (`app.ts`)
 
