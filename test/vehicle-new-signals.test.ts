@@ -156,3 +156,109 @@ test("TonneauOpenPercent converts 0-100 percent to a 0-1 fraction on windowcover
 
   assert.equal(capabilities["windowcoverings_set.tonneau"], 0.75);
 });
+
+test("TpmsSoftWarnings/TpmsHardWarnings map each wheel to its own alarm_generic subcapability", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "alarm_generic.tpms_soft_fl": undefined,
+    "alarm_generic.tpms_soft_fr": undefined,
+    "alarm_generic.tpms_soft_rl": undefined,
+    "alarm_generic.tpms_soft_rr": undefined,
+    "alarm_generic.tpms_hard_fl": undefined,
+    "alarm_generic.tpms_hard_fr": undefined,
+    "alarm_generic.tpms_hard_rl": undefined,
+    "alarm_generic.tpms_hard_rr": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("TpmsSoftWarnings", {
+    front_left: true,
+    front_right: false,
+    rear_left: false,
+    rear_right: false,
+  });
+  sse.data.emit("TpmsHardWarnings", {
+    front_left: false,
+    front_right: false,
+    rear_left: true,
+    rear_right: false,
+  });
+
+  assert.equal(capabilities["alarm_generic.tpms_soft_fl"], true);
+  assert.equal(capabilities["alarm_generic.tpms_soft_fr"], false);
+  assert.equal(capabilities["alarm_generic.tpms_soft_rl"], false);
+  assert.equal(capabilities["alarm_generic.tpms_soft_rr"], false);
+  assert.equal(capabilities["alarm_generic.tpms_hard_fl"], false);
+  assert.equal(capabilities["alarm_generic.tpms_hard_fr"], false);
+  assert.equal(capabilities["alarm_generic.tpms_hard_rl"], true);
+  assert.equal(capabilities["alarm_generic.tpms_hard_rr"], false);
+});
+
+/**
+ * Reproduces the buggy encoding TpmsLastSeenPressureTime* actually uses, so
+ * tests can construct a raw value that decodes to a known instant without
+ * duplicating the fix's own arithmetic (see tpms-timestamp.test.ts for that).
+ */
+function encodeAsBuggyTpmsTimestamp(targetMs: number): number {
+  const offsetParts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Los_Angeles",
+    timeZoneName: "longOffset",
+  }).formatToParts(new Date(targetMs));
+  const offsetLabel = offsetParts.find((p) => p.type === "timeZoneName")!.value;
+  const match = offsetLabel.match(/GMT([+-]\d{2}):(\d{2})/)!;
+  const offsetMs =
+    (Number(match[1]) * 60 + Math.sign(Number(match[1])) * Number(match[2])) *
+    60 *
+    1000;
+  return Math.round((targetMs - offsetMs) / 1000);
+}
+
+test("TpmsLastSeenPressureTime* marks a wheel stale after 24 hours and clears it again", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "alarm_generic.tpms_stale_fl": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit(
+    "TpmsLastSeenPressureTimeFl",
+    encodeAsBuggyTpmsTimestamp(Date.now() - 30 * 60 * 60 * 1000),
+  );
+  assert.equal(capabilities["alarm_generic.tpms_stale_fl"], true);
+
+  sse.data.emit(
+    "TpmsLastSeenPressureTimeFl",
+    encodeAsBuggyTpmsTimestamp(Date.now()),
+  );
+  assert.equal(capabilities["alarm_generic.tpms_stale_fl"], false);
+});
+
+test("TpmsLastSeenPressureTime* wheels are tracked independently", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "alarm_generic.tpms_stale_fl": undefined,
+    "alarm_generic.tpms_stale_fr": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit(
+    "TpmsLastSeenPressureTimeFl",
+    encodeAsBuggyTpmsTimestamp(Date.now() - 30 * 60 * 60 * 1000),
+  );
+  sse.data.emit(
+    "TpmsLastSeenPressureTimeFr",
+    encodeAsBuggyTpmsTimestamp(Date.now()),
+  );
+
+  assert.equal(capabilities["alarm_generic.tpms_stale_fl"], true);
+  assert.equal(capabilities["alarm_generic.tpms_stale_fr"], false);
+});
+
+test("null/undefined TpmsLastSeenPressureTime* readings are skipped", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "alarm_generic.tpms_stale_fl": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("TpmsLastSeenPressureTimeFl", null);
+  sse.data.emit("TpmsLastSeenPressureTimeFl", undefined);
+
+  assert.equal(capabilities["alarm_generic.tpms_stale_fl"], undefined);
+});

@@ -7,6 +7,7 @@ interface LiveStatusResponse {
     din: string;
     vin?: string;
     wall_connector_state: number;
+    wall_connector_fault_state?: number;
     wall_connector_power: number;
   }>;
 }
@@ -15,6 +16,7 @@ export default class WallConnecter extends TeslemetryDevice {
   site!: EnergyDetails;
   din!: string;
   pollingCleanup!: Array<() => void>;
+  private previousFaultCode?: number;
 
   /**
    * onInit is called when the device is initialized.
@@ -53,6 +55,9 @@ export default class WallConnecter extends TeslemetryDevice {
 
       // Connected Vehicle
       this.update("connected_vehicle", this.findVin(data.vin));
+
+      // Fault
+      this.handleFaultState(data.wall_connector_fault_state);
     };
 
     const onChargeHistory = async (
@@ -106,6 +111,27 @@ export default class WallConnecter extends TeslemetryDevice {
       default:
         this.log(`Unknown wall_connector_state: ${state}`);
         return undefined;
+    }
+  }
+
+  /**
+   * Maps the raw wall_connector_fault_state code (0 = clear, nonzero = fault)
+   * to the alarm_generic.fault capability, firing a tokenized trigger with
+   * the raw code on each new fault - there is no documented code table, so
+   * every nonzero value is logged as unknown.
+   */
+  private handleFaultState(code: number | undefined): void {
+    if (code === undefined || code === this.previousFaultCode) return;
+    this.previousFaultCode = code;
+
+    this.update("alarm_generic.fault", code !== 0);
+
+    if (code !== 0) {
+      this.log(`Unknown wall_connector_fault_state code: ${code}`);
+      this.homey.flow
+        .getDeviceTriggerCard("wall_connector_fault_code")
+        .trigger(this, { code })
+        .catch(this.error);
     }
   }
 

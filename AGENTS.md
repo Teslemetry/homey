@@ -280,6 +280,30 @@ received (no baseline to compare against) or on a repeated identical value.
   run listeners for a `(cardPrefix, capability, argName)` triple. See the
   solar/grid/load/battery power and buy/sell tariff rate cards for the
   pattern end to end.
+- **Boolean `alarm_generic.<sub>` capabilities** are the one exception to the
+  "not reliably auto-fired" rule above: Homey's platform auto-fires the
+  `<cap>_true`/`<cap>_false` triggers and auto-implements the plain `<cap>`
+  is/isn't condition whenever `update()` changes the value - no
+  `registerRunListener` or explicit `.trigger()` call needed, only the manual
+  card definitions (subcapabilities still don't get cards generated for you).
+  See `alarm_generic.off_grid`/`.island`/`.rear_defrost`/the per-wheel TPMS
+  warning and freshness alarms/`.fault` on Wall Connector. If a trigger also
+  needs a custom token (e.g. a fault code), don't try to attach it to this
+  auto-fired card - define a separate, explicitly-fired trigger instead (see
+  `wall_connector_fault_code`), since firing the same card manually on top of
+  Homey's automatic firing would double-run any flow built on it.
+
+### TPMS Freshness (`TpmsLastSeenPressureTime*`)
+
+`TpmsLastSeenPressureTimeFl/Fr/Rl/Rr` report a Unix timestamp that is wrong
+when read directly - formatting it in Pacific Time instead yields the
+vehicle's true local wall-clock reading time (an upstream Tesla API defect).
+`drivers/vehicle/tpms.ts`'s `correctTpmsTimestampMs()` reinterprets those
+wall-clock digits as UTC to recover a value comparable to `Date.now()`, which
+`VehicleDevice` uses to drive the per-wheel `alarm_generic.tpms_stale_*`
+alarms. Staleness must also be re-evaluated on a timer, not only when a new
+signal arrives, since a wheel going quiet is itself the stale condition - the
+timer is `unref()`'d so it doesn't keep the process (or a test run) alive.
 
 ### SSE Auth-Failure Handling (`app.ts`)
 

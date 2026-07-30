@@ -7,6 +7,7 @@ import {
 } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 import isCybertruck from "./model.js";
+import correctTpmsTimestampMs from "./tpms.js";
 
 const isBool = (x: any) => typeof x === "boolean";
 
@@ -61,6 +62,24 @@ const MILES_TO_KILOMETERS = 1.609344;
 const MPH_TO_METERS_PER_SECOND = 0.44704;
 const ATM_TO_BAR = 1.01325;
 
+const TPMS_WHEELS = ["fl", "fr", "rl", "rr"] as const;
+type TpmsWheel = (typeof TPMS_WHEELS)[number];
+
+const TPMS_WARNING_FIELDS: Record<
+  TpmsWheel,
+  "front_left" | "front_right" | "rear_left" | "rear_right"
+> = {
+  fl: "front_left",
+  fr: "front_right",
+  rl: "rear_left",
+  rr: "rear_right",
+};
+
+/** A TPMS reading is considered stale once it hasn't updated in this long. */
+const TPMS_STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000;
+/** How often the stale check re-evaluates age, since staleness can start with no new signal at all. */
+const TPMS_STALE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
+
 const ACTIVE_CHARGE_STATES = new Set<SseData["data"]["DetailedChargeState"]>([
   "DetailedChargeStateStarting",
   "DetailedChargeStateCharging",
@@ -80,6 +99,18 @@ export default class VehicleDevice extends TeslemetryDevice {
   private previousDetailedChargeState?: SseData["data"]["DetailedChargeState"];
 
   private sseCleanup: Array<() => void> = [];
+
+  private lastTpmsReadingMs: Partial<Record<TpmsWheel, number>> = {};
+  private tpmsStaleCheckInterval?: ReturnType<typeof setInterval>;
+
+  private updateTpmsFreshness(wheel: TpmsWheel): void {
+    const lastSeen = this.lastTpmsReadingMs[wheel];
+    if (lastSeen === undefined) return;
+    this.update(
+      `alarm_generic.tpms_stale_${wheel}`,
+      Date.now() - lastSeen > TPMS_STALE_THRESHOLD_MS,
+    );
+  }
 
   private readonly onSignal: TeslemetryVehicleStream["onSignal"] = (
     field,
@@ -363,6 +394,40 @@ export default class VehicleDevice extends TeslemetryDevice {
         value !== undefined && value !== null ? value * ATM_TO_BAR : value,
       ),
     );
+
+    this.onSignal("TpmsSoftWarnings", (value) => {
+      for (const wheel of TPMS_WHEELS) {
+        this.update(
+          `alarm_generic.tpms_soft_${wheel}`,
+          value?.[TPMS_WARNING_FIELDS[wheel]],
+        );
+      }
+    });
+    this.onSignal("TpmsHardWarnings", (value) => {
+      for (const wheel of TPMS_WHEELS) {
+        this.update(
+          `alarm_generic.tpms_hard_${wheel}`,
+          value?.[TPMS_WARNING_FIELDS[wheel]],
+        );
+      }
+    });
+
+    const handleTpmsLastSeen = (wheel: TpmsWheel) => (
+      value: number | null | undefined,
+    ) => {
+      if (value === undefined || value === null) return;
+      this.lastTpmsReadingMs[wheel] = correctTpmsTimestampMs(value);
+      this.updateTpmsFreshness(wheel);
+    };
+    this.onSignal("TpmsLastSeenPressureTimeFl", handleTpmsLastSeen("fl"));
+    this.onSignal("TpmsLastSeenPressureTimeFr", handleTpmsLastSeen("fr"));
+    this.onSignal("TpmsLastSeenPressureTimeRl", handleTpmsLastSeen("rl"));
+    this.onSignal("TpmsLastSeenPressureTimeRr", handleTpmsLastSeen("rr"));
+
+    this.tpmsStaleCheckInterval = setInterval(() => {
+      for (const wheel of TPMS_WHEELS) this.updateTpmsFreshness(wheel);
+    }, TPMS_STALE_CHECK_INTERVAL_MS);
+    this.tpmsStaleCheckInterval.unref?.();
 
     // Vehicle Status
     this.onSignal("Odometer", (value) => {
@@ -686,6 +751,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.vehicle.sse.off("connectivity", this.handleConnectivity);
     this.sseCleanup.forEach((off) => off());
     this.sseCleanup = [];
+    clearInterval(this.tpmsStaleCheckInterval);
   }
 
   /** Excludes Cybertruck-only capabilities (e.g. the tonneau cover) for every other model. */
