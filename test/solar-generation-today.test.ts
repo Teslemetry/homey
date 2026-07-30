@@ -11,13 +11,16 @@ function createDeviceStub(id: string) {
   };
   const store: Record<string, unknown> = {};
   const handlers: Record<string, (event: unknown) => void> = {};
+  const offCalls: Array<string> = [];
 
   const site = {
     sse: {
       on: (event: string, handler: (event: unknown) => void) => {
         handlers[event] = handler;
       },
-      off: () => {},
+      off: (event: string) => {
+        offCalls.push(event);
+      },
     },
   };
 
@@ -55,7 +58,7 @@ function createDeviceStub(id: string) {
     destroyed: false,
   });
 
-  return { stub, capabilities, handlers };
+  return { stub, capabilities, handlers, offCalls };
 }
 
 test("SolarDevice's energy_totals handler sets solar_generation_today to today's raw kWh total", async () => {
@@ -97,4 +100,13 @@ test("SolarDevice's energy_totals handler still drives the monotonic meter_power
 
   assert.equal(capabilities["solar_generation_today"], 25);
   assert.equal(capabilities["meter_power"], 15);
+});
+
+test("SolarDevice.onUninit removes the live_status and energy_totals listeners", async () => {
+  const { stub, offCalls } = createDeviceStub("site-1");
+
+  await stub.onInit();
+  await stub.onUninit();
+
+  assert.deepEqual(offCalls.sort(), ["energy_totals", "live_status"]);
 });
