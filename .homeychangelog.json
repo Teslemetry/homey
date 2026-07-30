@@ -49,5 +49,8 @@
   },
   "1.0.4": {
     "en": "Added a Today's Solar Generation insight to the Solar device"
+  },
+  "1.0.5": {
+    "en": "Fixes the Powerwall device becoming unresponsive (no updates and no commands) after updating, and a crash when a Powerwall was removed while updating. Adds power/solar/grid/battery and tariff threshold Flow cards, buy/sell tariff cards, seat climate actions, and TPMS warning + Wall Connector fault alarms."
   }
 }
