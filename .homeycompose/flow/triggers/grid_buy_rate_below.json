@@ -1,0 +1,40 @@
+{
+  "title": {
+    "en": "Buy rate drops below"
+  },
+  "titleFormatted": {
+    "en": "The buy rate on [[device]] drops below [[rate]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=grid_buy_rate",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "rate",
+      "title": {
+        "en": "Rate"
+      },
+      "min": -10,
+      "max": 10,
+      "step": 0.001
+    }
+  ],
+  "tokens": [
+    {
+      "name": "grid_buy_rate",
+      "type": "number",
+      "title": {
+        "en": "Buy rate"
+      },
+      "example": {
+        "en": "0.32"
+      }
+    }
+  ]
+}

@@ -26,6 +26,8 @@ export default class TeslemetryDevice extends Homey.Device {
     "backup_reserve",
     "operation_mode",
     "steering_wheel_heater",
+    "grid_buy_rate",
+    "grid_sell_rate",
   ]);
 
   async onInit() {
@@ -118,6 +120,39 @@ export default class TeslemetryDevice extends Homey.Device {
         .trigger(this, { [capability]: value })
         .catch(this.error);
     }
+  }
+
+  /**
+   * Updates a numeric capability and fires its paired <cap>_above/<cap>_below
+   * threshold trigger cards with {previous,current} state, mirroring
+   * battery_below's pattern: this only fires on a real value change, and
+   * each flow's own numeric argument decides whether *that* card's
+   * threshold was actually crossed (see the registerRunListener pair for
+   * these card IDs in app.ts).
+   */
+  protected async updateWithThresholdTriggers(
+    capability: string,
+    value: number | undefined | null,
+    aboveCardId: string,
+    belowCardId: string,
+    tokenName: string,
+  ): Promise<void> {
+    if (value === undefined || value === null) return;
+    const previous = this.getCapabilityValue(capability) as number | null;
+    await this.update(capability, value);
+    if (previous === null || previous === undefined || previous === value) {
+      return;
+    }
+    const tokens = { [tokenName]: value };
+    const state = { previous, current: value };
+    this.homey.flow
+      .getDeviceTriggerCard(aboveCardId)
+      .trigger(this, tokens, state)
+      .catch(this.error);
+    this.homey.flow
+      .getDeviceTriggerCard(belowCardId)
+      .trigger(this, tokens, state)
+      .catch(this.error);
   }
 
   protected handleApiResponse = ({ response }: { response: any }): void => {

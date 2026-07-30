@@ -409,6 +409,232 @@
       },
       {
         "title": {
+          "en": "Buy rate rises above"
+        },
+        "titleFormatted": {
+          "en": "The buy rate on [[device]] rises above [[rate]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=grid_buy_rate",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "rate",
+            "title": {
+              "en": "Rate"
+            },
+            "min": -10,
+            "max": 10,
+            "step": 0.001
+          }
+        ],
+        "tokens": [
+          {
+            "name": "grid_buy_rate",
+            "type": "number",
+            "title": {
+              "en": "Buy rate"
+            },
+            "example": {
+              "en": "0.32"
+            }
+          }
+        ],
+        "id": "grid_buy_rate_above"
+      },
+      {
+        "title": {
+          "en": "Buy rate drops below"
+        },
+        "titleFormatted": {
+          "en": "The buy rate on [[device]] drops below [[rate]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=grid_buy_rate",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "rate",
+            "title": {
+              "en": "Rate"
+            },
+            "min": -10,
+            "max": 10,
+            "step": 0.001
+          }
+        ],
+        "tokens": [
+          {
+            "name": "grid_buy_rate",
+            "type": "number",
+            "title": {
+              "en": "Buy rate"
+            },
+            "example": {
+              "en": "0.32"
+            }
+          }
+        ],
+        "id": "grid_buy_rate_below"
+      },
+      {
+        "title": {
+          "en": "The buy rate has changed"
+        },
+        "titleFormatted": {
+          "en": "The buy rate has changed on [[device]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=grid_buy_rate",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "grid_buy_rate",
+            "type": "number",
+            "title": {
+              "en": "Buy rate"
+            },
+            "example": {
+              "en": "0.32"
+            }
+          }
+        ],
+        "id": "grid_buy_rate_changed"
+      },
+      {
+        "title": {
+          "en": "Sell rate rises above"
+        },
+        "titleFormatted": {
+          "en": "The sell rate on [[device]] rises above [[rate]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=grid_sell_rate",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "rate",
+            "title": {
+              "en": "Rate"
+            },
+            "min": -10,
+            "max": 10,
+            "step": 0.001
+          }
+        ],
+        "tokens": [
+          {
+            "name": "grid_sell_rate",
+            "type": "number",
+            "title": {
+              "en": "Sell rate"
+            },
+            "example": {
+              "en": "0.12"
+            }
+          }
+        ],
+        "id": "grid_sell_rate_above"
+      },
+      {
+        "title": {
+          "en": "Sell rate drops below"
+        },
+        "titleFormatted": {
+          "en": "The sell rate on [[device]] drops below [[rate]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=grid_sell_rate",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "rate",
+            "title": {
+              "en": "Rate"
+            },
+            "min": -10,
+            "max": 10,
+            "step": 0.001
+          }
+        ],
+        "tokens": [
+          {
+            "name": "grid_sell_rate",
+            "type": "number",
+            "title": {
+              "en": "Sell rate"
+            },
+            "example": {
+              "en": "0.12"
+            }
+          }
+        ],
+        "id": "grid_sell_rate_below"
+      },
+      {
+        "title": {
+          "en": "The sell rate has changed"
+        },
+        "titleFormatted": {
+          "en": "The sell rate has changed on [[device]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=grid_sell_rate",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "grid_sell_rate",
+            "type": "number",
+            "title": {
+              "en": "Sell rate"
+            },
+            "example": {
+              "en": "0.12"
+            }
+          }
+        ],
+        "id": "grid_sell_rate_changed"
+      },
+      {
+        "title": {
           "en": "The operation mode has changed",
           "nl": "De bedieningsmodus is gewijzigd",
           "da": "Driftsindstillingen er ændret",
@@ -808,6 +1034,88 @@
         ]
       },
       {
+        "id": "battery_power_above",
+        "title": {
+          "en": "Battery power rises above"
+        },
+        "hint": {
+          "en": "Positive values mean the battery is discharging (supplying the home); negative values mean it's charging."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": -20000,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)"
+            },
+            "example": {
+              "en": "3500"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Rises above [[watts]] W"
+        }
+      },
+      {
+        "id": "battery_power_below",
+        "title": {
+          "en": "Battery power drops below"
+        },
+        "hint": {
+          "en": "Positive values mean the battery is discharging (supplying the home); negative values mean it's charging."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": -20000,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)"
+            },
+            "example": {
+              "en": "3500"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Drops below [[watts]] W"
+        }
+      },
+      {
         "id": "alarm_generic.off_grid_true",
         "title": {
           "en": "Grid power has been lost",
@@ -906,6 +1214,240 @@
             "filter": "driver_id=gateway"
           }
         ]
+      },
+      {
+        "id": "grid_power_above",
+        "title": {
+          "en": "Grid power rises above"
+        },
+        "hint": {
+          "en": "Positive values mean the home is importing from the grid; negative values mean it's exporting."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": -20000,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)"
+            },
+            "example": {
+              "en": "3500"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Rises above [[watts]] W"
+        }
+      },
+      {
+        "id": "grid_power_below",
+        "title": {
+          "en": "Grid power drops below"
+        },
+        "hint": {
+          "en": "Positive values mean the home is importing from the grid; negative values mean it's exporting."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": -20000,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)"
+            },
+            "example": {
+              "en": "3500"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Drops below [[watts]] W"
+        }
+      },
+      {
+        "id": "load_power_above",
+        "title": {
+          "en": "Load power rises above"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": 0,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)"
+            },
+            "example": {
+              "en": "3500"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Rises above [[watts]] W"
+        }
+      },
+      {
+        "id": "load_power_below",
+        "title": {
+          "en": "Load power drops below"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": 0,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)"
+            },
+            "example": {
+              "en": "3500"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Drops below [[watts]] W"
+        }
+      },
+      {
+        "id": "solar_power_above",
+        "title": {
+          "en": "Solar power rises above"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": 0,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)"
+            },
+            "example": {
+              "en": "3500"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Rises above [[watts]] W"
+        }
+      },
+      {
+        "id": "solar_power_below",
+        "title": {
+          "en": "Solar power drops below"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": 0,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)"
+            },
+            "example": {
+              "en": "3500"
+            }
+          }
+        ],
+        "titleFormatted": {
+          "en": "Drops below [[watts]] W"
+        }
       },
       {
         "id": "onoff.charge_port_true",
@@ -1591,6 +2133,64 @@
       },
       {
         "title": {
+          "en": "Buy rate comparison"
+        },
+        "titleFormatted": {
+          "en": "The buy rate on [[device]] is above [[rate]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=grid_buy_rate",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "rate",
+            "title": {
+              "en": "Rate"
+            },
+            "min": -10,
+            "max": 10,
+            "step": 0.001
+          }
+        ],
+        "id": "grid_buy_rate"
+      },
+      {
+        "title": {
+          "en": "Sell rate comparison"
+        },
+        "titleFormatted": {
+          "en": "The sell rate on [[device]] is above [[rate]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=grid_sell_rate",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "rate",
+            "title": {
+              "en": "Rate"
+            },
+            "min": -10,
+            "max": 10,
+            "step": 0.001
+          }
+        ],
+        "id": "grid_sell_rate"
+      },
+      {
+        "title": {
           "en": "Vehicle is !{{charging|not charging}}"
         },
         "titleFormatted": {
@@ -1808,6 +2408,35 @@
         ]
       },
       {
+        "id": "battery_power",
+        "title": {
+          "en": "Battery power comparison"
+        },
+        "hint": {
+          "en": "Positive values mean the battery is discharging (supplying the home); negative values mean it's charging."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": -20000,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "titleFormatted": {
+          "en": "Is above [[watts]] W"
+        }
+      },
+      {
         "id": "alarm_generic.off_grid",
         "title": {
           "en": "Grid is !{{offline|online}}",
@@ -1856,6 +2485,87 @@
             "filter": "driver_id=gateway"
           }
         ]
+      },
+      {
+        "id": "grid_power",
+        "title": {
+          "en": "Grid power comparison"
+        },
+        "hint": {
+          "en": "Positive values mean the home is importing from the grid; negative values mean it's exporting."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": -20000,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "titleFormatted": {
+          "en": "Is above [[watts]] W"
+        }
+      },
+      {
+        "id": "load_power",
+        "title": {
+          "en": "Load power comparison"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": 0,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "titleFormatted": {
+          "en": "Is above [[watts]] W"
+        }
+      },
+      {
+        "id": "solar_power",
+        "title": {
+          "en": "Solar power comparison"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": 0,
+            "max": 20000,
+            "step": 100
+          }
+        ],
+        "titleFormatted": {
+          "en": "Is above [[watts]] W"
+        }
       },
       {
         "id": "onoff.charge_port",
@@ -3724,6 +4434,349 @@
             "filter": "driver_id=vehicle"
           }
         ]
+      },
+      {
+        "id": "seat_heater.front_left_set",
+        "title": {
+          "en": "Set driver seat heater"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          },
+          {
+            "type": "dropdown",
+            "name": "level",
+            "title": {
+              "en": "Level"
+            },
+            "values": [
+              {
+                "id": "0",
+                "label": {
+                  "en": "Off"
+                }
+              },
+              {
+                "id": "1",
+                "label": {
+                  "en": "Low"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Medium"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "High"
+                }
+              }
+            ]
+          }
+        ],
+        "titleFormatted": {
+          "en": "Set driver seat heater to [[level]]"
+        }
+      },
+      {
+        "id": "seat_heater.front_right_set",
+        "title": {
+          "en": "Set passenger seat heater"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          },
+          {
+            "type": "dropdown",
+            "name": "level",
+            "title": {
+              "en": "Level"
+            },
+            "values": [
+              {
+                "id": "0",
+                "label": {
+                  "en": "Off"
+                }
+              },
+              {
+                "id": "1",
+                "label": {
+                  "en": "Low"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Medium"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "High"
+                }
+              }
+            ]
+          }
+        ],
+        "titleFormatted": {
+          "en": "Set passenger seat heater to [[level]]"
+        }
+      },
+      {
+        "id": "seat_heater.rear_left_set",
+        "title": {
+          "en": "Set rear left seat heater"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          },
+          {
+            "type": "dropdown",
+            "name": "level",
+            "title": {
+              "en": "Level"
+            },
+            "values": [
+              {
+                "id": "0",
+                "label": {
+                  "en": "Off"
+                }
+              },
+              {
+                "id": "1",
+                "label": {
+                  "en": "Low"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Medium"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "High"
+                }
+              }
+            ]
+          }
+        ],
+        "titleFormatted": {
+          "en": "Set rear left seat heater to [[level]]"
+        }
+      },
+      {
+        "id": "seat_heater.rear_right_set",
+        "title": {
+          "en": "Set rear right seat heater"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          },
+          {
+            "type": "dropdown",
+            "name": "level",
+            "title": {
+              "en": "Level"
+            },
+            "values": [
+              {
+                "id": "0",
+                "label": {
+                  "en": "Off"
+                }
+              },
+              {
+                "id": "1",
+                "label": {
+                  "en": "Low"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Medium"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "High"
+                }
+              }
+            ]
+          }
+        ],
+        "titleFormatted": {
+          "en": "Set rear right seat heater to [[level]]"
+        }
+      },
+      {
+        "id": "seat_heater.rear_center_set",
+        "title": {
+          "en": "Set rear center seat heater"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          },
+          {
+            "type": "dropdown",
+            "name": "level",
+            "title": {
+              "en": "Level"
+            },
+            "values": [
+              {
+                "id": "0",
+                "label": {
+                  "en": "Off"
+                }
+              },
+              {
+                "id": "1",
+                "label": {
+                  "en": "Low"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Medium"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "High"
+                }
+              }
+            ]
+          }
+        ],
+        "titleFormatted": {
+          "en": "Set rear center seat heater to [[level]]"
+        }
+      },
+      {
+        "id": "seat_cooler.front_left_set",
+        "title": {
+          "en": "Set driver seat cooler"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          },
+          {
+            "type": "dropdown",
+            "name": "level",
+            "title": {
+              "en": "Level"
+            },
+            "values": [
+              {
+                "id": "0",
+                "label": {
+                  "en": "Off"
+                }
+              },
+              {
+                "id": "1",
+                "label": {
+                  "en": "Low"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Medium"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "High"
+                }
+              }
+            ]
+          }
+        ],
+        "titleFormatted": {
+          "en": "Set driver seat cooler to [[level]]"
+        }
+      },
+      {
+        "id": "seat_cooler.front_right_set",
+        "title": {
+          "en": "Set passenger seat cooler"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          },
+          {
+            "type": "dropdown",
+            "name": "level",
+            "title": {
+              "en": "Level"
+            },
+            "values": [
+              {
+                "id": "0",
+                "label": {
+                  "en": "Off"
+                }
+              },
+              {
+                "id": "1",
+                "label": {
+                  "en": "Low"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Medium"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "High"
+                }
+              }
+            ]
+          }
+        ],
+        "titleFormatted": {
+          "en": "Set passenger seat cooler to [[level]]"
+        }
       }
     ]
   },

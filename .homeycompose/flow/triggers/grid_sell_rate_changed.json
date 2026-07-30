@@ -1,0 +1,30 @@
+{
+  "title": {
+    "en": "The sell rate has changed"
+  },
+  "titleFormatted": {
+    "en": "The sell rate has changed on [[device]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=grid_sell_rate",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "grid_sell_rate",
+      "type": "number",
+      "title": {
+        "en": "Sell rate"
+      },
+      "example": {
+        "en": "0.12"
+      }
+    }
+  ]
+}

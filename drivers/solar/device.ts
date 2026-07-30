@@ -28,7 +28,13 @@ export default class SolarDevice extends TeslemetryDevice {
 
     const onLiveStatus = (event: SseLiveStatus) => {
       const data = event.live_status as LiveStatusResponse;
-      this.update("measure_power", data.solar_power);
+      this.updateWithThresholdTriggers(
+        "measure_power",
+        data.solar_power,
+        "solar_power_above",
+        "solar_power_below",
+        "power",
+      );
     };
 
     const onEnergyTotals = async (event: SseEnergyTotals) => {

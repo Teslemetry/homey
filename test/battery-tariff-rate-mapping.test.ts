@@ -39,10 +39,18 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
   Object.defineProperty(sse, "siteInfoDocument", {
     get: () => siteInfoDocument,
   });
+  const triggerCalls: Array<{ cardId: string; tokens: unknown; state: unknown }> = [];
   const stub = Object.assign(Object.create(PowerwallDevice.prototype), {
     homey: {
       app: { products: { energySites: { "site-1": { api, sse } } } },
       __: (key: string) => key,
+      flow: {
+        getDeviceTriggerCard: (cardId: string) => ({
+          trigger: async (_device: unknown, tokens: unknown, state?: unknown) => {
+            triggerCalls.push({ cardId, tokens, state });
+          },
+        }),
+      },
     },
     driver: {
       manifest: { capabilities: Object.keys(capabilities), capabilitiesOptions: {} },
@@ -62,7 +70,7 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
     siteInfoDocument = document;
     sse.emit("site_info", { site_id: "site-1", site_info: document });
   };
-  return { stub, api, sse, capabilities, emitSiteInfo };
+  return { stub, api, sse, capabilities, emitSiteInfo, triggerCalls };
 }
 
 test("PowerwallDevice resolves grid_buy_rate/grid_sell_rate from siteInfo's tariff_content_v2", async () => {
@@ -79,6 +87,63 @@ test("PowerwallDevice resolves grid_buy_rate/grid_sell_rate from siteInfo's tari
 
   assert.equal(capabilities.grid_buy_rate, 0.3);
   assert.equal(capabilities.grid_sell_rate, 0.05);
+});
+
+test("PowerwallDevice fires grid_buy_rate/grid_sell_rate_above/below with previous/current state on a real rate change", async () => {
+  const { stub, emitSiteInfo, triggerCalls } = createDeviceStub({
+    grid_buy_rate: 0.2,
+    grid_sell_rate: 0.02,
+  });
+  await stub.onInit();
+
+  emitSiteInfo({
+    installation_time_zone: "UTC",
+    tariff_content_v2: SAMPLE_TARIFF,
+  });
+  // applySiteInfo fires updateWithThresholdTriggers without awaiting it, so
+  // let its internal setCapabilityValue/trigger promise chain flush first.
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.deepEqual(
+    triggerCalls.filter((c) => c.cardId.startsWith("grid_buy_rate")),
+    [
+      {
+        cardId: "grid_buy_rate_changed",
+        tokens: { grid_buy_rate: 0.3 },
+        state: undefined,
+      },
+      {
+        cardId: "grid_buy_rate_above",
+        tokens: { grid_buy_rate: 0.3 },
+        state: { previous: 0.2, current: 0.3 },
+      },
+      {
+        cardId: "grid_buy_rate_below",
+        tokens: { grid_buy_rate: 0.3 },
+        state: { previous: 0.2, current: 0.3 },
+      },
+    ],
+  );
+  assert.deepEqual(
+    triggerCalls.filter((c) => c.cardId.startsWith("grid_sell_rate")),
+    [
+      {
+        cardId: "grid_sell_rate_changed",
+        tokens: { grid_sell_rate: 0.05 },
+        state: undefined,
+      },
+      {
+        cardId: "grid_sell_rate_above",
+        tokens: { grid_sell_rate: 0.05 },
+        state: { previous: 0.02, current: 0.05 },
+      },
+      {
+        cardId: "grid_sell_rate_below",
+        tokens: { grid_sell_rate: 0.05 },
+        state: { previous: 0.02, current: 0.05 },
+      },
+    ],
+  );
 });
 
 test("PowerwallDevice does not touch grid_buy_rate/grid_sell_rate when siteInfo omits the tariff", async () => {

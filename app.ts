@@ -7,6 +7,8 @@ import TeslemetryOAuth2Client from './lib/TeslemetryOAuth2Client.js';
 import type { TeslemetryApiError } from './@types/error.d.ts';
 import type VehicleDevice from './drivers/vehicle/device.js';
 import type PowerwallDevice from './drivers/battery/device.js';
+import type SolarDevice from './drivers/solar/device.js';
+import type GatewayDevice from './drivers/gateway/device.js';
 
 sourceMapSupport.install();
 
@@ -166,6 +168,37 @@ export default class TeslemetryApp extends Homey.App {
         },
       );
 
+    // Vehicle seat climate action cards (subcapabilities get no auto-generated
+    // Flow cards; the device capability filter Homey applies to driver-scoped
+    // cards already hides these for seats a device wasn't paired with).
+    const seatHeaterPositions = [
+      'front_left',
+      'front_right',
+      'rear_left',
+      'rear_right',
+      'rear_center',
+    ] as const;
+    for (const position of seatHeaterPositions) {
+      this.homey.flow
+        .getActionCard(`seat_heater.${position}_set`)
+        .registerRunListener(
+          async (args: { device: VehicleDevice; level: string }) => {
+            await args.device.flowSetSeatHeater(position, args.level);
+          },
+        );
+    }
+
+    const seatCoolerPositions = ['front_left', 'front_right'] as const;
+    for (const position of seatCoolerPositions) {
+      this.homey.flow
+        .getActionCard(`seat_cooler.${position}_set`)
+        .registerRunListener(
+          async (args: { device: VehicleDevice; level: string }) => {
+            await args.device.flowSetSeatCooler(position, args.level);
+          },
+        );
+    }
+
     // Battery/Powerwall action cards
     this.homey.flow
       .getActionCard('set_backup_reserve')
@@ -242,7 +275,70 @@ export default class TeslemetryApp extends Homey.App {
         },
       );
 
+    // Power/tariff threshold trigger and condition cards: same
+    // above/below-crossing pattern as battery_below, registered once per
+    // capability across the three energy drivers that carry power/rate
+    // values (Solar, Gateway, Powerwall).
+    this.registerThresholdCards('solar_power', 'measure_power', 'watts');
+    this.registerThresholdCards('grid_power', 'measure_power', 'watts');
+    this.registerThresholdCards('load_power', 'measure_power.load', 'watts');
+    this.registerThresholdCards('battery_power', 'measure_power', 'watts');
+    this.registerThresholdCards('grid_buy_rate', 'grid_buy_rate', 'rate');
+    this.registerThresholdCards('grid_sell_rate', 'grid_sell_rate', 'rate');
+
     this.log('Flow card handlers registered');
+  }
+
+  /**
+   * Registers the <prefix>_above/<prefix>_below trigger cards and the
+   * <prefix> condition card for a numeric capability, using the same
+   * crossing-check pattern as battery_below: the device fires the trigger
+   * on every real value change with {previous,current} state, and this
+   * listener decides whether *that* flow's own threshold argument was
+   * actually crossed.
+   */
+  private registerThresholdCards(
+    cardPrefix: string,
+    capability: string,
+    argName: string,
+  ): void {
+    type ThresholdArgs = {
+      device: SolarDevice | GatewayDevice | PowerwallDevice;
+      [key: string]: unknown;
+    };
+
+    this.homey.flow
+      .getDeviceTriggerCard(`${cardPrefix}_above`)
+      .registerRunListener(
+        async (
+          args: ThresholdArgs,
+          state: { previous: number; current: number },
+        ) => {
+          const threshold = args[argName] as number;
+          return state.previous <= threshold && state.current > threshold;
+        },
+      );
+
+    this.homey.flow
+      .getDeviceTriggerCard(`${cardPrefix}_below`)
+      .registerRunListener(
+        async (
+          args: ThresholdArgs,
+          state: { previous: number; current: number },
+        ) => {
+          const threshold = args[argName] as number;
+          return state.previous >= threshold && state.current < threshold;
+        },
+      );
+
+    this.homey.flow
+      .getConditionCard(cardPrefix)
+      .registerRunListener(async (args: ThresholdArgs) => {
+        return (
+          (args.device.getCapabilityValue(capability) as number) >=
+          (args[argName] as number)
+        );
+      });
   }
 
   /**

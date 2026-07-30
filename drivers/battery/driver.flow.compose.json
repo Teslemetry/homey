@@ -107,6 +107,78 @@
         "ko": "폭풍 감시 경보가 비활성화되었습니다",
         "ar": "تم تعطيل تنبيه مراقبة العاصفة"
       }
+    },
+    {
+      "id": "battery_power_above",
+      "title": {
+        "en": "Battery power rises above"
+      },
+      "hint": {
+        "en": "Positive values mean the battery is discharging (supplying the home); negative values mean it's charging."
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": -20000,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Power (W)"
+          },
+          "example": {
+            "en": "3500"
+          }
+        }
+      ],
+      "titleFormatted": {
+        "en": "Rises above [[watts]] W"
+      }
+    },
+    {
+      "id": "battery_power_below",
+      "title": {
+        "en": "Battery power drops below"
+      },
+      "hint": {
+        "en": "Positive values mean the battery is discharging (supplying the home); negative values mean it's charging."
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": -20000,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Power (W)"
+          },
+          "example": {
+            "en": "3500"
+          }
+        }
+      ],
+      "titleFormatted": {
+        "en": "Drops below [[watts]] W"
+      }
     }
   ],
   "conditions": [
@@ -144,6 +216,30 @@
         "ru": "Штормовое предупреждение !{{активно|неактивно}}",
         "ko": "폭풍 감시 경보가 !{{활성화됨|비활성화됨}}",
         "ar": "تنبيه مراقبة العاصفة !{{نشط|غير نشط}}"
+      }
+    },
+    {
+      "id": "battery_power",
+      "title": {
+        "en": "Battery power comparison"
+      },
+      "hint": {
+        "en": "Positive values mean the battery is discharging (supplying the home); negative values mean it's charging."
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": -20000,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "titleFormatted": {
+        "en": "Is above [[watts]] W"
       }
     }
   ],
