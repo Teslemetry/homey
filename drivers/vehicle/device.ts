@@ -151,8 +151,29 @@ export default class VehicleDevice extends TeslemetryDevice {
       return;
     }
 
-    // --- Signals (Incoming Data) ---
+    // Essential behavior: state/connectivity SSE listeners and all command
+    // capability listeners. Registered before the signal replay below so a
+    // synchronous throw from a malformed cached signal (e.g.
+    // handleBatteryLevel reading an unexpected capability value) can never
+    // leave this device without them.
+    this.vehicle.sse.on("state", this.handleVehicleState);
+    this.vehicle.sse.on("connectivity", this.handleConnectivity);
+    this.registerCommandCapabilityListeners();
 
+    // --- Signals (Incoming Data) ---
+    // Optional/fallible: registering a signal handler replays any cached
+    // value synchronously, and per-signal handlers can throw on malformed
+    // cached data (e.g. handleBatteryLevel reading an unexpected capability
+    // value). Wrapped as a whole so a throw here can't undo the essential
+    // registration above.
+    try {
+      this.registerSignalListeners();
+    } catch (e) {
+      this.error("Failed to register Vehicle signal listeners", e);
+    }
+  }
+
+  private registerSignalListeners(): void {
     // Battery & Range
     this.onSignal("BatteryLevel", (value) =>
       this.handleBatteryLevel(value),
@@ -441,10 +462,6 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("onoff.guest_mode", value),
     );
 
-    // Vehicle State & Connectivity
-    this.vehicle.sse.on("state", this.handleVehicleState);
-    this.vehicle.sse.on("connectivity", this.handleConnectivity);
-
     // Media Volume
     this.onSignal("MediaAudioVolume", (value) => {
       if (value !== undefined && value !== null) {
@@ -511,9 +528,10 @@ export default class VehicleDevice extends TeslemetryDevice {
         this.update("speaker_position", value / 1000);
       }
     });
+  }
 
-    // --- Capability Listeners (Actions) ---
-
+  // --- Capability Listeners (Actions) ---
+  private registerCommandCapabilityListeners(): void {
     // Locked
     this.registerCapabilityListener("locked", async (value) => {
       return this.action(

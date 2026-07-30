@@ -245,6 +245,34 @@ Use the `update()` method which safely handles unsupported capabilities:
 this.update("measure_battery", value);  // No-op if capability not present
 ```
 
+### Device `onInit` Ordering ("registered but dead")
+
+Every device stream (`site.sse`/`vehicle.sse` `.on`/`onSignal`) replays the
+last cached payload for that event *synchronously* the moment a listener is
+registered. If a handler throws while processing that replay and nothing
+catches it, the throw propagates out of the still-synchronous portion of
+`onInit`, rejecting its promise before any registration after that point
+runs - the device ends up paired in Homey but permanently unresponsive (no
+data updates, no commands). Register the essential listeners (state/
+connectivity/live SSE listeners and all `registerCapabilityListener` command
+listeners) before anything that replays a less-trusted cached value, and
+guard the fallible replay so it can't undo that registration - see
+`PowerwallDevice.onInit` (guards `updateTariffRates`, a plain non-`async`
+method) and `VehicleDevice.onInit` (splits essential registration into
+`registerCommandCapabilityListeners()`, run first, and wraps the fallible
+`registerSignalListeners()` call in `try`/`catch`).
+
+This only protects against a handler that throws *synchronously*. A handler
+that is itself `async` never throws synchronously - JS converts any error
+inside it into a rejected Promise before the call returns, so wrapping the
+call site in `try`/`catch` silently does nothing and the rejection surfaces
+later as an unhandled rejection instead. `updateWithThresholdTriggers()`
+(`lib/TeslemetryDevice.ts`) is `async` for exactly this reason: Solar's and
+Gateway's `onLiveStatus` handlers call it directly and were audited for this
+bug, but since the call can't throw synchronously, it can't block their
+`energy_totals` listener from registering either - not vulnerable, and nothing
+to guard.
+
 ### Firing Flow Trigger Cards
 
 Homey does not reliably auto-fire trigger cards for this app's capabilities,
