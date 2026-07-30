@@ -185,9 +185,20 @@ itself.
 
 - `tesla-fleet-api` is pinned to a commit SHA via a `github:` dependency
   (`Teslemetry/node-tesla-fleet-api`), not a published npm version - as of this
-  writing the helper is merged to that repo's `main` but no npm release
-  contains it yet. Check `npm view tesla-fleet-api versions` before bumping;
-  switch to a real semver range once a release does.
+  writing npm has a `0.2.0` release, but it's behind the pinned commit (missing
+  `tariff.ts`, `commands.ts`, the `signing/` module) so it can't be swapped in
+  yet. Check `npm view tesla-fleet-api versions` and compare the release's
+  `gitHead` (`npm view tesla-fleet-api@<version> gitHead`) against the pinned
+  SHA before bumping; switch to a real semver range once a release catches up.
+- Because it's a `github:` dependency, its own `dist/` is built by its
+  `prepare` script (`tsc`), which `npm install`/`npm ci` normally run
+  automatically. The Homey app-publish action (`athombv/github-action-homey-app-publish`)
+  runs `npm ci --ignore-scripts`, which skips that script for every installed
+  package, so `dist/` never gets built there and every import from
+  `tesla-fleet-api` fails to resolve during `tsc`. `scripts/build-tesla-fleet-api.mjs`
+  (invoked from the `build` npm script, ahead of `tsc`) compiles it explicitly
+  as an ordinary build step, which runs regardless of `--ignore-scripts`; it's a
+  no-op once `dist/` already exists (e.g. under a normal `npm install`).
 - `tesla-fleet-api`'s public entry point does not re-export the `TariffContentV2`
   input type `getTariffPeriods` requires, so it's imported from the package's
   internal `tesla-fleet-api/dist/types/site_info.js` path instead; `@teslemetry/api`

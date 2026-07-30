@@ -15,6 +15,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: npm run build
       - uses: athombv/github-action-homey-app-validate@master
         with:
           level: verified
