@@ -23,7 +23,8 @@
   },
   "capabilities": [
     "measure_power",
-    "meter_power"
+    "meter_power",
+    "solar_generation_today"
   ],
   "energy": {
     "meterPowerExportedCapability": "meter_power"
