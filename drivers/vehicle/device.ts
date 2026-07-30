@@ -61,6 +61,13 @@ const MILES_TO_KILOMETERS = 1.609344;
 const MPH_TO_METERS_PER_SECOND = 0.44704;
 const ATM_TO_BAR = 1.01325;
 
+const TPMS_WHEEL_FIELDS = [
+  "front_left",
+  "front_right",
+  "rear_left",
+  "rear_right",
+] as const;
+
 const ACTIVE_CHARGE_STATES = new Set<SseData["data"]["DetailedChargeState"]>([
   "DetailedChargeStateStarting",
   "DetailedChargeStateCharging",
@@ -80,6 +87,23 @@ export default class VehicleDevice extends TeslemetryDevice {
   private previousDetailedChargeState?: SseData["data"]["DetailedChargeState"];
 
   private sseCleanup: Array<() => void> = [];
+
+  private lastTpmsSoftWarnings?: SseData["data"]["TpmsSoftWarnings"];
+  private lastTpmsHardWarnings?: SseData["data"]["TpmsHardWarnings"];
+
+  /** hard beats soft beats off, aggregated across every tire. */
+  private updateTpmsWarningLevel(): void {
+    const anyHard = TPMS_WHEEL_FIELDS.some(
+      (field) => this.lastTpmsHardWarnings?.[field],
+    );
+    const anySoft = TPMS_WHEEL_FIELDS.some(
+      (field) => this.lastTpmsSoftWarnings?.[field],
+    );
+    let level: "off" | "soft" | "hard" = "off";
+    if (anySoft) level = "soft";
+    if (anyHard) level = "hard";
+    this.update("tpms_warning", level);
+  }
 
   private readonly onSignal: TeslemetryVehicleStream["onSignal"] = (
     field,
@@ -363,6 +387,15 @@ export default class VehicleDevice extends TeslemetryDevice {
         value !== undefined && value !== null ? value * ATM_TO_BAR : value,
       ),
     );
+
+    this.onSignal("TpmsSoftWarnings", (value) => {
+      this.lastTpmsSoftWarnings = value ?? undefined;
+      this.updateTpmsWarningLevel();
+    });
+    this.onSignal("TpmsHardWarnings", (value) => {
+      this.lastTpmsHardWarnings = value ?? undefined;
+      this.updateTpmsWarningLevel();
+    });
 
     // Vehicle Status
     this.onSignal("Odometer", (value) => {

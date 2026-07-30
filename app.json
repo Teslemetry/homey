@@ -2048,6 +2048,82 @@
             "filter": "driver_id=vehicle"
           }
         ]
+      },
+      {
+        "id": "tpms_warning_changed",
+        "title": {
+          "en": "The tire pressure warning level has changed"
+        },
+        "tokens": [
+          {
+            "name": "tpms_warning",
+            "type": "string",
+            "title": {
+              "en": "Level"
+            },
+            "example": {
+              "en": "soft"
+            }
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.fault_true",
+        "title": {
+          "en": "A fault has been detected"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=wall-connector"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.fault_false",
+        "title": {
+          "en": "The fault has cleared"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=wall-connector"
+          }
+        ]
+      },
+      {
+        "id": "wall_connector_fault_code",
+        "title": {
+          "en": "A fault code has been reported"
+        },
+        "tokens": [
+          {
+            "name": "code",
+            "type": "number",
+            "title": {
+              "en": "Fault code"
+            },
+            "example": {
+              "en": "3"
+            }
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=wall-connector"
+          }
+        ]
       }
     ],
     "conditions": [
@@ -2864,6 +2940,62 @@
             "type": "device",
             "name": "device",
             "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "tpms_warning_is",
+        "title": {
+          "en": "Tire pressure warning level is"
+        },
+        "titleFormatted": {
+          "en": "Tire pressure warning level is [[level]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          },
+          {
+            "type": "dropdown",
+            "name": "level",
+            "title": {
+              "en": "Level"
+            },
+            "values": [
+              {
+                "id": "off",
+                "label": {
+                  "en": "Off"
+                }
+              },
+              {
+                "id": "soft",
+                "label": {
+                  "en": "Soft warning"
+                }
+              },
+              {
+                "id": "hard",
+                "label": {
+                  "en": "Hard warning"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.fault",
+        "title": {
+          "en": "There !{{is|isn't}} a fault"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=wall-connector"
           }
         ]
       }
@@ -5376,7 +5508,8 @@
         "meter_power.regen",
         "alarm_generic.rear_defrost",
         "windowcoverings_closed.tonneau",
-        "windowcoverings_set.tonneau"
+        "windowcoverings_set.tonneau",
+        "tpms_warning"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -6279,8 +6412,16 @@
         "evcharger_charging_state",
         "measure_power",
         "meter_power",
-        "connected_vehicle"
+        "connected_vehicle",
+        "alarm_generic.fault"
       ],
+      "capabilitiesOptions": {
+        "alarm_generic.fault": {
+          "title": {
+            "en": "Fault"
+          }
+        }
+      },
       "energy": {
         "evCharger": true,
         "meterPowerImportedCapability": "meter_power"
@@ -7186,6 +7327,84 @@
         "ar": "دقيقة"
       },
       "decimals": 0
+    },
+    "tpms_warning": {
+      "icon": "/assets/capabilities/tpms_warning.svg",
+      "type": "enum",
+      "title": {
+        "en": "Tire Pressure Warning",
+        "nl": "Bandenspanning Waarschuwing",
+        "da": "Dæktryk Advarsel",
+        "de": "Reifendruck Warnung",
+        "es": "Advertencia de Presión de los Neumáticos",
+        "fr": "Avertissement de Pression des Pneus",
+        "it": "Avviso Pressione Pneumatici",
+        "no": "Dekktrykk Advarsel",
+        "sv": "Däcktryck Varning",
+        "pl": "Ostrzeżenie o Ciśnieniu w Oponach",
+        "ru": "Предупреждение о Давлении в Шинах",
+        "ko": "타이어 압력 경고",
+        "ar": "تحذير ضغط الإطارات"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "values": [
+        {
+          "id": "off",
+          "title": {
+            "en": "Off",
+            "nl": "Uit",
+            "da": "Fra",
+            "de": "Aus",
+            "es": "Apagado",
+            "fr": "Éteint",
+            "it": "Spento",
+            "no": "Av",
+            "sv": "Av",
+            "pl": "Wyłączone",
+            "ru": "Выкл",
+            "ko": "꺼짐",
+            "ar": "إيقاف"
+          }
+        },
+        {
+          "id": "soft",
+          "title": {
+            "en": "Soft Warning",
+            "nl": "Lichte Waarschuwing",
+            "da": "Mild Advarsel",
+            "de": "Leichte Warnung",
+            "es": "Advertencia Leve",
+            "fr": "Avertissement Léger",
+            "it": "Avviso Lieve",
+            "no": "Mild Advarsel",
+            "sv": "Mild Varning",
+            "pl": "Łagodne Ostrzeżenie",
+            "ru": "Слабое Предупреждение",
+            "ko": "경미한 경고",
+            "ar": "تحذير خفيف"
+          }
+        },
+        {
+          "id": "hard",
+          "title": {
+            "en": "Hard Warning",
+            "nl": "Ernstige Waarschuwing",
+            "da": "Alvorlig Advarsel",
+            "de": "Starke Warnung",
+            "es": "Advertencia Grave",
+            "fr": "Avertissement Sévère",
+            "it": "Avviso Grave",
+            "no": "Alvorlig Advarsel",
+            "sv": "Allvarlig Varning",
+            "pl": "Poważne Ostrzeżenie",
+            "ru": "Серьезное Предупреждение",
+            "ko": "심각한 경고",
+            "ar": "تحذير شديد"
+          }
+        }
+      ]
     },
     "vehicle_state": {
       "icon": "/assets/capabilities/vehicle_state.svg",

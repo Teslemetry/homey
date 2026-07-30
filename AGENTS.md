@@ -280,6 +280,32 @@ received (no baseline to compare against) or on a repeated identical value.
   run listeners for a `(cardPrefix, capability, argName)` triple. See the
   solar/grid/load/battery power and buy/sell tariff rate cards for the
   pattern end to end.
+- **Boolean `alarm_generic.<sub>` capabilities** are the one exception to the
+  "not reliably auto-fired" rule above: Homey's platform auto-fires the
+  `<cap>_true`/`<cap>_false` triggers and auto-implements the plain `<cap>`
+  is/isn't condition whenever `update()` changes the value - no
+  `registerRunListener` or explicit `.trigger()` call needed, only the manual
+  card definitions (subcapabilities still don't get cards generated for you).
+  See `alarm_generic.off_grid`/`.island`/`.rear_defrost`/`.fault` on Wall
+  Connector. If a trigger also needs a custom token (e.g. a fault code),
+  don't try to attach it to this auto-fired card - define a separate,
+  explicitly-fired trigger instead (see `wall_connector_fault_code`), since
+  firing the same card manually on top of Homey's automatic firing would
+  double-run any flow built on it.
+
+### TPMS Warning Level (`tpms_warning`)
+
+`TpmsSoftWarnings`/`TpmsHardWarnings` are per-tire boolean objects
+(`front_left`/`front_right`/`rear_left`/`rear_right`); `VehicleDevice`
+aggregates both across every tire into a single custom enum capability,
+`tpms_warning` (`off`/`soft`/`hard`, hard beating soft beating off), rather
+than exposing eight separate per-wheel alarms. It's a plain
+`CHANGE_TRIGGER_CAPABILITIES` entry (see `tpms_warning_changed`), not an
+`alarm_generic` subcapability, since it has three states, not two.
+`TpmsLastSeenPressureTimeFl/Fr/Rl/Rr` (a per-tire last-seen timestamp with a
+documented timezone defect - it reports as though the reading time were
+Pacific Time regardless of the vehicle's real timezone) are not currently
+surfaced by this capability or any other.
 
 ### SSE Auth-Failure Handling (`app.ts`)
 

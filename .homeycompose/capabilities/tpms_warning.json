@@ -1,0 +1,78 @@
+{
+  "icon": "/assets/capabilities/tpms_warning.svg",
+  "type": "enum",
+  "title": {
+    "en": "Tire Pressure Warning",
+    "nl": "Bandenspanning Waarschuwing",
+    "da": "Dæktryk Advarsel",
+    "de": "Reifendruck Warnung",
+    "es": "Advertencia de Presión de los Neumáticos",
+    "fr": "Avertissement de Pression des Pneus",
+    "it": "Avviso Pressione Pneumatici",
+    "no": "Dekktrykk Advarsel",
+    "sv": "Däcktryck Varning",
+    "pl": "Ostrzeżenie o Ciśnieniu w Oponach",
+    "ru": "Предупреждение о Давлении в Шинах",
+    "ko": "타이어 압력 경고",
+    "ar": "تحذير ضغط الإطارات"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "values": [
+    {
+      "id": "off",
+      "title": {
+        "en": "Off",
+        "nl": "Uit",
+        "da": "Fra",
+        "de": "Aus",
+        "es": "Apagado",
+        "fr": "Éteint",
+        "it": "Spento",
+        "no": "Av",
+        "sv": "Av",
+        "pl": "Wyłączone",
+        "ru": "Выкл",
+        "ko": "꺼짐",
+        "ar": "إيقاف"
+      }
+    },
+    {
+      "id": "soft",
+      "title": {
+        "en": "Soft Warning",
+        "nl": "Lichte Waarschuwing",
+        "da": "Mild Advarsel",
+        "de": "Leichte Warnung",
+        "es": "Advertencia Leve",
+        "fr": "Avertissement Léger",
+        "it": "Avviso Lieve",
+        "no": "Mild Advarsel",
+        "sv": "Mild Varning",
+        "pl": "Łagodne Ostrzeżenie",
+        "ru": "Слабое Предупреждение",
+        "ko": "경미한 경고",
+        "ar": "تحذير خفيف"
+      }
+    },
+    {
+      "id": "hard",
+      "title": {
+        "en": "Hard Warning",
+        "nl": "Ernstige Waarschuwing",
+        "da": "Alvorlig Advarsel",
+        "de": "Starke Warnung",
+        "es": "Advertencia Grave",
+        "fr": "Avertissement Sévère",
+        "it": "Avviso Grave",
+        "no": "Alvorlig Advarsel",
+        "sv": "Allvarlig Varning",
+        "pl": "Poważne Ostrzeżenie",
+        "ru": "Серьезное Предупреждение",
+        "ko": "심각한 경고",
+        "ar": "تحذير شديد"
+      }
+    }
+  ]
+}

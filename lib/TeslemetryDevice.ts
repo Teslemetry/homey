@@ -28,6 +28,7 @@ export default class TeslemetryDevice extends Homey.Device {
     "steering_wheel_heater",
     "grid_buy_rate",
     "grid_sell_rate",
+    "tpms_warning",
   ]);
 
   async onInit() {

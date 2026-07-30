@@ -1,0 +1,42 @@
+{
+  "triggers": [
+    {
+      "id": "alarm_generic.fault_true",
+      "title": {
+        "en": "A fault has been detected"
+      }
+    },
+    {
+      "id": "alarm_generic.fault_false",
+      "title": {
+        "en": "The fault has cleared"
+      }
+    },
+    {
+      "id": "wall_connector_fault_code",
+      "title": {
+        "en": "A fault code has been reported"
+      },
+      "tokens": [
+        {
+          "name": "code",
+          "type": "number",
+          "title": {
+            "en": "Fault code"
+          },
+          "example": {
+            "en": "3"
+          }
+        }
+      ]
+    }
+  ],
+  "conditions": [
+    {
+      "id": "alarm_generic.fault",
+      "title": {
+        "en": "There !{{is|isn't}} a fault"
+      }
+    }
+  ]
+}

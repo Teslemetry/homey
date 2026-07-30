@@ -33,6 +33,11 @@ function createDeviceStub(
     homey: {
       app: { products: { vehicles: { [vin]: vehicle } } },
       __: (key: string) => key,
+      flow: {
+        getDeviceTriggerCard: () => ({
+          trigger: async () => {},
+        }),
+      },
     },
     driver: {
       manifest: { capabilities: Object.keys(capabilities), capabilitiesOptions: {} },
@@ -155,4 +160,98 @@ test("TonneauOpenPercent converts 0-100 percent to a 0-1 fraction on windowcover
   sse.data.emit("TonneauOpenPercent", 75);
 
   assert.equal(capabilities["windowcoverings_set.tonneau"], 0.75);
+});
+
+test("TpmsSoftWarnings/TpmsHardWarnings aggregate into a single off/soft/hard tpms_warning", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    tpms_warning: undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("TpmsSoftWarnings", {
+    front_left: false,
+    front_right: false,
+    rear_left: false,
+    rear_right: false,
+  });
+  assert.equal(capabilities["tpms_warning"], "off");
+
+  sse.data.emit("TpmsSoftWarnings", {
+    front_left: true,
+    front_right: false,
+    rear_left: false,
+    rear_right: false,
+  });
+  assert.equal(capabilities["tpms_warning"], "soft");
+
+  sse.data.emit("TpmsHardWarnings", {
+    front_left: false,
+    front_right: false,
+    rear_left: true,
+    rear_right: false,
+  });
+  assert.equal(capabilities["tpms_warning"], "hard");
+});
+
+test("a hard warning on any tire wins over a soft warning on another tire", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    tpms_warning: undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("TpmsHardWarnings", {
+    front_left: false,
+    front_right: false,
+    rear_left: false,
+    rear_right: true,
+  });
+  sse.data.emit("TpmsSoftWarnings", {
+    front_left: true,
+    front_right: false,
+    rear_left: false,
+    rear_right: false,
+  });
+
+  assert.equal(capabilities["tpms_warning"], "hard");
+});
+
+test("tpms_warning returns to off once every warning clears", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    tpms_warning: undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("TpmsHardWarnings", {
+    front_left: true,
+    front_right: false,
+    rear_left: false,
+    rear_right: false,
+  });
+  assert.equal(capabilities["tpms_warning"], "hard");
+
+  sse.data.emit("TpmsHardWarnings", {
+    front_left: false,
+    front_right: false,
+    rear_left: false,
+    rear_right: false,
+  });
+  assert.equal(capabilities["tpms_warning"], "off");
+});
+
+test("a null TpmsSoftWarnings/TpmsHardWarnings reading is treated as no warning on those tires", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    tpms_warning: undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("TpmsHardWarnings", {
+    front_left: true,
+    front_right: false,
+    rear_left: false,
+    rear_right: false,
+  });
+  assert.equal(capabilities["tpms_warning"], "hard");
+
+  sse.data.emit("TpmsHardWarnings", null);
+  assert.equal(capabilities["tpms_warning"], "off");
 });

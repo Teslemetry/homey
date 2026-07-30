@@ -11,8 +11,16 @@
     "evcharger_charging_state",
     "measure_power",
     "meter_power",
-    "connected_vehicle"
+    "connected_vehicle",
+    "alarm_generic.fault"
   ],
+  "capabilitiesOptions": {
+    "alarm_generic.fault": {
+      "title": {
+        "en": "Fault"
+      }
+    }
+  },
   "energy": {
     "evCharger": true,
     "meterPowerImportedCapability": "meter_power"

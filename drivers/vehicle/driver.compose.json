@@ -92,7 +92,8 @@
     "meter_power.regen",
     "alarm_generic.rear_defrost",
     "windowcoverings_closed.tonneau",
-    "windowcoverings_set.tonneau"
+    "windowcoverings_set.tonneau",
+    "tpms_warning"
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {

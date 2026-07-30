@@ -431,6 +431,24 @@
         "ko": "적재함 커버가 열렸습니다",
         "ar": "تم فتح غطاء صندوق الحمولة"
       }
+    },
+    {
+      "id": "tpms_warning_changed",
+      "title": {
+        "en": "The tire pressure warning level has changed"
+      },
+      "tokens": [
+        {
+          "name": "tpms_warning",
+          "type": "string",
+          "title": {
+            "en": "Level"
+          },
+          "example": {
+            "en": "soft"
+          }
+        }
+      ]
     }
   ],
   "conditions": [
@@ -649,6 +667,44 @@
         "ko": "적재함 커버가 !{{closed|open}}",
         "ar": "غطاء صندوق الحمولة !{{closed|open}}"
       }
+    },
+    {
+      "id": "tpms_warning_is",
+      "title": {
+        "en": "Tire pressure warning level is"
+      },
+      "titleFormatted": {
+        "en": "Tire pressure warning level is [[level]]"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "level",
+          "title": {
+            "en": "Level"
+          },
+          "values": [
+            {
+              "id": "off",
+              "label": {
+                "en": "Off"
+              }
+            },
+            {
+              "id": "soft",
+              "label": {
+                "en": "Soft warning"
+              }
+            },
+            {
+              "id": "hard",
+              "label": {
+                "en": "Hard warning"
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "actions": [
