@@ -37,6 +37,7 @@ export default class SolarDevice extends TeslemetryDevice {
         return;
       }
       const dateKey = event.createdAt.slice(0, 10);
+      this.update("solar_generation_today", total_solar_generation / 1000);
       await this.updateCumulativeMeter(
         "meter_power",
         total_solar_generation / 1000,

@@ -4176,7 +4176,8 @@
       },
       "capabilities": [
         "measure_power",
-        "meter_power"
+        "meter_power",
+        "solar_generation_today"
       ],
       "energy": {
         "meterPowerExportedCapability": "meter_power"
@@ -5989,6 +5990,33 @@
           }
         }
       ]
+    },
+    "solar_generation_today": {
+      "icon": "/assets/capabilities/solar.svg",
+      "type": "number",
+      "title": {
+        "en": "Solar Generated Today",
+        "nl": "Vandaag Opgewekte Zonne-energie",
+        "da": "Solenergi Produceret i Dag",
+        "de": "Heute Erzeugte Solarenergie",
+        "es": "Energía Solar Generada Hoy",
+        "fr": "Énergie Solaire Générée Aujourd'hui",
+        "it": "Energia Solare Generata Oggi",
+        "no": "Solenergi Generert i Dag",
+        "sv": "Solenergi Genererad Idag",
+        "pl": "Energia Słoneczna Wygenerowana Dzisiaj",
+        "ru": "Солнечная Энергия, Выработанная Сегодня",
+        "ko": "오늘 생성된 태양광 에너지",
+        "ar": "الطاقة الشمسية المولدة اليوم"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "kWh"
+      },
+      "decimals": 2,
+      "insights": true
     },
     "steering_wheel_heater": {
       "icon": "/assets/capabilities/steering_wheel_heater.svg",
