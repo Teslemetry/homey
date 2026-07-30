@@ -46,5 +46,8 @@
   },
   "1.0.3": {
     "en": "Reliability improvements: fixed re-authentication when your Teslemetry token expires, plus internal cleanups."
+  },
+  "1.0.4": {
+    "en": "Added a Today's Solar Generation insight to the Solar device"
   }
 }
