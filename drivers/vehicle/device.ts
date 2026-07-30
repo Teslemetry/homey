@@ -28,6 +28,15 @@ const windowMap = new Map<SseData["data"]["FdWindow"], boolean>([
   ["WindowStateClosed", false],
 ]);
 
+const tonneauPositionClosedMap = new Map<
+  SseData["data"]["TonneauPosition"],
+  boolean
+>([
+  ["TonneauPositionStateClosed", true],
+  ["TonneauPositionStatePartiallyOpen", false],
+  ["TonneauPositionStateFullyOpen", false],
+]);
+
 const centerDisplayMap = new Map<SseData["data"]["CenterDisplay"], boolean>([
   ["DisplayStateOff", false],
   ["DisplayStateDim", false],
@@ -161,6 +170,13 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("measure_power", value ? value * 1000 : value),
     );
 
+    // Lifetime Energy
+    this.onSignal("LifetimeEnergyGainedRegen", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("meter_power.regen", value);
+      }
+    });
+
     // Lock & Sentry & Security
     this.onSignal("Locked", (value) => this.update("locked", value));
     this.onSignal("SentryMode", (value) => {
@@ -224,6 +240,9 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
     this.onSignal("ClimateKeeperMode", (value) =>
       handleThermostatMode("ClimateKeeperMode", value),
+    );
+    this.onSignal("RearDefrostEnabled", (value) =>
+      this.update("alarm_generic.rear_defrost", value),
     );
 
     this.onSignal(
@@ -299,6 +318,19 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.onSignal("RdWindow", handleWindow);
     this.onSignal("RpWindow", handleWindow);
 
+    // Cybertruck Tonneau
+    this.onSignal("TonneauPosition", (value) =>
+      this.update(
+        "windowcoverings_closed.tonneau",
+        tonneauPositionClosedMap.get(value),
+      ),
+    );
+    this.onSignal("TonneauOpenPercent", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("windowcoverings_set.tonneau", value / 100);
+      }
+    });
+
     // Tire Pressure (TPMS)
     this.onSignal("TpmsPressureFl", (value) =>
       this.update(
@@ -341,6 +373,19 @@ export default class VehicleDevice extends TeslemetryDevice {
       else if (value === "ShiftStateR") this.update("gear", "R");
       else if (value === "ShiftStateN") this.update("gear", "N");
       else if (value === "ShiftStateD") this.update("gear", "D");
+    });
+    this.onSignal("MilesSinceReset", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("measure_distance.since_reset", value * MILES_TO_KILOMETERS);
+      }
+    });
+    this.onSignal("SelfDrivingMilesSinceReset", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update(
+          "measure_distance.fsd_since_reset",
+          value * MILES_TO_KILOMETERS,
+        );
+      }
     });
 
     // Navigation

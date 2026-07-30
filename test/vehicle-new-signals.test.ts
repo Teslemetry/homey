@@ -1,0 +1,143 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { EventEmitter } from "node:events";
+// Imports the built output; see device-oninit-no-product.test.ts for why.
+import VehicleDevice from "../.homeybuild/drivers/vehicle/device.js";
+
+class FakeVehicleStream extends EventEmitter {
+  data = new EventEmitter();
+  cache = { data: {} as Record<string, unknown> };
+
+  onSignal(field: string, callback: (value: unknown) => void) {
+    this.data.on(field, callback);
+    return () => this.data.off(field, callback);
+  }
+}
+
+function createDeviceStub(capabilities: Record<string, unknown>) {
+  const sse = new FakeVehicleStream();
+  const vehicle = {
+    sse,
+    api: {},
+    metadata: { config: { rhd: false, can_actuate_trunks: false } },
+  };
+  const stub = Object.assign(new VehicleDevice(), {
+    homey: {
+      app: { products: { vehicles: { "test-vin": vehicle } } },
+      __: (key: string) => key,
+    },
+    driver: {
+      manifest: { capabilities: Object.keys(capabilities), capabilitiesOptions: {} },
+    },
+    getData: () => ({ vin: "test-vin", id: "test-vin" }),
+    getCapabilities: () => Object.keys(capabilities),
+    getCapabilityValue: (capability: string) => capabilities[capability],
+    setCapabilityValue: async (capability: string, value: unknown) => {
+      capabilities[capability] = value;
+    },
+    setCapabilityOptions: async () => {},
+    registerCapabilityListener: () => {},
+    log: () => {},
+    error: () => {},
+    setUnavailable: async () => {},
+  });
+  return { stub, sse, capabilities };
+}
+
+test("MilesSinceReset converts miles to km on measure_distance.since_reset", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "measure_distance.since_reset": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("MilesSinceReset", 100);
+
+  assert.equal(capabilities["measure_distance.since_reset"], 100 * 1.609344);
+});
+
+test("SelfDrivingMilesSinceReset converts miles to km on measure_distance.fsd_since_reset", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "measure_distance.fsd_since_reset": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("SelfDrivingMilesSinceReset", 50);
+
+  assert.equal(capabilities["measure_distance.fsd_since_reset"], 50 * 1.609344);
+});
+
+test("null/undefined MilesSinceReset and SelfDrivingMilesSinceReset are skipped", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "measure_distance.since_reset": 5,
+    "measure_distance.fsd_since_reset": 5,
+  });
+  await stub.onInit();
+
+  sse.data.emit("MilesSinceReset", null);
+  sse.data.emit("SelfDrivingMilesSinceReset", undefined);
+
+  assert.equal(capabilities["measure_distance.since_reset"], 5);
+  assert.equal(capabilities["measure_distance.fsd_since_reset"], 5);
+});
+
+test("LifetimeEnergyGainedRegen passes the native kWh value straight through to meter_power.regen", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "meter_power.regen": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("LifetimeEnergyGainedRegen", 1234.5);
+
+  assert.equal(capabilities["meter_power.regen"], 1234.5);
+});
+
+test("RearDefrostEnabled updates alarm_generic.rear_defrost", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "alarm_generic.rear_defrost": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("RearDefrostEnabled", true);
+  assert.equal(capabilities["alarm_generic.rear_defrost"], true);
+
+  sse.data.emit("RearDefrostEnabled", false);
+  assert.equal(capabilities["alarm_generic.rear_defrost"], false);
+});
+
+test("TonneauPosition maps Closed to true and PartiallyOpen/FullyOpen to false on windowcoverings_closed.tonneau", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "windowcoverings_closed.tonneau": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("TonneauPosition", "TonneauPositionStateClosed");
+  assert.equal(capabilities["windowcoverings_closed.tonneau"], true);
+
+  sse.data.emit("TonneauPosition", "TonneauPositionStateFullyOpen");
+  assert.equal(capabilities["windowcoverings_closed.tonneau"], false);
+
+  sse.data.emit("TonneauPosition", "TonneauPositionStatePartiallyOpen");
+  assert.equal(capabilities["windowcoverings_closed.tonneau"], false);
+});
+
+test("TonneauPosition Unknown/Invalid states are skipped (no mapped value)", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "windowcoverings_closed.tonneau": true,
+  });
+  await stub.onInit();
+
+  sse.data.emit("TonneauPosition", "TonneauPositionStateUnknown");
+
+  assert.equal(capabilities["windowcoverings_closed.tonneau"], true);
+});
+
+test("TonneauOpenPercent converts 0-100 percent to a 0-1 fraction on windowcoverings_set.tonneau", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "windowcoverings_set.tonneau": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("TonneauOpenPercent", 75);
+
+  assert.equal(capabilities["windowcoverings_set.tonneau"], 0.75);
+});
