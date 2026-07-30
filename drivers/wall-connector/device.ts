@@ -128,10 +128,12 @@ export default class WallConnecter extends TeslemetryDevice {
 
     if (code !== 0) {
       this.log(`Unknown wall_connector_fault_state code: ${code}`);
-      this.homey.flow
-        .getDeviceTriggerCard("wall_connector_fault_code")
-        .trigger(this, { code })
-        .catch(this.error);
+      if (this.isLive()) {
+        this.homey.flow
+          .getDeviceTriggerCard("wall_connector_fault_code")
+          .trigger(this, { code })
+          .catch(this.error);
+      }
     }
   }
 

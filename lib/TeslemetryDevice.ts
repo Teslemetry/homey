@@ -40,6 +40,19 @@ export default class TeslemetryDevice extends Homey.Device {
   }
 
   /**
+   * Whether this device instance is still safe to fire a Flow trigger for.
+   * `destroyed` alone isn't enough: the Apps SDK removes a deleted device
+   * from the driver's runtime map before calling onUninit(), so a write
+   * that was already in flight can resume in that gap with destroyed still
+   * false. Checking current membership in driver.getDevices() closes it.
+   * Call this after the last await and immediately before every
+   * `.trigger(this, ...)`.
+   */
+  protected isLive(): boolean {
+    return !this.destroyed && this.driver.getDevices().includes(this);
+  }
+
+  /**
    * The capabilities this device instance should have. Defaults to the
    * driver's full static manifest list; subclasses override to exclude
    * capabilities that don't apply to this specific device (e.g. a
@@ -120,8 +133,7 @@ export default class TeslemetryDevice extends Homey.Device {
       this.error(error);
       return;
     }
-    if (this.destroyed) return;
-    if (hasChangeTrigger && previousValue !== value) {
+    if (hasChangeTrigger && previousValue !== value && this.isLive()) {
       this.homey.flow
         .getDeviceTriggerCard(`${capability}_changed`)
         .trigger(this, { [capability]: value })
@@ -147,10 +159,10 @@ export default class TeslemetryDevice extends Homey.Device {
     if (value === undefined || value === null) return;
     const previous = this.getCapabilityValue(capability) as number | null;
     await this.update(capability, value);
-    if (this.destroyed) return;
     if (previous === null || previous === undefined || previous === value) {
       return;
     }
+    if (!this.isLive()) return;
     const tokens = { [tokenName]: value };
     const state = { previous, current: value };
     this.homey.flow

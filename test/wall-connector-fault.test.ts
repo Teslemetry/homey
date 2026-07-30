@@ -34,6 +34,7 @@ function createDeviceStub(capabilities: Record<string, unknown>) {
     },
     driver: {
       manifest: { capabilities: Object.keys(capabilities), capabilitiesOptions: {} },
+      getDevices: () => [] as unknown[],
     },
     getData: () => ({ site: "site-1", din: "din-1" }),
     getCapabilities: () => Object.keys(capabilities),
@@ -45,6 +46,7 @@ function createDeviceStub(capabilities: Record<string, unknown>) {
     error: () => {},
     destroyed: false,
   });
+  stub.driver.getDevices = () => [stub];
 
   return { stub, capabilities, handlers, triggerCalls };
 }

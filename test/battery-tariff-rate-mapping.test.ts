@@ -54,6 +54,7 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
     },
     driver: {
       manifest: { capabilities: Object.keys(capabilities), capabilitiesOptions: {} },
+      getDevices: () => [] as unknown[],
     },
     getData: () => ({ id: "site-1" }),
     getCapabilities: () => Object.keys(capabilities),
@@ -66,6 +67,7 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
     log: () => {},
     error: () => {},
   });
+  stub.driver.getDevices = () => [stub];
   const emitSiteInfo = (document: Record<string, unknown>) => {
     siteInfoDocument = document;
     sse.emit("site_info", { site_id: "site-1", site_info: document });

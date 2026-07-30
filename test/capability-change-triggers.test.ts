@@ -20,6 +20,9 @@ function createDeviceStub(capabilities: Record<string, unknown>) {
         },
       },
     },
+    driver: {
+      getDevices: () => [] as unknown[],
+    },
     error: () => {},
     getCapabilities: () => Object.keys(capabilities),
     getCapabilityValue: (capability: string) => capabilities[capability],
@@ -27,6 +30,7 @@ function createDeviceStub(capabilities: Record<string, unknown>) {
       capabilities[capability] = value;
     },
   });
+  stub.driver.getDevices = () => [stub];
   return { stub, triggerCalls };
 }
 
@@ -120,6 +124,26 @@ test("update() does not fire a trigger after the device is removed during the ca
   resolveWrite();
   await updatePromise;
 
+  assert.deepEqual(triggerCalls, []);
+});
+
+test("update() does not fire a trigger when a write settles after the SDK removes the device from the driver map but before onUninit() runs", async () => {
+  // Models the actual Apps SDK v3 deletion order (map removal, then
+  // _onDeleted()/onUninit()), not a direct early onUninit() call - see
+  // device-liveness.test.ts. destroyed is still false in this gap.
+  let resolveWrite!: () => void;
+  const pendingWrite = new Promise<void>((resolve) => {
+    resolveWrite = resolve;
+  });
+  const { stub, triggerCalls } = createDeviceStub({ backup_reserve: 0.2 });
+  stub.setCapabilityValue = async () => pendingWrite;
+
+  const updatePromise = stub.update("backup_reserve", 0.35);
+  stub.driver.getDevices = () => [];
+  resolveWrite();
+  await updatePromise;
+
+  assert.equal(stub.destroyed, false);
   assert.deepEqual(triggerCalls, []);
 });
 

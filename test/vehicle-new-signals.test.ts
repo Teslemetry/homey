@@ -41,6 +41,7 @@ function createDeviceStub(
     },
     driver: {
       manifest: { capabilities: Object.keys(capabilities), capabilitiesOptions: {} },
+      getDevices: () => [] as unknown[],
     },
     getData: () => ({ vin, id: vin }),
     getCapabilities: () => Object.keys(capabilities),
@@ -54,6 +55,7 @@ function createDeviceStub(
     error: () => {},
     setUnavailable: async () => {},
   });
+  stub.driver.getDevices = () => [stub];
   return { stub, sse, capabilities };
 }
 
