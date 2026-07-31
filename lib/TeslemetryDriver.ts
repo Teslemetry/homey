@@ -134,6 +134,39 @@ export default class TeslemetryDriver extends Homey.Driver {
     return candidates.length === 1 ? candidates[0] : null;
   }
 
+  /**
+   * Maps every accessible energy site (metadata.access) to zero or more pair
+   * candidates independently via Promise.allSettled, so one site's rejected
+   * getSiteInfo() can't blank the whole pairing list. Failures are logged
+   * with the failing site id/reason and otherwise skipped - callers get back
+   * only the healthy candidates.
+   */
+  protected async listEnergySiteCandidates<T>(
+    sites: EnergyDetails[],
+    mapSite: (site: EnergyDetails) => Promise<T[]>,
+  ): Promise<T[]> {
+    const accessible = sites.filter((site) => site.metadata.access);
+    const results = await Promise.allSettled(accessible.map(mapSite));
+
+    const candidates: T[] = [];
+    const failures: string[] = [];
+    results.forEach((result, index) => {
+      if (result.status === "fulfilled") {
+        candidates.push(...result.value);
+      } else {
+        failures.push(`${accessible[index].id} (${result.reason})`);
+      }
+    });
+
+    if (failures.length > 0) {
+      this.error(
+        `onPairListDevices: skipped ${failures.length}/${accessible.length} energy site(s) that failed: ${failures.join(", ")}`,
+      );
+    }
+
+    return candidates;
+  }
+
   async onPair(session: any) {
     session.setHandler("showView", async (viewId: string) => {
       if (viewId === "login_oauth2") {

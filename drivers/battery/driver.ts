@@ -51,21 +51,22 @@ export default class PowerwallDriver extends TeslemetryDriver {
       );
     }
 
-    return (
-      await Promise.all(
-        Object.values(products.energySites).map(async (site) => {
-          const siteInfo = await site.api.getSiteInfo();
-          if (!siteInfo?.response.components?.battery) return null;
+    return this.listEnergySiteCandidates(
+      Object.values(products.energySites),
+      async (site) => {
+        const siteInfo = await site.api.getSiteInfo();
+        if (!siteInfo?.response.components?.battery) return [];
 
-          return {
+        return [
+          {
             name: `${site.name} Powerwall`,
             data: {
               id: site.id,
             },
             class: "battery",
-          };
-        }),
-      )
-    ).filter((device): device is NonNullable<typeof device> => device !== null);
+          },
+        ];
+      },
+    );
   }
 }

@@ -79,23 +79,21 @@ export default class WallConnectorDriver extends TeslemetryDriver {
       );
     }
 
-    const sitesResults = await Promise.all(
-      Object.values(products.energySites)
-        .filter(({ metadata }) => metadata.access)
-        .map(async (site) => {
-          const siteInfo = await site.api.getSiteInfo();
-          const wallConnectors =
-            siteInfo.response?.components?.wall_connectors ?? [];
+    return this.listEnergySiteCandidates(
+      Object.values(products.energySites),
+      async (site) => {
+        const siteInfo = await site.api.getSiteInfo();
+        const wallConnectors =
+          siteInfo.response?.components?.wall_connectors ?? [];
 
-          return wallConnectors.map((connector) => ({
-            name: `${site.name} ${connector.part_name}`,
-            data: {
-              site: site.id,
-              din: connector.din,
-            },
-          }));
-        }),
+        return wallConnectors.map((connector) => ({
+          name: `${site.name} ${connector.part_name}`,
+          data: {
+            site: site.id,
+            din: connector.din,
+          },
+        }));
+      },
     );
-    return sitesResults.flat();
   }
 }

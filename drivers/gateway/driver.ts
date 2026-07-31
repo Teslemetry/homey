@@ -49,22 +49,22 @@ export default class GatewayDriver extends TeslemetryDriver {
       );
     }
 
-    return (
-      await Promise.all(
-        Object.values(products.energySites).map(async (site) => {
-          // Assume all sites have a gateway/grid connection or check components.grid
-          const siteInfo = await site.api.getSiteInfo();
-          if (!siteInfo) return null;
+    return this.listEnergySiteCandidates(
+      Object.values(products.energySites),
+      async (site) => {
+        const siteInfo = await site.api.getSiteInfo();
+        if (!siteInfo) return [];
 
-          return {
+        return [
+          {
             name: `${site.name} Gateway`,
             data: {
               id: site.id,
             },
             class: "sensor",
-          };
-        }),
-      )
-    ).filter((device): device is NonNullable<typeof device> => device !== null);
+          },
+        ];
+      },
+    );
   }
 }

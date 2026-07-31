@@ -50,21 +50,22 @@ export default class SolarDriver extends TeslemetryDriver {
       );
     }
 
-    return (
-      await Promise.all(
-        Object.values(products.energySites).map(async (site) => {
-          const siteInfo = await site.api.getSiteInfo();
-          if (!siteInfo?.response.components?.solar) return null;
+    return this.listEnergySiteCandidates(
+      Object.values(products.energySites),
+      async (site) => {
+        const siteInfo = await site.api.getSiteInfo();
+        if (!siteInfo?.response.components?.solar) return [];
 
-          return {
+        return [
+          {
             name: `${site.name} Solar`,
             data: {
               id: site.id,
             },
             class: "solarpanel",
-          };
-        }),
-      )
-    ).filter((device): device is NonNullable<typeof device> => device !== null);
+          },
+        ];
+      },
+    );
   }
 }
