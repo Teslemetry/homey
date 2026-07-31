@@ -311,7 +311,7 @@ data updates, no commands). Register the essential listeners (state/
 connectivity/live SSE listeners and all `registerCapabilityListener` command
 listeners) before anything that replays a less-trusted cached value, and
 guard the fallible replay so it can't undo that registration - see
-`PowerwallDevice.onInit` (guards `updateTariffRates`, a plain non-`async`
+`PowerwallDevice.onInit` (guards `recomputeTariffRates`, a plain non-`async`
 method) and `VehicleDevice.onInit` (splits essential registration into
 `registerCommandCapabilityListeners()`, run first, and wraps the fallible
 `registerSignalListeners()` call in `try`/`catch`).

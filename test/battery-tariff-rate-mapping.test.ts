@@ -43,6 +43,7 @@ function createDeviceStub(
     get: () => siteInfoDocument,
   });
   const triggerCalls: Array<{ cardId: string; tokens: unknown; state: unknown }> = [];
+  const capabilityOptions: Record<string, Record<string, unknown>> = {};
   let currentNow = opts.now ?? new Date("2026-07-30T12:00:00Z");
   const timers: Array<{ id: number; callback: () => void; delay: number }> = [];
   let nextTimerId = 1;
@@ -77,7 +78,12 @@ function createDeviceStub(
     setCapabilityValue: async (capability: string, value: unknown) => {
       capabilities[capability] = value;
     },
-    setCapabilityOptions: async () => {},
+    setCapabilityOptions: async (
+      capability: string,
+      options: Record<string, unknown>,
+    ) => {
+      capabilityOptions[capability] = options;
+    },
     registerCapabilityListener: () => {},
     getStoreValue: () => null,
     now: () => currentNow,
@@ -96,6 +102,7 @@ function createDeviceStub(
     capabilities,
     emitSiteInfo,
     triggerCalls,
+    capabilityOptions,
     timers,
     setNow: (date: Date) => {
       currentNow = date;
@@ -176,8 +183,8 @@ test("PowerwallDevice fires grid_buy_rate/grid_sell_rate_above/below with previo
   );
 });
 
-test("PowerwallDevice clears grid_buy_rate/grid_sell_rate when siteInfo omits the tariff (removed)", async () => {
-  const { stub, capabilities, emitSiteInfo, timers } = createDeviceStub({
+test("PowerwallDevice clears grid_buy_rate/grid_sell_rate and currency units when siteInfo omits the tariff (removed)", async () => {
+  const { stub, capabilities, capabilityOptions, emitSiteInfo, timers } = createDeviceStub({
     grid_buy_rate: 0.3,
     grid_sell_rate: 0.05,
   });
@@ -188,12 +195,15 @@ test("PowerwallDevice clears grid_buy_rate/grid_sell_rate when siteInfo omits th
     tariff_content_v2: SAMPLE_TARIFF,
   });
   assert.equal(capabilities.grid_buy_rate, 0.3);
+  assert.equal(capabilityOptions.grid_buy_rate.units, "USD");
   assert.equal(timers.length, 1, "boundary timer scheduled while tariff resolves");
 
   emitSiteInfo({});
 
   assert.equal(capabilities.grid_buy_rate, null);
   assert.equal(capabilities.grid_sell_rate, null);
+  assert.equal(capabilityOptions.grid_buy_rate.units, undefined);
+  assert.equal(capabilityOptions.grid_sell_rate.units, undefined);
   assert.equal(timers.length, 0, "boundary timer cleared once the tariff is removed");
 });
 
@@ -209,6 +219,34 @@ test("PowerwallDevice clears grid_buy_rate/grid_sell_rate when installation_time
   assert.equal(capabilities.grid_buy_rate, null);
   assert.equal(capabilities.grid_sell_rate, null);
   assert.equal(timers.length, 0, "no boundary can be scheduled without a timezone");
+});
+
+test("PowerwallDevice clears stale rates when no tariff season matches now", async () => {
+  const { stub, capabilities, emitSiteInfo, timers } = createDeviceStub({
+    grid_buy_rate: 0.3,
+    grid_sell_rate: 0.05,
+  });
+  await stub.onInit();
+
+  emitSiteInfo({
+    installation_time_zone: "UTC",
+    tariff_content_v2: {
+      ...SAMPLE_TARIFF,
+      seasons: {
+        JANUARY: {
+          fromMonth: 1,
+          fromDay: 1,
+          toMonth: 1,
+          toDay: 31,
+          tou_periods: { ALL: { periods: ALL_DAY_PERIOD } },
+        },
+      },
+    },
+  });
+
+  assert.equal(capabilities.grid_buy_rate, null);
+  assert.equal(capabilities.grid_sell_rate, null);
+  assert.equal(timers.length, 0, "no boundary scheduled for an unresolved tariff");
 });
 
 test("PowerwallDevice advances grid_buy_rate/grid_sell_rate at the next tariff period boundary with no new site_info event", async () => {
