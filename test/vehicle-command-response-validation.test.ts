@@ -66,6 +66,7 @@ function createCapabilityDeviceStub(
       getDevices: () => [] as unknown[],
     },
     getData: () => ({ vin: "test-vin", id: "test-vin" }),
+    getStoreValue: () => null,
     getCapabilities: () => [],
     getCapabilityValue: () => undefined,
     setCapabilityValue: async () => {},
