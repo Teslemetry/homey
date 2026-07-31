@@ -25,7 +25,10 @@ class FakeEnergySiteStream extends EventEmitter {
   }
 }
 
-function createDeviceStub(siteInfoDocument?: Record<string, unknown>) {
+function createDeviceStub(
+  siteInfoDocument?: Record<string, unknown>,
+  opts: { now?: Date } = {},
+) {
   const apiCalls: Array<[string, unknown[]]> = [];
   const api = new Proxy(
     {},
@@ -52,12 +55,15 @@ function createDeviceStub(siteInfoDocument?: Record<string, unknown>) {
     grid_sell_rate: undefined,
     "meter_power.charged": 0,
     "meter_power.discharged": 0,
+    battery_charged_today: undefined,
+    battery_discharged_today: undefined,
   };
   const capabilityOptions: Array<{ capability: string; options: unknown }> = [];
   const store: Record<string, unknown> = {};
   const capabilityListeners: Record<string, (value: unknown) => Promise<void>> = {};
-  const timers: Array<{ id: number; callback: () => void }> = [];
+  const timers: Array<{ id: number; callback: () => void; delay: number }> = [];
   let nextTimerId = 1;
+  let currentNow = opts.now ?? new Date("2026-07-30T12:00:00Z");
 
   const stub = Object.assign(Object.create(PowerwallDevice.prototype), {
     homey: {
@@ -66,9 +72,9 @@ function createDeviceStub(siteInfoDocument?: Record<string, unknown>) {
       flow: {
         getDeviceTriggerCard: () => ({ trigger: async () => {} }),
       },
-      setTimeout: (callback: () => void) => {
+      setTimeout: (callback: () => void, delay: number) => {
         const timerId = nextTimerId++;
-        timers.push({ id: timerId, callback });
+        timers.push({ id: timerId, callback, delay });
         return timerId;
       },
       clearTimeout: (timerId: number) => {
@@ -99,10 +105,23 @@ function createDeviceStub(siteInfoDocument?: Record<string, unknown>) {
     setUnavailable: async () => {},
     log: () => {},
     error: () => {},
+    now: () => currentNow,
   });
   stub.driver.getDevices = () => [stub];
 
-  return { stub, sse, api, apiCalls, capabilities, capabilityOptions, capabilityListeners, timers };
+  return {
+    stub,
+    sse,
+    api,
+    apiCalls,
+    capabilities,
+    capabilityOptions,
+    capabilityListeners,
+    timers,
+    setNow: (date: Date) => {
+      currentNow = date;
+    },
+  };
 }
 
 test("PowerwallDevice's site_info handler maps backup_reserve_percent and default_real_mode", async () => {
@@ -234,6 +253,75 @@ test("PowerwallDevice's energy_totals handler drives charged/discharged cumulati
   assert.equal(capabilities["meter_power.discharged"], 0.5);
 });
 
+test("PowerwallDevice's energy_totals handler sets battery_charged_today/battery_discharged_today to today's raw kWh totals", async () => {
+  const { stub, sse, capabilities } = createDeviceStub();
+  await stub.onInit();
+
+  const onEnergyTotals = sse.listeners("energy_totals")[0] as (event: unknown) => Promise<void>;
+
+  await onEnergyTotals({
+    totals: { total_battery_charge: 3000, total_battery_discharge: 1000 },
+    createdAt: "2026-07-30T10:00:00Z",
+  });
+
+  assert.equal(capabilities["battery_charged_today"], 3);
+  assert.equal(capabilities["battery_discharged_today"], 1);
+});
+
+test("PowerwallDevice's energy_totals handler leaves battery_charged_today/battery_discharged_today untouched when the total is missing", async () => {
+  const { stub, sse, capabilities } = createDeviceStub();
+  await stub.onInit();
+
+  const onEnergyTotals = sse.listeners("energy_totals")[0] as (event: unknown) => Promise<void>;
+
+  await onEnergyTotals({
+    totals: { total_battery_charge: null, total_battery_discharge: null },
+    createdAt: "2026-07-30T10:00:00Z",
+  });
+
+  assert.equal(capabilities["battery_charged_today"], undefined);
+  assert.equal(capabilities["battery_discharged_today"], undefined);
+});
+
+test("PowerwallDevice schedules a midnight reset for the today-total capabilities using installation_time_zone from site_info", async () => {
+  const { stub, timers } = createDeviceStub(
+    { installation_time_zone: "America/New_York" },
+    { now: new Date("2026-07-30T23:59:00-04:00") },
+  );
+
+  await stub.onInit();
+
+  const midnightTimer = timers.find((timer) => timer.delay === 60_000);
+  assert.ok(midnightTimer, "midnight-reset timer scheduled at the 1-minute-to-midnight delay");
+});
+
+test("PowerwallDevice's midnight reset zeroes battery_charged_today/battery_discharged_today and reschedules", async () => {
+  const { stub, sse, capabilities, timers, setNow } = createDeviceStub(
+    { installation_time_zone: "America/New_York" },
+    { now: new Date("2026-07-30T23:59:00-04:00") },
+  );
+  await stub.onInit();
+
+  const onEnergyTotals = sse.listeners("energy_totals")[0] as (event: unknown) => Promise<void>;
+  await onEnergyTotals({
+    totals: { total_battery_charge: 3000, total_battery_discharge: 1000 },
+    createdAt: "2026-07-30T20:00:00Z",
+  });
+  assert.equal(capabilities["battery_charged_today"], 3);
+  assert.equal(capabilities["battery_discharged_today"], 1);
+
+  const timersBeforeReset = timers.length;
+  const midnightTimer = timers.find((timer) => timer.delay === 60_000);
+  assert.ok(midnightTimer);
+
+  setNow(new Date("2026-07-31T00:00:05-04:00"));
+  midnightTimer!.callback();
+
+  assert.equal(capabilities["battery_charged_today"], 0);
+  assert.equal(capabilities["battery_discharged_today"], 0);
+  assert.equal(timers.length, timersBeforeReset, "next midnight reset rescheduled");
+});
+
 test("PowerwallDevice's allow_export command listener calls gridImportExport with the mode and inverted onoff.charge_grid", async () => {
   const { stub, apiCalls, capabilityListeners } = createDeviceStub();
   await stub.onInit();
@@ -272,4 +360,17 @@ test("PowerwallDevice.onUninit removes the live_status listener registered in on
   assert.equal(sse.listenerCount("site_info"), 0);
   assert.equal(sse.listenerCount("tariff_content_v2"), 0);
   assert.equal(sse.listenerCount("energy_totals"), 0);
+});
+
+test("PowerwallDevice.onUninit clears the midnight-reset timer", async () => {
+  const { stub, timers } = createDeviceStub(
+    { installation_time_zone: "America/New_York" },
+    { now: new Date("2026-07-30T23:59:00-04:00") },
+  );
+  await stub.onInit();
+  assert.ok(timers.some((timer) => timer.delay === 60_000), "midnight timer scheduled during init");
+
+  await stub.onUninit();
+
+  assert.equal(timers.length, 0, "all timers cleared on uninit");
 });

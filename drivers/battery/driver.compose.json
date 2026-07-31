@@ -33,7 +33,9 @@
     "grid_buy_rate",
     "grid_sell_rate",
     "meter_power.charged",
-    "meter_power.discharged"
+    "meter_power.discharged",
+    "battery_charged_today",
+    "battery_discharged_today"
   ],
   "capabilitiesOptions": {
     "meter_power.charged": {

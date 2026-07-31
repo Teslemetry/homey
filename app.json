@@ -5106,7 +5106,9 @@
         "grid_buy_rate",
         "grid_sell_rate",
         "meter_power.charged",
-        "meter_power.discharged"
+        "meter_power.discharged",
+        "battery_charged_today",
+        "battery_discharged_today"
       ],
       "capabilitiesOptions": {
         "meter_power.charged": {
@@ -5276,7 +5278,10 @@
         "alarm_generic.off_grid",
         "alarm_generic.island",
         "meter_power.imported",
-        "meter_power.exported"
+        "meter_power.exported",
+        "grid_imported_today",
+        "grid_exported_today",
+        "home_usage_today"
       ],
       "capabilitiesOptions": {
         "meter_power.imported": {
@@ -6730,6 +6735,60 @@
       "decimals": 2,
       "step": 0.01
     },
+    "battery_charged_today": {
+      "icon": "/assets/capabilities/backup_reserve.svg",
+      "type": "number",
+      "title": {
+        "en": "Battery Charged Today",
+        "nl": "Vandaag Opgeladen Batterij-energie",
+        "da": "Batterienergi Opladet i Dag",
+        "de": "Heute Geladene Batterieenergie",
+        "es": "Energía de Batería Cargada Hoy",
+        "fr": "Énergie de Batterie Chargée Aujourd'hui",
+        "it": "Energia della Batteria Caricata Oggi",
+        "no": "Batterienergi Ladet i Dag",
+        "sv": "Batterienergi Laddad Idag",
+        "pl": "Energia Baterii Naładowana Dzisiaj",
+        "ru": "Энергия Батареи, Заряженная Сегодня",
+        "ko": "오늘 충전된 배터리 에너지",
+        "ar": "طاقة البطارية المشحونة اليوم"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "kWh"
+      },
+      "decimals": 2,
+      "insights": true
+    },
+    "battery_discharged_today": {
+      "icon": "/assets/capabilities/backup_reserve.svg",
+      "type": "number",
+      "title": {
+        "en": "Battery Discharged Today",
+        "nl": "Vandaag Ontladen Batterij-energie",
+        "da": "Batterienergi Afladet i Dag",
+        "de": "Heute Entladene Batterieenergie",
+        "es": "Energía de Batería Descargada Hoy",
+        "fr": "Énergie de Batterie Déchargée Aujourd'hui",
+        "it": "Energia della Batteria Scaricata Oggi",
+        "no": "Batterienergi Utladet i Dag",
+        "sv": "Batterienergi Urladdad Idag",
+        "pl": "Energia Baterii Rozładowana Dzisiaj",
+        "ru": "Энергия Батареи, Разряженная Сегодня",
+        "ko": "오늘 방전된 배터리 에너지",
+        "ar": "طاقة البطارية المفرغة اليوم"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "kWh"
+      },
+      "decimals": 2,
+      "insights": true
+    },
     "cellular_connected": {
       "icon": "/assets/capabilities/cellular_connected.svg",
       "type": "boolean",
@@ -6975,6 +7034,60 @@
       "uiComponent": "sensor",
       "decimals": 4
     },
+    "grid_exported_today": {
+      "icon": "/assets/capabilities/grid-status.svg",
+      "type": "number",
+      "title": {
+        "en": "Grid Exported Today",
+        "nl": "Vandaag Geëxporteerde Netenergie",
+        "da": "Netenergi Eksporteret i Dag",
+        "de": "Heute Exportierte Netzenergie",
+        "es": "Energía de Red Exportada Hoy",
+        "fr": "Énergie du Réseau Exportée Aujourd'hui",
+        "it": "Energia di Rete Esportata Oggi",
+        "no": "Nettenergi Eksportert i Dag",
+        "sv": "Nätenergi Exporterad Idag",
+        "pl": "Energia Sieciowa Wyeksportowana Dzisiaj",
+        "ru": "Сетевая Энергия, Экспортированная Сегодня",
+        "ko": "오늘 수출된 그리드 에너지",
+        "ar": "طاقة الشبكة المصدرة اليوم"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "kWh"
+      },
+      "decimals": 2,
+      "insights": true
+    },
+    "grid_imported_today": {
+      "icon": "/assets/capabilities/grid-status.svg",
+      "type": "number",
+      "title": {
+        "en": "Grid Imported Today",
+        "nl": "Vandaag Geïmporteerde Netenergie",
+        "da": "Netenergi Importeret i Dag",
+        "de": "Heute Importierte Netzenergie",
+        "es": "Energía de Red Importada Hoy",
+        "fr": "Énergie du Réseau Importée Aujourd'hui",
+        "it": "Energia di Rete Importata Oggi",
+        "no": "Nettenergi Importert i Dag",
+        "sv": "Nätenergi Importerad Idag",
+        "pl": "Energia Sieciowa Zaimportowana Dzisiaj",
+        "ru": "Сетевая Энергия, Импортированная Сегодня",
+        "ko": "오늘 수입된 그리드 에너지",
+        "ar": "طاقة الشبكة المستوردة اليوم"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "kWh"
+      },
+      "decimals": 2,
+      "insights": true
+    },
     "grid_sell_rate": {
       "icon": "/assets/capabilities/grid_sell_rate.svg",
       "type": "number",
@@ -6997,6 +7110,32 @@
       "setable": false,
       "uiComponent": "sensor",
       "decimals": 4
+    },
+    "home_usage_today": {
+      "type": "number",
+      "title": {
+        "en": "Home Usage Today",
+        "nl": "Vandaag Thuisverbruik",
+        "da": "Hjemmeforbrug i Dag",
+        "de": "Heute Hausverbrauch",
+        "es": "Consumo del Hogar Hoy",
+        "fr": "Consommation Domestique Aujourd'hui",
+        "it": "Consumo Domestico Oggi",
+        "no": "Hjemmeforbruk i Dag",
+        "sv": "Hemförbrukning Idag",
+        "pl": "Zużycie Domowe Dzisiaj",
+        "ru": "Домашнее Потребление Сегодня",
+        "ko": "오늘 가정 사용량",
+        "ar": "استهلاك المنزل اليوم"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "kWh"
+      },
+      "decimals": 2,
+      "insights": true
     },
     "measure_pressure": {
       "icon": "/assets/capabilities/measure_pressure.svg",

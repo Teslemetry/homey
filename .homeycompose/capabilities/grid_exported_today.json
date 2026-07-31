@@ -1,0 +1,25 @@
+{
+  "icon": "/assets/capabilities/grid-status.svg",
+  "type": "number",
+  "title": {
+    "en": "Grid Exported Today",
+    "nl": "Vandaag Geëxporteerde Netenergie",
+    "da": "Netenergi Eksporteret i Dag",
+    "de": "Heute Exportierte Netzenergie",
+    "es": "Energía de Red Exportada Hoy",
+    "fr": "Énergie du Réseau Exportée Aujourd'hui",
+    "it": "Energia di Rete Esportata Oggi",
+    "no": "Nettenergi Eksportert i Dag",
+    "sv": "Nätenergi Exporterad Idag",
+    "pl": "Energia Sieciowa Wyeksportowana Dzisiaj",
+    "ru": "Сетевая Энергия, Экспортированная Сегодня",
+    "ko": "오늘 수출된 그리드 에너지",
+    "ar": "طاقة الشبكة المصدرة اليوم"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "units": { "en": "kWh" },
+  "decimals": 2,
+  "insights": true
+}

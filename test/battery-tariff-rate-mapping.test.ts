@@ -196,7 +196,11 @@ test("PowerwallDevice clears grid_buy_rate/grid_sell_rate and currency units whe
   });
   assert.equal(capabilities.grid_buy_rate, 0.3);
   assert.equal(capabilityOptions.grid_buy_rate.units, "USD");
-  assert.equal(timers.length, 1, "boundary timer scheduled while tariff resolves");
+  assert.equal(
+    timers.length,
+    2,
+    "tariff boundary timer scheduled while resolving, plus the today-totals midnight-reset timer",
+  );
 
   emitSiteInfo({});
 
@@ -204,7 +208,11 @@ test("PowerwallDevice clears grid_buy_rate/grid_sell_rate and currency units whe
   assert.equal(capabilities.grid_sell_rate, null);
   assert.equal(capabilityOptions.grid_buy_rate.units, undefined);
   assert.equal(capabilityOptions.grid_sell_rate.units, undefined);
-  assert.equal(timers.length, 0, "boundary timer cleared once the tariff is removed");
+  assert.equal(
+    timers.length,
+    1,
+    "tariff boundary timer cleared once the tariff is removed; the midnight-reset timer is independent of the tariff and stays scheduled",
+  );
 });
 
 test("PowerwallDevice clears grid_buy_rate/grid_sell_rate when installation_time_zone is missing (unresolvable)", async () => {
@@ -246,7 +254,11 @@ test("PowerwallDevice clears stale rates when no tariff season matches now", asy
 
   assert.equal(capabilities.grid_buy_rate, null);
   assert.equal(capabilities.grid_sell_rate, null);
-  assert.equal(timers.length, 0, "no boundary scheduled for an unresolved tariff");
+  assert.equal(
+    timers.length,
+    1,
+    "no tariff boundary scheduled for an unresolved tariff, but the today-totals midnight-reset timer is scheduled once a timezone is known",
+  );
 });
 
 test("PowerwallDevice advances grid_buy_rate/grid_sell_rate at the next tariff period boundary with no new site_info event", async () => {
@@ -281,15 +293,27 @@ test("PowerwallDevice advances grid_buy_rate/grid_sell_rate at the next tariff p
   });
 
   assert.equal(capabilities.grid_buy_rate, 0.1, "off-peak rate active before the boundary");
-  assert.equal(timers.length, 1, "boundary timer scheduled");
-  assert.equal(timers[0].delay, 60_000, "scheduled exactly at the 14:00 boundary");
+  assert.equal(
+    timers.length,
+    2,
+    "tariff boundary timer scheduled, plus the today-totals midnight-reset timer",
+  );
+  assert.equal(
+    timers[0].delay,
+    60_000,
+    "tariff boundary timer (scheduled first) fires exactly at the 14:00 boundary",
+  );
 
   // Cross the period boundary with no further site_info/tariff_content_v2 event.
   setNow(new Date("2026-07-30T14:00:05Z"));
   timers[0].callback();
 
   assert.equal(capabilities.grid_buy_rate, 0.4, "peak rate applied purely from the clock");
-  assert.equal(timers.length, 1, "next boundary rescheduled");
+  assert.equal(
+    timers.length,
+    2,
+    "next tariff boundary rescheduled, midnight-reset timer untouched",
+  );
 });
 
 test("PowerwallDevice.onUninit clears a pending tariff boundary timer", async () => {
@@ -303,9 +327,13 @@ test("PowerwallDevice.onUninit clears a pending tariff boundary timer", async ()
     installation_time_zone: "UTC",
     tariff_content_v2: SAMPLE_TARIFF,
   });
-  assert.equal(timers.length, 1, "boundary timer scheduled during init");
+  assert.equal(
+    timers.length,
+    2,
+    "tariff boundary timer scheduled during init, plus the today-totals midnight-reset timer",
+  );
 
   await stub.onUninit();
 
-  assert.equal(timers.length, 0, "boundary timer cleared on uninit");
+  assert.equal(timers.length, 0, "boundary timer and midnight-reset timer both cleared on uninit");
 });

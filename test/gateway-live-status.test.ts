@@ -1,19 +1,44 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { EventEmitter } from "node:events";
 // Imports the built output; see device-oninit-no-product.test.ts for why.
 import GatewayDevice from "../.homeybuild/drivers/gateway/device.js";
 
-function createDeviceStub(capabilities: Record<string, unknown>) {
-  const handlers: Record<string, (event: unknown) => void> = {};
-  const site = {
-    sse: {
-      on: (event: string, handler: (event: unknown) => void) => {
-        handlers[event] = handler;
-      },
-      off: () => {},
-    },
-  };
+/**
+ * Mirrors TeslemetryEnergySiteStream: `.on(event, listener)` replays the
+ * last cached payload for that event synchronously - see
+ * solar-generation-today.test.ts for the same pattern on Solar.
+ */
+class FakeEnergySiteStream extends EventEmitter {
+  private cache = new Map<string, unknown>();
+  siteInfoDocument: Record<string, unknown> | undefined;
+
+  cacheAndEmit(event: string, payload: unknown) {
+    this.cache.set(event, payload);
+    this.emit(event, payload);
+  }
+
+  on(event: string, listener: (...args: unknown[]) => void): this {
+    super.on(event, listener);
+    if (this.cache.has(event)) listener(this.cache.get(event));
+    return this;
+  }
+}
+
+function createDeviceStub(
+  capabilities: Record<string, unknown>,
+  opts: { siteInfoDocument?: Record<string, unknown>; now?: Date } = {},
+) {
+  const sse = new FakeEnergySiteStream();
+  sse.siteInfoDocument = opts.siteInfoDocument;
+  if (opts.siteInfoDocument) sse.cacheAndEmit("site_info", opts.siteInfoDocument);
+
+  const site = { sse };
   const store: Record<string, unknown> = {};
+
+  let currentNow = opts.now ?? new Date("2026-07-30T12:00:00Z");
+  const timers: Array<{ id: number; callback: () => void; delay: number }> = [];
+  let nextTimerId = 1;
 
   const stub = Object.assign(Object.create(GatewayDevice.prototype), {
     homey: {
@@ -21,6 +46,15 @@ function createDeviceStub(capabilities: Record<string, unknown>) {
       __: (key: string) => key,
       flow: {
         getDeviceTriggerCard: () => ({ trigger: async () => {} }),
+      },
+      setTimeout: (callback: () => void, delay: number) => {
+        const timerId = nextTimerId++;
+        timers.push({ id: timerId, callback, delay });
+        return timerId;
+      },
+      clearTimeout: (timerId: number) => {
+        const index = timers.findIndex((timer) => timer.id === timerId);
+        if (index !== -1) timers.splice(index, 1);
       },
     },
     driver: {
@@ -37,6 +71,7 @@ function createDeviceStub(capabilities: Record<string, unknown>) {
     setStoreValue: async (key: string, value: unknown) => {
       store[key] = value;
     },
+    now: () => currentNow,
     log: () => {},
     error: () => {},
     setUnavailable: async () => {},
@@ -44,11 +79,24 @@ function createDeviceStub(capabilities: Record<string, unknown>) {
   });
   stub.driver.getDevices = () => [stub];
 
-  return { stub, site, handlers, capabilities };
+  return {
+    stub,
+    site,
+    sse,
+    capabilities,
+    timers,
+    setNow: (date: Date) => {
+      currentNow = date;
+    },
+  };
+}
+
+function getListener(sse: FakeEnergySiteStream, event: string) {
+  return sse.listeners(event)[0] as (event: unknown) => unknown;
 }
 
 test("GatewayDevice's live_status handler maps an Active grid_status to alarm_generic.off_grid=false", async () => {
-  const { stub, handlers, capabilities } = createDeviceStub({
+  const { stub, sse, capabilities } = createDeviceStub({
     "alarm_generic.off_grid": undefined,
     "alarm_generic.island": undefined,
     measure_power: undefined,
@@ -56,7 +104,7 @@ test("GatewayDevice's live_status handler maps an Active grid_status to alarm_ge
   });
   await stub.onInit();
 
-  handlers["live_status"]({
+  getListener(sse, "live_status")({
     live_status: { grid_status: "Active", island_status: "on_grid" },
   });
 
@@ -65,7 +113,7 @@ test("GatewayDevice's live_status handler maps an Active grid_status to alarm_ge
 });
 
 test("GatewayDevice's live_status handler maps an Inactive grid_status to alarm_generic.off_grid=true", async () => {
-  const { stub, handlers, capabilities } = createDeviceStub({
+  const { stub, sse, capabilities } = createDeviceStub({
     "alarm_generic.off_grid": undefined,
     "alarm_generic.island": undefined,
     measure_power: undefined,
@@ -73,7 +121,7 @@ test("GatewayDevice's live_status handler maps an Inactive grid_status to alarm_
   });
   await stub.onInit();
 
-  handlers["live_status"]({
+  getListener(sse, "live_status")({
     live_status: {
       grid_status: "Inactive",
       island_status: "off_grid_intentional",
@@ -85,7 +133,7 @@ test("GatewayDevice's live_status handler maps an Inactive grid_status to alarm_
 });
 
 test("GatewayDevice's live_status handler leaves off_grid/island untouched for an unmapped status string", async () => {
-  const { stub, handlers, capabilities } = createDeviceStub({
+  const { stub, sse, capabilities } = createDeviceStub({
     "alarm_generic.off_grid": undefined,
     "alarm_generic.island": undefined,
     measure_power: undefined,
@@ -93,7 +141,7 @@ test("GatewayDevice's live_status handler leaves off_grid/island untouched for a
   });
   await stub.onInit();
 
-  handlers["live_status"]({
+  getListener(sse, "live_status")({
     live_status: { grid_status: "SomeNewStatus", island_status: "unmapped" },
   });
 
@@ -102,7 +150,7 @@ test("GatewayDevice's live_status handler leaves off_grid/island untouched for a
 });
 
 test("GatewayDevice's live_status handler fires grid and load power thresholds independently", async () => {
-  const { stub, handlers, capabilities } = createDeviceStub({
+  const { stub, sse, capabilities } = createDeviceStub({
     "alarm_generic.off_grid": undefined,
     "alarm_generic.island": undefined,
     measure_power: 100,
@@ -110,7 +158,7 @@ test("GatewayDevice's live_status handler fires grid and load power thresholds i
   });
   await stub.onInit();
 
-  handlers["live_status"]({
+  getListener(sse, "live_status")({
     live_status: { grid_power: 200, load_power: 80 },
   });
 
@@ -119,20 +167,22 @@ test("GatewayDevice's live_status handler fires grid and load power thresholds i
 });
 
 test("GatewayDevice's energy_totals handler drives imported/exported cumulative meters", async () => {
-  const { stub, handlers, capabilities } = createDeviceStub({
+  const { stub, sse, capabilities } = createDeviceStub({
     "meter_power.imported": 0,
     "meter_power.exported": 0,
+    grid_imported_today: undefined,
+    grid_exported_today: undefined,
   });
   await stub.onInit();
 
   // The first reading only anchors the monotonic offset to the existing
   // capability value (see updateCumulativeMeter); the running total only
   // reflects new energy from the second reading onward.
-  await handlers["energy_totals"]({
+  await getListener(sse, "energy_totals")({
     totals: { grid_energy_imported: 5000, total_grid_energy_exported: 2000 },
     createdAt: "2026-07-30T10:00:00Z",
   });
-  await handlers["energy_totals"]({
+  await getListener(sse, "energy_totals")({
     totals: { grid_energy_imported: 8000, total_grid_energy_exported: 3000 },
     createdAt: "2026-07-30T11:00:00Z",
   });
@@ -142,17 +192,19 @@ test("GatewayDevice's energy_totals handler drives imported/exported cumulative 
 });
 
 test("GatewayDevice's energy_totals handler skips a meter whose total is missing", async () => {
-  const { stub, handlers, capabilities } = createDeviceStub({
+  const { stub, sse, capabilities } = createDeviceStub({
     "meter_power.imported": 0,
     "meter_power.exported": 0,
+    grid_imported_today: undefined,
+    grid_exported_today: undefined,
   });
   await stub.onInit();
 
-  await handlers["energy_totals"]({
+  await getListener(sse, "energy_totals")({
     totals: { grid_energy_imported: null, total_grid_energy_exported: 2000 },
     createdAt: "2026-07-30T10:00:00Z",
   });
-  await handlers["energy_totals"]({
+  await getListener(sse, "energy_totals")({
     totals: { grid_energy_imported: null, total_grid_energy_exported: 3000 },
     createdAt: "2026-07-30T11:00:00Z",
   });
@@ -161,20 +213,113 @@ test("GatewayDevice's energy_totals handler skips a meter whose total is missing
   assert.equal(capabilities["meter_power.exported"], 1);
 });
 
-test("GatewayDevice.onUninit removes the live_status and energy_totals listeners", async () => {
-  const { stub, site } = createDeviceStub({
-    "alarm_generic.off_grid": undefined,
-    "alarm_generic.island": undefined,
-    measure_power: undefined,
-    "measure_power.load": undefined,
+test("GatewayDevice's energy_totals handler sets grid_imported_today/grid_exported_today/home_usage_today to today's raw kWh totals", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    grid_imported_today: undefined,
+    grid_exported_today: undefined,
+    home_usage_today: undefined,
   });
-  const offCalls: Array<string> = [];
-  site.sse.off = (event: string) => {
-    offCalls.push(event);
-  };
   await stub.onInit();
+
+  await getListener(sse, "energy_totals")({
+    totals: {
+      grid_energy_imported: 5000,
+      total_grid_energy_exported: 2000,
+      total_home_usage: 12345,
+    },
+    createdAt: "2026-07-30T10:00:00Z",
+  });
+
+  assert.equal(capabilities["grid_imported_today"], 5);
+  assert.equal(capabilities["grid_exported_today"], 2);
+  assert.equal(capabilities["home_usage_today"], 12.345);
+});
+
+test("GatewayDevice's energy_totals handler leaves home_usage_today untouched when total_home_usage is missing", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    home_usage_today: undefined,
+  });
+  await stub.onInit();
+
+  await getListener(sse, "energy_totals")({
+    totals: { total_home_usage: null },
+    createdAt: "2026-07-30T10:00:00Z",
+  });
+
+  assert.equal(capabilities["home_usage_today"], undefined);
+});
+
+test("GatewayDevice schedules a midnight reset for the today-total capabilities using installation_time_zone from site_info", async () => {
+  const { stub, timers } = createDeviceStub(
+    {
+      grid_imported_today: undefined,
+      grid_exported_today: undefined,
+      home_usage_today: undefined,
+    },
+    {
+      siteInfoDocument: { installation_time_zone: "America/New_York" },
+      now: new Date("2026-07-30T23:59:00-04:00"),
+    },
+  );
+
+  await stub.onInit();
+
+  assert.equal(timers.length, 1);
+  assert.equal(timers[0].delay, 60_000);
+});
+
+test("GatewayDevice's midnight reset zeroes grid_imported_today/grid_exported_today/home_usage_today and reschedules", async () => {
+  const { stub, sse, capabilities, timers, setNow } = createDeviceStub(
+    {
+      grid_imported_today: undefined,
+      grid_exported_today: undefined,
+      home_usage_today: undefined,
+    },
+    {
+      siteInfoDocument: { installation_time_zone: "America/New_York" },
+      now: new Date("2026-07-30T23:59:00-04:00"),
+    },
+  );
+  await stub.onInit();
+
+  await getListener(sse, "energy_totals")({
+    totals: {
+      grid_energy_imported: 5000,
+      total_grid_energy_exported: 2000,
+      total_home_usage: 9000,
+    },
+    createdAt: "2026-07-30T20:00:00Z",
+  });
+  assert.equal(capabilities["grid_imported_today"], 5);
+  assert.equal(capabilities["grid_exported_today"], 2);
+  assert.equal(capabilities["home_usage_today"], 9);
+
+  setNow(new Date("2026-07-31T00:00:05-04:00"));
+  timers[0].callback();
+
+  assert.equal(capabilities["grid_imported_today"], 0);
+  assert.equal(capabilities["grid_exported_today"], 0);
+  assert.equal(capabilities["home_usage_today"], 0);
+  assert.equal(timers.length, 1, "next midnight reset rescheduled");
+});
+
+test("GatewayDevice.onUninit removes the live_status, energy_totals and site_info listeners, and clears the midnight timer", async () => {
+  const { stub, sse, timers } = createDeviceStub(
+    {
+      "alarm_generic.off_grid": undefined,
+      "alarm_generic.island": undefined,
+      measure_power: undefined,
+      "measure_power.load": undefined,
+    },
+    { siteInfoDocument: { installation_time_zone: "America/New_York" } },
+  );
+  await stub.onInit();
+  assert.equal(timers.length, 1, "midnight timer scheduled during init");
 
   await stub.onUninit();
 
-  assert.deepEqual(offCalls.sort(), ["energy_totals", "live_status"]);
+  assert.equal(sse.listenerCount("live_status"), 0);
+  assert.equal(sse.listenerCount("energy_totals"), 0);
+  assert.equal(sse.listenerCount("site_info"), 0);
+  assert.equal(timers.length, 0, "midnight timer cleared on uninit");
 });

@@ -27,7 +27,10 @@
     "alarm_generic.off_grid",
     "alarm_generic.island",
     "meter_power.imported",
-    "meter_power.exported"
+    "meter_power.exported",
+    "grid_imported_today",
+    "grid_exported_today",
+    "home_usage_today"
   ],
   "capabilitiesOptions": {
     "meter_power.imported": {

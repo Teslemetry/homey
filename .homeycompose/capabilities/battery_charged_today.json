@@ -1,0 +1,25 @@
+{
+  "icon": "/assets/capabilities/backup_reserve.svg",
+  "type": "number",
+  "title": {
+    "en": "Battery Charged Today",
+    "nl": "Vandaag Opgeladen Batterij-energie",
+    "da": "Batterienergi Opladet i Dag",
+    "de": "Heute Geladene Batterieenergie",
+    "es": "Energía de Batería Cargada Hoy",
+    "fr": "Énergie de Batterie Chargée Aujourd'hui",
+    "it": "Energia della Batteria Caricata Oggi",
+    "no": "Batterienergi Ladet i Dag",
+    "sv": "Batterienergi Laddad Idag",
+    "pl": "Energia Baterii Naładowana Dzisiaj",
+    "ru": "Энергия Батареи, Заряженная Сегодня",
+    "ko": "오늘 충전된 배터리 에너지",
+    "ar": "طاقة البطارية المشحونة اليوم"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "units": { "en": "kWh" },
+  "decimals": 2,
+  "insights": true
+}
