@@ -3,6 +3,21 @@ import type TeslemetryApp from "../app.js";
 import type TeslemetryDriver from "./TeslemetryDriver.js";
 import { TeslemetryApiError } from "../@types/error.js";
 
+/**
+ * Every reason a device can be unavailable, each with its own recovery
+ * predicate (see markUnavailable/clearAvailabilityReason below):
+ * - "startup": the app hasn't finished building its first Products
+ *   generation yet; clears once this device successfully binds.
+ * - "binding": this device's specific product/site/vehicle isn't present in
+ *   a ready Products generation; clears once this device successfully binds.
+ * - "stream": the shared SSE connection has been disconnected/erroring past
+ *   the freshness grace period; clears only when this device's own product
+ *   receives a genuine (non-cache) data event.
+ * - "auth": credentials are revoked/disconnected; clears only when this
+ *   device's own product receives a genuine data event after reauth.
+ */
+export type AvailabilityReason = "startup" | "binding" | "stream" | "auth";
+
 export default class TeslemetryDevice extends Homey.Device {
   declare homey: Homey.Device["homey"] & {
     app: TeslemetryApp;
@@ -16,6 +31,50 @@ export default class TeslemetryDevice extends Homey.Device {
    * knows about (which throws "Not Found: Device with ID ...").
    */
   protected destroyed = false;
+
+  /**
+   * The reason this device is currently unavailable, or undefined when
+   * available. Set only through markUnavailable/clearAvailabilityReason so
+   * recovery from one cause (e.g. a stream reconnect) can never clear an
+   * unrelated cause (e.g. a missing product binding).
+   */
+  private availabilityReason?: AvailabilityReason;
+
+  /**
+   * Marks the device unavailable for a specific, tracked reason. Overwrites
+   * any previously tracked reason - the newest cause of unavailability wins.
+   */
+  public markUnavailable(reason: AvailabilityReason, message: string): void {
+    this.availabilityReason = reason;
+    this.setUnavailable(message).catch(this.error);
+  }
+
+  /**
+   * Restores availability, but only if the device is currently unavailable
+   * for exactly this reason. A no-op otherwise, so e.g. a stream reconnect
+   * can never paper over a device that's unavailable because its product
+   * binding is missing.
+   */
+  public clearAvailabilityReason(reason: AvailabilityReason): void {
+    if (this.availabilityReason !== reason) return;
+    this.availabilityReason = undefined;
+    this.setAvailable().catch(this.error);
+  }
+
+  protected getAvailabilityReason(): AvailabilityReason | undefined {
+    return this.availabilityReason;
+  }
+
+  /**
+   * The app-level product key (`vehicle:<vin>` / `site:<id>`) this device is
+   * currently bound to, or undefined when unbound. Used by TeslemetryApp's
+   * per-product stream freshness watchdog to find which devices a genuine
+   * data event or a stale-stream escalation applies to. Subclasses that hold
+   * a product reference override this once bound.
+   */
+  public getProductKey(): string | undefined {
+    return undefined;
+  }
 
   /**
    * Capabilities with a declared `*_changed` flow trigger card. The card ID
@@ -42,11 +101,10 @@ export default class TeslemetryDevice extends Homey.Device {
   /**
    * Re-resolves this device's product (energy site or vehicle) from
    * `homey.app.products` and re-registers its SSE listeners, torn down and
-   * built up exactly as they are in `onInit()`. `TeslemetryApp.reinitialize()`
-   * builds a brand new `Products`/SSE connection when the Teslemetry session
-   * gets torn down and recreated (an auth failure recovering, a saved token
-   * refresh); without this, an already-paired device keeps its listeners on
-   * the old, now-dead per-product stream forever - it stays "available" but
+   * built up exactly as they are in `onInit()`. Whenever
+   * `TeslemetryApp.initializeTeslemetry()` publishes a new `Products`/SSE
+   * connection, an already-paired device would otherwise keep its listeners
+   * on the old, now-dead per-product stream forever - it stays "available" but
    * silently stops receiving any live data. Subclasses that hold a
    * `site`/`vehicle` reference override this; the default no-op covers
    * subclasses with no such reference to go stale.
@@ -216,13 +274,13 @@ export default class TeslemetryDevice extends Homey.Device {
     if (translation && translation !== key) {
       this.error(translation);
       if (error === "invalid_token" || error === "subscription_required") {
-        this.setUnavailable(translation).catch(this.error);
+        this.markUnavailable("auth", translation);
       }
       throw new Error(translation);
     }
     this.error(error_description);
     if (error === "invalid_token" || error === "subscription_required") {
-      this.setUnavailable(error_description).catch(this.error);
+      this.markUnavailable("auth", error_description);
     }
     throw new Error(error_description);
   };

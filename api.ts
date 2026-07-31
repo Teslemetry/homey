@@ -13,8 +13,7 @@ export async function getOAuthStatus({ homey }: ApiContext) {
 }
 
 export async function deleteOAuthToken({ homey }: ApiContext) {
-  homey.app.cleanup();
-  homey.app.oauth.clearToken();
+  homey.app.disconnectAccount();
 
   return { success: true };
 }

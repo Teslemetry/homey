@@ -44,18 +44,29 @@ export default class GatewayDevice extends TeslemetryDevice {
       site = this.homey.app.products?.energySites?.[this.getData().id];
       if (!site) throw new Error("No site found");
     } catch (e) {
+      if (!(this.homey.app.isReady?.() ?? true)) {
+        this.markUnavailable(
+          "startup",
+          this.homey.__("error.teslemetry_connecting"),
+        );
+        return;
+      }
       this.log("Failed to initialize Gateway device");
       this.error(e);
-      this.setUnavailable(this.homey.__("error.invalid_refresh_token")).catch(
-        this.error,
-      );
+      this.markUnavailable("binding", this.homey.__("error.invalid_refresh_token"));
       return;
     }
     this.bindSite(site);
   }
 
+  public getProductKey(): string | undefined {
+    return this.site ? `site:${String(this.site.id)}` : undefined;
+  }
+
   private bindSite(site: EnergyDetails): void {
     this.site = site;
+    this.clearAvailabilityReason("startup");
+    this.clearAvailabilityReason("binding");
 
     const onLiveStatus = (event: SseLiveStatus) => {
       const data = event.live_status as LiveStatusResponse;

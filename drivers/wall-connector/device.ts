@@ -49,6 +49,10 @@ export default class WallConnecter extends TeslemetryDevice {
     this.bindSite(site);
   }
 
+  public getProductKey(): string | undefined {
+    return this.site ? `site:${String(this.site.id)}` : undefined;
+  }
+
   private bindSite(site: EnergyDetails): void {
     this.site = site;
 

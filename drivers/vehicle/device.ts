@@ -146,11 +146,17 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.resolveAndBindVehicle();
   }
 
+  public getProductKey(): string | undefined {
+    return this.vehicle ? `vehicle:${this.vehicle.vin}` : undefined;
+  }
+
   private resolveAndBindVehicle(): void {
     try {
       const vehicle = this.homey.app.products?.vehicles?.[this.getData().vin];
       if (!vehicle) throw new Error("No vehicle found");
       this.vehicle = vehicle;
+      this.clearAvailabilityReason("startup");
+      this.clearAvailabilityReason("binding");
 
       this.setCapabilityOptions("onoff.frunk", {
         ...this.driver.manifest.capabilitiesOptions["onoff.frunk"],
@@ -161,11 +167,16 @@ export default class VehicleDevice extends TeslemetryDevice {
         setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
       }).catch(this.error);
     } catch (e) {
+      if (!(this.homey.app.isReady?.() ?? true)) {
+        this.markUnavailable(
+          "startup",
+          this.homey.__("error.teslemetry_connecting"),
+        );
+        return;
+      }
       this.log("Failed to initialize Vehicle device");
       this.error(e);
-      this.setUnavailable(this.homey.__("error.invalid_refresh_token")).catch(
-        this.error,
-      );
+      this.markUnavailable("binding", this.homey.__("error.invalid_refresh_token"));
       return;
     }
 
