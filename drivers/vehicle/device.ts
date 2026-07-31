@@ -924,7 +924,7 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   /**
-   * Derives alarm_presence directly from the vehicle's own LocatedAtHome
+   * Updates alarm_presence directly from the vehicle's own LocatedAtHome
    * signal - the Tesla-computed "is the vehicle at the active driver
    * profile's saved home location" boolean, the same field the Teslemetry
    * Home Assistant integration surfaces. No coordinates are read or
@@ -952,7 +952,7 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   /**
-   * Derives alarm_generic.at_work from the vehicle's own LocatedAtWork
+   * Updates alarm_generic.at_work from the vehicle's own LocatedAtWork
    * signal, mirroring handleLocatedAtHome. Its arrived/left-work triggers
    * (`alarm_generic.at_work_true`/`_false`) are auto-fired by Homey's
    * platform straight off this update() call - see the "Boolean system

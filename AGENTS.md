@@ -461,15 +461,12 @@ active driver profile's saved home/work location") that
 `@teslemetry/api`'s type comments and the Teslemetry Home Assistant
 integration's `binary_sensor.py` both confirm are genuine Fleet Telemetry
 fields (Requires 2024.44.32), not something this app derives from raw
-coordinates. Deliberately **not** a Homey-side geofence: an earlier version
-of this feature computed distance against the Homey's own geolocation and a
-configurable radius, but that was reworked to use the vehicle's own
-signals instead, matching what the Teslemetry HA integration exposes rather
-than reinventing HA's zone system. `VehicleDevice.handleLocatedAtHome`/
+coordinates. This is deliberately not a Homey-side geofence and requires no
+location math, geolocation permission, or device setting.
+`VehicleDevice.handleLocatedAtHome`/
 `handleLocatedAtWork` (registered via `onSignal("LocatedAtHome"/"LocatedAtWork",
 ...)`) just pass the boolean straight through to `alarm_presence`/
-`alarm_generic.at_work` - no location math, no permissions, no device
-settings. `alarm_presence` is a plain system capability (free
+`alarm_generic.at_work`. `alarm_presence` is a plain system capability (free
 `alarm_presence_true`/`_false`/condition cards - see the "Boolean system
 capabilities" bullet above - plus the explicitly-fired, distinctly-named
 `vehicle_arrived_home`/`vehicle_left_home` triggers since the generic
