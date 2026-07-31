@@ -141,7 +141,7 @@ test("PowerwallDevice.repairSite rejects and leaves the device unbound when the 
 });
 
 /** A PowerwallDriver-owned energy site with a controllable battery flag. */
-function createDriverSite(id: string, name: string, hasBattery: boolean) {
+function createDriverSite(id: string | number, name: string, hasBattery: boolean) {
   return {
     id,
     name,
@@ -163,7 +163,7 @@ function createDriverStub(sites: ReturnType<typeof createDriverSite>[]) {
 }
 
 /** A PowerwallDevice stub sufficient for driver.onRepair's own bookkeeping. */
-function createRepairTargetDevice(siteId: string) {
+function createRepairTargetDevice(siteId: string | number) {
   return Object.assign(Object.create(PowerwallDevice.prototype), {
     driver: { manifest: { capabilities: [], capabilitiesOptions: {} } },
     getData: () => ({ id: siteId }),
@@ -244,6 +244,51 @@ test("PowerwallDriver.onRepair excludes a battery site already bound to another 
     candidateId: "site-2",
     candidateName: "Available",
   });
+});
+
+test("PowerwallDriver.onRepair excludes a battery site already bound to another live Powerwall device when ids are the SDK's real numeric type", async () => {
+  // EnergyDetails.id is `number` in @teslemetry/api; a device paired before
+  // any repair keeps that numeric value in its immutable getData().id.
+  const driver = createDriverStub([
+    createDriverSite(123, "Already Bound", true),
+    createDriverSite(456, "Available", true),
+  ]);
+  const device = createRepairTargetDevice("stale-site");
+  const boundDevice = createRepairTargetDevice(123);
+  driver.getDevices = () => [device, boundDevice];
+  const session = createSessionStub();
+
+  await driver.onRepair(session, device);
+
+  assert.deepEqual(await session.handlers.get_repair_site_status(), {
+    needsRepair: true,
+    candidateId: "456",
+    candidateName: "Available",
+  });
+});
+
+test("PowerwallDriver.onRepair offers the sole numeric-id site unambiguously when no sibling device is bound", async () => {
+  const driver = createDriverStub([createDriverSite(789, "Home Battery", true)]);
+  const device = createRepairTargetDevice("stale-site");
+  const session = createSessionStub();
+
+  await driver.onRepair(session, device);
+
+  assert.deepEqual(await session.handlers.get_repair_site_status(), {
+    needsRepair: true,
+    candidateId: "789",
+    candidateName: "Home Battery",
+  });
+});
+
+test("PowerwallDevice.getSiteId always returns a string even when the immutable pairing data holds a numeric id", () => {
+  const stub = Object.assign(Object.create(PowerwallDevice.prototype), {
+    getStoreValue: () => null,
+    getData: () => ({ id: 123 }),
+  });
+
+  assert.equal(stub.getSiteId(), "123");
+  assert.equal(typeof stub.getSiteId(), "string");
 });
 
 test("PowerwallDriver.onRepair's confirm_repair_site invokes the device's own identity-preserving repairSite", async () => {

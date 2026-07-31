@@ -88,10 +88,10 @@ export default class WallConnecter extends TeslemetryDevice {
     const binding = this.getStoreValue(
       "wallConnectorBinding",
     ) as ConnectorBinding | null;
-    return (
+    return String(
       binding?.siteId ??
-      (this.getStoreValue("energySiteId") as string | null) ??
-      this.getData().site
+        (this.getStoreValue("energySiteId") as string | null) ??
+        this.getData().site,
     );
   }
 

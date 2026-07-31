@@ -356,6 +356,12 @@ shape:
   (`energySiteId` / `vehicleVin` / `energySiteId`+`wallConnectorDin`) if one
   has been set, falling back to the immutable pairing `data` otherwise. All
   product lookups go through these methods, never `getData()` directly.
+  `EnergyDetails.id` (`@teslemetry/api`) is `number`, not `string` -
+  energy drivers stringify it in pairing `data`, and `getSiteId()` also
+  wraps its resolved value in `String(...)` to cover pre-canonicalization
+  pairings and store overrides. Repair-candidate comparisons
+  (`findUnboundSiteCandidate`) depend on every site id using that canonical
+  string representation.
 - `<Device>.repairSite(id)` / `repairVehicle(vin)` / `repairConnector(siteId,
   din)` is the only way to change that store value. It validates the target
   exists (Wall Connector additionally validates the target DIN is actually
