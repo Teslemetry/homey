@@ -56,7 +56,7 @@ export default class TeslemetryApp extends Homey.App {
   // half-built generation - see initializeTeslemetry().
   private initChain: Promise<void> = Promise.resolve();
 
-  // Bumped at the start of every build and on every teardown. Captured by
+  // Bumped when a completed build is published and on every teardown. Captured by
   // each generation's own stream event handlers so a straggler event from an
   // already-superseded/closed SDK instance (close() doesn't abort its
   // in-flight request - a known @teslemetry/api gap) can't mutate current
@@ -74,6 +74,7 @@ export default class TeslemetryApp extends Homey.App {
   // Per-product ("vehicle:<vin>" / "site:<id>") timestamp of the last
   // genuine (non-cache) data event, for the stream freshness watchdog.
   private lastProductEventAt = new Map<string, number>();
+  private streamDisconnectedAt = new Map<string, number>();
   private streamStaleTimer?: NodeJS.Timeout;
   private static readonly STREAM_STALE_GRACE_MS = 90_000;
 
@@ -481,8 +482,7 @@ export default class TeslemetryApp extends Homey.App {
       throw new Error('No OAuth2 token available. User needs to authenticate.');
     }
 
-    const generation = ++this.generation;
-    this.log(`Initializing Teslemetry (generation ${generation})...`);
+    this.log('Initializing Teslemetry...');
 
     const sdk = new Teslemetry(this.oauth.getAccessToken, {
       logger: this.logger,
@@ -503,9 +503,11 @@ export default class TeslemetryApp extends Homey.App {
       throw error;
     }
 
+    const generation = this.generation + 1;
     this.attachStreamHandlers(sdk, generation);
 
     const oldSdk = this.teslemetry;
+    this.generation = generation;
     this.teslemetry = sdk;
     this.products = products;
     this.ready = true;
@@ -624,6 +626,7 @@ export default class TeslemetryApp extends Homey.App {
     this.generation++;
     this.cancelStreamStaleCheck();
     this.lastProductEventAt.clear();
+    this.streamDisconnectedAt.clear();
     this.ready = false;
     if (this.teslemetry) {
       this.teslemetry.sse.close();
@@ -716,7 +719,10 @@ export default class TeslemetryApp extends Homey.App {
     if (!key) return;
 
     this.lastProductEventAt.set(key, Date.now());
-    this.cancelStreamStaleCheck();
+    this.streamDisconnectedAt.delete(key);
+    if (this.streamDisconnectedAt.size === 0) {
+      this.cancelStreamStaleCheck();
+    }
     for (const device of this.getDevicesForProductKey(key)) {
       device.clearAvailabilityReason('stream');
       device.clearAvailabilityReason('auth');
@@ -732,6 +738,14 @@ export default class TeslemetryApp extends Homey.App {
    */
   private handleStreamDisconnect(generation: number): void {
     if (generation !== this.generation) return;
+    if (this.streamDisconnectedAt.size > 0) return;
+    const disconnectedAt = Date.now();
+    this.forEachTeslemetryDevice((device) => {
+      const key = device.getProductKey();
+      if (key !== undefined && !this.streamDisconnectedAt.has(key)) {
+        this.streamDisconnectedAt.set(key, disconnectedAt);
+      }
+    });
     this.scheduleStreamStaleCheck(generation);
   }
 
@@ -751,8 +765,8 @@ export default class TeslemetryApp extends Homey.App {
   }
 
   /**
-   * The stream has been disconnected/erroring for a full grace period with
-   * no genuine data for anything - findings 3's "act on ALL non-auth
+   * The stream has been disconnected/erroring for a full grace period -
+   * findings 3's "act on ALL non-auth
    * failures" (disconnect/stream_error/repeated-reconnect all funnel
    * through the same disconnect event the SDK emits before every retry).
    * Marks every currently-bound device unavailable with the "stream"
@@ -763,12 +777,20 @@ export default class TeslemetryApp extends Homey.App {
    */
   private markStreamStale(generation: number): void {
     if (generation !== this.generation) return;
+    const staleKeys = new Set<string>();
+    for (const [key, disconnectedAt] of this.streamDisconnectedAt) {
+      if ((this.lastProductEventAt.get(key) ?? 0) <= disconnectedAt) {
+        staleKeys.add(key);
+      }
+    }
+    if (staleKeys.size === 0) return;
     this.log(
-      `Stream freshness watchdog: no genuine data after ${TeslemetryApp.STREAM_STALE_GRACE_MS}ms grace period; marking bound devices unavailable (generation ${generation})`,
+      `Stream freshness watchdog: no genuine product data after ${TeslemetryApp.STREAM_STALE_GRACE_MS}ms grace period; marking affected devices unavailable (generation ${generation})`,
     );
     const message = this.homey.__('error.stream_disconnected');
     this.forEachTeslemetryDevice((device) => {
-      if (device.getProductKey() !== undefined) {
+      const key = device.getProductKey();
+      if (key !== undefined && staleKeys.has(key)) {
         device.markUnavailable('stream', message);
       }
     });

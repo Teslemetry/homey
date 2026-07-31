@@ -241,6 +241,55 @@ test("a non-auth stream stall marks bound devices unavailable after the grace pe
   assert.equal(vehicleDevice.availableCalls.length, 1, "recovered once its own product's genuine data arrived");
 });
 
+test("one product recovering during the grace period does not cancel stale detection for another product", async () => {
+  const { app, timers, drivers } = createAppStub();
+  const vehicleDevice = createDeviceStub("vehicle:vin-1");
+  const siteDevice = createDeviceStub("site:site-1");
+  drivers.vehicle = { getDevices: () => [vehicleDevice.device] };
+  drivers.battery = { getDevices: () => [siteDevice.device] };
+
+  let sdk: { sse: FakeStream } | undefined;
+  configureTeslemetryStub(() => {
+    sdk = { sse: new FakeStream() };
+    return { ...sdk, createProducts: async () => ({ vehicles: {}, energySites: {} }) };
+  });
+  await app.initializeTeslemetry();
+
+  sdk!.sse.emit("disconnect");
+  sdk!.sse.emit("live_status", { site_id: "site-1" });
+  assert.equal(timers.length, 1, "the other product keeps the watchdog active");
+
+  timers[0].callback();
+  assert.deepEqual(siteDevice.unavailableCalls, []);
+  assert.deepEqual(vehicleDevice.unavailableCalls, ["error.stream_disconnected"]);
+});
+
+test("a failed forced rebuild leaves the active generation's stream handlers effective", async () => {
+  const { app, timers, drivers } = createAppStub();
+  const device = createDeviceStub("vehicle:vin-1");
+  drivers.vehicle = { getDevices: () => [device.device] };
+
+  let activeSdk: { sse: FakeStream } | undefined;
+  configureTeslemetryStub(() => {
+    activeSdk = { sse: new FakeStream() };
+    return { ...activeSdk, createProducts: async () => ({ vehicles: {}, energySites: {} }) };
+  });
+  await app.initializeTeslemetry();
+
+  configureTeslemetryStub(() => ({
+    sse: new FakeStream(),
+    createProducts: async () => {
+      throw new Error("replacement failed");
+    },
+  }));
+  await assert.rejects(app.initializeTeslemetry(true), /replacement failed/);
+
+  activeSdk!.sse.emit("disconnect");
+  assert.equal(timers.length, 1, "the still-published generation continues monitoring disconnects");
+  timers[0].callback();
+  assert.deepEqual(device.unavailableCalls, ["error.stream_disconnected"]);
+});
+
 test("manual Disconnect (api.ts's disconnectAccount) marks every device unavailable and clears the token (finding 6)", async () => {
   const { app, drivers } = createAppStub();
   const deviceA = createDeviceStub("vehicle:vin-1");
