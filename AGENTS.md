@@ -395,8 +395,11 @@ received (no baseline to compare against) or on a repeated identical value.
 - **Simple 1:1 capability-changed cards** (`<capability>_changed`, one card
   per capability, token name matches the capability): add the capability to
   `TeslemetryDevice.CHANGE_TRIGGER_CAPABILITIES`. `update()` then fires it
-  automatically whenever `setCapabilityValue` actually changes the value; see
-  `test/capability-change-triggers.test.ts` for the test shape.
+  automatically whenever `setCapabilityValue` actually changes the value.
+  Numeric-token cards must also be listed in
+  `NUMERIC_CHANGE_TRIGGER_CAPABILITIES`; `update()` still writes the capability
+  value but suppresses the Flow trigger unless the new token is a finite
+  number. See `test/capability-change-triggers.test.ts` for the test shape.
 - **Value-specific branching** (a raw signal fans out to several differently
   named cards depending on the transition, e.g. `charging_started` vs
   `charging_complete` vs `plugged_in` off the same `DetailedChargeState`
