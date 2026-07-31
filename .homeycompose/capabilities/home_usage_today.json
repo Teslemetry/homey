@@ -1,0 +1,24 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Home Usage Today",
+    "nl": "Vandaag Thuisverbruik",
+    "da": "Hjemmeforbrug i Dag",
+    "de": "Heute Hausverbrauch",
+    "es": "Consumo del Hogar Hoy",
+    "fr": "Consommation Domestique Aujourd'hui",
+    "it": "Consumo Domestico Oggi",
+    "no": "Hjemmeforbruk i Dag",
+    "sv": "Hemförbrukning Idag",
+    "pl": "Zużycie Domowe Dzisiaj",
+    "ru": "Домашнее Потребление Сегодня",
+    "ko": "오늘 가정 사용량",
+    "ar": "استهلاك المنزل اليوم"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "units": { "en": "kWh" },
+  "decimals": 2,
+  "insights": true
+}

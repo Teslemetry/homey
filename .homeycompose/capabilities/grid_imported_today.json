@@ -1,0 +1,25 @@
+{
+  "icon": "/assets/capabilities/grid-status.svg",
+  "type": "number",
+  "title": {
+    "en": "Grid Imported Today",
+    "nl": "Vandaag Geïmporteerde Netenergie",
+    "da": "Netenergi Importeret i Dag",
+    "de": "Heute Importierte Netzenergie",
+    "es": "Energía de Red Importada Hoy",
+    "fr": "Énergie du Réseau Importée Aujourd'hui",
+    "it": "Energia di Rete Importata Oggi",
+    "no": "Nettenergi Importert i Dag",
+    "sv": "Nätenergi Importerad Idag",
+    "pl": "Energia Sieciowa Zaimportowana Dzisiaj",
+    "ru": "Сетевая Энергия, Импортированная Сегодня",
+    "ko": "오늘 수입된 그리드 에너지",
+    "ar": "طاقة الشبكة المستوردة اليوم"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "units": { "en": "kWh" },
+  "decimals": 2,
+  "insights": true
+}

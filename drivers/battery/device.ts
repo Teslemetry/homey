@@ -2,6 +2,12 @@ import { EnergyDetails, SseEnergyTotals, SseLiveStatus } from "@teslemetry/api";
 import { getTariffPeriods } from "tesla-fleet-api";
 import type { TariffContentV2 } from "tesla-fleet-api/dist/types/site_info.js";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+import msUntilNextLocalMidnight from "../../lib/localMidnight.js";
+
+const TODAY_TOTAL_CAPABILITIES = [
+  "battery_charged_today",
+  "battery_discharged_today",
+] as const;
 
 /** The fields this device reads off the merged site_info/tariff_content_v2
  *  document (`TeslemetryEnergySiteStream.siteInfoDocument`), which is
@@ -32,10 +38,33 @@ export default class PowerwallDevice extends TeslemetryDevice {
   private tariff: Record<string, unknown> | undefined;
   private tariffTimeZone: string | undefined;
   private tariffTimer: NodeJS.Timeout | undefined;
+  private todayTotalsTimeZone: string | undefined;
+  private midnightTimer: NodeJS.Timeout | undefined;
 
   /** Overridden by tests to control the clock without waiting real time. */
   protected now(): Date {
     return new Date();
+  }
+
+  /**
+   * `energy_totals` only pushes on a change, so a "today" total goes silent
+   * once its underlying activity stops for a stretch and keeps showing a
+   * stale value until the next sample arrives. This timer forces the reset
+   * at the actual local midnight boundary instead, using the site's own
+   * installation timezone - see SolarDevice.scheduleMidnightReset, the same
+   * fix applied there for solar_generation_today.
+   */
+  private scheduleMidnightReset(timeZone: string): void {
+    if (this.midnightTimer !== undefined) {
+      this.homey.clearTimeout(this.midnightTimer);
+    }
+    const delay = msUntilNextLocalMidnight(this.now(), timeZone);
+    this.midnightTimer = this.homey.setTimeout(() => {
+      for (const capability of TODAY_TOTAL_CAPABILITIES) {
+        this.update(capability, 0);
+      }
+      this.scheduleMidnightReset(timeZone);
+    }, delay);
   }
 
   async onInit() {
@@ -54,6 +83,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
     // drives the next recompute, not this now-unbound site's data.
     this.tariff = undefined;
     this.tariffTimeZone = undefined;
+    // pollingCleanup just cleared the midnight timer too; reset so the new
+    // site's cached site_info replay isn't skipped as "already scheduled".
+    this.todayTotalsTimeZone = undefined;
     this.clearTariffRates();
     this.resolveAndBindSite();
   }
@@ -136,6 +168,16 @@ export default class PowerwallDevice extends TeslemetryDevice {
       } catch (e) {
         this.error("Failed to update Powerwall tariff rates", e);
       }
+
+      const timeZone = data.installation_time_zone;
+      if (timeZone && timeZone !== this.todayTotalsTimeZone) {
+        this.todayTotalsTimeZone = timeZone;
+        try {
+          this.scheduleMidnightReset(timeZone);
+        } catch (e) {
+          this.error("Failed to schedule Powerwall midnight reset", e);
+        }
+      }
     };
 
     const handleEnergyTotals = async (event: SseEnergyTotals) => {
@@ -143,6 +185,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
       const { total_battery_charge, total_battery_discharge } = event.totals;
 
       if (total_battery_charge !== null && total_battery_charge !== undefined) {
+        await this.update("battery_charged_today", total_battery_charge / 1000);
         await this.updateCumulativeMeter(
           "meter_power.charged",
           total_battery_charge / 1000,
@@ -153,6 +196,10 @@ export default class PowerwallDevice extends TeslemetryDevice {
         total_battery_discharge !== null &&
         total_battery_discharge !== undefined
       ) {
+        await this.update(
+          "battery_discharged_today",
+          total_battery_discharge / 1000,
+        );
         await this.updateCumulativeMeter(
           "meter_power.discharged",
           total_battery_discharge / 1000,
@@ -216,6 +263,12 @@ export default class PowerwallDevice extends TeslemetryDevice {
         if (this.tariffTimer !== undefined) {
           this.homey.clearTimeout(this.tariffTimer);
           this.tariffTimer = undefined;
+        }
+      },
+      () => {
+        if (this.midnightTimer !== undefined) {
+          this.homey.clearTimeout(this.midnightTimer);
+          this.midnightTimer = undefined;
         }
       },
     ];
