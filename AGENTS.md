@@ -342,14 +342,11 @@ stale, or a physical connector is replaced). Per the "registered but dead"
 pattern above, every driver's device `onInit` returns early in that case -
 an accurate `error.<x>_not_found` message (never the misleading
 `error.invalid_refresh_token`), zero SSE listeners, zero command listeners.
-There is no repair/rebind flow: the device stays honestly unavailable and
-the user deletes and re-pairs it, getting a fresh pairing `data` (platform-
-standard behavior, matching Home Assistant). An identity-preserving repair
-subsystem (a mutable store-backed binding, a driver `onRepair` view, and
-candidate-matching helpers) existed for one release and was deliberately
-stripped as disproportionate to how rarely a binding actually goes stale -
-the connection-lifecycle work already makes that rarer still (see
-"Connection Lifecycle" below).
+There is no product-binding repair/rebind flow: the device stays honestly
+unavailable and the user deletes and re-pairs it, getting fresh pairing
+`data`. Do not add mutable store-backed binding overrides, driver-specific
+identity-repair views, or repair-candidate matching; Homey's generic OAuth
+repair flow remains responsible only for restoring account authorization.
 
 `<Device>.getSiteId()` / `getVin()` (Vehicle) / `getSiteId()`+`getDin()`
 (Wall Connector) resolve the product id from the immutable pairing `data`.
