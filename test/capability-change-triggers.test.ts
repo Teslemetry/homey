@@ -147,6 +147,34 @@ test("update() does not fire a trigger when a write settles after the SDK remove
   assert.deepEqual(triggerCalls, []);
 });
 
+test("update() clears grid_buy_rate to null without firing the numeric changed trigger", async () => {
+  const { stub, triggerCalls } = createDeviceStub({ grid_buy_rate: 0.25 });
+
+  await stub.update("grid_buy_rate", null);
+
+  assert.equal(stub.getCapabilityValue("grid_buy_rate"), null);
+  assert.deepEqual(triggerCalls, []);
+});
+
+test("update() still fires grid_sell_rate_changed for a real numeric change", async () => {
+  const { stub, triggerCalls } = createDeviceStub({ grid_sell_rate: 0.1 });
+
+  await stub.update("grid_sell_rate", 0.2);
+
+  assert.deepEqual(triggerCalls, [
+    { cardId: "grid_sell_rate_changed", tokens: { grid_sell_rate: 0.2 } },
+  ]);
+});
+
+test("update() does not fire backup_reserve_changed with a non-finite numeric value", async () => {
+  const { stub, triggerCalls } = createDeviceStub({ backup_reserve: 0.2 });
+
+  await stub.update("backup_reserve", NaN);
+
+  assert.equal(Number.isNaN(stub.getCapabilityValue("backup_reserve") as number), true);
+  assert.deepEqual(triggerCalls, []);
+});
+
 test("update() logs a rejected capability write and does not fire a trigger", async () => {
   const writeError = new Error("Not Found: Device with ID powerwall-1");
   const loggedErrors: unknown[][] = [];
