@@ -61,7 +61,7 @@ export default class PowerwallDriver extends TeslemetryDriver {
           {
             name: `${site.name} Powerwall`,
             data: {
-              id: site.id,
+              id: String(site.id),
             },
             class: "battery",
           },

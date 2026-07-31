@@ -106,7 +106,7 @@ test("SolarDevice.repairSite rejects and leaves the device unbound when the targ
 });
 
 /** A SolarDriver-owned energy site with a controllable solar flag. */
-function createDriverSite(id: string, name: string, hasSolar: boolean) {
+function createDriverSite(id: string | number, name: string, hasSolar: boolean) {
   return {
     id,
     name,
@@ -127,7 +127,7 @@ function createDriverStub(sites: ReturnType<typeof createDriverSite>[]) {
   });
 }
 
-function createRepairTargetDevice(siteId: string) {
+function createRepairTargetDevice(siteId: string | number) {
   return Object.assign(Object.create(SolarDevice.prototype), {
     driver: { manifest: { capabilities: [], capabilitiesOptions: {} } },
     getData: () => ({ id: siteId }),
@@ -208,6 +208,37 @@ test("SolarDriver.onRepair excludes a solar site already bound to another live S
     candidateId: "site-2",
     candidateName: "Available",
   });
+});
+
+test("SolarDriver.onRepair excludes a solar site already bound to another live Solar device when ids are the SDK's real numeric type", async () => {
+  // EnergyDetails.id is `number` in @teslemetry/api; a device paired before
+  // any repair keeps that numeric value in its immutable getData().id.
+  const driver = createDriverStub([
+    createDriverSite(123, "Already Bound", true),
+    createDriverSite(456, "Available", true),
+  ]);
+  const device = createRepairTargetDevice("stale-site");
+  const boundDevice = createRepairTargetDevice(123);
+  driver.getDevices = () => [device, boundDevice];
+  const session = createSessionStub();
+
+  await driver.onRepair(session, device);
+
+  assert.deepEqual(await session.handlers.get_repair_site_status(), {
+    needsRepair: true,
+    candidateId: "456",
+    candidateName: "Available",
+  });
+});
+
+test("SolarDevice.getSiteId always returns a string even when the immutable pairing data holds a numeric id", () => {
+  const stub = Object.assign(Object.create(SolarDevice.prototype), {
+    getStoreValue: () => null,
+    getData: () => ({ id: 123 }),
+  });
+
+  assert.equal(stub.getSiteId(), "123");
+  assert.equal(typeof stub.getSiteId(), "string");
 });
 
 test("SolarDriver.onRepair's confirm_repair_site invokes the device's own identity-preserving repairSite", async () => {

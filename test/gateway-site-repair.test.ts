@@ -102,7 +102,7 @@ test("GatewayDevice.repairSite rejects and leaves the device unbound when the ta
   assert.equal(stub.getSiteId(), "missing-site", "no store override was written on failure");
 });
 
-function createDriverSite(id: string, name: string) {
+function createDriverSite(id: string | number, name: string) {
   return { id, name, api: { getSiteInfo: async () => ({ response: { components: {} } }) } };
 }
 
@@ -117,7 +117,7 @@ function createDriverStub(sites: ReturnType<typeof createDriverSite>[]) {
   });
 }
 
-function createRepairTargetDevice(siteId: string) {
+function createRepairTargetDevice(siteId: string | number) {
   return Object.assign(Object.create(GatewayDevice.prototype), {
     driver: { manifest: { capabilities: [], capabilitiesOptions: {} } },
     getData: () => ({ id: siteId }),
@@ -195,6 +195,37 @@ test("GatewayDriver.onRepair excludes a site already bound to another live Gatew
     candidateId: "site-2",
     candidateName: "Available",
   });
+});
+
+test("GatewayDriver.onRepair excludes a site already bound to another live Gateway device when ids are the SDK's real numeric type", async () => {
+  // EnergyDetails.id is `number` in @teslemetry/api; a device paired before
+  // any repair keeps that numeric value in its immutable getData().id.
+  const driver = createDriverStub([
+    createDriverSite(123, "Already Bound"),
+    createDriverSite(456, "Available"),
+  ]);
+  const device = createRepairTargetDevice("stale-site");
+  const boundDevice = createRepairTargetDevice(123);
+  driver.getDevices = () => [device, boundDevice];
+  const session = createSessionStub();
+
+  await driver.onRepair(session, device);
+
+  assert.deepEqual(await session.handlers.get_repair_site_status(), {
+    needsRepair: true,
+    candidateId: "456",
+    candidateName: "Available",
+  });
+});
+
+test("GatewayDevice.getSiteId always returns a string even when the immutable pairing data holds a numeric id", () => {
+  const stub = Object.assign(Object.create(GatewayDevice.prototype), {
+    getStoreValue: () => null,
+    getData: () => ({ id: 123 }),
+  });
+
+  assert.equal(stub.getSiteId(), "123");
+  assert.equal(typeof stub.getSiteId(), "string");
 });
 
 test("GatewayDriver.onRepair's confirm_repair_site invokes the device's own identity-preserving repairSite", async () => {

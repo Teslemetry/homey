@@ -89,9 +89,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
    * post-pairing.
    */
   public getSiteId(): string {
-    return (
+    return String(
       (this.getStoreValue("energySiteId") as string | null) ??
-      this.getData().id
+        this.getData().id,
     );
   }
 

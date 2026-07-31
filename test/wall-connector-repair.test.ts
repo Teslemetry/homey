@@ -6,7 +6,7 @@ import WallConnecter from "../.homeybuild/drivers/wall-connector/device.js";
 import WallConnectorDriver from "../.homeybuild/drivers/wall-connector/driver.js";
 
 function createWcSite(
-  id: string,
+  id: string | number,
   wallConnectors: Array<{ din: string; part_name: string }> = [],
   name = "Home Site",
 ) {
@@ -181,7 +181,7 @@ function createDriverStub(sites: Record<string, ReturnType<typeof createWcSite>>
   });
 }
 
-function createRepairTargetDevice(siteId: string, din: string) {
+function createRepairTargetDevice(siteId: string | number, din: string) {
   return Object.assign(Object.create(WallConnecter.prototype), {
     driver: { manifest: { capabilities: [], capabilitiesOptions: {} } },
     getData: () => ({ site: siteId, din }),
@@ -279,6 +279,38 @@ test("WallConnectorDriver.onRepair's confirm_repair_connector splits the candida
   await session.handlers.confirm_repair_connector("site-1::din-2");
 
   assert.deepEqual(repairCalls, [["site-1", "din-2"]]);
+});
+
+test("WallConnectorDriver.onRepair excludes a connector already bound to another live device when the site id is the SDK's real numeric type", async () => {
+  // EnergyDetails.id is `number` in @teslemetry/api; a device paired before
+  // any repair keeps that numeric value in its immutable getData().site.
+  const site = createWcSite(123, [
+    { din: "din-2", part_name: "Wall Connector 2" },
+    { din: "din-3", part_name: "Wall Connector 3" },
+  ]);
+  const driver = createDriverStub({ "123": site });
+  const device = createRepairTargetDevice("stale-site", "stale-din");
+  const boundDevice = createRepairTargetDevice(123, "din-2");
+  driver.getDevices = () => [device, boundDevice];
+  const session = createSessionStub();
+
+  await driver.onRepair(session, device);
+
+  assert.deepEqual(await session.handlers.get_repair_connector_status(), {
+    needsRepair: true,
+    candidateId: "123::din-3",
+    candidateName: "Home Site Wall Connector 3",
+  });
+});
+
+test("WallConnecter.getSiteId always returns a string even when the immutable pairing data holds a numeric id", () => {
+  const stub = Object.assign(Object.create(WallConnecter.prototype), {
+    getStoreValue: () => null,
+    getData: () => ({ site: 123, din: "din-1" }),
+  });
+
+  assert.equal(stub.getSiteId(), "123");
+  assert.equal(typeof stub.getSiteId(), "string");
 });
 
 test("WallConnectorDriver serializes confirmation and revalidates candidate uniqueness", async () => {
