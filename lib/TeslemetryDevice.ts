@@ -124,6 +124,18 @@ export default class TeslemetryDevice extends Homey.Device {
     "tpms_warning",
   ]);
 
+  /**
+   * The subset of CHANGE_TRIGGER_CAPABILITIES whose `*_changed` Flow card
+   * carries a numeric token (Apps SDK rejects null/undefined/non-finite for
+   * a numeric token - see NUMERIC_CHANGE_TRIGGER_CAPABILITIES usage in
+   * update()).
+   */
+  private static readonly NUMERIC_CHANGE_TRIGGER_CAPABILITIES = new Set([
+    "backup_reserve",
+    "grid_buy_rate",
+    "grid_sell_rate",
+  ]);
+
   async onInit() {
     await this.ensureCapabilities();
   }
@@ -239,7 +251,15 @@ export default class TeslemetryDevice extends Homey.Device {
       this.error(error);
       return;
     }
-    if (hasChangeTrigger && previousValue !== value && this.isLive()) {
+    const isInvalidNumericToken =
+      TeslemetryDevice.NUMERIC_CHANGE_TRIGGER_CAPABILITIES.has(capability) &&
+      (typeof value !== "number" || !Number.isFinite(value));
+    if (
+      hasChangeTrigger &&
+      previousValue !== value &&
+      !isInvalidNumericToken &&
+      this.isLive()
+    ) {
       this.homey.flow
         .getDeviceTriggerCard(`${capability}_changed`)
         .trigger(this, { [capability]: value })
