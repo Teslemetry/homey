@@ -29,6 +29,14 @@ interface LiveStatusResponse {
 export default class PowerwallDevice extends TeslemetryDevice {
   site!: EnergyDetails;
   pollingCleanup!: Array<() => void>;
+  private tariff: Record<string, unknown> | undefined;
+  private tariffTimeZone: string | undefined;
+  private tariffTimer: NodeJS.Timeout | undefined;
+
+  /** Overridden by tests to control the clock without waiting real time. */
+  protected now(): Date {
+    return new Date();
+  }
 
   async onInit() {
     await super.onInit();
@@ -41,6 +49,12 @@ export default class PowerwallDevice extends TeslemetryDevice {
    */
   public rebindProduct(): void {
     this.pollingCleanup?.forEach((stop) => stop());
+    // pollingCleanup just cleared the tariff timer; reset the retained
+    // tariff/timezone so the new site's cached site_info replay is what
+    // drives the next recompute, not this now-unbound site's data.
+    this.tariff = undefined;
+    this.tariffTimeZone = undefined;
+    this.clearTariffRates();
     this.resolveAndBindSite();
   }
 
@@ -93,6 +107,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
       throw new Error(this.homey.__("error.energy_site_not_found"));
     }
     this.pollingCleanup?.forEach((stop) => stop());
+    this.tariff = undefined;
+    this.tariffTimeZone = undefined;
+    this.clearTariffRates();
     await this.setStoreValue("energySiteId", siteId);
     // bindSite() itself restores availability via clearAvailabilityReason
     // ("binding" is the only reason a device can have reached this repair
@@ -143,11 +160,10 @@ export default class PowerwallDevice extends TeslemetryDevice {
         !data.components?.disallow_charge_from_grid_with_solar_installed,
       );
       this.update("onoff.storm", data.user_settings?.storm_mode_enabled);
+      this.tariff = data.tariff_content_v2 ?? undefined;
+      this.tariffTimeZone = data.installation_time_zone;
       try {
-        this.updateTariffRates(
-          data.tariff_content_v2 ?? undefined,
-          data.installation_time_zone,
-        );
+        this.recomputeTariffRates();
       } catch (e) {
         this.error("Failed to update Powerwall tariff rates", e);
       }
@@ -222,6 +238,12 @@ export default class PowerwallDevice extends TeslemetryDevice {
 
     this.pollingCleanup = [
       () => this.site.sse.off("live_status", onLiveStatus),
+      () => {
+        if (this.tariffTimer !== undefined) {
+          this.homey.clearTimeout(this.tariffTimer);
+          this.tariffTimer = undefined;
+        }
+      },
     ];
 
     // Optional enrichment: site_info/tariff_content_v2 replay a cached value
@@ -246,16 +268,35 @@ export default class PowerwallDevice extends TeslemetryDevice {
     this.pollingCleanup?.forEach((stop) => stop());
   }
 
-  private updateTariffRates(
-    tariff: { [key: string]: unknown } | undefined,
-    timeZone: string | undefined,
-  ): void {
-    if (!tariff || !timeZone) return;
+  /**
+   * Resolves the buy/sell rate for the retained tariff/timezone at the
+   * current moment, applies it, and schedules a Homey timeout at the
+   * resolution's own next period boundary so a later call recomputes and
+   * reschedules itself with no further site_info/tariff_content_v2 event
+   * required. Clears the rates/currency (and any pending timer) when the
+   * tariff or timezone is absent, or when the tariff can't be resolved at
+   * all (e.g. no season covers the current date).
+   */
+  private recomputeTariffRates(): void {
+    if (this.tariffTimer !== undefined) {
+      this.homey.clearTimeout(this.tariffTimer);
+      this.tariffTimer = undefined;
+    }
 
-    const resolution = getTariffPeriods(tariff as unknown as TariffContentV2, new Date(), {
-      timeZone,
-    });
-    if (!resolution) return;
+    if (!this.tariff || !this.tariffTimeZone) {
+      this.clearTariffRates();
+      return;
+    }
+
+    const resolution = getTariffPeriods(
+      this.tariff as unknown as TariffContentV2,
+      this.now(),
+      { timeZone: this.tariffTimeZone },
+    );
+    if (!resolution) {
+      this.clearTariffRates();
+      return;
+    }
 
     this.updateWithThresholdTriggers(
       "grid_buy_rate",
@@ -282,6 +323,29 @@ export default class PowerwallDevice extends TeslemetryDevice {
         units: resolution.currency,
       }).catch(this.error);
     }
+
+    const delay = Math.max(
+      0,
+      resolution.nextChange.getTime() - this.now().getTime(),
+    );
+    this.tariffTimer = this.homey.setTimeout(() => {
+      try {
+        this.recomputeTariffRates();
+      } catch (e) {
+        this.error("Failed to update Powerwall tariff rates", e);
+      }
+    }, delay);
+  }
+
+  private clearTariffRates(): void {
+    this.update("grid_buy_rate", null);
+    this.update("grid_sell_rate", null);
+    this.setCapabilityOptions("grid_buy_rate", {
+      ...this.driver.manifest.capabilitiesOptions["grid_buy_rate"],
+    }).catch(this.error);
+    this.setCapabilityOptions("grid_sell_rate", {
+      ...this.driver.manifest.capabilitiesOptions["grid_sell_rate"],
+    }).catch(this.error);
   }
 
   // Public action methods for Flow cards
