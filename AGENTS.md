@@ -514,7 +514,8 @@ Flagged for a future pass.
 ### Credential Teardown & Availability Reasons (`app.ts`, `lib/TeslemetryDevice.ts`)
 
 Every device's unavailability is tracked as one typed `AvailabilityReason`
-(`"startup" | "binding" | "stream" | "auth"`, `lib/TeslemetryDevice.ts`) via
+(`"startup" | "binding" | "stream" | "auth" | "connector"`,
+`lib/TeslemetryDevice.ts`) via
 `markUnavailable(reason, message)` / `clearAvailabilityReason(reason)` -
 never a raw `setUnavailable()`/`setAvailable()` call from app.ts or a data
 handler. `clearAvailabilityReason()` is a no-op unless the device's *current*

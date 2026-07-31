@@ -23,8 +23,8 @@ export default class WallConnectorDriver extends TeslemetryDriver {
 
   /**
    * Whether this device's current site+DIN pair still resolves to a real
-   * connector - covers both a missing site (finding 4) and a site that
-   * resolves but no longer lists this DIN (finding 5) with one check.
+   * connector - covers both a missing site and a site that resolves but no
+   * longer lists this DIN with one check.
    */
   private async isConnectorBound(target: WallConnecter): Promise<boolean> {
     const site = this.homey.app.products?.energySites?.[target.getSiteId()];
