@@ -21,18 +21,6 @@
   "ui": {
     "quickAction": false
   },
-  "repair": [
-    {
-      "id": "login_oauth2",
-      "template": "login_oauth2",
-      "navigation": {
-        "next": "repair_vehicle"
-      }
-    },
-    {
-      "id": "repair_vehicle"
-    }
-  ],
   "energy": {
     "electricCar": true
   },

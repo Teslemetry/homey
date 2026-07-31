@@ -5,6 +5,9 @@ import PowerwallDriver from "../.homeybuild/drivers/battery/driver.js";
 import SolarDriver from "../.homeybuild/drivers/solar/driver.js";
 import GatewayDriver from "../.homeybuild/drivers/gateway/driver.js";
 import WallConnectorDriver from "../.homeybuild/drivers/wall-connector/driver.js";
+import PowerwallDevice from "../.homeybuild/drivers/battery/device.js";
+import SolarDevice from "../.homeybuild/drivers/solar/device.js";
+import GatewayDevice from "../.homeybuild/drivers/gateway/device.js";
 
 function createSite(
   id: string | number,
@@ -191,6 +194,33 @@ test("energy-site drivers keep pairing data.id as the SDK's real numeric type, n
     { name: "Numeric Site Wall Connector", data: { site: 123, din: "din-1" } },
   ]);
   assert.equal(typeof wcResult[0].data.site, "number");
+});
+
+test("PowerwallDevice.getSiteId always returns a string even when the immutable pairing data holds a numeric id", () => {
+  const stub = Object.assign(Object.create(PowerwallDevice.prototype), {
+    getData: () => ({ id: 123 }),
+  });
+
+  assert.equal(stub.getSiteId(), "123");
+  assert.equal(typeof stub.getSiteId(), "string");
+});
+
+test("SolarDevice.getSiteId always returns a string even when the immutable pairing data holds a numeric id", () => {
+  const stub = Object.assign(Object.create(SolarDevice.prototype), {
+    getData: () => ({ id: 123 }),
+  });
+
+  assert.equal(stub.getSiteId(), "123");
+  assert.equal(typeof stub.getSiteId(), "string");
+});
+
+test("GatewayDevice.getSiteId always returns a string even when the immutable pairing data holds a numeric id", () => {
+  const stub = Object.assign(Object.create(GatewayDevice.prototype), {
+    getData: () => ({ id: 123 }),
+  });
+
+  assert.equal(stub.getSiteId(), "123");
+  assert.equal(typeof stub.getSiteId(), "string");
 });
 
 test("all four energy drivers return every healthy candidate when every site fails or lacks access", async () => {

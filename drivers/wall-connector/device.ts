@@ -12,11 +12,6 @@ interface LiveStatusResponse {
   }>;
 }
 
-interface ConnectorBinding {
-  siteId: string;
-  din: string;
-}
-
 export default class WallConnecter extends TeslemetryDevice {
   site!: EnergyDetails;
   din!: string;
@@ -78,67 +73,12 @@ export default class WallConnecter extends TeslemetryDevice {
     return this.site ? `site:${String(this.site.id)}` : undefined;
   }
 
-  /**
-   * The energy site id this device resolves against. Defaults to the
-   * immutable pairing id (`getData().site`), but a repair rebind overrides
-   * it via a store value instead, since Homey device data can't be changed
-   * post-pairing.
-   */
   public getSiteId(): string {
-    const binding = this.getStoreValue(
-      "wallConnectorBinding",
-    ) as ConnectorBinding | null;
-    return String(
-      binding?.siteId ??
-        (this.getStoreValue("energySiteId") as string | null) ??
-        this.getData().site,
-    );
+    return String(this.getData().site);
   }
 
-  /**
-   * The wall connector DIN this device resolves against. Defaults to the
-   * immutable pairing id (`getData().din`), but a repair rebind overrides
-   * it via a store value instead, since Homey device data can't be changed
-   * post-pairing.
-   */
   public getDin(): string {
-    const binding = this.getStoreValue(
-      "wallConnectorBinding",
-    ) as ConnectorBinding | null;
-    return (
-      binding?.din ??
-      (this.getStoreValue("wallConnectorDin") as string | null) ??
-      this.getData().din
-    );
-  }
-
-  /**
-   * Explicit, identity-preserving repair action: rebinds this same device to
-   * a different site/DIN pair (via store values, not the immutable pairing
-   * data) and (re-)registers its live listeners. Called from the driver's
-   * repair view once the user confirms a specific connector. Validates the
-   * target DIN is actually present at the target site before committing -
-   * otherwise this would just reproduce the same "connector" unavailable
-   * state under the new binding.
-   */
-  public async repairConnector(siteId: string, din: string): Promise<void> {
-    const site = this.homey.app.products?.energySites?.[siteId];
-    if (!site) {
-      throw new Error(this.homey.__("error.energy_site_not_found"));
-    }
-    const siteInfo = await site.api.getSiteInfo().catch(() => null);
-    const hasDin = siteInfo?.response?.components?.wall_connectors?.some(
-      (connector) => connector.din === din,
-    );
-    if (!hasDin) {
-      throw new Error(this.homey.__("error.wall_connector_not_found"));
-    }
-    this.pollingCleanup?.forEach((stop) => stop());
-    await this.setStoreValue("wallConnectorBinding", { siteId, din });
-    // bindSite() itself restores availability via clearAvailabilityReason
-    // ("binding"/"connector" are the only reasons a device can have reached
-    // this repair flow with) - no separate setAvailable() call needed here.
-    this.bindSite(site);
+    return this.getData().din;
   }
 
   private bindSite(site: EnergyDetails): void {

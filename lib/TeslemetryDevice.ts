@@ -17,8 +17,7 @@ import { TeslemetryApiError } from "../@types/error.js";
  *   device's own product receives a genuine data event after reauth.
  * - "connector": Wall Connector only - the site itself resolves, but its
  *   saved DIN hasn't appeared in that site's live_status past the miss
- *   grace period; clears once a live_status event reports that DIN again,
- *   or after a repair rebinds the device to a different site/DIN.
+ *   grace period; clears once a live_status event reports that DIN again.
  */
 export type AvailabilityReason =
   | "startup"

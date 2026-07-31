@@ -62,36 +62,8 @@ export default class GatewayDevice extends TeslemetryDevice {
     return this.site ? `site:${String(this.site.id)}` : undefined;
   }
 
-  /**
-   * The energy site id this device resolves against. Defaults to the
-   * immutable pairing id (`getData().id`), but a repair rebind overrides it
-   * via a store value instead, since Homey device data can't be changed
-   * post-pairing.
-   */
   public getSiteId(): string {
-    return String(
-      (this.getStoreValue("energySiteId") as string | null) ??
-        this.getData().id,
-    );
-  }
-
-  /**
-   * Explicit, identity-preserving repair action: rebinds this same device to
-   * a different energy site id (via a store value, not the immutable
-   * pairing data) and (re-)registers its live listeners. Called from the
-   * driver's repair view once the user confirms a specific site.
-   */
-  public async repairSite(siteId: string): Promise<void> {
-    const site = this.homey.app.products?.energySites?.[siteId];
-    if (!site) {
-      throw new Error(this.homey.__("error.energy_site_not_found"));
-    }
-    this.pollingCleanup?.forEach((stop) => stop());
-    await this.setStoreValue("energySiteId", siteId);
-    // bindSite() itself restores availability via clearAvailabilityReason
-    // ("binding" is the only reason a device can have reached this repair
-    // flow with) - no separate setAvailable() call needed here.
-    this.bindSite(site);
+    return String(this.getData().id);
   }
 
   private bindSite(site: EnergyDetails): void {
