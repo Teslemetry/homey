@@ -9,6 +9,7 @@ export default class TeslemetryDriver extends Homey.Driver {
   };
 
   private missingDeviceLogAt = new Map<string, number>();
+  private identityRepairChain: Promise<void> = Promise.resolve();
   private static readonly MISSING_DEVICE_LOG_INTERVAL_MS = 60_000;
 
   /**
@@ -84,7 +85,19 @@ export default class TeslemetryDriver extends Homey.Driver {
       if (!config.isTarget(device)) {
         throw new Error(config.wrongDeviceMessage);
       }
-      await config.repair(device, id);
+
+      const repair = this.identityRepairChain.then(async () => {
+        if (await config.isBound(device)) {
+          throw new Error("Device binding no longer needs repair");
+        }
+        const candidate = await config.findCandidate(device);
+        if (candidate?.id !== id) {
+          throw new Error("Repair candidate is no longer available");
+        }
+        await config.repair(device, id);
+      });
+      this.identityRepairChain = repair.catch(() => {});
+      await repair;
     });
   }
 

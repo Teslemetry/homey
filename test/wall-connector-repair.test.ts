@@ -154,6 +154,22 @@ test("WallConnecter.repairConnector validates the target DIN exists at the targe
   assert.equal(stub.getDin(), "din-2");
 });
 
+test("WallConnecter resolves a connector repair from one atomic store value", async () => {
+  const site = createWcSite("site-1", [
+    { din: "din-2", part_name: "Wall Connector" },
+  ]);
+  const { stub } = createDeviceStub({ "site-1": site });
+
+  await stub.repairConnector("site-1", "din-2");
+
+  assert.deepEqual(stub.getStoreValue("wallConnectorBinding"), {
+    siteId: "site-1",
+    din: "din-2",
+  });
+  assert.equal(stub.getStoreValue("energySiteId"), null);
+  assert.equal(stub.getStoreValue("wallConnectorDin"), null);
+});
+
 function createDriverStub(sites: Record<string, ReturnType<typeof createWcSite>>) {
   const energySites: Record<string, unknown> = {};
   for (const site of Object.values(sites)) energySites[site.id] = site;
@@ -263,4 +279,38 @@ test("WallConnectorDriver.onRepair's confirm_repair_connector splits the candida
   await session.handlers.confirm_repair_connector("site-1::din-2");
 
   assert.deepEqual(repairCalls, [["site-1", "din-2"]]);
+});
+
+test("WallConnectorDriver serializes confirmation and revalidates candidate uniqueness", async () => {
+  const site = createWcSite("site-1", [
+    { din: "din-2", part_name: "Wall Connector 2" },
+  ]);
+  const driver = createDriverStub({ "site-1": site });
+  const first = createRepairTargetDevice("stale-1", "stale-din-1");
+  const second = createRepairTargetDevice("stale-2", "stale-din-2");
+  const repaired: Array<[string, string]> = [];
+  first.repairConnector = async (siteId: string, din: string) => {
+    repaired.push([siteId, din]);
+    first.getStoreValue = (key: string) =>
+      key === "wallConnectorBinding" ? { siteId, din } : null;
+  };
+  second.repairConnector = async (siteId: string, din: string) => {
+    repaired.push([siteId, din]);
+  };
+  driver.getDevices = () => [first, second];
+  const firstSession = createSessionStub();
+  const secondSession = createSessionStub();
+  await driver.onRepair(firstSession, first);
+  await driver.onRepair(secondSession, second);
+
+  const results = await Promise.allSettled([
+    firstSession.handlers.confirm_repair_connector("site-1::din-2"),
+    secondSession.handlers.confirm_repair_connector("site-1::din-2"),
+  ]);
+
+  assert.deepEqual(results.map(({ status }) => status), [
+    "fulfilled",
+    "rejected",
+  ]);
+  assert.deepEqual(repaired, [["site-1", "din-2"]]);
 });

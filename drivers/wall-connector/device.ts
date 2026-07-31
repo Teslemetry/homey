@@ -12,6 +12,11 @@ interface LiveStatusResponse {
   }>;
 }
 
+interface ConnectorBinding {
+  siteId: string;
+  din: string;
+}
+
 export default class WallConnecter extends TeslemetryDevice {
   site!: EnergyDetails;
   din!: string;
@@ -80,7 +85,11 @@ export default class WallConnecter extends TeslemetryDevice {
    * post-pairing.
    */
   public getSiteId(): string {
+    const binding = this.getStoreValue(
+      "wallConnectorBinding",
+    ) as ConnectorBinding | null;
     return (
+      binding?.siteId ??
       (this.getStoreValue("energySiteId") as string | null) ??
       this.getData().site
     );
@@ -93,7 +102,11 @@ export default class WallConnecter extends TeslemetryDevice {
    * post-pairing.
    */
   public getDin(): string {
+    const binding = this.getStoreValue(
+      "wallConnectorBinding",
+    ) as ConnectorBinding | null;
     return (
+      binding?.din ??
       (this.getStoreValue("wallConnectorDin") as string | null) ??
       this.getData().din
     );
@@ -121,8 +134,7 @@ export default class WallConnecter extends TeslemetryDevice {
       throw new Error(this.homey.__("error.wall_connector_not_found"));
     }
     this.pollingCleanup?.forEach((stop) => stop());
-    await this.setStoreValue("energySiteId", siteId);
-    await this.setStoreValue("wallConnectorDin", din);
+    await this.setStoreValue("wallConnectorBinding", { siteId, din });
     // bindSite() itself restores availability via clearAvailabilityReason
     // ("binding"/"connector" are the only reasons a device can have reached
     // this repair flow with) - no separate setAvailable() call needed here.
