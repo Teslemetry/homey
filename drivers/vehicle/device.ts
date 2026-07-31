@@ -128,7 +128,25 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   async onInit() {
     await super.onInit();
+    this.resolveAndBindVehicle();
+  }
 
+  /**
+   * Re-resolves the vehicle and rebinds, torn down and re-registered exactly
+   * like onInit(). See TeslemetryDevice.rebindProduct(). Re-registering the
+   * command capability listeners here is harmless, not load-bearing - they
+   * read `this.vehicle` dynamically on every call, so just reassigning it
+   * below would already point them at the new vehicle's API client.
+   */
+  public rebindProduct(): void {
+    this.vehicle?.sse.off("state", this.handleVehicleState);
+    this.vehicle?.sse.off("connectivity", this.handleConnectivity);
+    this.sseCleanup.forEach((off) => off());
+    this.sseCleanup = [];
+    this.resolveAndBindVehicle();
+  }
+
+  private resolveAndBindVehicle(): void {
     try {
       const vehicle = this.homey.app.products?.vehicles?.[this.getData().vin];
       if (!vehicle) throw new Error("No vehicle found");

@@ -4,6 +4,7 @@ import Homey from 'homey';
 import { Products, Teslemetry } from '@teslemetry/api';
 import type { TeslemetryStreamErrorEvent } from '@teslemetry/api';
 import TeslemetryOAuth2Client from './lib/TeslemetryOAuth2Client.js';
+import TeslemetryDevice from './lib/TeslemetryDevice.js';
 import type { TeslemetryApiError } from './@types/error.d.ts';
 import type VehicleDevice from './drivers/vehicle/device.js';
 import type PowerwallDevice from './drivers/battery/device.js';
@@ -440,6 +441,32 @@ export default class TeslemetryApp extends Homey.App {
     this.log(
       `Teslemetry initialized successfully! Found ${vehicleCount} vehicles and ${energyCount} energy sites.`,
     );
+
+    // A no-op on first boot (no devices are paired yet at this point in
+    // startup); load-bearing whenever this is a re-init of an already
+    // running app (reinitialize(), or a lazy re-init after
+    // stopSseAndSurfaceReauth()) - see rebindAllDeviceProducts().
+    this.rebindAllDeviceProducts();
+  }
+
+  /**
+   * Rebinds every already-paired device across every driver to the
+   * `products` object that was just (re)built. Every device captures its
+   * own site/vehicle reference and registers SSE listeners on it during its
+   * own onInit(); recreating `this.products` here without this would leave
+   * those devices listening on the old, now-dead per-product streams
+   * forever - staying "available" while silently never receiving another
+   * update again. See TeslemetryDevice.rebindProduct().
+   */
+  private rebindAllDeviceProducts(): void {
+    const drivers = Object.values(this.homey.drivers.getDrivers());
+    for (const driver of drivers) {
+      for (const device of driver.getDevices()) {
+        if (device instanceof TeslemetryDevice) {
+          device.rebindProduct();
+        }
+      }
+    }
   }
 
   /**
