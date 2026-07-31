@@ -237,6 +237,7 @@ test("VehicleDevice.rebindProduct recovers a device stuck on an orphaned vehicle
       api: {
         lockDoors: async () => {
           apiCalls.push("lockDoors");
+          return { response: { result: true } };
         },
       },
       apiCalls,

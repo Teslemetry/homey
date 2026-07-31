@@ -138,31 +138,58 @@ capability filter, matching the existing convention in `.homeycompose/flow/`.
 
 ### Capability Listeners
 
-**Do not await vehicle SDK actions in `registerCapabilityListener`** - they can take up to a minute. Use `.catch()` instead:
+**Do not await vehicle SDK actions directly in `registerCapabilityListener`** - they
+can take up to a minute. Return the `action()`/`vehicleAction()` call (see below)
+instead, which internally races a 9s timeout so the listener still settles well
+within Homey's ~10s flow-card timeout:
 
 ```typescript
 // Correct
 this.registerCapabilityListener("locked", async (value) => {
-  value
-    ? this.vehicle.api.lockDoors().catch(this.handleApiError)
-    : this.vehicle.api.unlockDoors().catch(this.handleApiError);
+  return this.vehicleAction(
+    value ? this.vehicle.api.lockDoors() : this.vehicle.api.unlockDoors(),
+  );
 });
 
-// Wrong - blocks the listener and will likely hit 10 second timeout
+// Wrong - blocks the listener on the raw SDK promise, no timeout race
 this.registerCapabilityListener("locked", async (value) => {
   await this.vehicle.api.lockDoors();  // Don't do this
 });
 ```
 
-### API Error Handling
+### Vehicle Command Response Validation (`VehicleDevice.vehicleAction()`)
 
-Use the inherited `handleApiError` and `handleApiResponse` methods:
+Every vehicle SDK command resolves `{ response: { result: boolean, reason?:
+string } }` **except** `wakeUp()`, whose response is the vehicle's own state
+payload. Homey only observes whether a listener/Flow promise resolves or
+rejects - it has no idea what `result: false` means - so every vehicle command
+(capability listener and Flow action alike) must route through
+`VehicleDevice.vehicleAction()`, not the base `TeslemetryDevice.action()`
+directly:
 
 ```typescript
-this.vehicle.api.someCommand()
-  .then(this.handleApiResponse)
-  .catch(this.handleApiError);
+return this.vehicleAction(this.vehicle.api.someCommand(args));
 ```
+
+`vehicleAction()` validates `response.result` via `handleApiResponse` before
+handing the promise to `action()`'s timeout race; its generic constraint
+requires the resolved type to include `response.result`, so passing
+`wakeUp()`'s promise won't compile - call `this.action(this.vehicle.api.wakeUp())`
+directly for that one exemption. Do not hand-roll
+`.then(this.handleApiResponse)` per call site again; that's exactly the
+ad-hoc pattern that let most commands report Tesla's explicit failures as
+Homey successes before this wrapper existed. Energy-site commands
+(Powerwall/Solar/Gateway/Wall Connector, via `this.site.api...`) have a
+different, less consistent response shape and still call the base
+`action()` directly - `vehicleAction()` is vehicle-only.
+
+### API Error Handling
+
+`handleApiResponse` (thrown into a rejection on `result: false`) and
+`handleApiError` (translates/logs a rejected API error, and marks the device
+`"auth"`-unavailable on `invalid_token`/`subscription_required`) are inherited
+from `TeslemetryDevice` and used internally by `action()`/`vehicleAction()`.
+Call them directly only for a command that bypasses those wrappers.
 
 ### Action Timeout (`TeslemetryDevice.action()`)
 
