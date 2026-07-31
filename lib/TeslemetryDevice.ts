@@ -101,11 +101,10 @@ export default class TeslemetryDevice extends Homey.Device {
   /**
    * Re-resolves this device's product (energy site or vehicle) from
    * `homey.app.products` and re-registers its SSE listeners, torn down and
-   * built up exactly as they are in `onInit()`. `TeslemetryApp.reinitialize()`
-   * builds a brand new `Products`/SSE connection when the Teslemetry session
-   * gets torn down and recreated (an auth failure recovering, a saved token
-   * refresh); without this, an already-paired device keeps its listeners on
-   * the old, now-dead per-product stream forever - it stays "available" but
+   * built up exactly as they are in `onInit()`. Whenever
+   * `TeslemetryApp.initializeTeslemetry()` publishes a new `Products`/SSE
+   * connection, an already-paired device would otherwise keep its listeners
+   * on the old, now-dead per-product stream forever - it stays "available" but
    * silently stops receiving any live data. Subclasses that hold a
    * `site`/`vehicle` reference override this; the default no-op covers
    * subclasses with no such reference to go stale.

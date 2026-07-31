@@ -399,9 +399,10 @@ published under concurrent calls. The pieces:
   attaches that generation's stream handlers to the *local* `sdk`, and only
   publishes to `this.teslemetry`/`this.products` after `createProducts()`
   fully succeeds - a failed build never leaves those fields half-updated.
-  The previous generation's stream is closed only *after* the new one is
-  live and connected, so a token-refresh rebuild has no gap with zero active
-  stream. `this.generation` is bumped at the start of every build and inside
+  The previous generation's stream is closed only *after* the new stream has
+  been started, so a token-refresh rebuild has no gap with zero active stream.
+  This does not imply that the optimistic `connect()` call has delivered data.
+  `this.generation` is bumped when a completed build is published and inside
   `cleanup()`; every stream handler captures its own generation and no-ops
   once superseded, so a straggler event from an old/closed SDK (`close()`
   doesn't abort its in-flight request - a known `@teslemetry/api` gap, not

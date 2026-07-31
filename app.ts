@@ -706,8 +706,7 @@ export default class TeslemetryApp extends Homey.App {
    * current generation's stream. A cached replay (`isCache`) is not
    * evidence of a live connection, only a genuine event is: it proves the
    * stream authenticated and is actively delivering data for that specific
-   * product, which is exactly the recovery evidence findings 3 and 9 call
-   * for - so this both cancels a pending stream-stale escalation and clears
+   * product. This both cancels a pending stream-stale escalation and clears
    * that one device's own "stream"/"auth" unavailability reason. It never
    * touches devices for other products, and never blindly calls
    * setAvailable() - clearAvailabilityReason() is a no-op unless the
