@@ -433,6 +433,42 @@
       }
     },
     {
+      "id": "alarm_generic.at_work_true",
+      "title": {
+        "en": "The vehicle has arrived at work",
+        "nl": "Het voertuig is op het werk aangekomen",
+        "da": "Køretøjet er ankommet til arbejde",
+        "de": "Das Fahrzeug ist bei der Arbeit angekommen",
+        "es": "El vehículo ha llegado al trabajo",
+        "fr": "Le véhicule est arrivé au travail",
+        "it": "Il veicolo è arrivato al lavoro",
+        "no": "Kjøretøyet har ankommet jobb",
+        "sv": "Fordonet har kommit fram till jobbet",
+        "pl": "Pojazd dotarł do pracy",
+        "ru": "Автомобиль прибыл на работу",
+        "ko": "차량이 직장에 도착했습니다",
+        "ar": "وصلت المركبة إلى العمل"
+      }
+    },
+    {
+      "id": "alarm_generic.at_work_false",
+      "title": {
+        "en": "The vehicle has left work",
+        "nl": "Het voertuig heeft het werk verlaten",
+        "da": "Køretøjet har forladt arbejdet",
+        "de": "Das Fahrzeug hat die Arbeit verlassen",
+        "es": "El vehículo ha salido del trabajo",
+        "fr": "Le véhicule a quitté le travail",
+        "it": "Il veicolo ha lasciato il lavoro",
+        "no": "Kjøretøyet har forlatt jobb",
+        "sv": "Fordonet har lämnat jobbet",
+        "pl": "Pojazd opuścił pracę",
+        "ru": "Автомобиль покинул работу",
+        "ko": "차량이 직장을 떠났습니다",
+        "ar": "غادرت المركبة العمل"
+      }
+    },
+    {
       "id": "tpms_warning_changed",
       "title": {
         "en": "The tire pressure warning level has changed"
@@ -648,6 +684,24 @@
         "ru": "Обогрев заднего стекла !{{on|off}}",
         "ko": "후면 서리 제거가 !{{on|off}}",
         "ar": "إزالة الصقيع الخلفي !{{on|off}}"
+      }
+    },
+    {
+      "id": "alarm_generic.at_work",
+      "title": {
+        "en": "The vehicle is !{{at work|not at work}}",
+        "nl": "Het voertuig is !{{op het werk|niet op het werk}}",
+        "da": "Køretøjet er !{{på arbejde|ikke på arbejde}}",
+        "de": "Das Fahrzeug ist !{{bei der Arbeit|nicht bei der Arbeit}}",
+        "es": "El vehículo está !{{en el trabajo|fuera del trabajo}}",
+        "fr": "Le véhicule est !{{au travail|absent du travail}}",
+        "it": "Il veicolo è !{{al lavoro|fuori dal lavoro}}",
+        "no": "Kjøretøyet er !{{på jobb|ikke på jobb}}",
+        "sv": "Fordonet är !{{på jobbet|inte på jobbet}}",
+        "pl": "Pojazd jest !{{w pracy|poza pracą}}",
+        "ru": "Автомобиль !{{на работе|не на работе}}",
+        "ko": "차량이 !{{직장에 있음|직장에 없음}}",
+        "ar": "المركبة !{{في العمل|ليست في العمل}}"
       }
     },
     {

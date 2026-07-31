@@ -88,6 +88,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   private lastTpmsSoftWarnings?: SseData["data"]["TpmsSoftWarnings"];
   private lastTpmsHardWarnings?: SseData["data"]["TpmsHardWarnings"];
+  private previousLocatedAtHome?: boolean;
 
   /** Count of signal handlers that threw during registration/replay; see onSignal(). */
   private signalHandlerFailures = 0;
@@ -516,6 +517,14 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("minutes_to_arrival", value),
     );
 
+    // Presence (native vehicle-reported at-home/at-work, not derived from
+    // raw coordinates). Only ever updates if the account has granted the
+    // vehicle_location scope and the vehicle has resolved a location - see
+    // handleLocatedAtHome()/handleLocatedAtWork() for the degrade-gracefully
+    // behavior when it hasn't.
+    this.onSignal("LocatedAtHome", (value) => this.handleLocatedAtHome(value));
+    this.onSignal("LocatedAtWork", (value) => this.handleLocatedAtWork(value));
+
     // Guest Mode
     this.onSignal("GuestModeEnabled", (value) =>
       this.update("onoff.guest_mode", value),
@@ -912,6 +921,47 @@ export default class VehicleDevice extends TeslemetryDevice {
     ) {
       this.triggerFlow("charge_limit_reached", { battery: value });
     }
+  }
+
+  /**
+   * Updates alarm_presence directly from the vehicle's own LocatedAtHome
+   * signal - the Tesla-computed "is the vehicle at the active driver
+   * profile's saved home location" boolean, the same field the Teslemetry
+   * Home Assistant integration surfaces. No coordinates are read or
+   * computed here.
+   *
+   * If the account hasn't granted the vehicle_location scope,
+   * LocatedAtHome never arrives (cached or live) and this never runs, so
+   * alarm_presence just stays at its unset/null value - an honest
+   * "unknown", not a thrown error or a device marked unavailable.
+   *
+   * The previous value is tracked in `previousLocatedAtHome` rather than
+   * read back via getCapabilityValue(), since update() writes it
+   * asynchronously - a second signal arriving before the first write
+   * settles would otherwise see the same stale value and could double- or
+   * mis-fire the arrived/left-home triggers.
+   */
+  private handleLocatedAtHome(value: boolean | null | undefined): void {
+    if (value === undefined || value === null) return;
+    const previous = this.previousLocatedAtHome;
+    this.previousLocatedAtHome = value;
+    this.update("alarm_presence", value);
+
+    if (previous === undefined || previous === value) return;
+    this.triggerFlow(value ? "vehicle_arrived_home" : "vehicle_left_home");
+  }
+
+  /**
+   * Updates alarm_generic.at_work from the vehicle's own LocatedAtWork
+   * signal, mirroring handleLocatedAtHome. Its arrived/left-work triggers
+   * (`alarm_generic.at_work_true`/`_false`) are auto-fired by Homey's
+   * platform straight off this update() call - see the "Boolean system
+   * capabilities" pattern in AGENTS.md - so no explicit triggerFlow() call
+   * is needed here.
+   */
+  private handleLocatedAtWork(value: boolean | null | undefined): void {
+    if (value === undefined || value === null) return;
+    this.update("alarm_generic.at_work", value);
   }
 
   private triggerFlow(

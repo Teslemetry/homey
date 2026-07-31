@@ -420,18 +420,24 @@ received (no baseline to compare against) or on a repeated identical value.
   run listeners for a `(cardPrefix, capability, argName)` triple. See the
   solar/grid/load/battery power and buy/sell tariff rate cards for the
   pattern end to end.
-- **Boolean `alarm_generic.<sub>` capabilities** are the one exception to the
+- **Boolean system capabilities with their own `$flow` definition** (any
+  `alarm_*`, not just `alarm_generic.<sub>`) are the one exception to the
   "not reliably auto-fired" rule above: Homey's platform auto-fires the
   `<cap>_true`/`<cap>_false` triggers and auto-implements the plain `<cap>`
   is/isn't condition whenever `update()` changes the value - no
-  `registerRunListener` or explicit `.trigger()` call needed, only the manual
-  card definitions (subcapabilities still don't get cards generated for you).
-  See `alarm_generic.off_grid`/`.island`/`.rear_defrost`/`.fault` on Wall
-  Connector. If a trigger also needs a custom token (e.g. a fault code),
-  don't try to attach it to this auto-fired card - define a separate,
-  explicitly-fired trigger instead (see `wall_connector_fault_code`), since
-  firing the same card manually on top of Homey's automatic firing would
-  double-run any flow built on it.
+  `registerRunListener` or explicit `.trigger()` call needed. A
+  subcapability (`alarm_generic.off_grid`/`.island`/`.rear_defrost`/`.fault`
+  on Wall Connector) still needs its own manual card definitions (see
+  "Subcapability Flow Cards" above); a plain system capability used as-is
+  (`alarm_motion`, `alarm_presence` on Vehicle) needs none - just add it to
+  the driver's `capabilities` array and call `update()`. If a trigger also
+  needs a custom token (e.g. a fault code) or a distinct name (e.g.
+  "arrived home" instead of the generic "presence alarm turned on"), don't
+  try to attach it to this auto-fired card - define a separate,
+  explicitly-fired trigger instead (see `wall_connector_fault_code`,
+  `vehicle_arrived_home`/`vehicle_left_home`), since firing the same card
+  manually on top of Homey's automatic firing would double-run any flow
+  built on it.
 
 ### TPMS Warning Level (`tpms_warning`)
 
@@ -446,6 +452,39 @@ than exposing eight separate per-wheel alarms. It's a plain
 documented timezone defect - it reports as though the reading time were
 Pacific Time regardless of the vehicle's real timezone) are not currently
 surfaced by this capability or any other.
+
+### At-Home/At-Work Presence (`alarm_presence`, `alarm_generic.at_work`)
+
+Presence is sourced from the vehicle's own native `LocatedAtHome`/
+`LocatedAtWork` signals - Tesla-computed booleans ("is the vehicle at the
+active driver profile's saved home/work location") that
+`@teslemetry/api`'s type comments and the Teslemetry Home Assistant
+integration's `binary_sensor.py` both confirm are genuine Fleet Telemetry
+fields (Requires 2024.44.32), not something this app derives from raw
+coordinates. This is deliberately not a Homey-side geofence and requires no
+location math, geolocation permission, or device setting.
+`VehicleDevice.handleLocatedAtHome`/
+`handleLocatedAtWork` (registered via `onSignal("LocatedAtHome"/"LocatedAtWork",
+...)`) just pass the boolean straight through to `alarm_presence`/
+`alarm_generic.at_work`. `alarm_presence` is a plain system capability (free
+`alarm_presence_true`/`_false`/condition cards - see the "Boolean system
+capabilities" bullet above - plus the explicitly-fired, distinctly-named
+`vehicle_arrived_home`/`vehicle_left_home` triggers since the generic
+wording isn't clear enough on its own); `alarm_generic.at_work` is a
+subcapability with its own manually-defined `_true`/`_false`/condition
+cards (worded directly as "arrived at work"/"left work", so no supplementary
+trigger is needed the way home's is).
+
+If the account hasn't granted the `vehicle_location` scope, neither signal
+ever arrives (cached or live), so the handlers never run and both
+capabilities just stay at their unset/`null` value - an honest "unknown"
+rather than a thrown error or a device marked unavailable. No separate
+scope-detection call was added for this. `handleLocatedAtHome` tracks the
+previous value in `previousLocatedAtHome` rather than reading it back via
+`getCapabilityValue()`, since `update()` writes it asynchronously - a second
+signal arriving before the first write settles would otherwise see the same
+stale value and could double- or mis-fire `vehicle_arrived_home`/
+`vehicle_left_home`. See `test/vehicle-presence.test.ts`.
 
 ### Connection Lifecycle: Single-Flight Init, Startup Retry, Freshness Watchdog (`app.ts`)
 

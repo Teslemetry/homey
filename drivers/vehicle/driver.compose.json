@@ -93,7 +93,9 @@
     "alarm_generic.rear_defrost",
     "windowcoverings_closed.tonneau",
     "windowcoverings_set.tonneau",
-    "tpms_warning"
+    "tpms_warning",
+    "alarm_presence",
+    "alarm_generic.at_work"
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {
@@ -934,6 +936,70 @@
         "ar": "موضع غطاء صندوق الحمولة"
       },
       "setable": false
+    },
+    "alarm_presence": {
+      "title": {
+        "en": "At Home",
+        "nl": "Thuis",
+        "da": "Hjemme",
+        "de": "Zuhause",
+        "es": "En Casa",
+        "fr": "À la Maison",
+        "it": "A Casa",
+        "no": "Hjemme",
+        "sv": "Hemma",
+        "pl": "W Domu",
+        "ru": "Дома",
+        "ko": "집에 있음",
+        "ar": "في المنزل"
+      },
+      "desc": {
+        "en": "Whether the vehicle is at its driver profile's saved home location, as reported directly by the vehicle. No location coordinates are read, stored, or displayed by this app.",
+        "nl": "Of het voertuig zich op de opgeslagen thuislocatie van het bestuurdersprofiel bevindt, zoals rechtstreeks door het voertuig gerapporteerd. Er worden door deze app geen locatiecoördinaten gelezen, opgeslagen of weergegeven.",
+        "da": "Om køretøjet er på kørselsprofilens gemte hjemmeplacering, som rapporteret direkte af køretøjet selv. Denne app læser, gemmer eller viser ingen lokationskoordinater.",
+        "de": "Ob sich das Fahrzeug an der im Fahrerprofil gespeicherten Heimatadresse befindet, direkt vom Fahrzeug gemeldet. Diese App liest, speichert oder zeigt keine Standortkoordinaten an.",
+        "es": "Si el vehículo está en la ubicación de casa guardada en el perfil del conductor, según lo informa directamente el vehículo. Esta app no lee, almacena ni muestra coordenadas de ubicación.",
+        "fr": "Indique si le véhicule se trouve à l'adresse du domicile enregistrée dans le profil du conducteur, telle que rapportée directement par le véhicule. Cette application ne lit, ne stocke ni n'affiche aucune coordonnée de localisation.",
+        "it": "Indica se il veicolo si trova nella posizione di casa salvata nel profilo del conducente, come segnalato direttamente dal veicolo. Questa app non legge, memorizza o mostra alcuna coordinata di posizione.",
+        "no": "Om kjøretøyet er på førerprofilens lagrede hjemmeplassering, rapportert direkte av kjøretøyet selv. Denne appen leser, lagrer eller viser ingen posisjonskoordinater.",
+        "sv": "Om fordonet är på förarprofilens sparade hemplats, rapporterat direkt av fordonet självt. Den här appen läser, lagrar eller visar inga platskoordinater.",
+        "pl": "Czy pojazd znajduje się w domowej lokalizacji zapisanej w profilu kierowcy, zgłaszanej bezpośrednio przez pojazd. Ta aplikacja nie odczytuje, nie przechowuje ani nie wyświetla żadnych współrzędnych lokalizacji.",
+        "ru": "Находится ли автомобиль в домашнем местоположении, сохраненном в профиле водителя, о чем сообщает сам автомобиль. Это приложение не считывает, не хранит и не отображает координаты местоположения.",
+        "ko": "차량이 운전자 프로필에 저장된 자택 위치에 있는지 여부이며, 차량이 직접 보고하는 값입니다. 이 앱은 위치 좌표를 읽거나 저장하거나 표시하지 않습니다.",
+        "ar": "ما إذا كانت المركبة في موقع المنزل المحفوظ في ملف تعريف السائق، كما تُبلغ المركبة نفسها مباشرة. لا يقرأ هذا التطبيق أو يخزن أو يعرض أي إحداثيات موقع."
+      }
+    },
+    "alarm_generic.at_work": {
+      "title": {
+        "en": "At Work",
+        "nl": "Op Werk",
+        "da": "På Arbejde",
+        "de": "Bei der Arbeit",
+        "es": "En el Trabajo",
+        "fr": "Au Travail",
+        "it": "Al Lavoro",
+        "no": "På Jobb",
+        "sv": "På Jobbet",
+        "pl": "W Pracy",
+        "ru": "На Работе",
+        "ko": "직장에 있음",
+        "ar": "في العمل"
+      },
+      "desc": {
+        "en": "Whether the vehicle is at its driver profile's saved work location, as reported directly by the vehicle. No location coordinates are read, stored, or displayed by this app.",
+        "nl": "Of het voertuig zich op de opgeslagen werklocatie van het bestuurdersprofiel bevindt, zoals rechtstreeks door het voertuig gerapporteerd. Er worden door deze app geen locatiecoördinaten gelezen, opgeslagen of weergegeven.",
+        "da": "Om køretøjet er på kørselsprofilens gemte arbejdsplacering, som rapporteret direkte af køretøjet selv. Denne app læser, gemmer eller viser ingen lokationskoordinater.",
+        "de": "Ob sich das Fahrzeug an der im Fahrerprofil gespeicherten Arbeitsadresse befindet, direkt vom Fahrzeug gemeldet. Diese App liest, speichert oder zeigt keine Standortkoordinaten an.",
+        "es": "Si el vehículo está en la ubicación de trabajo guardada en el perfil del conductor, según lo informa directamente el vehículo. Esta app no lee, almacena ni muestra coordenadas de ubicación.",
+        "fr": "Indique si le véhicule se trouve à l'adresse de travail enregistrée dans le profil du conducteur, telle que rapportée directement par le véhicule. Cette application ne lit, ne stocke ni n'affiche aucune coordonnée de localisation.",
+        "it": "Indica se il veicolo si trova nella posizione di lavoro salvata nel profilo del conducente, come segnalato direttamente dal veicolo. Questa app non legge, memorizza o mostra alcuna coordinata di posizione.",
+        "no": "Om kjøretøyet er på førerprofilens lagrede jobbplassering, rapportert direkte av kjøretøyet selv. Denne appen leser, lagrer eller viser ingen posisjonskoordinater.",
+        "sv": "Om fordonet är på förarprofilens sparade jobbplats, rapporterat direkt av fordonet självt. Den här appen läser, lagrar eller visar inga platskoordinater.",
+        "pl": "Czy pojazd znajduje się w lokalizacji pracy zapisanej w profilu kierowcy, zgłaszanej bezpośrednio przez pojazd. Ta aplikacja nie odczytuje, nie przechowuje ani nie wyświetla żadnych współrzędnych lokalizacji.",
+        "ru": "Находится ли автомобиль в рабочем местоположении, сохраненном в профиле водителя, о чем сообщает сам автомобиль. Это приложение не считывает, не хранит и не отображает координаты местоположения.",
+        "ko": "차량이 운전자 프로필에 저장된 직장 위치에 있는지 여부이며, 차량이 직접 보고하는 값입니다. 이 앱은 위치 좌표를 읽거나 저장하거나 표시하지 않습니다.",
+        "ar": "ما إذا كانت المركبة في موقع العمل المحفوظ في ملف تعريف السائق، كما تُبلغ المركبة نفسها مباشرة. لا يقرأ هذا التطبيق أو يخزن أو يعرض أي إحداثيات موقع."
+      }
     }
   }
 }
