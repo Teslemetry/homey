@@ -341,7 +341,7 @@ export default class TeslemetryDevice extends Homey.Device {
 
   /**
    * Converts a source system's daily running total into a monotonically
-   * increasing `meter_*` capability value. See CLAUDE.md's "Cumulative
+   * increasing `meter_*` capability value. See AGENTS.md's "Cumulative
    * Energy Meters" section for why this exists.
    *
    * `dateKey` must be a zero-padded ISO `YYYY-MM-DD` string - every caller
