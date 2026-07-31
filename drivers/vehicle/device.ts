@@ -99,6 +99,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   private lastTpmsSoftWarnings?: SseData["data"]["TpmsSoftWarnings"];
   private lastTpmsHardWarnings?: SseData["data"]["TpmsHardWarnings"];
+  private previousPresence?: boolean | null;
 
   /** Count of signal handlers that threw during registration/replay; see onSignal(). */
   private signalHandlerFailures = 0;
@@ -977,14 +978,18 @@ export default class VehicleDevice extends TeslemetryDevice {
         ? configuredRadius
         : DEFAULT_PRESENCE_RADIUS_METERS;
 
-    const wasHome = this.getCapabilityValue("alarm_presence") as
-      | boolean
-      | null;
+    if (this.previousPresence === undefined) {
+      this.previousPresence = this.getCapabilityValue("alarm_presence") as
+        | boolean
+        | null;
+    }
+    const wasHome = this.previousPresence;
     const isHome =
       wasHome === true
         ? distance <= radius * (1 + PRESENCE_HYSTERESIS_RATIO)
         : distance <= radius;
 
+    this.previousPresence = isHome;
     this.update("alarm_presence", isHome);
 
     if (wasHome === null || wasHome === undefined || wasHome === isHome) {

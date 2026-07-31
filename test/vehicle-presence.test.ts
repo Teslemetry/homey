@@ -157,6 +157,22 @@ test("repeated readings well inside the radius do not re-fire vehicle_arrived_ho
   assert.deepEqual(triggerCalls, ["vehicle_arrived_home"]);
 });
 
+test("pending capability writes do not duplicate presence transitions", () => {
+  const { stub, triggerCalls } = createDeviceStub({ initialPresence: false });
+  stub.setCapabilityValue = async () => new Promise<void>(() => {});
+
+  (stub as any).handleLocation({
+    latitude: offsetNorth(HOME_LATITUDE, 10),
+    longitude: HOME_LONGITUDE,
+  });
+  (stub as any).handleLocation({
+    latitude: offsetNorth(HOME_LATITUDE, 20),
+    longitude: HOME_LONGITUDE,
+  });
+
+  assert.deepEqual(triggerCalls, ["vehicle_arrived_home"]);
+});
+
 // --- radius setting ---
 
 test("a custom presence_radius setting is honored", () => {
