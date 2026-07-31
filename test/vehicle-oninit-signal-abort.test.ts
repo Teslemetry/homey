@@ -77,7 +77,17 @@ function createDeviceStub({ throwOnBatteryLevel = false } = {}) {
   const vehicle = {
     sse,
     api,
-    metadata: { config: { rhd: false, can_actuate_trunks: false } },
+    metadata: {
+      config: {
+        rhd: false,
+        can_actuate_trunks: false,
+        // Matches every seat capability already in COMMAND_CAPABILITIES, so
+        // ensureCapabilities() is a no-op and this fixture stays focused on
+        // signal-listener registration ordering, not capability gating.
+        has_seat_cooling: true,
+        rear_seat_heaters: 3,
+      },
+    },
   };
 
   const capabilities: Record<string, unknown> = Object.fromEntries(

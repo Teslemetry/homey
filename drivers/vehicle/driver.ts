@@ -1,7 +1,7 @@
 import Homey from "homey";
 import TeslemetryDriver from "../../lib/TeslemetryDriver.js";
 import VehicleDevice from "./device.js";
-import isCybertruck from "./model.js";
+import { filterVehicleCapabilities } from "./capabilityGating.js";
 
 const icon: Record<string, { icon: string }> = {
   S: { icon: "modelS.svg" },
@@ -78,36 +78,11 @@ export default class VehicleDriver extends TeslemetryDriver {
             metadata.access && !!metadata.fleet_telemetry && !metadata.polling,
         )
         .map((data) => {
-          const hasSeatCooling = !!data.metadata.config?.has_seat_cooling;
-          const rearSeatHeaters = data.metadata.config?.rear_seat_heaters ?? 0;
-          const isCybertruckVin = isCybertruck(data.vin);
-
           // Build capabilities list, excluding unsupported features
-          const capabilities = (this.manifest.capabilities as string[]).filter(
-            (cap) => {
-              if (
-                cap === "seat_cooler.front_left" ||
-                cap === "seat_cooler.front_right"
-              ) {
-                return hasSeatCooling;
-              }
-              if (
-                cap === "seat_heater.rear_left" ||
-                cap === "seat_heater.rear_right"
-              ) {
-                return rearSeatHeaters >= 2;
-              }
-              if (cap === "seat_heater.rear_center") {
-                return rearSeatHeaters >= 3;
-              }
-              if (
-                cap === "windowcoverings_closed.tonneau" ||
-                cap === "windowcoverings_set.tonneau"
-              ) {
-                return isCybertruckVin;
-              }
-              return true;
-            },
+          const capabilities = filterVehicleCapabilities(
+            this.manifest.capabilities as string[],
+            data.vin,
+            data.metadata.config,
           );
 
           return {

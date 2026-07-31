@@ -13,7 +13,14 @@ class FakeVehicleStream extends EventEmitter {
   }
 }
 
-function createVehicle(vin: string) {
+function createVehicle(
+  vin: string,
+  config: {
+    can_actuate_trunks?: boolean;
+    has_seat_cooling?: boolean;
+    rear_seat_heaters?: number;
+  } = {},
+) {
   return {
     vin,
     sse: new FakeVehicleStream(),
@@ -22,7 +29,7 @@ function createVehicle(vin: string) {
       access: true,
       fleet_telemetry: true,
       polling: false,
-      config: { can_actuate_trunks: false },
+      config: { can_actuate_trunks: false, ...config },
     },
   };
 }
@@ -55,6 +62,12 @@ function createDeviceStub(vehicles: Record<string, ReturnType<typeof createVehic
       capabilities[capability] = value;
     },
     setCapabilityOptions: async () => {},
+    addCapability: async (capability: string) => {
+      capabilities[capability] = undefined;
+    },
+    removeCapability: async (capability: string) => {
+      delete capabilities[capability];
+    },
     registerCapabilityListener: () => {},
     getStoreValue: (key: string) => (key in store ? store[key] : null),
     setStoreValue: async (key: string, value: unknown) => {
@@ -110,6 +123,30 @@ test("VehicleDevice.repairVehicle rejects and leaves the device unbound when the
   assert.equal(stub.getVin(), "missing-vin", "no store override was written on failure");
 });
 
+test("VehicleDevice.repairVehicle resyncs seat capabilities for the replacement vehicle", async () => {
+  const seatCapabilities = [
+    "seat_heater.rear_left",
+    "seat_heater.rear_right",
+    "seat_heater.rear_center",
+    "seat_cooler.front_left",
+    "seat_cooler.front_right",
+  ];
+  const replacement = createVehicle("vin-1", {
+    has_seat_cooling: false,
+    rear_seat_heaters: 0,
+  });
+  const { stub, capabilities } = createDeviceStub({ "vin-1": replacement });
+  for (const capability of seatCapabilities) capabilities[capability] = undefined;
+  stub.driver.manifest.capabilities = ["vehicle_state", ...seatCapabilities];
+
+  await stub.repairVehicle("vin-1");
+
+  assert.deepEqual(
+    seatCapabilities.filter((capability) => capability in capabilities),
+    [],
+  );
+});
+
 function createDriverStub(vehicles: Record<string, ReturnType<typeof createVehicle> & { name: string }>) {
   return Object.assign(new VehicleDriver(), {
     homey: { app: { products: { vehicles } } },
@@ -120,6 +157,7 @@ function createDriverStub(vehicles: Record<string, ReturnType<typeof createVehic
 
 function createRepairTargetDevice(vin: string) {
   return Object.assign(Object.create(VehicleDevice.prototype), {
+    homey: { app: { products: {} } },
     driver: { manifest: { capabilities: [], capabilitiesOptions: {} } },
     getData: () => ({ vin, id: vin }),
     getCapabilities: () => [],
