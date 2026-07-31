@@ -455,6 +455,26 @@ resume in that gap with `destroyed` still `false`. See
 `test/device-liveness.test.ts` for the real SDK deletion-ordering model (map
 removal first, not a direct early `onUninit()` call).
 
+### Dependency Vulnerabilities (`npm audit`)
+
+`@teslemetry/api` and `tesla-fleet-api` (the two runtime dependencies) pull in
+no transitive dependencies of their own - every `npm audit` finding traces
+back to the `homey` devDependency (the CLI/release toolchain), so treat audit
+findings as toolchain hygiene, not runtime exposure. `package.json`'s
+`overrides` block pins several of `homey`'s own transitive deps (`uuid`,
+`tmp`, `minimatch`, `update-notifier`, `sharp`) past their advisory-fixed
+versions without bumping `homey` itself - each was verified individually
+(`npm run build && npm test && npm run lint && npm run app:validate` after
+each override) since forcing a transitive major can break the CLI in ways
+this app's own test suite can't catch on its own. The remaining findings
+(`socket.io-client`/`engine.io-client`/`parseuri`, pinned by `homey-api`) are
+left alone: `homey-api`'s client talks live protocol to a paired Homey box
+during `homey app run`/`select`, a path this repo has no way to exercise in
+CI, and `npm audit fix --force`'s only route is downgrading `homey` itself to
+a much older release - a regression, not a fix. Re-run `npm audit` after any
+`homey` devDependency bump to see whether upstream has closed this gap before
+adding another override.
+
 ## Maintaining this file
 
 Keep this file for knowledge useful to almost every future agent session in this project.
