@@ -59,7 +59,7 @@ export default class GatewayDriver extends TeslemetryDriver {
           {
             name: `${site.name} Gateway`,
             data: {
-              id: String(site.id),
+              id: site.id,
             },
             class: "sensor",
           },
