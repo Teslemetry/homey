@@ -115,6 +115,7 @@ function createDeviceStub({ throwOnBatteryLevel = false } = {}) {
       capabilities[capability] = value;
     },
     setCapabilityOptions: async () => {},
+    getStoreValue: () => null,
     registerCapabilityListener: (
       capability: string,
       listener: (value: unknown) => Promise<void>,

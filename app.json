@@ -5115,19 +5115,11 @@
           "id": "login_oauth2",
           "template": "login_oauth2",
           "navigation": {
-            "next": "list_devices"
+            "next": "repair_site"
           }
         },
         {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "add_devices"
-          }
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
+          "id": "repair_site"
         }
       ],
       "name": {
@@ -5317,19 +5309,11 @@
           "id": "login_oauth2",
           "template": "login_oauth2",
           "navigation": {
-            "next": "list_devices"
+            "next": "repair_site"
           }
         },
         {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "add_devices"
-          }
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
+          "id": "repair_site"
         }
       ],
       "name": {
@@ -5395,19 +5379,11 @@
           "id": "login_oauth2",
           "template": "login_oauth2",
           "navigation": {
-            "next": "list_devices"
+            "next": "repair_vehicle"
           }
         },
         {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "add_devices"
-          }
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
+          "id": "repair_vehicle"
         }
       ],
       "name": {
@@ -6378,19 +6354,11 @@
           "id": "login_oauth2",
           "template": "login_oauth2",
           "navigation": {
-            "next": "list_devices"
+            "next": "repair_connector"
           }
         },
         {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "add_devices"
-          }
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
+          "id": "repair_connector"
         }
       ],
       "name": {

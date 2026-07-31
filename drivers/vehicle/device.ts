@@ -150,9 +150,40 @@ export default class VehicleDevice extends TeslemetryDevice {
     return this.vehicle ? `vehicle:${this.vehicle.vin}` : undefined;
   }
 
+  /**
+   * The vehicle VIN this device resolves against. Defaults to the immutable
+   * pairing id (`getData().vin`), but a repair rebind overrides it via a
+   * store value instead, since Homey device data can't be changed
+   * post-pairing.
+   */
+  public getVin(): string {
+    return (
+      (this.getStoreValue("vehicleVin") as string | null) ?? this.getData().vin
+    );
+  }
+
+  /**
+   * Explicit, identity-preserving repair action: rebinds this same device to
+   * a different vehicle VIN (via a store value, not the immutable pairing
+   * data) and (re-)registers its live/command listeners. Called from the
+   * driver's repair view once the user confirms a specific vehicle.
+   */
+  public async repairVehicle(vin: string): Promise<void> {
+    const vehicle = this.homey.app.products?.vehicles?.[vin];
+    if (!vehicle) {
+      throw new Error(this.homey.__("error.vehicle_not_found"));
+    }
+    await this.setStoreValue("vehicleVin", vin);
+    // rebindProduct() itself restores availability via bindVehicle's
+    // clearAvailabilityReason ("binding" is the only reason a device can
+    // have reached this repair flow with) - no separate setAvailable() call
+    // needed here.
+    this.rebindProduct();
+  }
+
   private resolveAndBindVehicle(): void {
     try {
-      const vehicle = this.homey.app.products?.vehicles?.[this.getData().vin];
+      const vehicle = this.homey.app.products?.vehicles?.[this.getVin()];
       if (!vehicle) throw new Error("No vehicle found");
       this.vehicle = vehicle;
       this.clearAvailabilityReason("startup");
@@ -176,7 +207,7 @@ export default class VehicleDevice extends TeslemetryDevice {
       }
       this.log("Failed to initialize Vehicle device");
       this.error(e);
-      this.markUnavailable("binding", this.homey.__("error.invalid_refresh_token"));
+      this.markUnavailable("binding", this.homey.__("error.vehicle_not_found"));
       return;
     }
 
@@ -782,8 +813,8 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   async onUninit() {
     await super.onUninit();
-    this.vehicle.sse.off("state", this.handleVehicleState);
-    this.vehicle.sse.off("connectivity", this.handleConnectivity);
+    this.vehicle?.sse.off("state", this.handleVehicleState);
+    this.vehicle?.sse.off("connectivity", this.handleConnectivity);
     this.sseCleanup.forEach((off) => off());
     this.sseCleanup = [];
   }
@@ -791,7 +822,7 @@ export default class VehicleDevice extends TeslemetryDevice {
   /** Excludes Cybertruck-only capabilities (e.g. the tonneau cover) for every other model. */
   protected getExpectedCapabilities(): string[] {
     const capabilities = super.getExpectedCapabilities();
-    if (isCybertruck(this.getData().vin)) return capabilities;
+    if (isCybertruck(this.getVin())) return capabilities;
     return capabilities.filter((cap) => !CYBERTRUCK_ONLY_CAPABILITIES.has(cap));
   }
 

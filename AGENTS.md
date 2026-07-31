@@ -313,38 +313,80 @@ bug, but since the call can't throw synchronously, it can't block their
 `energy_totals` listener from registering either - not vulnerable, and nothing
 to guard.
 
-### Powerwall Missing-Site Repair (`PowerwallDevice`/`PowerwallDriver`)
+### Missing-Product Repair (all five drivers)
 
-A saved Powerwall's site id (`getData().id`) can stop resolving in
-`products.energySites` (e.g. the underlying site binding goes stale). Per
-the "registered but dead" pattern above, `PowerwallDevice.onInit` returns
-early in that case - `error.energy_site_not_found`, zero SSE listeners, zero
-command listeners. Fixing this without losing the device's identity (its
-runtime id, capability history, and Flow bindings, all keyed off the paired
-device instance, not the site id) needs the site binding to be mutable
-independently of the immutable Homey pairing `data`:
+A saved device's product id (energy site id, vehicle VIN, wall connector
+DIN) can stop resolving in `products` (e.g. the underlying binding goes
+stale, or a physical connector is replaced). Per the "registered but dead"
+pattern above, every driver's device `onInit` returns early in that case -
+an accurate `error.<x>_not_found` message (never the misleading
+`error.invalid_refresh_token`), zero SSE listeners, zero command listeners.
+Fixing this without losing the device's identity (its runtime id,
+capability history, and Flow bindings, all keyed off the paired device
+instance, not the product id) needs the product binding to be mutable
+independently of the immutable Homey pairing `data`. `PowerwallDevice`/
+`PowerwallDriver` (`drivers/battery/`) is the reference implementation this
+is generalized from; Solar, Gateway, Vehicle, and Wall Connector
+(`drivers/solar|gateway|vehicle|wall-connector/`) each carry the same
+shape:
 
-- `PowerwallDevice.getSiteId()` resolves the site id from a store value
-  (`energySiteId`) if one has been set, falling back to `getData().id`
-  otherwise. All site lookups go through this method, not `getData().id`
-  directly.
-- `PowerwallDevice.repairSite(siteId)` is the only way to change that store
-  value. It validates the target site exists, then calls the same
-  `bindSite()` internals `onInit` uses to register SSE/command listeners, so
-  a repaired device ends up identical to one that resolved correctly on
-  first init.
-- `PowerwallDriver.onRepair` exposes this through a driver-specific custom
-  repair view (`drivers/battery/repair/repair_site.html`, wired via
-  `driver.compose.json`'s own `repair` array, which overrides the shared
-  `teslemetry` template's array for this driver only - see
+- `<Device>.getSiteId()` / `getVin()` (Vehicle) / `getSiteId()`+`getDin()`
+  (Wall Connector) resolve the product id from a store value
+  (`energySiteId` / `vehicleVin` / `energySiteId`+`wallConnectorDin`) if one
+  has been set, falling back to the immutable pairing `data` otherwise. All
+  product lookups go through these methods, never `getData()` directly.
+- `<Device>.repairSite(id)` / `repairVehicle(vin)` / `repairConnector(siteId,
+  din)` is the only way to change that store value. It validates the target
+  exists (Wall Connector additionally validates the target DIN is actually
+  present at the target site via a live `getSiteInfo()` call), then calls
+  the same `bindSite()`/`rebindProduct()` internals `onInit` uses to
+  register SSE/command listeners, so a repaired device ends up identical to
+  one that resolved correctly on first init.
+- `<Driver>.onRepair` exposes this through a driver-specific custom repair
+  view (`drivers/<type>/repair/repair_*.html`, wired via each driver's own
+  `driver.compose.json` `repair` array, which overrides the shared
+  `teslemetry` template's array for that driver only - see
   `HomeyCompose.js`'s driver-json merge, where a driver's own top-level key
   fully replaces the same key inherited via `$extends`, not merges with it).
-  The view only ever offers a relink when `findRepairCandidate()` finds
-  exactly one battery-capable energy site not already bound to another live
-  Powerwall device; zero or multiple candidates get an explanatory
-  dead-end, never a guess. `Homey.createDevice()` is unavailable in repair
-  views by design, which is why this rebinds the existing device via a
-  store value instead of any list-devices/add-devices flow.
+  Every driver's `onRepair` wires its status/confirm session handlers
+  through `TeslemetryDriver.wireIdentityRepair()` - the shared status/confirm
+  contract every repair view speaks - rather than forking that boilerplate
+  per driver; `findUnboundSiteCandidate()` is the further-shared "exactly one
+  eligible, unbound site" search Powerwall/Solar/Gateway's own
+  `findRepairCandidate()` each call with a driver-specific eligibility check
+  (component presence, or none for Gateway, which pairs every accessible
+  site). Vehicle and Wall Connector's candidate search is different enough
+  (vehicle eligibility metadata; a site+DIN pair) that each keeps its own
+  `findRepairCandidate()` rather than forcing them through that helper. Every
+  view only ever offers a relink when the search finds exactly one candidate
+  not already bound to another live device of that same driver; zero or
+  multiple candidates get an explanatory dead-end, never a guess.
+  `Homey.createDevice()` is unavailable in repair views by design, which is
+  why this rebinds the existing device via a store value instead of any
+  list-devices/add-devices flow.
+
+Wall Connector additionally validates its DIN's continued presence, not just
+its site's: `WallConnecter`'s `live_status` handler counts consecutive
+events where its bound DIN is absent from the site's `wall_connectors` list.
+`DIN_MISS_GRACE_EVENTS` skips the first couple of events after a (re)bind (an
+initial/cached snapshot may not yet include every connector), and
+`DIN_MISS_THRESHOLD` then requires several further consecutive misses before
+`markUnavailable("connector", ...)` fires - a distinct `AvailabilityReason`
+from `"binding"` (the site itself missing), since a resolvable site with a
+vanished DIN is a different, repairable cause. Recovery is symmetric: the
+next `live_status` event carrying that DIN clears the `"connector"` reason
+and resets the miss streak.
+
+Every device's `onUninit()` must be safe to call after any of these early
+returns - a missing-product `onInit()` never assigns the product/cleanup
+fields a normal bind would, so dereferencing them unconditionally in
+`onUninit()` throws a secondary error that masks the original binding
+failure. `VehicleDevice`/`WallConnecter` guard this with `this.vehicle?.sse`
+and a `pollingCleanup` field initialized to `[]` at declaration plus
+optional chaining at every use site (matching Solar/Gateway/Powerwall's
+existing convention) - not one or the other alone, since a test double or
+any other path that skips the constructor still needs the optional chaining
+to be safe.
 
 ### Firing Flow Trigger Cards
 

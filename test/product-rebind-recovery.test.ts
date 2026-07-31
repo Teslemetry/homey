@@ -99,6 +99,7 @@ test("SolarDevice.rebindProduct recovers a device stuck on an orphaned site stre
       capabilities[capability] = value;
     },
     setCapabilityOptions: async () => {},
+    getStoreValue: () => null,
     log: () => {},
     error: () => {},
     setUnavailable: async () => {},
@@ -142,6 +143,7 @@ test("GatewayDevice.rebindProduct recovers a device stuck on an orphaned site st
       capabilities[capability] = value;
     },
     setCapabilityOptions: async () => {},
+    getStoreValue: () => null,
     log: () => {},
     error: () => {},
     setUnavailable: async () => {},
@@ -189,6 +191,7 @@ test("WallConnecter.rebindProduct recovers a device stuck on an orphaned site st
       capabilities[capability] = value;
     },
     setCapabilityOptions: async () => {},
+    getStoreValue: () => null,
     log: () => {},
     error: () => {},
   });
@@ -267,6 +270,7 @@ test("VehicleDevice.rebindProduct recovers a device stuck on an orphaned vehicle
       capabilities[capability] = value;
     },
     setCapabilityOptions: async () => {},
+    getStoreValue: () => null,
     registerCapabilityListener: (capability: string, listener: (value: unknown) => Promise<void>) => {
       capabilityListeners[capability] = listener;
     },

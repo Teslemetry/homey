@@ -21,6 +21,18 @@
   "ui": {
     "quickAction": false
   },
+  "repair": [
+    {
+      "id": "login_oauth2",
+      "template": "login_oauth2",
+      "navigation": {
+        "next": "repair_site"
+      }
+    },
+    {
+      "id": "repair_site"
+    }
+  ],
   "capabilities": [
     "measure_power",
     "measure_power.load",

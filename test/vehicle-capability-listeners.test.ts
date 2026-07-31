@@ -58,6 +58,7 @@ async function createDeviceStub(
       capabilities[capability] = value;
     },
     setCapabilityOptions: async () => {},
+    getStoreValue: () => null,
     registerCapabilityListener: (capability: string, listener: (value: unknown) => Promise<void>) => {
       capabilityListeners[capability] = listener;
     },

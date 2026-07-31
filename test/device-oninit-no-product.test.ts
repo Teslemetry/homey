@@ -35,7 +35,7 @@ function createDeviceStub(deviceClass: { prototype: object }, id: string) {
   return { stub, setUnavailableCalls };
 }
 
-test("VehicleDevice.onInit marks the device unavailable with a reauth message when no vehicle is found", async () => {
+test("VehicleDevice.onInit marks the device unavailable with a vehicle-not-found message when no vehicle is found", async () => {
   const { stub, setUnavailableCalls } = createDeviceStub(
     VehicleDevice,
     "missing-vin",
@@ -43,7 +43,7 @@ test("VehicleDevice.onInit marks the device unavailable with a reauth message wh
 
   await stub.onInit();
 
-  assert.deepEqual(setUnavailableCalls, ["error.invalid_refresh_token"]);
+  assert.deepEqual(setUnavailableCalls, ["error.vehicle_not_found"]);
 });
 
 test("PowerwallDevice.onInit marks the device unavailable with an energy-site-not-found message when no site is found", async () => {
@@ -57,7 +57,7 @@ test("PowerwallDevice.onInit marks the device unavailable with an energy-site-no
   assert.deepEqual(setUnavailableCalls, ["error.energy_site_not_found"]);
 });
 
-test("GatewayDevice.onInit marks the device unavailable with a reauth message when no site is found", async () => {
+test("GatewayDevice.onInit marks the device unavailable with an energy-site-not-found message when no site is found", async () => {
   const { stub, setUnavailableCalls } = createDeviceStub(
     GatewayDevice,
     "missing-site",
@@ -65,10 +65,10 @@ test("GatewayDevice.onInit marks the device unavailable with a reauth message wh
 
   await stub.onInit();
 
-  assert.deepEqual(setUnavailableCalls, ["error.invalid_refresh_token"]);
+  assert.deepEqual(setUnavailableCalls, ["error.energy_site_not_found"]);
 });
 
-test("SolarDevice.onInit marks the device unavailable with a reauth message when no site is found", async () => {
+test("SolarDevice.onInit marks the device unavailable with an energy-site-not-found message when no site is found", async () => {
   const { stub, setUnavailableCalls } = createDeviceStub(
     SolarDevice,
     "missing-site",
@@ -76,5 +76,5 @@ test("SolarDevice.onInit marks the device unavailable with a reauth message when
 
   await stub.onInit();
 
-  assert.deepEqual(setUnavailableCalls, ["error.invalid_refresh_token"]);
+  assert.deepEqual(setUnavailableCalls, ["error.energy_site_not_found"]);
 });

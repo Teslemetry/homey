@@ -6,26 +6,16 @@ export default class PowerwallDriver extends TeslemetryDriver {
   async onRepair(session: any, device: Homey.Device) {
     await super.onRepair(session, device);
 
-    session.setHandler("get_repair_site_status", async () => {
-      if (!(device instanceof PowerwallDevice)) return { needsRepair: false };
-
-      if (this.homey.app.products?.energySites?.[device.getSiteId()]) {
-        return { needsRepair: false };
-      }
-
-      const candidate = await this.findRepairCandidate(device);
-      return {
-        needsRepair: true,
-        candidateId: candidate?.id ?? null,
-        candidateName: candidate?.name ?? null,
-      };
-    });
-
-    session.setHandler("confirm_repair_site", async (siteId: string) => {
-      if (!(device instanceof PowerwallDevice)) {
-        throw new Error("Not a Powerwall device");
-      }
-      await device.repairSite(siteId);
+    this.wireIdentityRepair(session, device, {
+      isTarget: (candidate): candidate is PowerwallDevice =>
+        candidate instanceof PowerwallDevice,
+      isBound: (target) =>
+        !!this.homey.app.products?.energySites?.[target.getSiteId()],
+      findCandidate: (target) => this.findRepairCandidate(target),
+      repair: (target, siteId) => target.repairSite(siteId),
+      statusEvent: "get_repair_site_status",
+      confirmEvent: "confirm_repair_site",
+      wrongDeviceMessage: "Not a Powerwall device",
     });
   }
 
@@ -38,29 +28,19 @@ export default class PowerwallDriver extends TeslemetryDriver {
   private async findRepairCandidate(
     excludeDevice: PowerwallDevice,
   ): Promise<{ id: string; name: string } | null> {
-    const { products } = this.homey.app;
-    if (!products?.energySites) return null;
-
-    const boundSiteIds = new Set(
-      (this.getDevices() as Homey.Device[])
-        .filter(
-          (candidate): candidate is PowerwallDevice =>
-            candidate instanceof PowerwallDevice && candidate !== excludeDevice,
-        )
-        .map((candidate) => candidate.getSiteId()),
+    const siblings = (this.getDevices() as Homey.Device[]).filter(
+      (candidate): candidate is PowerwallDevice =>
+        candidate instanceof PowerwallDevice,
     );
-
-    const candidates: Array<{ id: string; name: string }> = [];
-    for (const site of Object.values(products.energySites)) {
-      const siteId = String(site.id);
-      if (boundSiteIds.has(siteId)) continue;
-      const siteInfo = await site.api.getSiteInfo().catch(() => null);
-      if (siteInfo?.response.components?.battery) {
-        candidates.push({ id: siteId, name: site.name });
-      }
-    }
-
-    return candidates.length === 1 ? candidates[0] : null;
+    return this.findUnboundSiteCandidate(
+      siblings,
+      excludeDevice,
+      (target) => target.getSiteId(),
+      async (site) => {
+        const siteInfo = await site.api.getSiteInfo().catch(() => null);
+        return !!siteInfo?.response.components?.battery;
+      },
+    );
   }
 
   async onPairListDevices() {
