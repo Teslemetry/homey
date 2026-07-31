@@ -30,6 +30,7 @@ function createDeviceStub(vin: string, existingCapabilities: string[]) {
       },
     },
     getData: () => ({ vin, id: vin }),
+    getStoreValue: () => null,
     getCapabilities: () => capabilities,
     addCapability: async (capability: string) => {
       added.push(capability);

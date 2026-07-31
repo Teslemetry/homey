@@ -3,6 +3,8 @@
     "invalid_token": "Invalid token. Please try again.",
     "invalid_refresh_token": "Invalid refresh token. Please re-authenticate.",
     "energy_site_not_found": "Energy site not found.",
+    "vehicle_not_found": "Vehicle not found.",
+    "wall_connector_not_found": "Wall Connector not found.",
     "subscription_required": "Subscription required. Please check your Teslemetry subscription.",
     "could_not_wake_vehicle": "Vehicle didn't wake up. Please try again.",
     "insufficient_credits": "Insufficent command credits. Please purchase additional credits to run commands.",

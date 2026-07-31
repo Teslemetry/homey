@@ -33,6 +33,7 @@ function createDeviceStub(vin: string) {
     getCapabilities: () => [],
     getCapabilityValue: () => undefined,
     setCapabilityOptions: async () => {},
+    getStoreValue: () => null,
     registerCapabilityListener: () => {},
     log: () => {},
     error: () => {},

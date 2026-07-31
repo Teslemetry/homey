@@ -1,4 +1,5 @@
 import Homey from "homey";
+import type { EnergyDetails } from "@teslemetry/api";
 import type TeslemetryApp from "../app.js";
 import TeslemetryDevice from "./TeslemetryDevice.js";
 
@@ -8,6 +9,7 @@ export default class TeslemetryDriver extends Homey.Driver {
   };
 
   private missingDeviceLogAt = new Map<string, number>();
+  private identityRepairChain: Promise<void> = Promise.resolve();
   private static readonly MISSING_DEVICE_LOG_INTERVAL_MS = 60_000;
 
   /**
@@ -39,6 +41,97 @@ export default class TeslemetryDriver extends Homey.Driver {
       );
     }
     return undefined;
+  }
+
+  /**
+   * Wires the identity-preserving repair session handlers shared by every
+   * driver whose devices bind to a mutable store-backed id (energy site,
+   * vehicle VIN, wall connector DIN): a status handler reporting whether the
+   * device's current binding still resolves and, if not, the sole
+   * unambiguous repair candidate; and a confirm handler that hands the
+   * user-picked id to the device's own repair method. Every driver's
+   * onRepair calls this instead of forking its own copy of the same
+   * status/confirm contract - see PowerwallDriver.onRepair for the reference
+   * usage this generalizes from.
+   */
+  protected wireIdentityRepair<TDevice extends Homey.Device>(
+    session: any,
+    device: Homey.Device,
+    config: {
+      isTarget: (device: Homey.Device) => device is TDevice;
+      isBound: (device: TDevice) => boolean | Promise<boolean>;
+      findCandidate: (
+        device: TDevice,
+      ) => Promise<{ id: string; name: string } | null>;
+      repair: (device: TDevice, id: string) => Promise<void>;
+      statusEvent: string;
+      confirmEvent: string;
+      wrongDeviceMessage: string;
+    },
+  ): void {
+    session.setHandler(config.statusEvent, async () => {
+      if (!config.isTarget(device)) return { needsRepair: false };
+      if (await config.isBound(device)) return { needsRepair: false };
+
+      const candidate = await config.findCandidate(device);
+      return {
+        needsRepair: true,
+        candidateId: candidate?.id ?? null,
+        candidateName: candidate?.name ?? null,
+      };
+    });
+
+    session.setHandler(config.confirmEvent, async (id: string) => {
+      if (!config.isTarget(device)) {
+        throw new Error(config.wrongDeviceMessage);
+      }
+
+      const repair = this.identityRepairChain.then(async () => {
+        if (await config.isBound(device)) {
+          throw new Error("Device binding no longer needs repair");
+        }
+        const candidate = await config.findCandidate(device);
+        if (candidate?.id !== id) {
+          throw new Error("Repair candidate is no longer available");
+        }
+        await config.repair(device, id);
+      });
+      this.identityRepairChain = repair.catch(() => {});
+      await repair;
+    });
+  }
+
+  /**
+   * The energy site not already bound to another live device of this
+   * driver, matching an additional per-driver eligibility check (e.g. a
+   * required component), if exactly one such site exists. Shared by every
+   * energy-site driver's (Powerwall/Solar/Gateway) findRepairCandidate so
+   * zero or multiple matches consistently block a guessed repair.
+   */
+  protected async findUnboundSiteCandidate<TDevice>(
+    siblingDevices: TDevice[],
+    excludeDevice: TDevice,
+    getSiteId: (device: TDevice) => string,
+    isEligible: (site: EnergyDetails) => Promise<boolean>,
+  ): Promise<{ id: string; name: string } | null> {
+    const { products } = this.homey.app;
+    if (!products?.energySites) return null;
+
+    const boundSiteIds = new Set(
+      siblingDevices
+        .filter((candidate) => candidate !== excludeDevice)
+        .map((candidate) => getSiteId(candidate)),
+    );
+
+    const candidates: Array<{ id: string; name: string }> = [];
+    for (const site of Object.values(products.energySites)) {
+      const siteId = String(site.id);
+      if (boundSiteIds.has(siteId)) continue;
+      if (!(await isEligible(site))) continue;
+      candidates.push({ id: siteId, name: site.name });
+    }
+
+    return candidates.length === 1 ? candidates[0] : null;
   }
 
   async onPair(session: any) {

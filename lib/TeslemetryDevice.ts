@@ -15,8 +15,17 @@ import { TeslemetryApiError } from "../@types/error.js";
  *   receives a genuine (non-cache) data event.
  * - "auth": credentials are revoked/disconnected; clears only when this
  *   device's own product receives a genuine data event after reauth.
+ * - "connector": Wall Connector only - the site itself resolves, but its
+ *   saved DIN hasn't appeared in that site's live_status past the miss
+ *   grace period; clears once a live_status event reports that DIN again,
+ *   or after a repair rebinds the device to a different site/DIN.
  */
-export type AvailabilityReason = "startup" | "binding" | "stream" | "auth";
+export type AvailabilityReason =
+  | "startup"
+  | "binding"
+  | "stream"
+  | "auth"
+  | "connector";
 
 export default class TeslemetryDevice extends Homey.Device {
   declare homey: Homey.Device["homey"] & {

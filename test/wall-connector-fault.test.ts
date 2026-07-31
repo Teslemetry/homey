@@ -42,6 +42,7 @@ function createDeviceStub(capabilities: Record<string, unknown>) {
     setCapabilityValue: async (capability: string, value: unknown) => {
       capabilities[capability] = value;
     },
+    getStoreValue: () => null,
     log: () => {},
     error: () => {},
     destroyed: false,
