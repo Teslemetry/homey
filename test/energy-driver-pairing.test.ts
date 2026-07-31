@@ -7,7 +7,7 @@ import GatewayDriver from "../.homeybuild/drivers/gateway/driver.js";
 import WallConnectorDriver from "../.homeybuild/drivers/wall-connector/driver.js";
 
 function createSite(
-  id: string,
+  id: string | number,
   name: string,
   access: boolean,
   getSiteInfo: () => Promise<unknown>,
@@ -144,6 +144,53 @@ test("WallConnectorDriver.onPairListDevices isolates a per-site failure and stil
   ]);
   assert.equal(errors.length, 1);
   assert.match(String(errors[0]), /site-1/);
+});
+
+test("energy-site drivers keep pairing data.id as the SDK's real numeric type, not stringified", async () => {
+  // EnergyDetails.id is `number` in @teslemetry/api. Pairing `data` is
+  // Homey's immutable device identity - stringifying it here would change
+  // an already-paired device's identity shape across an app update, making
+  // Homey's pairing dedup treat it as unpaired and offer a duplicate.
+  const numericSite = (getSiteInfo: () => Promise<unknown>) =>
+    createSite(123, "Numeric Site", true, getSiteInfo);
+
+  const { driver: batteryDriver } = createDriverStub(PowerwallDriver, [
+    numericSite(async () => ({ response: { components: { battery: true } } })),
+  ]);
+  const batteryResult = await batteryDriver.onPairListDevices();
+  assert.deepEqual(batteryResult, [
+    { name: "Numeric Site Powerwall", data: { id: 123 }, class: "battery" },
+  ]);
+  assert.equal(typeof batteryResult[0].data.id, "number");
+
+  const { driver: solarDriver } = createDriverStub(SolarDriver, [
+    numericSite(async () => ({ response: { components: { solar: true } } })),
+  ]);
+  const solarResult = await solarDriver.onPairListDevices();
+  assert.deepEqual(solarResult, [
+    { name: "Numeric Site Solar", data: { id: 123 }, class: "solarpanel" },
+  ]);
+  assert.equal(typeof solarResult[0].data.id, "number");
+
+  const { driver: gatewayDriver } = createDriverStub(GatewayDriver, [
+    numericSite(async () => ({ response: {} })),
+  ]);
+  const gatewayResult = await gatewayDriver.onPairListDevices();
+  assert.deepEqual(gatewayResult, [
+    { name: "Numeric Site Gateway", data: { id: 123 }, class: "sensor" },
+  ]);
+  assert.equal(typeof gatewayResult[0].data.id, "number");
+
+  const { driver: wcDriver } = createDriverStub(WallConnectorDriver, [
+    numericSite(async () => ({
+      response: { components: { wall_connectors: [{ din: "din-1", part_name: "Wall Connector" }] } },
+    })),
+  ]);
+  const wcResult = await wcDriver.onPairListDevices();
+  assert.deepEqual(wcResult, [
+    { name: "Numeric Site Wall Connector", data: { site: 123, din: "din-1" } },
+  ]);
+  assert.equal(typeof wcResult[0].data.site, "number");
 });
 
 test("all four energy drivers return every healthy candidate when every site fails or lacks access", async () => {

@@ -89,7 +89,7 @@ export default class WallConnectorDriver extends TeslemetryDriver {
         return wallConnectors.map((connector) => ({
           name: `${site.name} ${connector.part_name}`,
           data: {
-            site: String(site.id),
+            site: site.id,
             din: connector.din,
           },
         }));
