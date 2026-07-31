@@ -357,15 +357,16 @@ shape:
   has been set, falling back to the immutable pairing `data` otherwise. All
   product lookups go through these methods, never `getData()` directly.
   `EnergyDetails.id` (`@teslemetry/api`) is `number`, not `string`. Pairing
-  `data` keeps that raw numeric id - not stringified - so an already-paired
-  device's immutable identity never changes shape across an app update
+  `data.id` (or Wall Connector's `data.site`) keeps that raw numeric id - not
+  stringified - so an already-paired device's immutable identity never changes
+  shape across an app update
   (Homey's pairing dedup compares `data` verbatim; changing its type would
   make an existing device look unpaired and offer it again as a
   duplicate). `getSiteId()` alone canonicalizes: it wraps its resolved
   value in `String(...)` on every call, covering both a numeric pairing
-  `data.id` and a string store override. Repair-candidate comparisons
-  (`findUnboundSiteCandidate`) depend on every site id passing through
-  `getSiteId()` to compare correctly.
+  `data.id`/`data.site` and a string store override. Repair-candidate
+  comparisons (`findUnboundSiteCandidate`) depend on every site id passing
+  through `getSiteId()` to compare correctly.
 - `<Device>.repairSite(id)` / `repairVehicle(vin)` / `repairConnector(siteId,
   din)` is the only way to change that store value. It validates the target
   exists (Wall Connector additionally validates the target DIN is actually
