@@ -1,0 +1,18 @@
+{
+  "title": {
+    "en": "The vehicle has arrived home"
+  },
+  "titleFormatted": {
+    "en": "[[device]] has arrived home"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=alarm_presence",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ]
+}

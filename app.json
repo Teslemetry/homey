@@ -52,7 +52,9 @@
   "category": [
     "energy"
   ],
-  "permissions": [],
+  "permissions": [
+    "homey:manager:geolocation"
+  ],
   "images": {
     "small": "/assets/images/small.png",
     "large": "/assets/images/large.png",
@@ -882,6 +884,44 @@
           }
         ],
         "id": "unplugged"
+      },
+      {
+        "title": {
+          "en": "The vehicle has arrived home"
+        },
+        "titleFormatted": {
+          "en": "[[device]] has arrived home"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=alarm_presence",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "vehicle_arrived_home"
+      },
+      {
+        "title": {
+          "en": "The vehicle has left home"
+        },
+        "titleFormatted": {
+          "en": "[[device]] has left home"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=alarm_presence",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "vehicle_left_home"
       },
       {
         "id": "onoff.charge_grid_true",
@@ -5509,7 +5549,8 @@
         "alarm_generic.rear_defrost",
         "windowcoverings_closed.tonneau",
         "windowcoverings_set.tonneau",
-        "tpms_warning"
+        "tpms_warning",
+        "alarm_presence"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -6350,8 +6391,83 @@
             "ar": "موضع غطاء صندوق الحمولة"
           },
           "setable": false
+        },
+        "alarm_presence": {
+          "title": {
+            "en": "At Home",
+            "nl": "Thuis",
+            "da": "Hjemme",
+            "de": "Zuhause",
+            "es": "En Casa",
+            "fr": "À la Maison",
+            "it": "A Casa",
+            "no": "Hjemme",
+            "sv": "Hemma",
+            "pl": "W Domu",
+            "ru": "Дома",
+            "ko": "집에 있음",
+            "ar": "في المنزل"
+          },
+          "desc": {
+            "en": "Whether the vehicle is within the home radius. Location data is used only to calculate this presence state - it is not stored or displayed as coordinates.",
+            "nl": "Of het voertuig zich binnen de thuisradius bevindt. Locatiegegevens worden alleen gebruikt om deze aanwezigheidsstatus te berekenen - ze worden niet opgeslagen of als coördinaten weergegeven.",
+            "da": "Om køretøjet er inden for hjemmeradiussen. Lokationsdata bruges kun til at beregne denne tilstedeværelsesstatus - de gemmes eller vises ikke som koordinater.",
+            "de": "Ob sich das Fahrzeug innerhalb des Heimradius befindet. Standortdaten werden nur zur Berechnung dieses Anwesenheitsstatus verwendet - sie werden nicht gespeichert oder als Koordinaten angezeigt.",
+            "es": "Si el vehículo está dentro del radio del hogar. Los datos de ubicación se usan únicamente para calcular este estado de presencia - no se almacenan ni se muestran como coordenadas.",
+            "fr": "Indique si le véhicule se trouve dans le rayon du domicile. Les données de localisation ne servent qu'à calculer cet état de présence - elles ne sont ni stockées ni affichées sous forme de coordonnées.",
+            "it": "Indica se il veicolo si trova entro il raggio di casa. I dati sulla posizione vengono utilizzati solo per calcolare questo stato di presenza - non vengono memorizzati né mostrati come coordinate.",
+            "no": "Om kjøretøyet er innenfor hjemmeradiusen. Posisjonsdata brukes kun til å beregne denne tilstedeværelsesstatusen - de lagres eller vises ikke som koordinater.",
+            "sv": "Om fordonet är inom hemradien. Platsdata används endast för att beräkna detta närvarostatus - det lagras eller visas inte som koordinater.",
+            "pl": "Czy pojazd znajduje się w promieniu domu. Dane lokalizacyjne są używane wyłącznie do obliczenia tego stanu obecności - nie są przechowywane ani wyświetlane jako współrzędne.",
+            "ru": "Находится ли автомобиль в радиусе дома. Данные о местоположении используются только для расчета этого статуса присутствия - они не сохраняются и не отображаются в виде координат.",
+            "ko": "차량이 자택 반경 내에 있는지 여부입니다. 위치 데이터는 이 재실 상태를 계산하는 데만 사용되며, 좌표로 저장되거나 표시되지 않습니다.",
+            "ar": "ما إذا كانت المركبة ضمن نطاق المنزل. تُستخدم بيانات الموقع فقط لحساب حالة التواجد هذه - ولا يتم تخزينها أو عرضها كإحداثيات."
+          }
         }
       },
+      "settings": [
+        {
+          "type": "number",
+          "id": "presence_radius",
+          "label": {
+            "en": "Home Radius (meters)",
+            "nl": "Thuisradius (meter)",
+            "da": "Hjemmeradius (meter)",
+            "de": "Heimradius (Meter)",
+            "es": "Radio del Hogar (metros)",
+            "fr": "Rayon du Domicile (mètres)",
+            "it": "Raggio di Casa (metri)",
+            "no": "Hjemmeradius (meter)",
+            "sv": "Hemradie (meter)",
+            "pl": "Promień Domu (metry)",
+            "ru": "Радиус дома (метры)",
+            "ko": "자택 반경 (미터)",
+            "ar": "نطاق المنزل (متر)"
+          },
+          "hint": {
+            "en": "How close the vehicle must be to this Homey to count as \"at home\", used for the At Home presence status and its arrived/left home Flow triggers. Only a distance is calculated locally - the vehicle's coordinates are never stored or shown.",
+            "nl": "Hoe dichtbij het voertuig bij deze Homey moet zijn om als \"thuis\" te gelden, gebruikt voor de status Thuis en de bijbehorende Flow-triggers voor aankomst/vertrek. Er wordt alleen lokaal een afstand berekend - de coördinaten van het voertuig worden nooit opgeslagen of getoond.",
+            "da": "Hvor tæt køretøjet skal være på denne Homey for at tælle som \"hjemme\", bruges til status Hjemme og de tilhørende Flow-triggere for ankomst/afgang. Kun en afstand beregnes lokalt - køretøjets koordinater gemmes eller vises aldrig.",
+            "de": "Wie nah sich das Fahrzeug an diesem Homey befinden muss, um als \"zu Hause\" zu gelten, verwendet für den Zuhause-Status und die zugehörigen Ankunft/Abfahrt-Flow-Trigger. Es wird nur lokal eine Distanz berechnet - die Koordinaten des Fahrzeugs werden nie gespeichert oder angezeigt.",
+            "es": "Qué tan cerca debe estar el vehículo de este Homey para contar como \"en casa\", usado para el estado En Casa y sus activadores de Flow de llegada/salida. Solo se calcula una distancia localmente - las coordenadas del vehículo nunca se almacenan ni se muestran.",
+            "fr": "À quelle distance le véhicule doit se trouver de ce Homey pour être considéré \"à la maison\", utilisé pour l'état À la Maison et ses déclencheurs de Flow d'arrivée/départ. Seule une distance est calculée localement - les coordonnées du véhicule ne sont jamais stockées ni affichées.",
+            "it": "A quale distanza il veicolo deve trovarsi da questo Homey per essere considerato \"a casa\", usato per lo stato A Casa e i relativi trigger di Flow di arrivo/partenza. Viene calcolata solo una distanza in locale - le coordinate del veicolo non vengono mai memorizzate né mostrate.",
+            "no": "Hvor nært kjøretøyet må være denne Homey for å telle som \"hjemme\", brukt for Hjemme-status og de tilhørende Flow-triggerne for ankomst/avgang. Kun en avstand beregnes lokalt - kjøretøyets koordinater lagres eller vises aldri.",
+            "sv": "Hur nära fordonet måste vara denna Homey för att räknas som \"hemma\", används för statusen Hemma och dess Flow-triggers för ankomst/avresa. Endast ett avstånd beräknas lokalt - fordonets koordinater lagras eller visas aldrig.",
+            "pl": "Jak blisko pojazd musi znajdować się przy tym Homey, aby liczyć się jako \"w domu\", używane dla statusu W Domu i powiązanych wyzwalaczy Flow przyjazdu/wyjazdu. Lokalnie obliczana jest tylko odległość - współrzędne pojazdu nigdy nie są przechowywane ani wyświetlane.",
+            "ru": "Насколько близко автомобиль должен находиться к этому Homey, чтобы считаться \"дома\", используется для статуса Дома и связанных триггеров Flow приезда/отъезда. Локально вычисляется только расстояние - координаты автомобиля никогда не сохраняются и не отображаются.",
+            "ko": "차량이 \"집에 있음\"으로 간주되려면 이 Homey에 얼마나 가까워야 하는지를 나타내며, 집에 있음 상태 및 관련 도착/출발 Flow 트리거에 사용됩니다. 거리만 로컬에서 계산되며 차량의 좌표는 저장되거나 표시되지 않습니다.",
+            "ar": "مدى قرب المركبة من جهاز Homey هذا لتُحتسب \"في المنزل\"، وتُستخدم لحالة في المنزل ومحفزات Flow للوصول/المغادرة المرتبطة بها. يتم حساب المسافة محليًا فقط - ولا يتم تخزين إحداثيات المركبة أو عرضها أبدًا."
+          },
+          "value": 100,
+          "min": 20,
+          "max": 2000,
+          "step": 10,
+          "units": {
+            "en": "m"
+          }
+        }
+      ],
       "id": "vehicle"
     },
     {

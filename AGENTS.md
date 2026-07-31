@@ -420,18 +420,24 @@ received (no baseline to compare against) or on a repeated identical value.
   run listeners for a `(cardPrefix, capability, argName)` triple. See the
   solar/grid/load/battery power and buy/sell tariff rate cards for the
   pattern end to end.
-- **Boolean `alarm_generic.<sub>` capabilities** are the one exception to the
+- **Boolean system capabilities with their own `$flow` definition** (any
+  `alarm_*`, not just `alarm_generic.<sub>`) are the one exception to the
   "not reliably auto-fired" rule above: Homey's platform auto-fires the
   `<cap>_true`/`<cap>_false` triggers and auto-implements the plain `<cap>`
   is/isn't condition whenever `update()` changes the value - no
-  `registerRunListener` or explicit `.trigger()` call needed, only the manual
-  card definitions (subcapabilities still don't get cards generated for you).
-  See `alarm_generic.off_grid`/`.island`/`.rear_defrost`/`.fault` on Wall
-  Connector. If a trigger also needs a custom token (e.g. a fault code),
-  don't try to attach it to this auto-fired card - define a separate,
-  explicitly-fired trigger instead (see `wall_connector_fault_code`), since
-  firing the same card manually on top of Homey's automatic firing would
-  double-run any flow built on it.
+  `registerRunListener` or explicit `.trigger()` call needed. A
+  subcapability (`alarm_generic.off_grid`/`.island`/`.rear_defrost`/`.fault`
+  on Wall Connector) still needs its own manual card definitions (see
+  "Subcapability Flow Cards" above); a plain system capability used as-is
+  (`alarm_motion`, `alarm_presence` on Vehicle) needs none - just add it to
+  the driver's `capabilities` array and call `update()`. If a trigger also
+  needs a custom token (e.g. a fault code) or a distinct name (e.g.
+  "arrived home" instead of the generic "presence alarm turned on"), don't
+  try to attach it to this auto-fired card - define a separate,
+  explicitly-fired trigger instead (see `wall_connector_fault_code`,
+  `vehicle_arrived_home`/`vehicle_left_home`), since firing the same card
+  manually on top of Homey's automatic firing would double-run any flow
+  built on it.
 
 ### TPMS Warning Level (`tpms_warning`)
 
@@ -446,6 +452,34 @@ than exposing eight separate per-wheel alarms. It's a plain
 documented timezone defect - it reports as though the reading time were
 Pacific Time regardless of the vehicle's real timezone) are not currently
 surfaced by this capability or any other.
+
+### At-Home Presence (`alarm_presence`) & Device Settings
+
+`VehicleDevice.handleLocation` (registered via `onSignal("Location", ...)`)
+derives the `alarm_presence` system capability by comparing the vehicle's
+`Location` signal against the Homey's own coordinates
+(`this.homey.geolocation`, requiring the `homey:manager:geolocation`
+permission) and a per-device `presence_radius` setting, via
+`lib/geoDistance.ts`'s pure haversine helper. Raw lat/lon is never stored or
+exposed as a capability - only the boolean and the `vehicle_arrived_home`/
+`vehicle_left_home` triggers (in addition to the free `alarm_presence_true`/
+`_false`/condition cards from the "Boolean system capabilities" bullet
+above). Hysteresis (`PRESENCE_HYSTERESIS_RATIO`, 20%) applies only on the
+way out of the radius - entering is immediate, leaving requires drifting
+past `radius * 1.2` - so a vehicle parked near the boundary doesn't flap the
+triggers. If the account hasn't granted the `vehicle_location` scope,
+`Location` never arrives (cached or live), so `handleLocation` never runs
+and `alarm_presence` just stays at its unset/`null` value - an honest
+"unknown" rather than a thrown error or a device marked unavailable - no
+separate scope-detection call was added for this. See
+`test/vehicle-presence.test.ts`.
+
+`presence_radius` is this app's first use of a Homey per-device Settings
+page (`driver.compose.json`'s `settings` array, read via
+`this.getSetting(id)`) rather than a capability - the right mechanism for a
+local, non-telemetry config value with no need for its own tile/history.
+Follow this pattern (not a settable capability) for future purely-local
+per-device configuration.
 
 ### Connection Lifecycle: Single-Flight Init, Startup Retry, Freshness Watchdog (`app.ts`)
 

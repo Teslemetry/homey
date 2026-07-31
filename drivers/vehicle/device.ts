@@ -6,6 +6,7 @@ import {
   VehicleDetails,
 } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+import haversineDistanceMeters from "../../lib/geoDistance.js";
 import {
   isCapabilitySupported,
   filterVehicleCapabilities,
@@ -70,6 +71,16 @@ const ACTIVE_CHARGE_STATES = new Set<SseData["data"]["DetailedChargeState"]>([
   "DetailedChargeStateStarting",
   "DetailedChargeStateCharging",
 ]);
+
+/** Fallback when the `presence_radius` device setting is unset/invalid. */
+const DEFAULT_PRESENCE_RADIUS_METERS = 100;
+
+/**
+ * Once home, the vehicle must drift past radius * (1 + this ratio) before
+ * being marked away again, so a vehicle parked near the boundary doesn't
+ * flap the arrived/left-home triggers.
+ */
+const PRESENCE_HYSTERESIS_RATIO = 0.2;
 
 export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
@@ -516,6 +527,12 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("minutes_to_arrival", value),
     );
 
+    // Presence (at-home arrival/departure). Only ever updates if the
+    // account has granted the vehicle_location scope and the vehicle has
+    // reported a fix - see handleLocation() for the degrade-gracefully
+    // behavior when it hasn't.
+    this.onSignal("Location", (value) => this.handleLocation(value));
+
     // Guest Mode
     this.onSignal("GuestModeEnabled", (value) =>
       this.update("onoff.guest_mode", value),
@@ -912,6 +929,68 @@ export default class VehicleDevice extends TeslemetryDevice {
     ) {
       this.triggerFlow("charge_limit_reached", { battery: value });
     }
+  }
+
+  /**
+   * Derives alarm_presence from the vehicle's Location signal against the
+   * Homey's own geolocation and the `presence_radius` device setting.
+   * Never surfaces raw coordinates - only the boolean crossing and the
+   * arrived/left-home triggers. Hysteresis (PRESENCE_HYSTERESIS_RATIO) is
+   * applied only on the way out of the radius, so entering is immediate but
+   * leaving requires a real departure, not a wobble on the boundary.
+   *
+   * If the account hasn't granted the vehicle_location scope, Location
+   * never arrives (cached or live) and this never runs, so alarm_presence
+   * just stays at its unset/null value - an honest "unknown", not a thrown
+   * error or a device marked unavailable.
+   */
+  private handleLocation(value: SseData["data"]["Location"]): void {
+    if (
+      !value ||
+      typeof value.latitude !== "number" ||
+      typeof value.longitude !== "number"
+    ) {
+      return;
+    }
+
+    const homeLatitude = this.homey.geolocation.getLatitude();
+    const homeLongitude = this.homey.geolocation.getLongitude();
+    if (
+      typeof homeLatitude !== "number" ||
+      typeof homeLongitude !== "number" ||
+      Number.isNaN(homeLatitude) ||
+      Number.isNaN(homeLongitude)
+    ) {
+      return;
+    }
+
+    const distance = haversineDistanceMeters(
+      value.latitude,
+      value.longitude,
+      homeLatitude,
+      homeLongitude,
+    );
+
+    const configuredRadius = Number(this.getSetting("presence_radius"));
+    const radius =
+      Number.isFinite(configuredRadius) && configuredRadius > 0
+        ? configuredRadius
+        : DEFAULT_PRESENCE_RADIUS_METERS;
+
+    const wasHome = this.getCapabilityValue("alarm_presence") as
+      | boolean
+      | null;
+    const isHome =
+      wasHome === true
+        ? distance <= radius * (1 + PRESENCE_HYSTERESIS_RATIO)
+        : distance <= radius;
+
+    this.update("alarm_presence", isHome);
+
+    if (wasHome === null || wasHome === undefined || wasHome === isHome) {
+      return;
+    }
+    this.triggerFlow(isHome ? "vehicle_arrived_home" : "vehicle_left_home");
   }
 
   private triggerFlow(
