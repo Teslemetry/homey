@@ -388,18 +388,6 @@ existing convention) - not one or the other alone, since a test double or
 any other path that skips the constructor still needs the optional chaining
 to be safe.
 
-### Pairing: Per-Site Failure Isolation (all four energy drivers)
-
-Every energy driver's `onPairListDevices()` (`drivers/battery|solar|gateway|
-wall-connector/driver.ts`) maps `products.energySites` through
-`TeslemetryDriver.listEnergySiteCandidates()` instead of a raw `Promise.all`:
-it filters to `metadata.access` sites, runs each site's `getSiteInfo()`
-independently via `Promise.allSettled`, and logs a partial-failure summary
-instead of letting one inaccessible/broken site reject the whole pairing
-list. `mapSite` returns an array (zero, one, or several candidates per site,
-matching Wall Connector's need to emit multiple connectors from one site) so
-every driver shares the same isolation/logging code.
-
 ### Firing Flow Trigger Cards
 
 Homey does not reliably auto-fire trigger cards for this app's capabilities,
