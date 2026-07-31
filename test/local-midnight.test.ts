@@ -55,7 +55,7 @@ test("msUntilNextLocalMidnight returns 24.5h on a fall-back (25h) day in America
   );
 });
 
-test("msUntilNextLocalMidnight returns a plain 24h on a non-transition day in America/New_York", () => {
+test("msUntilNextLocalMidnight returns 23.5h from 00:30 on a non-transition day in America/New_York", () => {
   const now = new Date("2026-03-01T00:30:00-05:00");
   assert.equal(
     msUntilNextLocalMidnight(now, "America/New_York"),
