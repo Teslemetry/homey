@@ -54,6 +54,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     // drives the next recompute, not this now-unbound site's data.
     this.tariff = undefined;
     this.tariffTimeZone = undefined;
+    this.clearTariffRates();
     this.resolveAndBindSite();
   }
 
@@ -108,6 +109,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     this.pollingCleanup?.forEach((stop) => stop());
     this.tariff = undefined;
     this.tariffTimeZone = undefined;
+    this.clearTariffRates();
     await this.setStoreValue("energySiteId", siteId);
     // bindSite() itself restores availability via clearAvailabilityReason
     // ("binding" is the only reason a device can have reached this repair
@@ -327,7 +329,11 @@ export default class PowerwallDevice extends TeslemetryDevice {
       resolution.nextChange.getTime() - this.now().getTime(),
     );
     this.tariffTimer = this.homey.setTimeout(() => {
-      this.recomputeTariffRates();
+      try {
+        this.recomputeTariffRates();
+      } catch (e) {
+        this.error("Failed to update Powerwall tariff rates", e);
+      }
     }, delay);
   }
 
