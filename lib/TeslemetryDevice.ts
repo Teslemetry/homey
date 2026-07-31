@@ -27,6 +27,32 @@ export type AvailabilityReason =
   | "auth"
   | "connector";
 
+/**
+ * One atomically-persisted snapshot of a cumulative meter's derived state.
+ * `v` guards against trusting a differently-shaped or pre-migration value
+ * found at the store key - an unrecognized shape is treated as absent
+ * rather than partially applied.
+ */
+interface CumulativeMeterState {
+  v: 1;
+  date: string;
+  lastTotal: number;
+  offset: number;
+}
+
+function isCumulativeMeterState(
+  value: unknown,
+): value is CumulativeMeterState {
+  if (typeof value !== "object" || value === null) return false;
+  const state = value as Record<string, unknown>;
+  return (
+    state.v === 1 &&
+    typeof state.date === "string" &&
+    typeof state.lastTotal === "number" &&
+    typeof state.offset === "number"
+  );
+}
+
 export default class TeslemetryDevice extends Homey.Device {
   declare homey: Homey.Device["homey"] & {
     app: TeslemetryApp;
@@ -313,34 +339,85 @@ export default class TeslemetryDevice extends Homey.Device {
     }
   }
 
-  protected async updateCumulativeMeter(
+  /**
+   * Per-capability update queues so two close SSE events for the same
+   * cumulative meter can never interleave its read-modify-write cycle.
+   * Lazily initialized rather than a field initializer, since some tests
+   * construct devices via `Object.create(Driver.prototype)` without running
+   * the constructor.
+   */
+  private cumulativeMeterQueues?: Map<string, Promise<void>>;
+
+  /**
+   * Converts a source system's daily running total into a monotonically
+   * increasing `meter_*` capability value. See AGENTS.md's "Cumulative
+   * Energy Meters" section for why this exists.
+   *
+   * `dateKey` must be a zero-padded ISO `YYYY-MM-DD` string - every caller
+   * derives it that way - so plain string comparison orders it correctly,
+   * with no timezone-parsing ambiguity from constructing a `Date`.
+   */
+  protected updateCumulativeMeter(
+    capability: string,
+    todayTotal: number,
+    dateKey: string,
+  ): Promise<void> {
+    const queues = (this.cumulativeMeterQueues ??= new Map());
+    const previous = queues.get(capability) ?? Promise.resolve();
+    // Swallow a prior failure here (not at the caller) so one bad event
+    // can't wedge every later update for this capability behind it.
+    const next = previous
+      .catch(() => {})
+      .then(() =>
+        this.runCumulativeMeterUpdate(capability, todayTotal, dateKey),
+      );
+    queues.set(capability, next);
+    return next;
+  }
+
+  private async runCumulativeMeterUpdate(
     capability: string,
     todayTotal: number,
     dateKey: string,
   ): Promise<void> {
     if (this.destroyed) return;
 
-    const storeKey = `meter_${capability}`;
-    const lastDate = this.getStoreValue(`${storeKey}_date`) as string | null;
-    const lastToday = this.getStoreValue(`${storeKey}_last`) as number | null;
-    let offset = this.getStoreValue(`${storeKey}_offset`) as number | null;
+    const storeKey = `meter_${capability}_state`;
+    const stored = this.getStoreValue(storeKey) as unknown;
+    const state = isCumulativeMeterState(stored) ? stored : null;
 
-    // First run: initialize offset from existing capability value
-    if (offset === null) {
+    let offset: number;
+    let lastTotal: number;
+
+    if (state === null) {
+      // First run, or a store value from before this format existed / an
+      // unrecognized shape: recalibrate from whatever the capability
+      // already shows so this can't make the meter jump or go backwards.
       const current = this.getCapabilityValue(capability) as number | null;
       offset = (current || 0) - todayTotal;
-      if (!(await this.setStore(`${storeKey}_offset`, offset))) return;
+      lastTotal = todayTotal;
+    } else if (dateKey < state.date) {
+      // Older than the last-applied event - applying it would either write
+      // a decrease or fold its day into the offset a second time.
+      return;
+    } else if (dateKey === state.date) {
+      if (todayTotal < state.lastTotal) {
+        // Same-day source regression - clamp instead of decreasing.
+        return;
+      }
+      offset = state.offset;
+      lastTotal = todayTotal;
+    } else {
+      // Forward day rollover: fold the prior day's final total into the
+      // offset exactly once, then start tracking the new day.
+      offset = state.offset + state.lastTotal;
+      lastTotal = todayTotal;
     }
 
-    // Day rollover: date changed since last poll
-    if (lastDate !== null && dateKey !== lastDate && lastToday !== null) {
-      offset += lastToday;
-      if (!(await this.setStore(`${storeKey}_offset`, offset))) return;
-    }
+    const newState: CumulativeMeterState = { v: 1, date: dateKey, lastTotal, offset };
+    if (!(await this.setStore(storeKey, newState))) return;
 
-    if (!(await this.setStore(`${storeKey}_date`, dateKey))) return;
-    if (!(await this.setStore(`${storeKey}_last`, todayTotal))) return;
-    this.update(capability, offset + todayTotal);
+    await this.update(capability, offset + lastTotal);
   }
 
   private static readonly ACTION_TIMEOUT = 9000;

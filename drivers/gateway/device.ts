@@ -126,7 +126,7 @@ export default class GatewayDevice extends TeslemetryDevice {
       );
     };
 
-    const onEnergyTotals = async (event: SseEnergyTotals) => {
+    const handleEnergyTotals = async (event: SseEnergyTotals) => {
       const dateKey = event.createdAt.slice(0, 10);
       const { grid_energy_imported, total_grid_energy_exported } =
         event.totals;
@@ -148,6 +148,11 @@ export default class GatewayDevice extends TeslemetryDevice {
           dateKey,
         );
       }
+    };
+    // EventEmitter doesn't await listeners, so an unhandled rejection here
+    // would otherwise crash the app instead of just failing this update.
+    const onEnergyTotals = (event: SseEnergyTotals) => {
+      return handleEnergyTotals(event).catch(this.error);
     };
 
     this.site.sse.on("live_status", onLiveStatus);

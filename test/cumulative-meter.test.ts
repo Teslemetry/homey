@@ -27,7 +27,10 @@ test("updateCumulativeMeter initializes the offset from the existing capability 
 
   await stub.updateCumulativeMeter("meter_power", 10, "2026-07-23");
 
-  assert.equal(store["meter_meter_power_offset"], 90);
+  assert.equal(
+    (store["meter_meter_power_state"] as { offset: number }).offset,
+    90,
+  );
   assert.equal(capabilities["meter_power"], 100);
 });
 
@@ -38,7 +41,10 @@ test("updateCumulativeMeter treats a missing capability value as zero when initi
 
   await stub.updateCumulativeMeter("meter_power", 10, "2026-07-23");
 
-  assert.equal(store["meter_meter_power_offset"], -10);
+  assert.equal(
+    (store["meter_meter_power_state"] as { offset: number }).offset,
+    -10,
+  );
   assert.equal(capabilities["meter_power"], 0);
 });
 
@@ -68,10 +74,15 @@ test("updateCumulativeMeter carries the prior day's total into the offset on day
   // New day starts back near zero (a fresh daily total from the API).
   await stub.updateCumulativeMeter("meter_power", 5, "2026-07-23");
 
-  assert.equal(store["meter_meter_power_offset"], 20);
+  const state = store["meter_meter_power_state"] as {
+    offset: number;
+    date: string;
+    lastTotal: number;
+  };
+  assert.equal(state.offset, 20);
   assert.equal(capabilities["meter_power"], 25);
-  assert.equal(store["meter_meter_power_date"], "2026-07-23");
-  assert.equal(store["meter_meter_power_last"], 5);
+  assert.equal(state.date, "2026-07-23");
+  assert.equal(state.lastTotal, 5);
 });
 
 test("updateCumulativeMeter continues accumulating across multiple day rollovers", async () => {
@@ -90,35 +101,103 @@ test("updateCumulativeMeter does not roll over the offset when the date is uncha
   const { stub, capabilities, store } = createDeviceStub({ meter_power: 0 });
 
   await stub.updateCumulativeMeter("meter_power", 10, "2026-07-23");
-  const offsetAfterFirst = store["meter_meter_power_offset"];
+  const offsetAfterFirst = (
+    store["meter_meter_power_state"] as { offset: number }
+  ).offset;
 
   await stub.updateCumulativeMeter("meter_power", 20, "2026-07-23");
 
-  assert.equal(store["meter_meter_power_offset"], offsetAfterFirst);
+  assert.equal(
+    (store["meter_meter_power_state"] as { offset: number }).offset,
+    offsetAfterFirst,
+  );
   assert.equal(capabilities["meter_power"], 10);
 });
 
-test("updateCumulativeMeter does not roll over on the very first reading even though lastDate starts null", async () => {
+test("updateCumulativeMeter does not roll over on the very first reading even though no state is stored yet", async () => {
   const { stub, capabilities, store } = createDeviceStub({ meter_power: 0 });
 
   await stub.updateCumulativeMeter("meter_power", 50, "2026-07-23");
 
-  assert.equal(store["meter_meter_power_offset"], -50);
+  assert.equal(
+    (store["meter_meter_power_state"] as { offset: number }).offset,
+    -50,
+  );
   assert.equal(capabilities["meter_power"], 0);
 });
 
-test("updateCumulativeMeter passes a lower same-day raw reading straight through as a decreasing value", async () => {
-  // Documents current behavior: the day-rollover offset only accounts for
-  // a date change, so a same-day drop in the raw total is not guarded and
-  // reaches setCapabilityValue as a decrease.
-  const { stub, capabilities } = createDeviceStub({ meter_power: 0 });
+test("updateCumulativeMeter clamps a lower same-day raw reading instead of writing a decrease", async () => {
+  const { stub, capabilities, store } = createDeviceStub({ meter_power: 0 });
 
   await stub.updateCumulativeMeter("meter_power", 40, "2026-07-23");
   assert.equal(capabilities["meter_power"], 0);
+  const stateAfterFirst = store["meter_meter_power_state"];
 
   await stub.updateCumulativeMeter("meter_power", 25, "2026-07-23");
 
-  assert.equal(capabilities["meter_power"], -15);
+  assert.equal(capabilities["meter_power"], 0);
+  assert.deepEqual(store["meter_meter_power_state"], stateAfterFirst);
+});
+
+test("updateCumulativeMeter ignores an event whose date is older than the last-applied event", async () => {
+  const { stub, capabilities, store } = createDeviceStub({ meter_power: 0 });
+
+  await stub.updateCumulativeMeter("meter_power", 10, "2026-07-22");
+  await stub.updateCumulativeMeter("meter_power", 30, "2026-07-22");
+  await stub.updateCumulativeMeter("meter_power", 5, "2026-07-23"); // rollover
+  assert.equal(capabilities["meter_power"], 25);
+  const stateAfterRollover = store["meter_meter_power_state"];
+
+  // A stale event for the already-superseded day arrives late.
+  await stub.updateCumulativeMeter("meter_power", 999, "2026-07-22");
+
+  assert.equal(capabilities["meter_power"], 25);
+  assert.deepEqual(store["meter_meter_power_state"], stateAfterRollover);
+});
+
+test("updateCumulativeMeter never decreases the capability across a mixed sequence of rollovers, a regression, and a stale event", async () => {
+  const { stub, capabilities } = createDeviceStub({ meter_power: 0 });
+  const sequence: Array<[string, number]> = [
+    ["2026-07-23", 10],
+    ["2026-07-23", 25],
+    ["2026-07-23", 20], // same-day regression, must clamp
+    ["2026-07-23", 40],
+    ["2026-07-24", 3], // rollover
+    ["2026-07-22", 999], // stale/out-of-order, must be ignored
+    ["2026-07-24", 12],
+  ];
+
+  const observed: number[] = [];
+  for (const [dateKey, total] of sequence) {
+    await stub.updateCumulativeMeter("meter_power", total, dateKey);
+    observed.push(capabilities["meter_power"] as number);
+  }
+
+  for (let i = 1; i < observed.length; i++) {
+    assert.ok(
+      observed[i] >= observed[i - 1],
+      `capability decreased at step ${i}: ${observed[i - 1]} -> ${observed[i]}`,
+    );
+  }
+});
+
+test("updateCumulativeMeter serializes overlapping calls for the same capability so they cannot interleave", async () => {
+  const { stub, capabilities } = createDeviceStub({ meter_power: 0 });
+  const realSetStoreValue = stub.setStoreValue.bind(stub);
+  stub.setStoreValue = async (key: string, value: unknown) => {
+    // Yield, opening a window where an unserialized second call could read
+    // the same pre-write state this call just read.
+    await Promise.resolve();
+    return realSetStoreValue(key, value);
+  };
+
+  const first = stub.updateCumulativeMeter("meter_power", 10, "2026-07-23");
+  const second = stub.updateCumulativeMeter("meter_power", 25, "2026-07-23");
+  await Promise.all([first, second]);
+
+  // Applied in call order: the first call establishes the offset, the
+  // second accumulates on top of it - not two independent "first runs".
+  assert.equal(capabilities["meter_power"], 15);
 });
 
 test("updateCumulativeMeter is a no-op once the device is destroyed", async () => {
@@ -128,26 +207,48 @@ test("updateCumulativeMeter is a no-op once the device is destroyed", async () =
   await stub.updateCumulativeMeter("meter_power", 10, "2026-07-23");
 
   assert.equal(capabilities["meter_power"], 0);
-  assert.equal(store["meter_meter_power_offset"], undefined);
+  assert.equal(store["meter_meter_power_state"], undefined);
 });
 
-test("updateCumulativeMeter stops mid-flight if the device is destroyed after offset initialization", async () => {
+test("updateCumulativeMeter writes nothing if the device is destroyed mid-write, and never surfaces the partial state", async () => {
+  const { stub, capabilities, store } = createDeviceStub({ meter_power: 0 });
+  stub.setStoreValue = async () => {
+    // Mirrors setStoreValue on a real deleted device: it throws instead of
+    // succeeding once the device is gone.
+    stub.destroyed = true;
+    throw new Error("Not Found: Device with ID ...");
+  };
+
+  await stub.updateCumulativeMeter("meter_power", 10, "2026-07-23");
+
+  assert.equal(store["meter_meter_power_state"], undefined);
+  assert.equal(capabilities["meter_power"], 0);
+});
+
+test("updateCumulativeMeter recovers cleanly after a store-write failure without corrupting state", async () => {
   const { stub, capabilities, store } = createDeviceStub({ meter_power: 0 });
   const realSetStoreValue = stub.setStoreValue.bind(stub);
-  let calls = 0;
+  let failNext = true;
   stub.setStoreValue = async (key: string, value: unknown) => {
-    calls += 1;
-    if (calls === 1) {
-      // Simulate onUninit() firing between the offset write and the rest
-      // of the update, the same race the `destroyed` guard exists for.
-      stub.destroyed = true;
+    if (failNext) {
+      failNext = false;
+      throw new Error("simulated store failure");
     }
     return realSetStoreValue(key, value);
   };
 
   await stub.updateCumulativeMeter("meter_power", 10, "2026-07-23");
-
-  assert.equal(store["meter_meter_power_offset"], -10);
-  assert.equal(store["meter_meter_power_date"], undefined);
+  // The single atomic write failed, so nothing was persisted or applied -
+  // no partial offset/date/lastTotal state to recover from.
+  assert.equal(store["meter_meter_power_state"], undefined);
   assert.equal(capabilities["meter_power"], 0);
+
+  await stub.updateCumulativeMeter("meter_power", 25, "2026-07-23");
+  // Recovery treats this as a fresh first-run recalibration off the
+  // untouched capability value - no jump, no lost accumulation.
+  assert.equal(capabilities["meter_power"], 0);
+  assert.equal(
+    (store["meter_meter_power_state"] as { offset: number }).offset,
+    -25,
+  );
 });
