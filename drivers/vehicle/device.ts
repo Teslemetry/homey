@@ -6,7 +6,6 @@ import {
   VehicleDetails,
 } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
-import haversineDistanceMeters from "../../lib/geoDistance.js";
 import {
   isCapabilitySupported,
   filterVehicleCapabilities,
@@ -72,16 +71,6 @@ const ACTIVE_CHARGE_STATES = new Set<SseData["data"]["DetailedChargeState"]>([
   "DetailedChargeStateCharging",
 ]);
 
-/** Fallback when the `presence_radius` device setting is unset/invalid. */
-const DEFAULT_PRESENCE_RADIUS_METERS = 100;
-
-/**
- * Once home, the vehicle must drift past radius * (1 + this ratio) before
- * being marked away again, so a vehicle parked near the boundary doesn't
- * flap the arrived/left-home triggers.
- */
-const PRESENCE_HYSTERESIS_RATIO = 0.2;
-
 export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
   private volumeMax: number = 10.333;
@@ -99,7 +88,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   private lastTpmsSoftWarnings?: SseData["data"]["TpmsSoftWarnings"];
   private lastTpmsHardWarnings?: SseData["data"]["TpmsHardWarnings"];
-  private previousPresence?: boolean | null;
+  private previousLocatedAtHome?: boolean;
 
   /** Count of signal handlers that threw during registration/replay; see onSignal(). */
   private signalHandlerFailures = 0;
@@ -528,11 +517,13 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("minutes_to_arrival", value),
     );
 
-    // Presence (at-home arrival/departure). Only ever updates if the
-    // account has granted the vehicle_location scope and the vehicle has
-    // reported a fix - see handleLocation() for the degrade-gracefully
+    // Presence (native vehicle-reported at-home/at-work, not derived from
+    // raw coordinates). Only ever updates if the account has granted the
+    // vehicle_location scope and the vehicle has resolved a location - see
+    // handleLocatedAtHome()/handleLocatedAtWork() for the degrade-gracefully
     // behavior when it hasn't.
-    this.onSignal("Location", (value) => this.handleLocation(value));
+    this.onSignal("LocatedAtHome", (value) => this.handleLocatedAtHome(value));
+    this.onSignal("LocatedAtWork", (value) => this.handleLocatedAtWork(value));
 
     // Guest Mode
     this.onSignal("GuestModeEnabled", (value) =>
@@ -933,69 +924,44 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   /**
-   * Derives alarm_presence from the vehicle's Location signal against the
-   * Homey's own geolocation and the `presence_radius` device setting.
-   * Never surfaces raw coordinates - only the boolean crossing and the
-   * arrived/left-home triggers. Hysteresis (PRESENCE_HYSTERESIS_RATIO) is
-   * applied only on the way out of the radius, so entering is immediate but
-   * leaving requires a real departure, not a wobble on the boundary.
+   * Derives alarm_presence directly from the vehicle's own LocatedAtHome
+   * signal - the Tesla-computed "is the vehicle at the active driver
+   * profile's saved home location" boolean, the same field the Teslemetry
+   * Home Assistant integration surfaces. No coordinates are read or
+   * computed here.
    *
-   * If the account hasn't granted the vehicle_location scope, Location
-   * never arrives (cached or live) and this never runs, so alarm_presence
-   * just stays at its unset/null value - an honest "unknown", not a thrown
-   * error or a device marked unavailable.
+   * If the account hasn't granted the vehicle_location scope,
+   * LocatedAtHome never arrives (cached or live) and this never runs, so
+   * alarm_presence just stays at its unset/null value - an honest
+   * "unknown", not a thrown error or a device marked unavailable.
+   *
+   * The previous value is tracked in `previousLocatedAtHome` rather than
+   * read back via getCapabilityValue(), since update() writes it
+   * asynchronously - a second signal arriving before the first write
+   * settles would otherwise see the same stale value and could double- or
+   * mis-fire the arrived/left-home triggers.
    */
-  private handleLocation(value: SseData["data"]["Location"]): void {
-    if (
-      !value ||
-      typeof value.latitude !== "number" ||
-      typeof value.longitude !== "number"
-    ) {
-      return;
-    }
+  private handleLocatedAtHome(value: boolean | null | undefined): void {
+    if (value === undefined || value === null) return;
+    const previous = this.previousLocatedAtHome;
+    this.previousLocatedAtHome = value;
+    this.update("alarm_presence", value);
 
-    const homeLatitude = this.homey.geolocation.getLatitude();
-    const homeLongitude = this.homey.geolocation.getLongitude();
-    if (
-      typeof homeLatitude !== "number" ||
-      typeof homeLongitude !== "number" ||
-      Number.isNaN(homeLatitude) ||
-      Number.isNaN(homeLongitude)
-    ) {
-      return;
-    }
+    if (previous === undefined || previous === value) return;
+    this.triggerFlow(value ? "vehicle_arrived_home" : "vehicle_left_home");
+  }
 
-    const distance = haversineDistanceMeters(
-      value.latitude,
-      value.longitude,
-      homeLatitude,
-      homeLongitude,
-    );
-
-    const configuredRadius = Number(this.getSetting("presence_radius"));
-    const radius =
-      Number.isFinite(configuredRadius) && configuredRadius > 0
-        ? configuredRadius
-        : DEFAULT_PRESENCE_RADIUS_METERS;
-
-    if (this.previousPresence === undefined) {
-      this.previousPresence = this.getCapabilityValue("alarm_presence") as
-        | boolean
-        | null;
-    }
-    const wasHome = this.previousPresence;
-    const isHome =
-      wasHome === true
-        ? distance <= radius * (1 + PRESENCE_HYSTERESIS_RATIO)
-        : distance <= radius;
-
-    this.previousPresence = isHome;
-    this.update("alarm_presence", isHome);
-
-    if (wasHome === null || wasHome === undefined || wasHome === isHome) {
-      return;
-    }
-    this.triggerFlow(isHome ? "vehicle_arrived_home" : "vehicle_left_home");
+  /**
+   * Derives alarm_generic.at_work from the vehicle's own LocatedAtWork
+   * signal, mirroring handleLocatedAtHome. Its arrived/left-work triggers
+   * (`alarm_generic.at_work_true`/`_false`) are auto-fired by Homey's
+   * platform straight off this update() call - see the "Boolean system
+   * capabilities" pattern in AGENTS.md - so no explicit triggerFlow() call
+   * is needed here.
+   */
+  private handleLocatedAtWork(value: boolean | null | undefined): void {
+    if (value === undefined || value === null) return;
+    this.update("alarm_generic.at_work", value);
   }
 
   private triggerFlow(

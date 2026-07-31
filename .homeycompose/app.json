@@ -51,9 +51,7 @@
   "category": [
     "energy"
   ],
-  "permissions": [
-    "homey:manager:geolocation"
-  ],
+  "permissions": [],
   "images": {
     "small": "/assets/images/small.png",
     "large": "/assets/images/large.png",

@@ -453,33 +453,41 @@ documented timezone defect - it reports as though the reading time were
 Pacific Time regardless of the vehicle's real timezone) are not currently
 surfaced by this capability or any other.
 
-### At-Home Presence (`alarm_presence`) & Device Settings
+### At-Home/At-Work Presence (`alarm_presence`, `alarm_generic.at_work`)
 
-`VehicleDevice.handleLocation` (registered via `onSignal("Location", ...)`)
-derives the `alarm_presence` system capability by comparing the vehicle's
-`Location` signal against the Homey's own coordinates
-(`this.homey.geolocation`, requiring the `homey:manager:geolocation`
-permission) and a per-device `presence_radius` setting, via
-`lib/geoDistance.ts`'s pure haversine helper. Raw lat/lon is never stored or
-exposed as a capability - only the boolean and the `vehicle_arrived_home`/
-`vehicle_left_home` triggers (in addition to the free `alarm_presence_true`/
-`_false`/condition cards from the "Boolean system capabilities" bullet
-above). Hysteresis (`PRESENCE_HYSTERESIS_RATIO`, 20%) applies only on the
-way out of the radius - entering is immediate, leaving requires drifting
-past `radius * 1.2` - so a vehicle parked near the boundary doesn't flap the
-triggers. If the account hasn't granted the `vehicle_location` scope,
-`Location` never arrives (cached or live), so `handleLocation` never runs
-and `alarm_presence` just stays at its unset/`null` value - an honest
-"unknown" rather than a thrown error or a device marked unavailable - no
-separate scope-detection call was added for this. See
-`test/vehicle-presence.test.ts`.
+Presence is sourced from the vehicle's own native `LocatedAtHome`/
+`LocatedAtWork` signals - Tesla-computed booleans ("is the vehicle at the
+active driver profile's saved home/work location") that
+`@teslemetry/api`'s type comments and the Teslemetry Home Assistant
+integration's `binary_sensor.py` both confirm are genuine Fleet Telemetry
+fields (Requires 2024.44.32), not something this app derives from raw
+coordinates. Deliberately **not** a Homey-side geofence: an earlier version
+of this feature computed distance against the Homey's own geolocation and a
+configurable radius, but that was reworked to use the vehicle's own
+signals instead, matching what the Teslemetry HA integration exposes rather
+than reinventing HA's zone system. `VehicleDevice.handleLocatedAtHome`/
+`handleLocatedAtWork` (registered via `onSignal("LocatedAtHome"/"LocatedAtWork",
+...)`) just pass the boolean straight through to `alarm_presence`/
+`alarm_generic.at_work` - no location math, no permissions, no device
+settings. `alarm_presence` is a plain system capability (free
+`alarm_presence_true`/`_false`/condition cards - see the "Boolean system
+capabilities" bullet above - plus the explicitly-fired, distinctly-named
+`vehicle_arrived_home`/`vehicle_left_home` triggers since the generic
+wording isn't clear enough on its own); `alarm_generic.at_work` is a
+subcapability with its own manually-defined `_true`/`_false`/condition
+cards (worded directly as "arrived at work"/"left work", so no supplementary
+trigger is needed the way home's is).
 
-`presence_radius` is this app's first use of a Homey per-device Settings
-page (`driver.compose.json`'s `settings` array, read via
-`this.getSetting(id)`) rather than a capability - the right mechanism for a
-local, non-telemetry config value with no need for its own tile/history.
-Follow this pattern (not a settable capability) for future purely-local
-per-device configuration.
+If the account hasn't granted the `vehicle_location` scope, neither signal
+ever arrives (cached or live), so the handlers never run and both
+capabilities just stay at their unset/`null` value - an honest "unknown"
+rather than a thrown error or a device marked unavailable. No separate
+scope-detection call was added for this. `handleLocatedAtHome` tracks the
+previous value in `previousLocatedAtHome` rather than reading it back via
+`getCapabilityValue()`, since `update()` writes it asynchronously - a second
+signal arriving before the first write settles would otherwise see the same
+stale value and could double- or mis-fire `vehicle_arrived_home`/
+`vehicle_left_home`. See `test/vehicle-presence.test.ts`.
 
 ### Connection Lifecycle: Single-Flight Init, Startup Retry, Freshness Watchdog (`app.ts`)
 
