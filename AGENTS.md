@@ -409,6 +409,44 @@ byte), so it fires on every reconnect attempt regardless of whether that
 attempt goes on to fail. `live_status` is included so this also fires for
 accounts with energy sites but no vehicles.
 
+### Reinitialize Product Rebinding (`app.ts`, `TeslemetryDevice.rebindProduct`)
+
+`initializeTeslemetry()` can run more than once per app process - via
+`reinitialize()` (currently unreachable in production: see the note below)
+or lazily via `getTeslemetry()`/`getProducts()` after `stopSseAndSurfaceReauth()`
+recovers. Each run builds a brand new `Products` object with brand new
+per-site/per-vehicle stream objects. Every device captures its own
+`site`/`vehicle` reference and registers SSE listeners on it during its own
+`onInit()`; without rebinding, an already-paired device keeps listening on
+the old, now-dead stream forever - it stays `available`, its capability
+values simply stop changing, silently, with no error anywhere. This is a
+**distinct freeze mode from the missing-site one** (see "Stale Device
+References" below): it does not survive a full app/process restart (a fresh
+process re-runs every device's `onInit()` against the current `Products`
+from scratch), but does persist across an in-process reconnect/recovery
+that never restarts the app.
+
+`initializeTeslemetry()` calls `rebindAllDeviceProducts()` after building
+`products`, which walks every driver's `getDevices()` and calls
+`TeslemetryDevice.rebindProduct()` (default no-op) on each. Subclasses that
+hold a product reference - `PowerwallDevice`, `SolarDevice`, `GatewayDevice`,
+`WallConnecter`, `VehicleDevice` - override it to tear down their existing
+listeners (the same cleanup `onUninit()` uses) and re-run their own
+bind-and-register logic against the freshly resolved product. This runs
+unconditionally on every `initializeTeslemetry()` call, including the very
+first one at boot - a harmless no-op there, since no devices are paired yet
+at that point in Homey's own startup ordering.
+
+Separately: `TeslemetryOAuth2Client.saveToken()` emits `oauth2:token_saved`
+on `this.app.homey` (the SDK's `Homey` instance), but `app.ts`'s own
+`onInit()` listens via `this.on(...)` on the `App` instance itself - a
+different `EventEmitter` with no bridging for custom events (SDK's
+`_initApp` only forwards `__log`/`__error`/`__debug`). That listener is
+therefore dead code today; a normal token refresh never calls
+`reinitialize()` in production at all. Not fixed here - flagged for a
+future pass, since fixing it only matters once `reinitialize()` itself is
+safe to call, which is what this section's rebinding fix establishes.
+
 ### SSE Topic Selection (`app.ts`)
 
 `Teslemetry`'s `stream.topics` option (added in `@teslemetry/api` 0.10.0)

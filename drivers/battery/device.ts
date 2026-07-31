@@ -32,7 +32,19 @@ export default class PowerwallDevice extends TeslemetryDevice {
 
   async onInit() {
     await super.onInit();
+    this.resolveAndBindSite();
+  }
 
+  /**
+   * Re-resolves the current site id and rebinds, torn down and re-registered
+   * exactly like onInit(). See TeslemetryDevice.rebindProduct().
+   */
+  public rebindProduct(): void {
+    this.pollingCleanup?.forEach((stop) => stop());
+    this.resolveAndBindSite();
+  }
+
+  private resolveAndBindSite(): void {
     const siteId = this.getSiteId();
     const site = this.homey.app.products?.energySites?.[siteId];
     if (!site) {

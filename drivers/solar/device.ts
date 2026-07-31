@@ -45,11 +45,27 @@ export default class SolarDevice extends TeslemetryDevice {
 
   async onInit() {
     await super.onInit();
+    this.resolveAndBindSite();
+  }
 
+  /**
+   * Re-resolves the site and rebinds, torn down and re-registered exactly
+   * like onInit(). See TeslemetryDevice.rebindProduct().
+   */
+  public rebindProduct(): void {
+    this.pollingCleanup?.forEach((stop) => stop());
+    // pollingCleanup just cleared the midnight timer; reset so the cached
+    // site_info replay below doesn't treat an unchanged timezone as
+    // "already scheduled" and skip rescheduling it.
+    this.timeZone = undefined;
+    this.resolveAndBindSite();
+  }
+
+  private resolveAndBindSite(): void {
+    let site: EnergyDetails | undefined;
     try {
-      const site = this.homey.app.products?.energySites?.[this.getData().id];
+      site = this.homey.app.products?.energySites?.[this.getData().id];
       if (!site) throw new Error("No site found");
-      this.site = site;
     } catch (e) {
       this.log("Failed to initialize Solar device");
       this.error(e);
@@ -58,6 +74,11 @@ export default class SolarDevice extends TeslemetryDevice {
       );
       return;
     }
+    this.bindSite(site);
+  }
+
+  private bindSite(site: EnergyDetails): void {
+    this.site = site;
 
     const onLiveStatus = (event: SseLiveStatus) => {
       const data = event.live_status as LiveStatusResponse;
