@@ -102,18 +102,23 @@ export default class SolarDevice extends TeslemetryDevice {
       );
     };
 
-    const onEnergyTotals = async (event: SseEnergyTotals) => {
+    const handleEnergyTotals = async (event: SseEnergyTotals) => {
       const { total_solar_generation } = event.totals;
       if (total_solar_generation === null || total_solar_generation === undefined) {
         return;
       }
       const dateKey = event.createdAt.slice(0, 10);
-      this.update("solar_generation_today", total_solar_generation / 1000);
+      await this.update("solar_generation_today", total_solar_generation / 1000);
       await this.updateCumulativeMeter(
         "meter_power",
         total_solar_generation / 1000,
         dateKey,
       );
+    };
+    // EventEmitter doesn't await listeners, so an unhandled rejection here
+    // would otherwise crash the app instead of just failing this update.
+    const onEnergyTotals = (event: SseEnergyTotals) => {
+      return handleEnergyTotals(event).catch(this.error);
     };
 
     // Essential behavior: live data and the today/cumulative totals.

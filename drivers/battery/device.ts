@@ -153,7 +153,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
       }
     };
 
-    const onEnergyTotals = async (event: SseEnergyTotals) => {
+    const handleEnergyTotals = async (event: SseEnergyTotals) => {
       const dateKey = event.createdAt.slice(0, 10);
       const { total_battery_charge, total_battery_discharge } = event.totals;
 
@@ -174,6 +174,11 @@ export default class PowerwallDevice extends TeslemetryDevice {
           dateKey,
         );
       }
+    };
+    // EventEmitter doesn't await listeners, so an unhandled rejection here
+    // would otherwise crash the app instead of just failing this update.
+    const onEnergyTotals = (event: SseEnergyTotals) => {
+      return handleEnergyTotals(event).catch(this.error);
     };
 
     // Essential behavior: live data and commands. Registered before the

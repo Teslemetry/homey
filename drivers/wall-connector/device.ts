@@ -81,7 +81,7 @@ export default class WallConnecter extends TeslemetryDevice {
       this.handleFaultState(data.wall_connector_fault_state);
     };
 
-    const onChargeHistory = async (
+    const handleChargeHistory = async (
       chargeHistory: NonNullable<typeof this.site.api.cache.chargeHistory>,
     ) => {
       if (!chargeHistory.response?.charge_history?.length) return;
@@ -102,6 +102,13 @@ export default class WallConnecter extends TeslemetryDevice {
         const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
         await this.updateCumulativeMeter("meter_power", charged / 1000, dateKey);
       }
+    };
+    // EventEmitter doesn't await listeners, so an unhandled rejection here
+    // would otherwise crash the app instead of just failing this update.
+    const onChargeHistory = (
+      chargeHistory: NonNullable<typeof this.site.api.cache.chargeHistory>,
+    ) => {
+      return handleChargeHistory(chargeHistory).catch(this.error);
     };
 
     this.site.sse.on("live_status", onLiveStatus);
