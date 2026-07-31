@@ -248,7 +248,8 @@
         "ru": "Засов порта зарядки",
         "ko": "충전 포트 래치",
         "ar": "مزلاج منفذ الشحن"
-      }
+      },
+      "setable": false
     },
     "seat_heater.front_left": {
       "title": {
@@ -925,7 +926,8 @@
         "ru": "Крышка кузова",
         "ko": "적재함 커버",
         "ar": "غطاء صندوق الحمولة"
-      }
+      },
+      "setable": false
     },
     "windowcoverings_set.tonneau": {
       "title": {
