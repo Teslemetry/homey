@@ -429,12 +429,13 @@ export default class TeslemetryDevice extends Homey.Device {
    */
   protected action(promise: Promise<unknown>): Promise<void> {
     let timedOut = false;
-    const timeout = new Promise<void>((resolve) =>
-      setTimeout(() => {
+    let timer: NodeJS.Timeout;
+    const timeout = new Promise<void>((resolve) => {
+      timer = setTimeout(() => {
         timedOut = true;
         resolve();
-      }, TeslemetryDevice.ACTION_TIMEOUT),
-    );
+      }, TeslemetryDevice.ACTION_TIMEOUT);
+    });
     const handled = promise.then(() => {}, this.handleApiError);
     // If the timeout already won the race (flow card reported success), a
     // later rejection would otherwise vanish silently. Log it prominently
@@ -447,6 +448,9 @@ export default class TeslemetryDevice extends Homey.Device {
         );
       }
     });
+    // Clear the timer the moment the command settles first, so a fast
+    // command doesn't leave its 9s timer (and this closure) referenced.
+    handled.finally(() => clearTimeout(timer)).catch(() => {});
     return Promise.race([handled, timeout]);
   }
 }

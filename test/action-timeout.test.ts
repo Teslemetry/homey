@@ -22,6 +22,27 @@ test("action() resolves once the underlying promise resolves, well within the ti
   await (stub as any).action(Promise.resolve("ok"));
 });
 
+test("action() clears its timeout timer once the command settles first", async () => {
+  const { stub } = createDeviceStub();
+  const originalClearTimeout = global.clearTimeout;
+  const clearedTimers: unknown[] = [];
+  global.clearTimeout = ((timer: unknown) => {
+    clearedTimers.push(timer);
+    return originalClearTimeout(timer as any);
+  }) as typeof clearTimeout;
+
+  try {
+    await (stub as any).action(Promise.resolve("ok"));
+    // Let the .finally() microtask that clears the timer flush.
+    await Promise.resolve();
+    await Promise.resolve();
+  } finally {
+    global.clearTimeout = originalClearTimeout;
+  }
+
+  assert.equal(clearedTimers.length, 1, "the action timeout timer was cleared exactly once");
+});
+
 test("action() lets a rejection through handleApiError before the timeout wins", async () => {
   const { stub, errorCalls } = createDeviceStub();
 
