@@ -64,6 +64,7 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
     },
     setCapabilityOptions: async () => {},
     registerCapabilityListener: () => {},
+    getStoreValue: () => null,
     log: () => {},
     error: () => {},
   });

@@ -278,6 +278,39 @@ bug, but since the call can't throw synchronously, it can't block their
 `energy_totals` listener from registering either - not vulnerable, and nothing
 to guard.
 
+### Powerwall Missing-Site Repair (`PowerwallDevice`/`PowerwallDriver`)
+
+A saved Powerwall's site id (`getData().id`) can stop resolving in
+`products.energySites` (e.g. the underlying site binding goes stale). Per
+the "registered but dead" pattern above, `PowerwallDevice.onInit` returns
+early in that case - `error.energy_site_not_found`, zero SSE listeners, zero
+command listeners. Fixing this without losing the device's identity (its
+runtime id, capability history, and Flow bindings, all keyed off the paired
+device instance, not the site id) needs the site binding to be mutable
+independently of the immutable Homey pairing `data`:
+
+- `PowerwallDevice.getSiteId()` resolves the site id from a store value
+  (`energySiteId`) if one has been set, falling back to `getData().id`
+  otherwise. All site lookups go through this method, not `getData().id`
+  directly.
+- `PowerwallDevice.repairSite(siteId)` is the only way to change that store
+  value. It validates the target site exists, then calls the same
+  `bindSite()` internals `onInit` uses to register SSE/command listeners, so
+  a repaired device ends up identical to one that resolved correctly on
+  first init.
+- `PowerwallDriver.onRepair` exposes this through a driver-specific custom
+  repair view (`drivers/battery/repair/repair_site.html`, wired via
+  `driver.compose.json`'s own `repair` array, which overrides the shared
+  `teslemetry` template's array for this driver only - see
+  `HomeyCompose.js`'s driver-json merge, where a driver's own top-level key
+  fully replaces the same key inherited via `$extends`, not merges with it).
+  The view only ever offers a relink when `findRepairCandidate()` finds
+  exactly one battery-capable energy site not already bound to another live
+  Powerwall device; zero or multiple candidates get an explanatory
+  dead-end, never a guess. `Homey.createDevice()` is unavailable in repair
+  views by design, which is why this rebinds the existing device via a
+  store value instead of any list-devices/add-devices flow.
+
 ### Firing Flow Trigger Cards
 
 Homey does not reliably auto-fire trigger cards for this app's capabilities,

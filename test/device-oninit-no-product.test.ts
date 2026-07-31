@@ -25,6 +25,7 @@ function createDeviceStub(deviceClass: { prototype: object }, id: string) {
     getData: () => ({ vin: id, id }),
     getCapabilities: () => [],
     setCapabilityOptions: async () => {},
+    getStoreValue: () => null,
     log: () => {},
     error: () => {},
     setUnavailable: async (message: unknown) => {

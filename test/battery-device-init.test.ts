@@ -109,6 +109,7 @@ function createDeviceStub(siteInfoDocument?: Record<string, unknown>) {
     registerCapabilityListener: (capability: string, listener: (value: unknown) => Promise<void>) => {
       capabilityListeners[capability] = listener;
     },
+    getStoreValue: () => null,
     setUnavailable: async () => {},
     log: () => {},
     error: () => {},

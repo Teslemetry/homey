@@ -4947,19 +4947,11 @@
           "id": "login_oauth2",
           "template": "login_oauth2",
           "navigation": {
-            "next": "list_devices"
+            "next": "repair_site"
           }
         },
         {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "add_devices"
-          }
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
+          "id": "repair_site"
         }
       ],
       "name": {
