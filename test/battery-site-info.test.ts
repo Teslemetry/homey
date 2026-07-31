@@ -56,6 +56,8 @@ function createDeviceStub(siteInfoDocument?: Record<string, unknown>) {
   const capabilityOptions: Array<{ capability: string; options: unknown }> = [];
   const store: Record<string, unknown> = {};
   const capabilityListeners: Record<string, (value: unknown) => Promise<void>> = {};
+  const timers: Array<{ id: number; callback: () => void }> = [];
+  let nextTimerId = 1;
 
   const stub = Object.assign(Object.create(PowerwallDevice.prototype), {
     homey: {
@@ -63,6 +65,15 @@ function createDeviceStub(siteInfoDocument?: Record<string, unknown>) {
       __: (key: string) => key,
       flow: {
         getDeviceTriggerCard: () => ({ trigger: async () => {} }),
+      },
+      setTimeout: (callback: () => void) => {
+        const timerId = nextTimerId++;
+        timers.push({ id: timerId, callback });
+        return timerId;
+      },
+      clearTimeout: (timerId: number) => {
+        const index = timers.findIndex((timer) => timer.id === timerId);
+        if (index !== -1) timers.splice(index, 1);
       },
     },
     driver: {
@@ -91,7 +102,7 @@ function createDeviceStub(siteInfoDocument?: Record<string, unknown>) {
   });
   stub.driver.getDevices = () => [stub];
 
-  return { stub, sse, api, apiCalls, capabilities, capabilityOptions, capabilityListeners };
+  return { stub, sse, api, apiCalls, capabilities, capabilityOptions, capabilityListeners, timers };
 }
 
 test("PowerwallDevice's site_info handler maps backup_reserve_percent and default_real_mode", async () => {

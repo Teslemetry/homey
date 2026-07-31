@@ -233,13 +233,27 @@ Unlike the cumulative meters above, `solar_generation_today` is a plain (non-`cu
 ### Grid Tariff Rate (`grid_buy_rate` / `grid_sell_rate`)
 
 The Powerwall driver resolves the live buy/sell grid rate via `getTariffPeriods`
-from the `tesla-fleet-api` package, called from `PowerwallDevice.updateTariffRates`.
+from the `tesla-fleet-api` package, called from `PowerwallDevice.recomputeTariffRates`.
 The SSE protocol splits `tariff_content_v2` out of a now-slim `site_info` event
 (a `null` body means the tariff was removed), so `PowerwallDevice` subscribes to
 both `site.sse` `site_info` and `tariff_content_v2` events and, on either, re-reads
 `site.sse.siteInfoDocument` - the SDK's merged view of the last-cached `site_info`
 plus the last-cached `tariff_content_v2` - rather than trying to reassemble the two
 itself.
+
+A period boundary arrives with the clock, not with a new SSE event, so
+`recomputeTariffRates` retains the last-seen tariff document/timezone on the
+device instance and schedules a Homey timeout at `getTariffPeriods`' own
+`resolution.nextChange` instant; the timeout recomputes and reschedules
+itself, so rates advance correctly with no further config event required.
+Every call clears any previously scheduled timer first (matching
+`SolarDevice.scheduleMidnightReset`'s pattern), so a fresh `site_info`/
+`tariff_content_v2` event - including a timezone change - always wins over a
+stale boundary. When the tariff is absent (removed, `null`) or otherwise
+unresolvable (no timezone, or `getTariffPeriods` finds no matching season),
+`clearTariffRates` unsets both rate capabilities and their currency `units`
+rather than leaving a stale price in place; the boundary timer is cleaned up
+in `onUninit` via the same `pollingCleanup` array every other listener uses.
 
 - `tesla-fleet-api` is pinned to a commit SHA via a `github:` dependency
   (`Teslemetry/node-tesla-fleet-api`), not a published npm version - as of this
@@ -272,7 +286,7 @@ itself.
   looking plausible - `homey app validate` is the source of truth, not
   intuition about what "should" be a standard capability).
 - Currency varies per site and isn't known at compose time, so `units` isn't
-  set in the `.homeycompose/capabilities/*.json` files; `updateTariffRates`
+  set in the `.homeycompose/capabilities/*.json` files; `recomputeTariffRates`
   sets it at runtime via `setCapabilityOptions` once `getTariffPeriods` reports
   `currency`, the same runtime-options pattern `VehicleDevice.onInit` uses for
   `onoff.frunk`/`onoff.trunk`'s `setable`.
