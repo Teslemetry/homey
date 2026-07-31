@@ -24,7 +24,15 @@ source files' full import graph. `test/support/loader.mjs` stubs the
 `homey` SDK import (it only resolves to real classes inside the actual
 Homey runtime) so device/driver/app classes can be exercised directly via
 their prototypes without a live Homey instance; `test/support/homey-stub.js`
-holds the stand-in `Device`/`Driver`/`App` base classes.
+holds the stand-in `Device`/`Driver`/`App` base classes. The same loader
+also redirects `@teslemetry/api` to `test/support/teslemetry-api-stub.js` -
+`app.js` is the only compiled file with a *runtime* (not type-only) import
+from that package (`Teslemetry`; the SDK's other exports used elsewhere are
+TS interfaces/type aliases, erased at build time), and constructing the real
+class would issue live network calls. Each test calls the stub's
+`configureTeslemetryStub(factory)` before triggering a build to control
+`createProducts()` timing/outcome and drive the returned `sse` EventEmitter
+directly - see `test/app-connection-lifecycle.test.ts`.
 
 ## Architecture
 
@@ -373,79 +381,98 @@ documented timezone defect - it reports as though the reading time were
 Pacific Time regardless of the vehicle's real timezone) are not currently
 surfaced by this capability or any other.
 
-### SSE Auth-Failure Handling (`app.ts`)
+### Connection Lifecycle: Single-Flight Init, Startup Retry, Freshness Watchdog (`app.ts`)
 
-As of `@teslemetry/api` 0.7.0, the SDK's `TeslemetryStream` owns 401/403
-detection, the exponential backoff for transient failures, and the
-stop-loss policy for persistent auth failure — that used to all live in
-this repo as a `logger.error("SSE error:", ...)` string-sniffing hack
-(dead code against the SDK versions it shipped against, since inner
-retries never surfaced that log line for a 401). It now emits two typed
-events on `teslemetry.sse` that `app.ts` subscribes to instead:
+`app.ts` owns one shared, generation-safe pipeline for building/rebuilding
+`teslemetry`/`products`, replacing an earlier ad hoc `initializeTeslemetry()`/
+`reinitialize()` pair that could split an SDK instance from the `Products` it
+published under concurrent calls. The pieces:
 
-- `stream_error: { error, status?, retries }` — fires on every failed
-  reconnect attempt, transient or not. `app.ts` only acts when
-  `status` is `401`/`403`: it forces `oauth.refreshToken()` so the SDK's
-  own single same-attempt retry (it re-resolves the auth callback per
-  attempt) gets a token that's actually fresh, covering a token revoked
-  early enough that our proactive expiry-based refresh wouldn't have
-  caught it. If that refresh itself finds the refresh token dead, `app.ts`
-  doesn't wait for a second consecutive failure — it surfaces reauth
-  immediately.
-- `auth_failure` — the SDK's terminal event: it fires once two consecutive
-  401/403s occur and the SDK has already stopped reconnecting
-  (`active = false`). `app.ts` responds by stopping its own state
-  (`cleanup()`), clearing the token, and marking every device unavailable
-  via `error.invalid_refresh_token`, which surfaces through Homey's
-  existing repair flow (same mechanism as
-  `TeslemetryDevice.handleApiError`'s `invalid_token`/`subscription_required`
-  handling).
+- **`initializeTeslemetry(forceRebuild?)`** is single-flight: every caller
+  (boot `onInit()`, `getTeslemetry()`/`getProducts()`, the startup retry
+  timer, a token-refresh rebuild) chains onto one `initChain` promise, so
+  builds never run concurrently and no caller can observe a half-built
+  generation. `forceRebuild` (used by the `oauth2:token_saved` listener - see
+  the dead-listener caveat below) always builds a fresh generation even if
+  the current one is `ready`; a plain call is a no-op once already ready.
+- **`doInitialize()`** builds into local `const sdk`/`const products`,
+  attaches that generation's stream handlers to the *local* `sdk`, and only
+  publishes to `this.teslemetry`/`this.products` after `createProducts()`
+  fully succeeds - a failed build never leaves those fields half-updated.
+  The previous generation's stream is closed only *after* the new one is
+  live and connected, so a token-refresh rebuild has no gap with zero active
+  stream. `this.generation` is bumped at the start of every build and inside
+  `cleanup()`; every stream handler captures its own generation and no-ops
+  once superseded, so a straggler event from an old/closed SDK (`close()`
+  doesn't abort its in-flight request - a known `@teslemetry/api` gap, not
+  fixed here) can't mutate current state.
+- **`scheduleStartupRetry()`** covers a transient `createProducts()` failure
+  at boot: bounded exponential backoff (`STARTUP_RETRY_BASE_MS` doubling up
+  to `STARTUP_RETRY_MAX_MS`) via `this.homey.setTimeout`, cleared as soon as
+  any build succeeds. Doesn't schedule without a valid token - that's an auth
+  problem for the OAuth pairing/repair flow, not a timer. `isReady()`
+  reflects whether a generation has ever been fully published; devices that
+  fail to bind while not yet ready use the `"startup"` availability reason
+  (see below) instead of a misleading "product not found" message.
+- **The stream freshness watchdog** tracks per-product last-genuine-event
+  time. The SDK emits `disconnect` before every reconnect attempt regardless
+  of cause (network/server/parse/auth), so `handleStreamDisconnect()` starts
+  a `STREAM_STALE_GRACE_MS` timer on the first one; if it fires with no
+  genuine data in between, every currently-bound device is marked
+  unavailable with reason `"stream"`. Each device recovers independently the
+  moment its *own* product's next genuine (non-`isCache`) `state`/`data`/
+  `connectivity`/`live_status` event arrives - never on a blanket reconnect,
+  and never on the SDK's `connect` event, which fires optimistically before
+  the underlying HTTP request even completes.
+- **`rebindAllDeviceProducts()`** (unchanged from earlier versions) walks
+  every driver's `getDevices()` and calls `TeslemetryDevice.rebindProduct()`
+  (default no-op; overridden by every product-holding device) after each
+  successful build - without it, an already-paired device would keep
+  listening on the old, now-dead per-product stream forever. Runs
+  unconditionally on every successful build, including the very first one at
+  boot (a harmless no-op there, since no devices are paired yet).
 
-Device availability is restored on the SDK's `state`/`data`/`connectivity`/
-`live_status` events, **not** on `connect` — `TeslemetryStream` still emits
-`connect` optimistically, before the underlying HTTP request even completes
-(it fires right after constructing the SSE generator, not after the first
-byte), so it fires on every reconnect attempt regardless of whether that
-attempt goes on to fail. `live_status` is included so this also fires for
-accounts with energy sites but no vehicles.
+Separately, and **not fixed by this work**: `TeslemetryOAuth2Client.saveToken()`
+emits `oauth2:token_saved` on `this.app.homey` (the SDK's `Homey` instance),
+but `app.ts`'s own `onInit()` listens via `this.on(...)` on the `App`
+instance itself - a different `EventEmitter` with no bridging for custom
+events (SDK's `_initApp` only forwards `__log`/`__error`/`__debug`). That
+listener - and therefore `initializeTeslemetry(true)`'s force-rebuild path -
+is dead code today; a normal token refresh never reaches it in production.
+Flagged for a future pass.
 
-### Reinitialize Product Rebinding (`app.ts`, `TeslemetryDevice.rebindProduct`)
+### Credential Teardown & Availability Reasons (`app.ts`, `lib/TeslemetryDevice.ts`)
 
-`initializeTeslemetry()` can run more than once per app process - via
-`reinitialize()` (currently unreachable in production: see the note below)
-or lazily via `getTeslemetry()`/`getProducts()` after `stopSseAndSurfaceReauth()`
-recovers. Each run builds a brand new `Products` object with brand new
-per-site/per-vehicle stream objects. Every device captures its own
-`site`/`vehicle` reference and registers SSE listeners on it during its own
-`onInit()`; without rebinding, an already-paired device keeps listening on
-the old, now-dead stream forever - it stays `available`, its capability
-values simply stop changing, silently, with no error anywhere. This is a
-**distinct freeze mode from the missing-site one** (see "Stale Device
-References" below): it does not survive a full app/process restart (a fresh
-process re-runs every device's `onInit()` against the current `Products`
-from scratch), but does persist across an in-process reconnect/recovery
-that never restarts the app.
+Every device's unavailability is tracked as one typed `AvailabilityReason`
+(`"startup" | "binding" | "stream" | "auth"`, `lib/TeslemetryDevice.ts`) via
+`markUnavailable(reason, message)` / `clearAvailabilityReason(reason)` -
+never a raw `setUnavailable()`/`setAvailable()` call from app.ts or a data
+handler. `clearAvailabilityReason()` is a no-op unless the device's *current*
+reason matches, so one recovery signal (a stream reconnect, a genuine data
+event) can never paper over an unrelated cause (a missing product binding, a
+revoked subscription) - see `TeslemetryDevice.getProductKey()` and
+`app.ts`'s `getDevicesForProductKey()`, used by both the freshness watchdog
+above and the auth recovery below to target exactly the right device(s).
 
-`initializeTeslemetry()` calls `rebindAllDeviceProducts()` after building
-`products`, which walks every driver's `getDevices()` and calls
-`TeslemetryDevice.rebindProduct()` (default no-op) on each. Subclasses that
-hold a product reference - `PowerwallDevice`, `SolarDevice`, `GatewayDevice`,
-`WallConnecter`, `VehicleDevice` - override it to tear down their existing
-listeners (the same cleanup `onUninit()` uses) and re-run their own
-bind-and-register logic against the freshly resolved product. This runs
-unconditionally on every `initializeTeslemetry()` call, including the very
-first one at boot - a harmless no-op there, since no devices are paired yet
-at that point in Homey's own startup ordering.
+`teardownCredentials(message)` is the single path for every credential-removal
+event: the SSE `auth_failure` terminal event (`stopSseAndSurfaceReauth()`)
+and the manual Disconnect action (`api.ts`'s `deleteOAuthToken` calls the
+public `app.disconnectAccount()`). Both close the stream, clear the token,
+and mark every device unavailable with reason `"auth"` - no later unrelated
+event can globally re-declare them healthy; only that specific device's own
+genuine post-reauth data event clears it (`handleGenuineStreamEvent()`,
+shared with the freshness watchdog, also tries `clearAvailabilityReason("auth")`
+per matched device - a live event on the current stream generation is by
+itself proof the account reauthenticated, so no separate "reauth in
+progress" flag is needed).
 
-Separately: `TeslemetryOAuth2Client.saveToken()` emits `oauth2:token_saved`
-on `this.app.homey` (the SDK's `Homey` instance), but `app.ts`'s own
-`onInit()` listens via `this.on(...)` on the `App` instance itself - a
-different `EventEmitter` with no bridging for custom events (SDK's
-`_initApp` only forwards `__log`/`__error`/`__debug`). That listener is
-therefore dead code today; a normal token refresh never calls
-`reinitialize()` in production at all. Not fixed here - flagged for a
-future pass, since fixing it only matters once `reinitialize()` itself is
-safe to call, which is what this section's rebinding fix establishes.
+`TeslemetryDevice.handleApiError()` marks the same `"auth"` reason on
+`invalid_token`/`subscription_required` from an individual command response,
+so a device-level auth failure and an app-level stream auth failure recover
+through the identical per-device evidence path. See
+`test/app-connection-lifecycle.test.ts` for the regression coverage of all
+of the above (single-flight/generation-safety, startup retry, the freshness
+watchdog, manual disconnect, and reason-scoped auth recovery).
 
 ### SSE Topic Selection (`app.ts`)
 

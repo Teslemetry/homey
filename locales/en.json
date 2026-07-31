@@ -6,6 +6,9 @@
     "subscription_required": "Subscription required. Please check your Teslemetry subscription.",
     "could_not_wake_vehicle": "Vehicle didn't wake up. Please try again.",
     "insufficient_credits": "Insufficent command credits. Please purchase additional credits to run commands.",
-    "device_removed": "The selected device no longer exists. Please edit this Flow."
+    "device_removed": "The selected device no longer exists. Please edit this Flow.",
+    "teslemetry_connecting": "Connecting to Teslemetry...",
+    "stream_disconnected": "Connection to Teslemetry lost. Reconnecting...",
+    "account_disconnected": "Teslemetry account disconnected. Please re-authenticate to reconnect this device."
   }
 }

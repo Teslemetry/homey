@@ -48,15 +48,24 @@ export default class PowerwallDevice extends TeslemetryDevice {
     const siteId = this.getSiteId();
     const site = this.homey.app.products?.energySites?.[siteId];
     if (!site) {
+      if (!(this.homey.app.isReady?.() ?? true)) {
+        this.markUnavailable(
+          "startup",
+          this.homey.__("error.teslemetry_connecting"),
+        );
+        return;
+      }
       this.error(
         `Failed to initialize Powerwall device: energy site not found for id ${siteId}`,
       );
-      this.setUnavailable(this.homey.__("error.energy_site_not_found")).catch(
-        this.error,
-      );
+      this.markUnavailable("binding", this.homey.__("error.energy_site_not_found"));
       return;
     }
     this.bindSite(site);
+  }
+
+  public getProductKey(): string | undefined {
+    return this.site ? `site:${String(this.site.id)}` : undefined;
   }
 
   /**
@@ -85,12 +94,16 @@ export default class PowerwallDevice extends TeslemetryDevice {
     }
     this.pollingCleanup?.forEach((stop) => stop());
     await this.setStoreValue("energySiteId", siteId);
+    // bindSite() itself restores availability via clearAvailabilityReason
+    // ("binding" is the only reason a device can have reached this repair
+    // flow with) - no separate setAvailable() call needed here.
     this.bindSite(site);
-    await this.setAvailable();
   }
 
   private bindSite(site: EnergyDetails): void {
     this.site = site;
+    this.clearAvailabilityReason("startup");
+    this.clearAvailabilityReason("binding");
 
     const onLiveStatus = (event: SseLiveStatus) => {
       const data = event.live_status as LiveStatusResponse;
