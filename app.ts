@@ -74,8 +74,7 @@ export default class TeslemetryApp extends Homey.App {
   // Per-product ("vehicle:<vin>" / "site:<id>") timestamp of the last
   // genuine (non-cache) data event, for the stream freshness watchdog.
   private lastProductEventAt = new Map<string, number>();
-  private streamDisconnectedAt = new Map<string, number>();
-  private streamStaleTimer?: NodeJS.Timeout;
+  private productStaleTimers = new Map<string, NodeJS.Timeout>();
   private static readonly STREAM_STALE_GRACE_MS = 90_000;
 
   private logger = {
@@ -482,6 +481,7 @@ export default class TeslemetryApp extends Homey.App {
       throw new Error('No OAuth2 token available. User needs to authenticate.');
     }
 
+    const baseGeneration = this.generation;
     this.log('Initializing Teslemetry...');
 
     const sdk = new Teslemetry(this.oauth.getAccessToken, {
@@ -503,11 +503,17 @@ export default class TeslemetryApp extends Homey.App {
       throw error;
     }
 
-    const generation = this.generation + 1;
+    if (this.generation !== baseGeneration || !this.oauth.hasValidToken()) {
+      sdk.sse.close();
+      return;
+    }
+
+    const generation = baseGeneration + 1;
     this.attachStreamHandlers(sdk, generation);
 
     const oldSdk = this.teslemetry;
     this.generation = generation;
+    this.cancelAllProductStaleChecks();
     this.teslemetry = sdk;
     this.products = products;
     this.ready = true;
@@ -624,9 +630,8 @@ export default class TeslemetryApp extends Homey.App {
    */
   cleanup(): void {
     this.generation++;
-    this.cancelStreamStaleCheck();
+    this.cancelAllProductStaleChecks();
     this.lastProductEventAt.clear();
-    this.streamDisconnectedAt.clear();
     this.ready = false;
     if (this.teslemetry) {
       this.teslemetry.sse.close();
@@ -719,10 +724,7 @@ export default class TeslemetryApp extends Homey.App {
     if (!key) return;
 
     this.lastProductEventAt.set(key, Date.now());
-    this.streamDisconnectedAt.delete(key);
-    if (this.streamDisconnectedAt.size === 0) {
-      this.cancelStreamStaleCheck();
-    }
+    this.cancelProductStaleCheck(key);
     for (const device of this.getDevicesForProductKey(key)) {
       device.clearAvailabilityReason('stream');
       device.clearAvailabilityReason('auth');
@@ -738,62 +740,46 @@ export default class TeslemetryApp extends Homey.App {
    */
   private handleStreamDisconnect(generation: number): void {
     if (generation !== this.generation) return;
-    if (this.streamDisconnectedAt.size > 0) return;
-    const disconnectedAt = Date.now();
     this.forEachTeslemetryDevice((device) => {
       const key = device.getProductKey();
-      if (key !== undefined && !this.streamDisconnectedAt.has(key)) {
-        this.streamDisconnectedAt.set(key, disconnectedAt);
-      }
+      if (key !== undefined) this.scheduleProductStaleCheck(generation, key);
     });
-    this.scheduleStreamStaleCheck(generation);
   }
 
-  private scheduleStreamStaleCheck(generation: number): void {
-    if (this.streamStaleTimer !== undefined) return;
-    this.streamStaleTimer = this.homey.setTimeout(() => {
-      this.streamStaleTimer = undefined;
-      this.markStreamStale(generation);
+  private scheduleProductStaleCheck(generation: number, key: string): void {
+    if (this.productStaleTimers.has(key)) return;
+    const timer = this.homey.setTimeout(() => {
+      this.productStaleTimers.delete(key);
+      this.markProductStale(generation, key);
     }, TeslemetryApp.STREAM_STALE_GRACE_MS);
+    this.productStaleTimers.set(key, timer);
   }
 
-  private cancelStreamStaleCheck(): void {
-    if (this.streamStaleTimer !== undefined) {
-      this.homey.clearTimeout(this.streamStaleTimer);
-      this.streamStaleTimer = undefined;
+  private cancelProductStaleCheck(key: string): void {
+    const timer = this.productStaleTimers.get(key);
+    if (timer === undefined) return;
+    this.homey.clearTimeout(timer);
+    this.productStaleTimers.delete(key);
+  }
+
+  private cancelAllProductStaleChecks(): void {
+    for (const timer of this.productStaleTimers.values()) {
+      this.homey.clearTimeout(timer);
     }
+    this.productStaleTimers.clear();
   }
 
-  /**
-   * The stream has been disconnected/erroring for a full grace period -
-   * findings 3's "act on ALL non-auth
-   * failures" (disconnect/stream_error/repeated-reconnect all funnel
-   * through the same disconnect event the SDK emits before every retry).
-   * Marks every currently-bound device unavailable with the "stream"
-   * reason; each recovers independently the moment its own product's next
-   * genuine event arrives (handleGenuineStreamEvent), not on a global
-   * reconnect. Devices with no product key (never bound) are left alone -
-   * their own "startup"/"binding" reason already covers them.
-   */
-  private markStreamStale(generation: number): void {
+  private markProductStale(generation: number, key: string): void {
     if (generation !== this.generation) return;
-    const staleKeys = new Set<string>();
-    for (const [key, disconnectedAt] of this.streamDisconnectedAt) {
-      if ((this.lastProductEventAt.get(key) ?? 0) <= disconnectedAt) {
-        staleKeys.add(key);
-      }
-    }
-    if (staleKeys.size === 0) return;
+    const lastEventAt = this.lastProductEventAt.get(key);
+    const lastEventAge = lastEventAt === undefined ? 'never' : `${Date.now() - lastEventAt}ms`;
     this.log(
-      `Stream freshness watchdog: no genuine product data after ${TeslemetryApp.STREAM_STALE_GRACE_MS}ms grace period; marking affected devices unavailable (generation ${generation})`,
+      `Stream freshness watchdog: ${key} has no genuine data after ${TeslemetryApp.STREAM_STALE_GRACE_MS}ms grace period; last event age ${lastEventAge} (generation ${generation})`,
     );
     const message = this.homey.__('error.stream_disconnected');
-    this.forEachTeslemetryDevice((device) => {
-      const key = device.getProductKey();
-      if (key !== undefined && staleKeys.has(key)) {
-        device.markUnavailable('stream', message);
-      }
-    });
+    for (const device of this.getDevicesForProductKey(key)) {
+      device.markUnavailable('stream', message);
+    }
   }
 
   /**

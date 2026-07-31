@@ -216,14 +216,14 @@ test("a non-auth stream stall marks bound devices unavailable after the grace pe
   // Every failed reconnect attempt fires "disconnect" first, whether or not
   // it's an auth failure - a non-auth outage must not be silently ignored.
   sdk!.sse.emit("disconnect");
-  assert.equal(timers.length, 1, "stale-check grace period scheduled");
+  assert.equal(timers.length, 2, "one stale-check grace period scheduled per product");
   assert.equal(timers[0].delay, 90_000);
   assert.equal(vehicleDevice.unavailableCalls.length, 0, "not marked unavailable before the grace period elapses");
 
   // Grace period elapses with no genuine data.
-  const staleTimer = timers[0];
+  const staleTimers = [...timers];
   timers.length = 0;
-  staleTimer.callback();
+  for (const timer of staleTimers) timer.callback();
 
   assert.deepEqual(vehicleDevice.unavailableCalls, ["error.stream_disconnected"]);
   assert.deepEqual(siteDevice.unavailableCalls, ["error.stream_disconnected"]);
@@ -287,6 +287,116 @@ test("a failed forced rebuild leaves the active generation's stream handlers eff
   activeSdk!.sse.emit("disconnect");
   assert.equal(timers.length, 1, "the still-published generation continues monitoring disconnects");
   timers[0].callback();
+  assert.deepEqual(device.unavailableCalls, ["error.stream_disconnected"]);
+});
+
+test("a recovered product receives a fresh watchdog on a later disconnect", async () => {
+  const { app, timers, drivers } = createAppStub();
+  const deviceA = createDeviceStub("vehicle:vin-a");
+  const deviceB = createDeviceStub("vehicle:vin-b");
+  drivers.vehicle = { getDevices: () => [deviceA.device, deviceB.device] };
+
+  let sdk: { sse: FakeStream } | undefined;
+  configureTeslemetryStub(() => {
+    sdk = { sse: new FakeStream() };
+    return { ...sdk, createProducts: async () => ({ vehicles: {}, energySites: {} }) };
+  });
+  await app.initializeTeslemetry();
+
+  sdk!.sse.emit("disconnect");
+  const firstTimers = [...timers];
+  timers.length = 0;
+  for (const timer of firstTimers) timer.callback();
+  sdk!.sse.emit("state", { vin: "vin-a" });
+  assert.equal(deviceA.availableCalls.length, 1);
+
+  sdk!.sse.emit("disconnect");
+  assert.equal(timers.length, 2, "both currently-bound products receive a fresh check");
+  const secondTimers = [...timers];
+  timers.length = 0;
+  for (const timer of secondTimers) timer.callback();
+  assert.deepEqual(deviceA.unavailableCalls, [
+    "error.stream_disconnected",
+    "error.stream_disconnected",
+  ]);
+});
+
+test("disconnect during an in-flight initialization prevents stale publication", async () => {
+  const { app } = createAppStub();
+  let resolveProducts!: (products: { vehicles: {}; energySites: {} }) => void;
+  const pendingProducts = new Promise<{ vehicles: {}; energySites: {} }>((resolve) => {
+    resolveProducts = resolve;
+  });
+  const stream = new FakeStream();
+  configureTeslemetryStub(() => ({
+    sse: stream,
+    createProducts: () => pendingProducts,
+  }));
+
+  const initialization = app.initializeTeslemetry(true);
+  await flushMicrotasks();
+  app.disconnectAccount();
+  resolveProducts({ vehicles: {}, energySites: {} });
+  await initialization;
+
+  assert.equal(app.teslemetry, undefined);
+  assert.equal(app.products, undefined);
+  assert.equal(app.isReady(), false);
+  assert.equal(stream.connected, false);
+  assert.equal(stream.closed, true);
+});
+
+test("partial product recovery never clears another product's stale reason", async () => {
+  const { app, timers, drivers } = createAppStub();
+  const deviceA = createDeviceStub("vehicle:vin-a");
+  const deviceB = createDeviceStub("vehicle:vin-b");
+  drivers.vehicle = { getDevices: () => [deviceA.device, deviceB.device] };
+
+  let sdk: { sse: FakeStream } | undefined;
+  configureTeslemetryStub(() => {
+    sdk = { sse: new FakeStream() };
+    return { ...sdk, createProducts: async () => ({ vehicles: {}, energySites: {} }) };
+  });
+  await app.initializeTeslemetry();
+  sdk!.sse.emit("disconnect");
+  const staleTimers = [...timers];
+  timers.length = 0;
+  for (const timer of staleTimers) timer.callback();
+
+  sdk!.sse.emit("state", { vin: "vin-a" });
+  sdk!.sse.emit("state", { vin: "vin-a" });
+  assert.equal(deviceA.availableCalls.length, 1);
+  assert.equal(deviceB.availableCalls.length, 0);
+  assert.deepEqual(deviceB.unavailableCalls, ["error.stream_disconnected"]);
+});
+
+test("successful generation replacement cancels prior watchdog timers", async () => {
+  const { app, timers, drivers } = createAppStub();
+  const device = createDeviceStub("vehicle:vin-1");
+  drivers.vehicle = { getDevices: () => [device.device] };
+
+  let firstSdk: { sse: FakeStream } | undefined;
+  configureTeslemetryStub(() => {
+    firstSdk = { sse: new FakeStream() };
+    return { ...firstSdk, createProducts: async () => ({ vehicles: {}, energySites: {} }) };
+  });
+  await app.initializeTeslemetry();
+  firstSdk!.sse.emit("disconnect");
+  assert.equal(timers.length, 1);
+
+  let secondSdk: { sse: FakeStream } | undefined;
+  configureTeslemetryStub(() => {
+    secondSdk = { sse: new FakeStream() };
+    return { ...secondSdk, createProducts: async () => ({ vehicles: {}, energySites: {} }) };
+  });
+  await app.initializeTeslemetry(true);
+  assert.equal(timers.length, 0, "the superseded generation's timer was cleared");
+
+  secondSdk!.sse.emit("disconnect");
+  assert.equal(timers.length, 1);
+  const currentTimer = timers[0];
+  timers.length = 0;
+  currentTimer.callback();
   assert.deepEqual(device.unavailableCalls, ["error.stream_disconnected"]);
 });
 
