@@ -7,18 +7,6 @@
   "ui": {
     "quickAction": false
   },
-  "repair": [
-    {
-      "id": "login_oauth2",
-      "template": "login_oauth2",
-      "navigation": {
-        "next": "repair_connector"
-      }
-    },
-    {
-      "id": "repair_connector"
-    }
-  ],
   "capabilities": [
     "evcharger_charging_state",
     "measure_power",

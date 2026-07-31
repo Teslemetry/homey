@@ -167,36 +167,8 @@ export default class VehicleDevice extends TeslemetryDevice {
     return this.vehicle ? `vehicle:${this.vehicle.vin}` : undefined;
   }
 
-  /**
-   * The vehicle VIN this device resolves against. Defaults to the immutable
-   * pairing id (`getData().vin`), but a repair rebind overrides it via a
-   * store value instead, since Homey device data can't be changed
-   * post-pairing.
-   */
   public getVin(): string {
-    return (
-      (this.getStoreValue("vehicleVin") as string | null) ?? this.getData().vin
-    );
-  }
-
-  /**
-   * Explicit, identity-preserving repair action: rebinds this same device to
-   * a different vehicle VIN (via a store value, not the immutable pairing
-   * data) and (re-)registers its live/command listeners. Called from the
-   * driver's repair view once the user confirms a specific vehicle.
-   */
-  public async repairVehicle(vin: string): Promise<void> {
-    const vehicle = this.homey.app.products?.vehicles?.[vin];
-    if (!vehicle) {
-      throw new Error(this.homey.__("error.vehicle_not_found"));
-    }
-    await this.setStoreValue("vehicleVin", vin);
-    await this.ensureCapabilities();
-    // rebindProduct() itself restores availability via bindVehicle's
-    // clearAvailabilityReason ("binding" is the only reason a device can
-    // have reached this repair flow with) - no separate setAvailable() call
-    // needed here.
-    this.rebindProduct();
+    return this.getData().vin;
   }
 
   private resolveAndBindVehicle(): void {

@@ -334,7 +334,7 @@ bug, but since the call can't throw synchronously, it can't block their
 `energy_totals` listener from registering either - not vulnerable, and nothing
 to guard.
 
-### Missing-Product Repair (all five drivers)
+### Missing-Product Honest Unavailability (all five drivers)
 
 A saved device's product id (energy site id, vehicle VIN, wall connector
 DIN) can stop resolving in `products` (e.g. the underlying binding goes
@@ -342,72 +342,37 @@ stale, or a physical connector is replaced). Per the "registered but dead"
 pattern above, every driver's device `onInit` returns early in that case -
 an accurate `error.<x>_not_found` message (never the misleading
 `error.invalid_refresh_token`), zero SSE listeners, zero command listeners.
-Fixing this without losing the device's identity (its runtime id,
-capability history, and Flow bindings, all keyed off the paired device
-instance, not the product id) needs the product binding to be mutable
-independently of the immutable Homey pairing `data`. `PowerwallDevice`/
-`PowerwallDriver` (`drivers/battery/`) is the reference implementation this
-is generalized from; Solar, Gateway, Vehicle, and Wall Connector
-(`drivers/solar|gateway|vehicle|wall-connector/`) each carry the same
-shape:
+There is no product-binding repair/rebind flow: the device stays honestly
+unavailable and the user deletes and re-pairs it, getting fresh pairing
+`data`. Do not add mutable store-backed binding overrides, driver-specific
+identity-repair views, or repair-candidate matching; Homey's generic OAuth
+repair flow remains responsible only for restoring account authorization.
 
-- `<Device>.getSiteId()` / `getVin()` (Vehicle) / `getSiteId()`+`getDin()`
-  (Wall Connector) resolve the product id from a store value
-  (`energySiteId` / `vehicleVin` / `energySiteId`+`wallConnectorDin`) if one
-  has been set, falling back to the immutable pairing `data` otherwise. All
-  product lookups go through these methods, never `getData()` directly.
-  `EnergyDetails.id` (`@teslemetry/api`) is `number`, not `string`. Pairing
-  `data.id` (or Wall Connector's `data.site`) keeps that raw numeric id - not
-  stringified - so an already-paired device's immutable identity never changes
-  shape across an app update
-  (Homey's pairing dedup compares `data` verbatim; changing its type would
-  make an existing device look unpaired and offer it again as a
-  duplicate). `getSiteId()` alone canonicalizes: it wraps its resolved
-  value in `String(...)` on every call, covering both a numeric pairing
-  `data.id`/`data.site` and a string store override. Repair-candidate
-  comparisons (`findUnboundSiteCandidate`) depend on every site id passing
-  through `getSiteId()` to compare correctly.
-- `<Device>.repairSite(id)` / `repairVehicle(vin)` / `repairConnector(siteId,
-  din)` is the only way to change that store value. It validates the target
-  exists (Wall Connector additionally validates the target DIN is actually
-  present at the target site via a live `getSiteInfo()` call), then calls
-  the same `bindSite()`/`rebindProduct()` internals `onInit` uses to
-  register SSE/command listeners, so a repaired device ends up identical to
-  one that resolved correctly on first init.
-- `<Driver>.onRepair` exposes this through a driver-specific custom repair
-  view (`drivers/<type>/repair/repair_*.html`, wired via each driver's own
-  `driver.compose.json` `repair` array, which overrides the shared
-  `teslemetry` template's array for that driver only - see
-  `HomeyCompose.js`'s driver-json merge, where a driver's own top-level key
-  fully replaces the same key inherited via `$extends`, not merges with it).
-  Every driver's `onRepair` wires its status/confirm session handlers
-  through `TeslemetryDriver.wireIdentityRepair()` - the shared status/confirm
-  contract every repair view speaks - rather than forking that boilerplate
-  per driver; `findUnboundSiteCandidate()` is the further-shared "exactly one
-  eligible, unbound site" search Powerwall/Solar/Gateway's own
-  `findRepairCandidate()` each call with a driver-specific eligibility check
-  (component presence, or none for Gateway, which pairs every accessible
-  site). Vehicle and Wall Connector's candidate search is different enough
-  (vehicle eligibility metadata; a site+DIN pair) that each keeps its own
-  `findRepairCandidate()` rather than forcing them through that helper. Every
-  view only ever offers a relink when the search finds exactly one candidate
-  not already bound to another live device of that same driver; zero or
-  multiple candidates get an explanatory dead-end, never a guess.
-  `Homey.createDevice()` is unavailable in repair views by design, which is
-  why this rebinds the existing device via a store value instead of any
-  list-devices/add-devices flow.
+`<Device>.getSiteId()` / `getVin()` (Vehicle) / `getSiteId()`+`getDin()`
+(Wall Connector) resolve the product id from the immutable pairing `data`.
+All product lookups go through these methods, never `getData()` directly.
+`EnergyDetails.id` (`@teslemetry/api`) is `number`, not `string`. Pairing
+`data.id` (or Wall Connector's `data.site`) keeps that raw numeric id - not
+stringified - so an already-paired device's immutable identity never changes
+shape across an app update (Homey's pairing dedup compares `data` verbatim;
+changing its type would make an existing device look unpaired and offer it
+again as a duplicate). `getSiteId()` still canonicalizes: it wraps its
+resolved value in `String(...)` on every call, so normal product-registry
+lookups (keyed by string) match a numeric pairing `data.id`/`data.site`. See
+`test/energy-driver-pairing.test.ts` for the numeric-pairing regression
+coverage.
 
 Wall Connector additionally validates its DIN's continued presence, not just
 its site's: `WallConnecter`'s `live_status` handler counts consecutive
 events where its bound DIN is absent from the site's `wall_connectors` list.
-`DIN_MISS_GRACE_EVENTS` skips the first couple of events after a (re)bind (an
+`DIN_MISS_GRACE_EVENTS` skips the first couple of events after a bind (an
 initial/cached snapshot may not yet include every connector), and
 `DIN_MISS_THRESHOLD` then requires several further consecutive misses before
 `markUnavailable("connector", ...)` fires - a distinct `AvailabilityReason`
 from `"binding"` (the site itself missing), since a resolvable site with a
-vanished DIN is a different, repairable cause. Recovery is symmetric: the
-next `live_status` event carrying that DIN clears the `"connector"` reason
-and resets the miss streak.
+vanished DIN is a different cause. Recovery is symmetric: the next
+`live_status` event carrying that DIN clears the `"connector"` reason and
+resets the miss streak. See `test/wall-connector-availability.test.ts`.
 
 Every device's `onUninit()` must be safe to call after any of these early
 returns - a missing-product `onInit()` never assigns the product/cleanup
