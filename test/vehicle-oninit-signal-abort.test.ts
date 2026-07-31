@@ -60,7 +60,18 @@ const COMMAND_CAPABILITIES = [
   "volume_mute",
 ];
 
-function createDeviceStub({ throwOnBatteryLevel = false } = {}) {
+function createDeviceStub({
+  throwOnBatteryLevel = false,
+  metadataConfig = {
+    rhd: false,
+    can_actuate_trunks: false,
+    // Matches every seat capability already in COMMAND_CAPABILITIES, so
+    // ensureCapabilities() is a no-op and this fixture stays focused on
+    // signal-listener registration ordering, not capability gating.
+    has_seat_cooling: true,
+    rear_seat_heaters: 3,
+  } as Record<string, unknown> | undefined,
+} = {}) {
   const sse = new FakeVehicleStream();
   if (throwOnBatteryLevel) sse.cache.data.BatteryLevel = 42;
 
@@ -78,15 +89,7 @@ function createDeviceStub({ throwOnBatteryLevel = false } = {}) {
     sse,
     api,
     metadata: {
-      config: {
-        rhd: false,
-        can_actuate_trunks: false,
-        // Matches every seat capability already in COMMAND_CAPABILITIES, so
-        // ensureCapabilities() is a no-op and this fixture stays focused on
-        // signal-listener registration ordering, not capability gating.
-        has_seat_cooling: true,
-        rear_seat_heaters: 3,
-      },
+      config: metadataConfig,
     },
   };
 
@@ -98,6 +101,8 @@ function createDeviceStub({ throwOnBatteryLevel = false } = {}) {
     string,
     (value: unknown) => Promise<void>
   > = {};
+
+  const logMessages: unknown[][] = [];
 
   const stub = Object.assign(new VehicleDevice(), {
     homey: {
@@ -125,6 +130,8 @@ function createDeviceStub({ throwOnBatteryLevel = false } = {}) {
       capabilities[capability] = value;
     },
     setCapabilityOptions: async () => {},
+    addCapability: async () => {},
+    removeCapability: async () => {},
     getStoreValue: () => null,
     registerCapabilityListener: (
       capability: string,
@@ -132,12 +139,22 @@ function createDeviceStub({ throwOnBatteryLevel = false } = {}) {
     ) => {
       capabilityListeners[capability] = listener;
     },
-    log: () => {},
+    log: (...args: unknown[]) => {
+      logMessages.push(args);
+    },
     error: () => {},
     setUnavailable: async () => {},
   });
 
-  return { stub, sse, api, apiCalls, capabilities, capabilityListeners };
+  return {
+    stub,
+    sse,
+    api,
+    apiCalls,
+    capabilities,
+    capabilityListeners,
+    logMessages,
+  };
 }
 
 test("VehicleDevice.onInit registers state/connectivity listeners and every command capability listener even when an early cached signal replay throws", async () => {
@@ -163,6 +180,80 @@ test("VehicleDevice.onInit registers state/connectivity listeners and every comm
 
   await capabilityListeners.locked(true);
   assert.deepEqual(apiCalls, [{ method: "lockDoors", args: [] }]);
+});
+
+test("a throwing cached signal replay does not abort registration of signals registered after it", async () => {
+  const { stub, sse } = createDeviceStub({ throwOnBatteryLevel: true });
+
+  await assert.doesNotReject(() => stub.onInit());
+
+  assert.equal(
+    sse.signalListenerCount("BatteryLevel"),
+    1,
+    "the throwing signal's own listener is still registered",
+  );
+  assert.equal(
+    sse.signalListenerCount("EstBatteryRange"),
+    1,
+    "the next signal after the throw is registered",
+  );
+  assert.equal(
+    sse.signalListenerCount("ChargePortLatch"),
+    1,
+    "a signal further down the registration order is registered",
+  );
+  assert.equal(
+    sse.signalListenerCount("MediaNowPlayingElapsed"),
+    1,
+    "the last signal in registration order is registered",
+  );
+});
+
+test("VehicleDevice.onInit logs a degraded-health summary when a signal handler throws during registration", async () => {
+  const { stub, logMessages } = createDeviceStub({ throwOnBatteryLevel: true });
+
+  await stub.onInit();
+
+  assert.ok(
+    logMessages.some((args) =>
+      args.some(
+        (arg) => typeof arg === "string" && arg.includes("1 signal handler failure"),
+      ),
+    ),
+    `expected a degraded-health log message, got: ${JSON.stringify(logMessages)}`,
+  );
+});
+
+test("VehicleDevice.onInit does not log a degraded-health summary on a normal init", async () => {
+  const { stub, logMessages } = createDeviceStub();
+
+  await stub.onInit();
+
+  assert.ok(
+    !logMessages.some((args) =>
+      args.some(
+        (arg) => typeof arg === "string" && arg.includes("signal handler failure"),
+      ),
+    ),
+    `expected no degraded-health log message, got: ${JSON.stringify(logMessages)}`,
+  );
+});
+
+test("missing optional metadata.config.rhd does not throw during registration and falls back to the left-side signal", async () => {
+  const { stub, sse } = createDeviceStub({ metadataConfig: {} });
+
+  await assert.doesNotReject(() => stub.onInit());
+
+  assert.equal(
+    sse.signalListenerCount("HvacLeftTemperatureRequest"),
+    1,
+    "falls back to the left-side signal when rhd is absent",
+  );
+  assert.equal(
+    sse.signalListenerCount("HvacRightTemperatureRequest"),
+    0,
+    "does not register the right-side signal when rhd is absent",
+  );
 });
 
 test("VehicleDevice.onInit registers state/connectivity and all command listeners on a normal init", async () => {

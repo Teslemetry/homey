@@ -89,6 +89,9 @@ export default class VehicleDevice extends TeslemetryDevice {
   private lastTpmsSoftWarnings?: SseData["data"]["TpmsSoftWarnings"];
   private lastTpmsHardWarnings?: SseData["data"]["TpmsHardWarnings"];
 
+  /** Count of signal handlers that threw during registration/replay; see onSignal(). */
+  private signalHandlerFailures = 0;
+
   /** hard beats soft beats off, aggregated across every tire. */
   private updateTpmsWarningLevel(): void {
     const anyHard = TPMS_WHEEL_FIELDS.some(
@@ -103,11 +106,27 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.update("tpms_warning", level);
   }
 
+  /**
+   * The SDK's onSignal() replays any cached value synchronously through
+   * `callback` before returning, and only registers the live listener
+   * afterwards. A throw from `callback` - during that replay or from a
+   * later live event - must not skip that registration or escape to abort
+   * whichever signal registerSignalListeners() calls next, so every
+   * callback is wrapped to catch and log instead of propagating.
+   */
   private readonly onSignal: TeslemetryVehicleStream["onSignal"] = (
     field,
     callback,
   ) => {
-    const off = this.vehicle.sse.onSignal(field, callback);
+    const guarded: typeof callback = (value) => {
+      try {
+        callback(value);
+      } catch (e) {
+        this.signalHandlerFailures++;
+        this.error(`Signal handler for "${field}" failed`, e);
+      }
+    };
+    const off = this.vehicle.sse.onSignal(field, guarded);
     this.sseCleanup.push(off);
     return off;
   };
@@ -224,15 +243,24 @@ export default class VehicleDevice extends TeslemetryDevice {
     // value synchronously, and per-signal handlers can throw on malformed
     // cached data (e.g. handleBatteryLevel reading an unexpected capability
     // value). Wrapped as a whole so a throw here can't undo the essential
-    // registration above.
+    // registration above; onSignal() itself isolates one signal's failure
+    // from the rest so this outer catch is only a last resort for a throw
+    // outside a signal callback (e.g. building a field name to register).
     try {
       this.registerSignalListeners();
+      if (this.signalHandlerFailures > 0) {
+        this.log(
+          `Vehicle device registered with ${this.signalHandlerFailures} signal handler failure(s); affected capabilities may be stale until their next live update`,
+        );
+      }
     } catch (e) {
       this.error("Failed to register Vehicle signal listeners", e);
     }
   }
 
   private registerSignalListeners(): void {
+    this.signalHandlerFailures = 0;
+
     // Battery & Range
     this.onSignal("BatteryLevel", (value) =>
       this.handleBatteryLevel(value),
@@ -357,7 +385,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
 
     this.onSignal(
-      this.vehicle.metadata.config!.rhd
+      this.vehicle.metadata.config?.rhd
         ? "HvacRightTemperatureRequest"
         : "HvacLeftTemperatureRequest",
       (value) => this.update("target_temperature", value),

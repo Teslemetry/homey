@@ -316,7 +316,12 @@ guard the fallible replay so it can't undo that registration - see
 `PowerwallDevice.onInit` (guards `recomputeTariffRates`, a plain non-`async`
 method) and `VehicleDevice.onInit` (splits essential registration into
 `registerCommandCapabilityListeners()`, run first, and wraps the fallible
-`registerSignalListeners()` call in `try`/`catch`).
+`registerSignalListeners()` call in `try`/`catch`). Within
+`registerSignalListeners()`, `VehicleDevice`'s private `onSignal()` wrapper
+goes one step further and isolates each individual signal: it catches a
+throw from one signal's callback (replay-time or later) so that failure
+can't also abort every signal registered after it in the same function -
+see `signalHandlerFailures` for the resulting degraded-health log line.
 
 This only protects against a handler that throws *synchronously*. A handler
 that is itself `async` never throws synchronously - JS converts any error
