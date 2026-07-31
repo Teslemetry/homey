@@ -285,6 +285,24 @@ Use the `update()` method which safely handles unsupported capabilities:
 this.update("measure_battery", value);  // No-op if capability not present
 ```
 
+### Per-Vehicle Feature Capability Gating (`drivers/vehicle/capabilityGating.ts`)
+
+Which seat-heater/seat-cooler/tonneau capabilities a vehicle should have depends
+on per-vehicle metadata (`rear_seat_heaters`, `has_seat_cooling`) and VIN
+(Cybertruck tonneau), not the manifest's full capability list. `VehicleDriver.onPairListDevices()`
+and `VehicleDevice.getExpectedCapabilities()` must never diverge on this, so
+both call the same `filterVehicleCapabilities()`/`isCapabilitySupported()`
+predicate instead of each re-deriving it.
+
+`getExpectedCapabilities()` runs inside `super.onInit()` (`TeslemetryDevice.ensureCapabilities()`),
+before `VehicleDevice.onInit()`'s `resolveAndBindVehicle()` call assigns
+`this.vehicle` - so it reads metadata straight from `homey.app.products`
+instead of the instance field. If that product isn't resolvable yet (config
+absent), VIN-gated capabilities still filter normally, but metadata-gated
+seat capabilities keep whatever the device already has rather than widening
+back to the manifest default - absence of metadata must never re-add
+hardware a vehicle was already confirmed not to have.
+
 ### Device `onInit` Ordering ("registered but dead")
 
 Every device stream (`site.sse`/`vehicle.sse` `.on`/`onSignal`) replays the

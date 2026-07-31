@@ -14,18 +14,38 @@ const TONNEAU_CAPABILITIES = [
 const CYBERTRUCK_VIN = "XYZCTRK0000000001";
 const MODEL_Y_VIN = "XYZYTRK0000000001";
 
-function createDeviceStub(vin: string, existingCapabilities: string[]) {
+const SEAT_FEATURE_CAPABILITIES = [
+  "seat_heater.rear_left",
+  "seat_heater.rear_right",
+  "seat_heater.rear_center",
+  "seat_cooler.front_left",
+  "seat_cooler.front_right",
+];
+
+function createDeviceStub(
+  vin: string,
+  existingCapabilities: string[],
+  config?: { has_seat_cooling?: boolean; rear_seat_heaters?: number },
+) {
   const added: string[] = [];
   const removed: string[] = [];
   let capabilities = [...existingCapabilities];
   const stub = Object.assign(Object.create(VehicleDevice.prototype), {
     homey: {
-      app: { products: {} },
+      app: {
+        products: config
+          ? { vehicles: { [vin]: { metadata: { config } } } }
+          : {},
+      },
       __: (key: string) => key,
     },
     driver: {
       manifest: {
-        capabilities: ["measure_battery", ...TONNEAU_CAPABILITIES],
+        capabilities: [
+          "measure_battery",
+          ...TONNEAU_CAPABILITIES,
+          ...SEAT_FEATURE_CAPABILITIES,
+        ],
         capabilitiesOptions: {},
       },
     },
@@ -95,4 +115,108 @@ test("isCybertruck reads VIN position 4 (index 3)", () => {
   assert.equal(isCybertruck(CYBERTRUCK_VIN), true);
   assert.equal(isCybertruck(MODEL_Y_VIN), false);
   assert.equal(isCybertruck(undefined), false);
+});
+
+test("ensureCapabilities does not add rear-heater/seat-cooler capabilities for a no-feature vehicle", async () => {
+  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"], {
+    has_seat_cooling: false,
+    rear_seat_heaters: 0,
+  });
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    added.filter((cap) => SEAT_FEATURE_CAPABILITIES.includes(cap)),
+    [],
+  );
+});
+
+test("ensureCapabilities removes rear-heater/seat-cooler capabilities already present on a no-feature vehicle", async () => {
+  const { stub, removed } = createDeviceStub(
+    MODEL_Y_VIN,
+    ["measure_battery", ...SEAT_FEATURE_CAPABILITIES],
+    { has_seat_cooling: false, rear_seat_heaters: 0 },
+  );
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(new Set(removed), new Set(SEAT_FEATURE_CAPABILITIES));
+});
+
+test("ensureCapabilities adds rear-heater/seat-cooler capabilities for a fully-equipped vehicle", async () => {
+  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"], {
+    has_seat_cooling: true,
+    rear_seat_heaters: 3,
+  });
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(new Set(added), new Set(SEAT_FEATURE_CAPABILITIES));
+});
+
+test("ensureCapabilities gates rear_left/rear_right on 2+ rear seat heaters but rear_center on 3", async () => {
+  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"], {
+    has_seat_cooling: false,
+    rear_seat_heaters: 2,
+  });
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    new Set(added),
+    new Set(["seat_heater.rear_left", "seat_heater.rear_right"]),
+  );
+});
+
+test("ensureCapabilities leaves a fully-equipped vehicle's seat capabilities alone when it already has them", async () => {
+  const { stub, added, removed } = createDeviceStub(
+    MODEL_Y_VIN,
+    ["measure_battery", ...SEAT_FEATURE_CAPABILITIES],
+    { has_seat_cooling: true, rear_seat_heaters: 3 },
+  );
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    added.filter((cap) => SEAT_FEATURE_CAPABILITIES.includes(cap)),
+    [],
+  );
+  assert.deepEqual(
+    removed.filter((cap) => SEAT_FEATURE_CAPABILITIES.includes(cap)),
+    [],
+  );
+});
+
+test("ensureCapabilities preserves the paired seat-feature set (no widening) when vehicle metadata is temporarily absent", async () => {
+  // No `config` passed: homey.app.products has no vehicles entry, matching a
+  // device whose product hasn't resolved yet (e.g. still starting up).
+  const { stub, added, removed } = createDeviceStub(MODEL_Y_VIN, [
+    "measure_battery",
+    "seat_heater.rear_left",
+    "seat_heater.rear_right",
+  ]);
+
+  await stub.ensureCapabilities();
+
+  // Already-paired rear heaters must not be removed...
+  assert.deepEqual(
+    removed.filter((cap) => SEAT_FEATURE_CAPABILITIES.includes(cap)),
+    [],
+  );
+  // ...and capabilities the device never had must not be widened back in.
+  assert.deepEqual(
+    added.filter((cap) => SEAT_FEATURE_CAPABILITIES.includes(cap)),
+    [],
+  );
+});
+
+test("ensureCapabilities still filters Cybertruck tonneau capabilities by VIN when metadata is absent", async () => {
+  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    added.filter((cap) => TONNEAU_CAPABILITIES.includes(cap)),
+    [],
+  );
 });

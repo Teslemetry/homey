@@ -120,6 +120,7 @@ function createDriverStub(vehicles: Record<string, ReturnType<typeof createVehic
 
 function createRepairTargetDevice(vin: string) {
   return Object.assign(Object.create(VehicleDevice.prototype), {
+    homey: { app: { products: {} } },
     driver: { manifest: { capabilities: [], capabilitiesOptions: {} } },
     getData: () => ({ vin, id: vin }),
     getCapabilities: () => [],

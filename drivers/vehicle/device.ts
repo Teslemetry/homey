@@ -6,15 +6,13 @@ import {
   VehicleDetails,
 } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
-import isCybertruck from "./model.js";
+import {
+  isCapabilitySupported,
+  filterVehicleCapabilities,
+  isMetadataGatedCapability,
+} from "./capabilityGating.js";
 
 const isBool = (x: any) => typeof x === "boolean";
-
-/** Capabilities only Cybertruck exposes; excluded from every other model. */
-const CYBERTRUCK_ONLY_CAPABILITIES = new Set([
-  "windowcoverings_closed.tonneau",
-  "windowcoverings_set.tonneau",
-]);
 
 const chargePortLatchMap = new Map<SseData["data"]["ChargePortLatch"], boolean>(
   [
@@ -819,11 +817,30 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.sseCleanup = [];
   }
 
-  /** Excludes Cybertruck-only capabilities (e.g. the tonneau cover) for every other model. */
+  /**
+   * Filters the manifest capability list down to this vehicle's actual
+   * hardware (Cybertruck tonneau, rear seat heaters, third-row heater, seat
+   * coolers) via the same predicate pairing uses. `this.vehicle` isn't bound
+   * yet when this runs (called from super.onInit(), before
+   * resolveAndBindVehicle()), so metadata is read directly from
+   * homey.app.products instead. If that product isn't resolvable yet, VIN-
+   * gated capabilities (Cybertruck tonneau - VIN is always known) still
+   * filter normally, but metadata-gated seat capabilities keep whatever the
+   * device already has rather than widening back to the manifest default.
+   */
   protected getExpectedCapabilities(): string[] {
     const capabilities = super.getExpectedCapabilities();
-    if (isCybertruck(this.getVin())) return capabilities;
-    return capabilities.filter((cap) => !CYBERTRUCK_ONLY_CAPABILITIES.has(cap));
+    const vin = this.getVin();
+    const config = this.homey.app.products?.vehicles?.[vin]?.metadata?.config;
+    if (config) {
+      return filterVehicleCapabilities(capabilities, vin, config);
+    }
+    const current = new Set(this.getCapabilities());
+    return capabilities.filter((cap) =>
+      isMetadataGatedCapability(cap)
+        ? current.has(cap)
+        : isCapabilitySupported(cap, vin, undefined),
+    );
   }
 
   /**
