@@ -172,6 +172,7 @@ export default class VehicleDevice extends TeslemetryDevice {
       throw new Error(this.homey.__("error.vehicle_not_found"));
     }
     await this.setStoreValue("vehicleVin", vin);
+    await this.ensureCapabilities();
     // rebindProduct() itself restores availability via bindVehicle's
     // clearAvailabilityReason ("binding" is the only reason a device can
     // have reached this repair flow with) - no separate setAvailable() call
