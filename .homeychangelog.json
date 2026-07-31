@@ -55,5 +55,8 @@
   },
   "1.0.6": {
     "en": "Fixes an app crash that could occur when a saved Flow still referenced a Powerwall that had been removed and re-paired. Improves resilience so devices no longer stop updating or stop responding to commands after an error during startup."
+  },
+  "1.0.7": {
+    "en": "Fix Powerwall device that could stop updating and stop accepting commands after losing its energy-site link, now with a repair that preserves the device. Fix Solar generated today so it resets at local midnight."
   }
 }
