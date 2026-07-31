@@ -60,7 +60,7 @@ export default class SolarDriver extends TeslemetryDriver {
           {
             name: `${site.name} Solar`,
             data: {
-              id: String(site.id),
+              id: site.id,
             },
             class: "solarpanel",
           },
