@@ -46,6 +46,7 @@ function createDeviceStub(
       capabilities[capability] = value;
     },
     registerCapabilityListener: () => {},
+    getStoreValue: () => null,
     log: () => {},
     error: () => {},
     destroyed: false,

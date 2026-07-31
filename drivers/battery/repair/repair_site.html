@@ -1,0 +1,53 @@
+<script type="application/javascript">
+  Homey.setTitle("Powerwall energy site");
+
+  function setMessage(text) {
+    document.getElementById("message").textContent = text;
+  }
+
+  Homey.emit("get_repair_site_status")
+    .then((status) => {
+      if (!status || !status.needsRepair) {
+        Homey.done();
+        return;
+      }
+
+      if (!status.candidateId) {
+        setMessage(
+          "This Powerwall's energy site could not be found, and there isn't exactly one other matching energy site available to relink it to automatically. Please contact support.",
+        );
+        document.getElementById("close").style.display = "inline-block";
+        return;
+      }
+
+      setMessage(
+        'This Powerwall\'s energy site could not be found. Relink this device to "' +
+          status.candidateName +
+          '"? Its history and flows will be kept.',
+      );
+      const relinkButton = document.getElementById("relink");
+      relinkButton.style.display = "inline-block";
+      relinkButton.onclick = () => {
+        relinkButton.disabled = true;
+        Homey.showLoadingOverlay();
+        Homey.emit("confirm_repair_site", status.candidateId)
+          .then(() => {
+            Homey.hideLoadingOverlay();
+            Homey.done();
+          })
+          .catch((err) => {
+            Homey.hideLoadingOverlay();
+            Homey.alert((err && err.message) || String(err));
+            relinkButton.disabled = false;
+          });
+      };
+    })
+    .catch((err) => {
+      setMessage((err && err.message) || String(err));
+      document.getElementById("close").style.display = "inline-block";
+    });
+</script>
+
+<p id="message">Checking energy site binding&hellip;</p>
+<button id="relink" style="display: none">Relink</button>
+<button id="close" style="display: none" onclick="Homey.done()">Close</button>
