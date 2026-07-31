@@ -460,20 +460,26 @@ removal first, not a direct early `onUninit()` call).
 `@teslemetry/api` and `tesla-fleet-api` (the two runtime dependencies) pull in
 no transitive dependencies of their own - every `npm audit` finding traces
 back to the `homey` devDependency (the CLI/release toolchain), so treat audit
-findings as toolchain hygiene, not runtime exposure. `package.json`'s
-`overrides` block pins several of `homey`'s own transitive deps (`uuid`,
-`tmp`, `minimatch`, `update-notifier`, `sharp`) past their advisory-fixed
-versions without bumping `homey` itself - each was verified individually
-(`npm run build && npm test && npm run lint && npm run app:validate` after
-each override) since forcing a transitive major can break the CLI in ways
-this app's own test suite can't catch on its own. The remaining findings
-(`socket.io-client`/`engine.io-client`/`parseuri`, pinned by `homey-api`) are
+findings as toolchain hygiene, not runtime exposure. `homey` itself is pinned
+to `^4.4.1`, the latest release on npm as of this writing - staying current
+there is fine (it's dev-only and this repo tracks it deliberately), but it
+alone does not clear the remaining findings below, since `homey`'s own
+`package.json` declares narrow semver ranges for its transitive deps that
+predate their advisories' fixed versions. `package.json`'s `overrides` block
+pins several of those transitive deps (`uuid`, `tmp`, `minimatch`,
+`update-notifier`, `sharp`) past their advisory-fixed versions - each was
+verified individually (`npm run build && npm test && npm run lint && npm run
+app:validate` after each override) since forcing a transitive major can break
+the CLI in ways this app's own test suite can't catch on its own. The
+remaining findings (`socket.io-client`/`engine.io-client`/`parseuri`, pinned
+by `homey-api`, itself already the latest release `homey`'s range allows) are
 left alone: `homey-api`'s client talks live protocol to a paired Homey box
 during `homey app run`/`select`, a path this repo has no way to exercise in
 CI, and `npm audit fix --force`'s only route is downgrading `homey` itself to
-a much older release - a regression, not a fix. Re-run `npm audit` after any
-`homey` devDependency bump to see whether upstream has closed this gap before
-adding another override.
+a much older release - a regression, not a fix. This is an upstream (Athom)
+gap, not something fixable from this repo; re-run `npm audit` after any
+`homey`/`homey-api` release to see whether it's been closed before adding
+another override.
 
 ## Maintaining this file
 
