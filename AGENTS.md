@@ -191,6 +191,10 @@ Homey's energy tab uses `cumulative: true` meter capabilities (`meter_power.*`) 
 
 The `energy_totals` SSE event carries per-type daily totals (midnight to now, already summed server-side - not a `time_series` to sum client-side). Use `updateCumulativeMeter()` in `TeslemetryDevice` to convert those daily totals into monotonically increasing values. It tracks a persistent offset across day boundaries using Homey's device store, detecting day rollover by comparing the date derived from the event's `createdAt` (UTC, since `energy_totals` carries no per-site local timestamp).
 
+### Non-Cumulative "Today" Totals (`solar_generation_today`)
+
+Unlike the cumulative meters above, `solar_generation_today` is a plain (non-`cumulative`) gauge that should read 0 from local midnight until the day's first generation. `energy_totals` only pushes when a value actually changes, so once solar output stops for the night the event goes silent and the last-received total (yesterday's) just sits there - it does not get zeroed by a late-night event. `SolarDevice` compensates with its own timer, scheduled via `msUntilNextLocalMidnight()` (`lib/localMidnight.ts`) off the site's `installation_time_zone` (read from `site_info`/`siteInfoDocument`, the same source `PowerwallDevice` trusts for tariff resolution below - not `this.homey.clock.getTimezone()`, which is the Homey box's own location and may differ from the site's), that force-resets the capability at the actual local-midnight boundary and reschedules itself for the next one. See `test/solar-generation-today.test.ts` for the time-controlled repro (a stubbed `now()` plus a fake `homey.setTimeout`/`clearTimeout` capturing the scheduled callback, so the boundary crossing is asserted without waiting real time) and `test/local-midnight.test.ts` for the boundary-math unit tests.
+
 ### Grid Tariff Rate (`grid_buy_rate` / `grid_sell_rate`)
 
 The Powerwall driver resolves the live buy/sell grid rate via `getTariffPeriods`
