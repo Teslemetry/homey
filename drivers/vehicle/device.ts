@@ -902,6 +902,17 @@ export default class VehicleDevice extends TeslemetryDevice {
       );
     });
 
+    // Cybertruck tonneau: closure() only supports the open/close endpoints,
+    // not an arbitrary position, so this is the sole settable tonneau control.
+    this.registerCapabilityListener(
+      "windowcoverings_closed.tonneau",
+      async (value) => {
+        return this.vehicleAction(
+          this.vehicle.api.closure({ tonneau: value ? "close" : "open" }),
+        );
+      },
+    );
+
     // Buttons
     this.registerCapabilityListener("button.flash", async () => {
       return this.vehicleAction(this.vehicle.api.flashLights());
