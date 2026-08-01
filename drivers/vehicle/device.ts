@@ -117,6 +117,7 @@ const ACTIVE_CHARGE_STATES = new Set<SseData["data"]["DetailedChargeState"]>([
 export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
   private volumeMax: number = 10.333;
+  /** Tesla's default step until MediaAudioVolumeIncrement is reported. */
   private volumeIncrement: number = 0.333;
   private muted: boolean = false;
   private lastVolume: number = 0.5 * 10.333;
