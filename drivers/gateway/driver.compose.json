@@ -24,6 +24,7 @@
   "capabilities": [
     "measure_power",
     "measure_power.load",
+    "measure_power.generator",
     "alarm_generic.off_grid",
     "alarm_generic.island",
     "island_status",
@@ -100,6 +101,38 @@
         "ru": "Нагрузка мощности",
         "ko": "부하 전력",
         "ar": "طاقة الحمل"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "da": "W",
+        "de": "W",
+        "es": "W",
+        "fr": "W",
+        "it": "W",
+        "no": "W",
+        "sv": "W",
+        "pl": "W",
+        "ru": "Вт",
+        "ko": "W",
+        "ar": "و"
+      }
+    },
+    "measure_power.generator": {
+      "title": {
+        "en": "Generator Power",
+        "nl": "Generatorvermogen",
+        "da": "Generatoreffekt",
+        "de": "Generatorleistung",
+        "es": "Potencia del Generador",
+        "fr": "Puissance du Générateur",
+        "it": "Potenza del Generatore",
+        "no": "Generatoreffekt",
+        "sv": "Generatorkraft",
+        "pl": "Moc Generatora",
+        "ru": "Мощность генератора",
+        "ko": "발전기 전력",
+        "ar": "طاقة المولد"
       },
       "units": {
         "en": "W",

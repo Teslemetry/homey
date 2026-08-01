@@ -32,6 +32,7 @@ const KNOWN_ISLAND_STATUSES = new Set([
 interface LiveStatusResponse {
   grid_power?: number;
   load_power?: number;
+  generator_power?: number;
   grid_status?: string;
   island_status?: string;
 }
@@ -40,6 +41,9 @@ interface LiveStatusResponse {
  *  document (`TeslemetryEnergySiteStream.siteInfoDocument`). */
 interface SiteInfoDocument {
   installation_time_zone?: string;
+  components?: {
+    generator?: boolean;
+  };
 }
 
 const TODAY_TOTAL_CAPABILITIES = [
@@ -54,6 +58,8 @@ export default class GatewayDevice extends TeslemetryDevice {
   private timeZone: string | undefined;
   private midnightTimer: NodeJS.Timeout | undefined;
   private previousIslandStatus: string | undefined;
+  private hasGenerator: boolean | undefined;
+  private latestGeneratorPower: number | undefined;
 
   /** Overridden by tests to control the clock without waiting real time. */
   protected now(): Date {
@@ -103,6 +109,8 @@ export default class GatewayDevice extends TeslemetryDevice {
     // site_info replay below doesn't treat an unchanged timezone as
     // "already scheduled" and skip rescheduling it.
     this.timeZone = undefined;
+    this.hasGenerator = undefined;
+    this.latestGeneratorPower = undefined;
     this.resolveAndBindSite();
   }
 
@@ -141,6 +149,9 @@ export default class GatewayDevice extends TeslemetryDevice {
 
     const onLiveStatus = (event: SseLiveStatus) => {
       const data = event.live_status as LiveStatusResponse;
+      if (data.generator_power !== undefined) {
+        this.latestGeneratorPower = data.generator_power;
+      }
 
       this.updateWithThresholdTriggers(
         "measure_power",
@@ -154,6 +165,13 @@ export default class GatewayDevice extends TeslemetryDevice {
         data.load_power,
         "load_power_above",
         "load_power_below",
+        "power",
+      );
+      this.updateWithThresholdTriggers(
+        "measure_power.generator",
+        this.hasGenerator ? this.latestGeneratorPower : undefined,
+        "generator_power_above",
+        "generator_power_below",
         "power",
       );
       this.update(
@@ -233,6 +251,22 @@ export default class GatewayDevice extends TeslemetryDevice {
         const data = this.site.sse.siteInfoDocument as
           | SiteInfoDocument
           | undefined;
+
+        const hasGenerator = data?.components?.generator === true;
+        if (this.hasGenerator === true && !hasGenerator) {
+          this.update("measure_power.generator", null);
+        }
+        if (this.hasGenerator !== true && hasGenerator) {
+          this.updateWithThresholdTriggers(
+            "measure_power.generator",
+            this.latestGeneratorPower,
+            "generator_power_above",
+            "generator_power_below",
+            "power",
+          );
+        }
+        this.hasGenerator = hasGenerator;
+
         const timeZone = data?.installation_time_zone;
         if (!timeZone || timeZone === this.timeZone) return;
         this.timeZone = timeZone;

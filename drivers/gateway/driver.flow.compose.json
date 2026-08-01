@@ -239,6 +239,72 @@
       "titleFormatted": {
         "en": "Drops below [[watts]] W"
       }
+    },
+    {
+      "id": "generator_power_above",
+      "title": {
+        "en": "Generator power rises above"
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": 0,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Power (W)"
+          },
+          "example": {
+            "en": "3500"
+          }
+        }
+      ],
+      "titleFormatted": {
+        "en": "Rises above [[watts]] W"
+      }
+    },
+    {
+      "id": "generator_power_below",
+      "title": {
+        "en": "Generator power drops below"
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": 0,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Power (W)"
+          },
+          "example": {
+            "en": "3500"
+          }
+        }
+      ],
+      "titleFormatted": {
+        "en": "Drops below [[watts]] W"
+      }
     }
   ],
   "conditions": [
@@ -350,6 +416,27 @@
       "id": "load_power",
       "title": {
         "en": "Load power comparison"
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "watts",
+          "title": {
+            "en": "Watts"
+          },
+          "min": 0,
+          "max": 20000,
+          "step": 100
+        }
+      ],
+      "titleFormatted": {
+        "en": "Is above [[watts]] W"
+      }
+    },
+    {
+      "id": "generator_power",
+      "title": {
+        "en": "Generator power comparison"
       },
       "args": [
         {

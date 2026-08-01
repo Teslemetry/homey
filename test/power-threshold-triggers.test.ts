@@ -8,11 +8,13 @@ import PowerwallDevice from "../.homeybuild/drivers/battery/device.js";
 function createDeviceStub(
   DeviceClass: { prototype: object },
   capabilities: Record<string, unknown>,
+  siteInfoDocument?: Record<string, unknown>,
 ) {
   const triggerCalls: Array<{ cardId: string; tokens: unknown; state: unknown }> = [];
   const handlers: Record<string, (event: unknown) => void> = {};
   const site = {
     sse: {
+      siteInfoDocument,
       on: (event: string, handler: (event: unknown) => void) => {
         handlers[event] = handler;
       },
@@ -133,6 +135,35 @@ test("GatewayDevice fires grid_power_above/below and load_power_above/below inde
         cardId: "load_power_below",
         tokens: { power: 2600 },
         state: { previous: 2000, current: 2600 },
+      },
+    ],
+  );
+});
+
+test("GatewayDevice fires generator_power_above/below when the site has a generator", async () => {
+  const { stub, handlers, triggerCalls } = createDeviceStub(
+    GatewayDevice,
+    { "measure_power.generator": 1200 },
+    { components: { generator: true } },
+  );
+  await stub.onInit();
+  handlers["site_info"]({});
+
+  handlers["live_status"]({ live_status: { generator_power: 3500 } });
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.deepEqual(
+    triggerCalls.filter((c) => c.cardId.startsWith("generator_power")),
+    [
+      {
+        cardId: "generator_power_above",
+        tokens: { power: 3500 },
+        state: { previous: 1200, current: 3500 },
+      },
+      {
+        cardId: "generator_power_below",
+        tokens: { power: 3500 },
+        state: { previous: 1200, current: 3500 },
       },
     ],
   );
