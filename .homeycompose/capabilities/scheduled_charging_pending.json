@@ -1,0 +1,22 @@
+{
+  "icon": "/assets/capabilities/time_to_full_charge.svg",
+  "type": "boolean",
+  "title": {
+    "en": "Scheduled Charging Pending",
+    "nl": "Geplande Lading in Wachtrij",
+    "da": "Planlagt Opladning Afventer",
+    "de": "Geplantes Laden Ausstehend",
+    "es": "Carga Programada Pendiente",
+    "fr": "Charge Programmée en Attente",
+    "it": "Ricarica Programmata in Sospeso",
+    "no": "Planlagt Lading Venter",
+    "sv": "Schemalagd Laddning Väntar",
+    "pl": "Zaplanowane Ładowanie Oczekuje",
+    "ru": "Запланированная Зарядка Ожидает",
+    "ko": "예약 충전 대기 중",
+    "ar": "الشحن المجدول قيد الانتظار"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

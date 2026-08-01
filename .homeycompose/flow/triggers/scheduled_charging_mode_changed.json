@@ -1,0 +1,105 @@
+{
+  "title": {
+    "en": "Scheduled charging mode has changed",
+    "nl": "Geplande laadmodus is gewijzigd",
+    "da": "Planlagt opladningstilstand er ændret",
+    "de": "Geplanter Lademodus hat sich geändert",
+    "es": "El modo de carga programada ha cambiado",
+    "fr": "Le mode de charge programmée a changé",
+    "it": "La modalità di ricarica programmata è cambiata",
+    "no": "Planlagt ladetilstand er endret",
+    "sv": "Schemalagt laddningsläge har ändrats",
+    "pl": "Tryb zaplanowanego ładowania uległ zmianie",
+    "ru": "Режим запланированной зарядки изменился",
+    "ko": "예약 충전 모드가 변경되었습니다",
+    "ar": "تغير وضع الشحن المجدول"
+  },
+  "titleFormatted": {
+    "en": "Scheduled charging mode has changed on [[device]]",
+    "nl": "Geplande laadmodus is gewijzigd op [[device]]",
+    "da": "Planlagt opladningstilstand er ændret på [[device]]",
+    "de": "Geplanter Lademodus hat sich auf [[device]] geändert",
+    "es": "El modo de carga programada ha cambiado en [[device]]",
+    "fr": "Le mode de charge programmée a changé sur [[device]]",
+    "it": "La modalità di ricarica programmata è cambiata su [[device]]",
+    "no": "Planlagt ladetilstand er endret på [[device]]",
+    "sv": "Schemalagt laddningsläge har ändrats på [[device]]",
+    "pl": "Tryb zaplanowanego ładowania uległ zmianie na [[device]]",
+    "ru": "Режим запланированной зарядки изменился на [[device]]",
+    "ko": "[[device]]의 예약 충전 모드가 변경되었습니다",
+    "ar": "تغير وضع الشحن المجدول على [[device]]"
+  },
+  "hint": {
+    "en": "This card triggers when the vehicle's scheduled charging mode changes between off, start-at, and depart-by.",
+    "nl": "Deze kaart activeert wanneer de geplande laadmodus van het voertuig wisselt tussen uit, start-om en vertrek-om.",
+    "da": "Dette kort udløses, når køretøjets planlagte opladningstilstand skifter mellem fra, start-kl. og afgang-senest-kl.",
+    "de": "Diese Karte wird ausgelöst, wenn der geplante Lademodus des Fahrzeugs zwischen Aus, Start-um und Abfahrt-bis wechselt.",
+    "es": "Esta tarjeta se activa cuando el modo de carga programada del vehículo cambia entre apagado, iniciar a las y salida antes de las.",
+    "fr": "Cette carte se déclenche lorsque le mode de charge programmée du véhicule change entre éteint, démarrer à et départ avant.",
+    "it": "Questa scheda si attiva quando la modalità di ricarica programmata del veicolo cambia tra spento, inizia alle e partenza entro le.",
+    "no": "Dette kortet utløses når kjøretøyets planlagte ladetilstand bytter mellom av, start-kl. og avreise-innen-kl.",
+    "sv": "Detta kort utlöses när fordonets schemalagda laddningsläge växlar mellan av, starta-kl. och avgång-senast-kl.",
+    "pl": "Ta karta uruchamia się, gdy tryb zaplanowanego ładowania pojazdu zmienia się między wyłączony, start-o i wyjazd-do.",
+    "ru": "Эта карта срабатывает при изменении режима запланированной зарядки автомобиля между выкл., начало-в и отправление-до.",
+    "ko": "차량의 예약 충전 모드가 꺼짐, 시작 시간, 출발 시간 사이에서 변경되면 이 카드가 트리거됩니다.",
+    "ar": "تتفاعل هذه البطاقة عندما يتغير وضع الشحن المجدول للمركبة بين إيقاف والبدء في والمغادرة بحلول."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=scheduled_charging_mode",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "scheduled_charging_mode",
+      "type": "string",
+      "title": {
+        "en": "Mode",
+        "nl": "Modus",
+        "da": "Tilstand",
+        "de": "Modus",
+        "es": "Modo",
+        "fr": "Mode",
+        "it": "Modalità",
+        "no": "Modus",
+        "sv": "Läge",
+        "pl": "Tryb",
+        "ru": "Режим",
+        "ko": "모드",
+        "ar": "الوضع"
+      },
+      "example": {
+        "en": "depart_by",
+        "nl": "depart_by",
+        "da": "depart_by",
+        "de": "depart_by",
+        "es": "depart_by",
+        "fr": "depart_by",
+        "it": "depart_by",
+        "no": "depart_by",
+        "sv": "depart_by",
+        "pl": "depart_by",
+        "ru": "depart_by",
+        "ko": "depart_by",
+        "ar": "depart_by"
+      }
+    }
+  ]
+}

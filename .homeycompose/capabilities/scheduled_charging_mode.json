@@ -1,0 +1,78 @@
+{
+  "icon": "/assets/capabilities/time_to_full_charge.svg",
+  "type": "enum",
+  "title": {
+    "en": "Scheduled Charging Mode",
+    "nl": "Geplande Laadmodus",
+    "da": "Planlagt Opladningstilstand",
+    "de": "Geplanter Lademodus",
+    "es": "Modo de Carga Programada",
+    "fr": "Mode de Charge Programmée",
+    "it": "Modalità di Ricarica Programmata",
+    "no": "Planlagt Ladetilstand",
+    "sv": "Schemalagt Laddningsläge",
+    "pl": "Tryb Zaplanowanego Ładowania",
+    "ru": "Режим Запланированной Зарядки",
+    "ko": "예약 충전 모드",
+    "ar": "وضع الشحن المجدول"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "values": [
+    {
+      "id": "off",
+      "title": {
+        "en": "Off",
+        "nl": "Uit",
+        "da": "Fra",
+        "de": "Aus",
+        "es": "Apagado",
+        "fr": "Éteint",
+        "it": "Spento",
+        "no": "Av",
+        "sv": "Av",
+        "pl": "Wyłączony",
+        "ru": "Выкл.",
+        "ko": "꺼짐",
+        "ar": "إيقاف"
+      }
+    },
+    {
+      "id": "start_at",
+      "title": {
+        "en": "Start at",
+        "nl": "Start om",
+        "da": "Start kl.",
+        "de": "Start um",
+        "es": "Iniciar a las",
+        "fr": "Démarrer à",
+        "it": "Inizia alle",
+        "no": "Start kl.",
+        "sv": "Starta kl.",
+        "pl": "Start o",
+        "ru": "Начало в",
+        "ko": "시작 시간",
+        "ar": "البدء في"
+      }
+    },
+    {
+      "id": "depart_by",
+      "title": {
+        "en": "Depart by",
+        "nl": "Vertrekken om",
+        "da": "Afgang senest kl.",
+        "de": "Abfahrt bis",
+        "es": "Salida antes de las",
+        "fr": "Départ avant",
+        "it": "Partenza entro le",
+        "no": "Avreise innen kl.",
+        "sv": "Avgång senast kl.",
+        "pl": "Wyjazd do",
+        "ru": "Отправление до",
+        "ko": "출발 시간",
+        "ar": "المغادرة بحلول"
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "title": {
+    "en": "Disable scheduled charging",
+    "nl": "Geplande lading uitschakelen",
+    "da": "Deaktiver planlagt opladning",
+    "de": "Geplantes Laden deaktivieren",
+    "es": "Deshabilitar carga programada",
+    "fr": "Désactiver la charge programmée",
+    "it": "Disattiva ricarica programmata",
+    "no": "Deaktiver planlagt lading",
+    "sv": "Inaktivera schemalagd laddning",
+    "pl": "Wyłącz zaplanowane ładowanie",
+    "ru": "Отключить запланированную зарядку",
+    "ko": "예약 충전 비활성화",
+    "ar": "تعطيل الشحن المجدول"
+  },
+  "titleFormatted": {
+    "en": "Disable scheduled charging on [[device]]",
+    "nl": "Schakel geplande lading uit op [[device]]",
+    "da": "Deaktiver planlagt opladning på [[device]]",
+    "de": "Geplantes Laden auf [[device]] deaktivieren",
+    "es": "Deshabilita la carga programada en [[device]]",
+    "fr": "Désactive la charge programmée sur [[device]]",
+    "it": "Disattiva la ricarica programmata su [[device]]",
+    "no": "Deaktiver planlagt lading på [[device]]",
+    "sv": "Inaktivera schemalagd laddning på [[device]]",
+    "pl": "Wyłącz zaplanowane ładowanie na [[device]]",
+    "ru": "Отключить запланированную зарядку на [[device]]",
+    "ko": "[[device]]에서 예약 충전 비활성화",
+    "ar": "تعطيل الشحن المجدول على [[device]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=scheduled_charging_mode",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    }
+  ]
+}

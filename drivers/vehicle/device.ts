@@ -60,6 +60,15 @@ const copTemperatureLimitMap = new Map<
   ["ClimateOverheatProtectionTempLimitHigh", "high"],
 ]);
 
+const scheduledChargingModeMap = new Map<
+  SseData["data"]["ScheduledChargingMode"],
+  string
+>([
+  ["ScheduledChargingModeOff", "off"],
+  ["ScheduledChargingModeStartAt", "start_at"],
+  ["ScheduledChargingModeDepartBy", "depart_by"],
+]);
+
 const centerDisplayMap = new Map<SseData["data"]["CenterDisplay"], boolean>([
   ["DisplayStateOff", false],
   ["DisplayStateDim", false],
@@ -72,6 +81,22 @@ const centerDisplayMap = new Map<SseData["data"]["CenterDisplay"], boolean>([
   ["DisplayStateDog", true],
   ["DisplayStateEntertainment", true],
 ]);
+
+/**
+ * Homey's "time" Flow argument resolves to a 24-hour "HH:mm" string.
+ * setScheduledCharging()/setScheduledDeparture() take Tesla's own
+ * minutes-into-the-day encoding instead (the SDK's doc comment gives
+ * "1:05 AM is represented as 65" as an example) - not epoch seconds and not
+ * subject to the TPMS-style timezone defect elsewhere in this file, since
+ * it's the vehicle's own local clock.
+ */
+function timeArgToMinutesOfDay(time: string): number {
+  const match = /^([01]?\d|2[0-3]):([0-5]\d)$/.exec(time);
+  if (!match) {
+    throw new Error(`Invalid time "${time}" - expected HH:mm`);
+  }
+  return Number(match[1]) * 60 + Number(match[2]);
+}
 
 const MILES_TO_KILOMETERS = 1.609344;
 const MPH_TO_METERS_PER_SECOND = 0.44704;
@@ -304,6 +329,12 @@ export default class VehicleDevice extends TeslemetryDevice {
         this.update("time_to_full_charge", value * 60);
       }
     });
+    this.onSignal("ScheduledChargingMode", (value) =>
+      this.update("scheduled_charging_mode", scheduledChargingModeMap.get(value)),
+    );
+    this.onSignal("ScheduledChargingPending", (value) =>
+      this.update("scheduled_charging_pending", value),
+    );
 
     // AC Charging
     this.onSignal("ACChargingEnergyIn", (value) =>
@@ -1298,6 +1329,46 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   public async flowSetChargingAmps(amps: number): Promise<void> {
     await this.vehicleAction(this.vehicle.api.setChargingAmps(amps));
+  }
+
+  public async flowEnableScheduledCharging(time: string): Promise<void> {
+    await this.vehicleAction(
+      this.vehicle.api.setScheduledCharging(true, timeArgToMinutesOfDay(time)),
+    );
+  }
+
+  public async flowDisableScheduledCharging(): Promise<void> {
+    await this.vehicleAction(this.vehicle.api.setScheduledCharging(false, 0));
+  }
+
+  public async flowEnableScheduledDeparture(args: {
+    departureTime: string;
+    preconditioningEnabled: boolean;
+    preconditioningWeekdaysOnly: boolean;
+    offPeakChargingEnabled: boolean;
+    offPeakChargingWeekdaysOnly: boolean;
+    endOffPeakTime: string;
+  }): Promise<void> {
+    await this.vehicleAction(
+      this.vehicle.api.setScheduledDeparture({
+        enable: true,
+        departure_time: timeArgToMinutesOfDay(args.departureTime),
+        preconditioning_enabled: args.preconditioningEnabled,
+        preconditioning_weekdays_only: args.preconditioningWeekdaysOnly,
+        off_peak_charging_enabled: args.offPeakChargingEnabled,
+        off_peak_charging_weekdays_only: args.offPeakChargingWeekdaysOnly,
+        end_off_peak_time: timeArgToMinutesOfDay(args.endOffPeakTime),
+      }),
+    );
+  }
+
+  public async flowDisableScheduledDeparture(): Promise<void> {
+    await this.vehicleAction(
+      this.vehicle.api.setScheduledDeparture({
+        enable: false,
+        departure_time: 0,
+      }),
+    );
   }
 
   public async flowNavigateToAddress(address: string): Promise<void> {

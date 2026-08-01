@@ -1,0 +1,73 @@
+{
+  "title": {
+    "en": "Enable scheduled charging",
+    "nl": "Geplande lading inschakelen",
+    "da": "Aktiver planlagt opladning",
+    "de": "Geplantes Laden aktivieren",
+    "es": "Habilitar carga programada",
+    "fr": "Activer la charge programmée",
+    "it": "Attiva ricarica programmata",
+    "no": "Aktiver planlagt lading",
+    "sv": "Aktivera schemalagd laddning",
+    "pl": "Włącz zaplanowane ładowanie",
+    "ru": "Включить запланированную зарядку",
+    "ko": "예약 충전 활성화",
+    "ar": "تفعيل الشحن المجدول"
+  },
+  "titleFormatted": {
+    "en": "Enable scheduled charging on [[device]] at [[time]]",
+    "nl": "Schakel geplande lading in op [[device]] om [[time]]",
+    "da": "Aktiver planlagt opladning på [[device]] kl. [[time]]",
+    "de": "Geplantes Laden auf [[device]] um [[time]] aktivieren",
+    "es": "Habilita la carga programada en [[device]] a las [[time]]",
+    "fr": "Active la charge programmée sur [[device]] à [[time]]",
+    "it": "Attiva la ricarica programmata su [[device]] alle [[time]]",
+    "no": "Aktiver planlagt lading på [[device]] kl. [[time]]",
+    "sv": "Aktivera schemalagd laddning på [[device]] kl. [[time]]",
+    "pl": "Włącz zaplanowane ładowanie na [[device]] o [[time]]",
+    "ru": "Включить запланированную зарядку на [[device]] в [[time]]",
+    "ko": "[[device]]에서 [[time]]에 예약 충전 활성화",
+    "ar": "تفعيل الشحن المجدول على [[device]] في [[time]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=scheduled_charging_mode",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    },
+    {
+      "type": "time",
+      "name": "time",
+      "title": {
+        "en": "Start time",
+        "nl": "Starttijd",
+        "da": "Starttidspunkt",
+        "de": "Startzeit",
+        "es": "Hora de inicio",
+        "fr": "Heure de début",
+        "it": "Ora di inizio",
+        "no": "Starttid",
+        "sv": "Starttid",
+        "pl": "Czas rozpoczęcia",
+        "ru": "Время начала",
+        "ko": "시작 시간",
+        "ar": "وقت البدء"
+      }
+    }
+  ]
+}

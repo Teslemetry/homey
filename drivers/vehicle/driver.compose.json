@@ -101,7 +101,9 @@
     "software_update_status",
     "software_update_progress",
     "alarm_generic.pin_to_drive",
-    "alarm_generic.valet_mode"
+    "alarm_generic.valet_mode",
+    "scheduled_charging_mode",
+    "scheduled_charging_pending"
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {
