@@ -151,6 +151,18 @@ capability filter, matching the existing convention in `.homeycompose/flow/`.
 
 ## Key Patterns
 
+### Checking HA Parity
+
+The capability-expansion work in this app is repeatedly required to mirror the
+Teslemetry Home Assistant integration's own capability choice, units, and
+semantics rather than inventing a shape from the raw `@teslemetry/api` field.
+A local checkout of `home-assistant/core` is available at
+`~/firstmate/projects/hass-teslemetry` - grep
+`homeassistant/components/teslemetry/{sensor,binary_sensor,switch,number}.py`
+and `strings.json` there for the field/entity in question before designing a
+new Homey capability; a field with no HA entity there generally belongs in
+the PR body's skip list, not invented as a Homey-only shape.
+
 ### Capability Listeners
 
 **Do not await vehicle SDK actions directly in `registerCapabilityListener`** - they

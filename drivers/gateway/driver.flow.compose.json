@@ -1,6 +1,36 @@
 {
   "triggers": [
     {
+      "id": "grid_outage_started",
+      "title": {
+        "en": "A real grid outage has started"
+      },
+      "hint": {
+        "en": "Fires for an unplanned, unintentional grid outage - not a user-initiated Go Off-Grid test."
+      }
+    },
+    {
+      "id": "grid_outage_ended",
+      "title": {
+        "en": "A real grid outage has ended"
+      }
+    },
+    {
+      "id": "island_test_started",
+      "title": {
+        "en": "A Go Off-Grid test has started"
+      },
+      "hint": {
+        "en": "Fires for a user-initiated Go Off-Grid test - not an unplanned grid outage."
+      }
+    },
+    {
+      "id": "island_test_ended",
+      "title": {
+        "en": "A Go Off-Grid test has ended"
+      }
+    },
+    {
       "id": "alarm_generic.off_grid_true",
       "title": {
         "en": "Grid power has been lost",
@@ -247,6 +277,50 @@
         "ko": "섬 모드가 !{{활성화|비활성화}} 상태입니다",
         "ar": "وضع الجزيرة !{{نشط|غير نشط}}"
       }
+    },
+    {
+      "id": "island_status",
+      "title": {
+        "en": "Island status is"
+      },
+      "titleFormatted": {
+        "en": "Island status is [[status]]"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "status",
+          "title": {
+            "en": "Status"
+          },
+          "values": [
+            {
+              "id": "on_grid",
+              "label": {
+                "en": "On-grid"
+              }
+            },
+            {
+              "id": "off_grid_intentional",
+              "label": {
+                "en": "Off-grid (intentional)"
+              }
+            },
+            {
+              "id": "off_grid_unintentional",
+              "label": {
+                "en": "Off-grid (unintentional)"
+              }
+            },
+            {
+              "id": "island_status_unknown",
+              "label": {
+                "en": "Unknown"
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "grid_power",

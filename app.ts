@@ -402,6 +402,15 @@ export default class TeslemetryApp extends Homey.App {
         },
       );
 
+    this.homey.flow
+      .getConditionCard('island_status')
+      .registerRunListener(
+        async (args: { device?: GatewayDevice; status: string }) => {
+          if (!args.device) return false;
+          return args.device.getCapabilityValue('island_status') === args.status;
+        },
+      );
+
     // Vehicle trigger cards with per-card arguments need a run listener to
     // decide whether *this* card's threshold was actually crossed; cards
     // without args default to firing whenever .trigger() is called.
