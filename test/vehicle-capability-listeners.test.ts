@@ -171,7 +171,7 @@ test("cop_temperature_limit capability listener rejects unsupported vehicles", a
 });
 
 test("cop_temperature_limit flow action rejects when support is absent", async () => {
-  const { stub, apiCalls } = await createDeviceStub({}, {}, undefined);
+  const { stub, apiCalls } = await createDeviceStub({}, {}, false);
 
   await assert.rejects(
     () => stub.flowSetCopTemperatureLimit("high"),
