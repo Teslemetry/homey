@@ -59,6 +59,7 @@ export default class GatewayDevice extends TeslemetryDevice {
   private midnightTimer: NodeJS.Timeout | undefined;
   private previousIslandStatus: string | undefined;
   private hasGenerator: boolean | undefined;
+  private latestGeneratorPower: number | undefined;
 
   /** Overridden by tests to control the clock without waiting real time. */
   protected now(): Date {
@@ -109,6 +110,7 @@ export default class GatewayDevice extends TeslemetryDevice {
     // "already scheduled" and skip rescheduling it.
     this.timeZone = undefined;
     this.hasGenerator = undefined;
+    this.latestGeneratorPower = undefined;
     this.resolveAndBindSite();
   }
 
@@ -147,6 +149,9 @@ export default class GatewayDevice extends TeslemetryDevice {
 
     const onLiveStatus = (event: SseLiveStatus) => {
       const data = event.live_status as LiveStatusResponse;
+      if (data.generator_power !== undefined) {
+        this.latestGeneratorPower = data.generator_power;
+      }
 
       this.updateWithThresholdTriggers(
         "measure_power",
@@ -164,7 +169,7 @@ export default class GatewayDevice extends TeslemetryDevice {
       );
       this.updateWithThresholdTriggers(
         "measure_power.generator",
-        this.hasGenerator ? data.generator_power : undefined,
+        this.hasGenerator ? this.latestGeneratorPower : undefined,
         "generator_power_above",
         "generator_power_below",
         "power",
@@ -250,6 +255,15 @@ export default class GatewayDevice extends TeslemetryDevice {
         const hasGenerator = data?.components?.generator === true;
         if (this.hasGenerator === true && !hasGenerator) {
           this.update("measure_power.generator", null);
+        }
+        if (this.hasGenerator !== true && hasGenerator) {
+          this.updateWithThresholdTriggers(
+            "measure_power.generator",
+            this.latestGeneratorPower,
+            "generator_power_above",
+            "generator_power_below",
+            "power",
+          );
         }
         this.hasGenerator = hasGenerator;
 

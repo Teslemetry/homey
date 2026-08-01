@@ -231,6 +231,36 @@ test("GatewayDevice's live_status handler wires generator_power only when site_i
   assert.equal(capabilities["measure_power.generator"], 1500);
 });
 
+test("GatewayDevice applies cached generator power after cached site_info confirms a generator", async () => {
+  const { stub, sse, capabilities } = createDeviceStub(
+    { "measure_power.generator": undefined },
+    { siteInfoDocument: { components: { generator: true } } },
+  );
+  sse.cacheAndEmit("live_status", {
+    live_status: { generator_power: 1500 },
+  });
+
+  await stub.onInit();
+
+  assert.equal(capabilities["measure_power.generator"], 1500);
+});
+
+test("GatewayDevice applies the latest generator power when site_info gains a generator", async () => {
+  const { stub, sse, capabilities } = createDeviceStub(
+    { "measure_power.generator": undefined },
+    { siteInfoDocument: {} },
+  );
+  await stub.onInit();
+  getListener(sse, "live_status")({
+    live_status: { generator_power: 1500 },
+  });
+
+  sse.siteInfoDocument = { components: { generator: true } };
+  getListener(sse, "site_info")({});
+
+  assert.equal(capabilities["measure_power.generator"], 1500);
+});
+
 test("GatewayDevice's live_status handler ignores generator_power when site_info reports no generator", async () => {
   const { stub, sse, capabilities } = createDeviceStub(
     {
