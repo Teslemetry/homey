@@ -262,16 +262,17 @@ export default class GatewayDevice extends TeslemetryDevice {
 
     if (previous === undefined || previous === value) return;
 
-    if (value === "off_grid_unintentional") {
-      this.triggerFlow("grid_outage_started");
-    } else if (previous === "off_grid_unintentional" && value === "on_grid") {
+    if (previous === "off_grid_unintentional") {
       this.triggerFlow("grid_outage_ended");
     }
-
+    if (previous === "off_grid_intentional") {
+      this.triggerFlow("island_test_ended");
+    }
+    if (value === "off_grid_unintentional") {
+      this.triggerFlow("grid_outage_started");
+    }
     if (value === "off_grid_intentional") {
       this.triggerFlow("island_test_started");
-    } else if (previous === "off_grid_intentional" && value === "on_grid") {
-      this.triggerFlow("island_test_ended");
     }
   }
 

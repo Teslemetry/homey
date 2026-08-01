@@ -164,7 +164,7 @@ test("GatewayDevice's live_status handler maps island_status straight through fo
   assert.equal(capabilities["island_status"], "off_grid_unintentional");
 });
 
-test("GatewayDevice's live_status handler fires grid_outage_started/ended only for off_grid_unintentional, not a Go Off-Grid test", async () => {
+test("GatewayDevice's live_status handler closes each island lifecycle when its state is exited", async () => {
   const { stub, sse, capabilities } = createDeviceStub({
     island_status: undefined,
   });
@@ -181,17 +181,19 @@ test("GatewayDevice's live_status handler fires grid_outage_started/ended only f
 
   emit("on_grid");
   emit("off_grid_unintentional");
-  emit("on_grid");
   emit("off_grid_intentional");
-  emit("on_grid");
+  emit("off_grid_unintentional");
+  emit("island_status_unknown");
 
   assert.deepEqual(triggered, [
     "grid_outage_started",
     "grid_outage_ended",
     "island_test_started",
     "island_test_ended",
+    "grid_outage_started",
+    "grid_outage_ended",
   ]);
-  assert.equal(capabilities["island_status"], "on_grid");
+  assert.equal(capabilities["island_status"], "island_status_unknown");
 });
 
 test("GatewayDevice's live_status handler fires grid and load power thresholds independently", async () => {
