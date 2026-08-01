@@ -1,0 +1,40 @@
+{
+  "icon": "/assets/capabilities/software_update_progress.svg",
+  "type": "number",
+  "title": {
+    "en": "Software Update Progress",
+    "nl": "Softwareupdatevoortgang",
+    "da": "Softwareopdateringsfremskridt",
+    "de": "Software-Update-Fortschritt",
+    "es": "Progreso de la actualización de software",
+    "fr": "Progression de la mise à jour du logiciel",
+    "it": "Avanzamento aggiornamento software",
+    "no": "Fremdrift for programvareoppdatering",
+    "sv": "Förlopp för programvaruuppdatering",
+    "pl": "Postęp aktualizacji oprogramowania",
+    "ru": "Ход обновления ПО",
+    "ko": "소프트웨어 업데이트 진행률",
+    "ar": "تقدم تحديث البرنامج"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "units": {
+    "en": "%",
+    "nl": "%",
+    "da": "%",
+    "de": "%",
+    "es": "%",
+    "fr": "%",
+    "it": "%",
+    "no": "%",
+    "sv": "%",
+    "pl": "%",
+    "ru": "%",
+    "ko": "%",
+    "ar": "%"
+  },
+  "min": 0,
+  "max": 1,
+  "decimals": 2
+}

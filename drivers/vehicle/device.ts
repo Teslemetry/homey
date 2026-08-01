@@ -385,6 +385,24 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("cop_temperature_limit", copTemperatureLimitMap.get(value)),
     );
 
+    // Software Update - derived from stream fields only (no REST-polled raw
+    // status enum is available here), mirroring the Teslemetry HA
+    // integration's streaming update entity: download/install percentage and
+    // scheduled-start-time presence, not a literal status string.
+    this.onSignal("SoftwareUpdateDownloadPercentComplete", () =>
+      this.recomputeSoftwareUpdateStatus(),
+    );
+    this.onSignal("SoftwareUpdateInstallationPercentComplete", () =>
+      this.recomputeSoftwareUpdateStatus(),
+    );
+    this.onSignal("SoftwareUpdateScheduledStartTime", () =>
+      this.recomputeSoftwareUpdateStatus(),
+    );
+    this.onSignal("SoftwareUpdateVersion", () =>
+      this.recomputeSoftwareUpdateStatus(),
+    );
+    this.onSignal("Version", () => this.recomputeSoftwareUpdateStatus());
+
     this.onSignal(
       this.vehicle.metadata.config?.rhd
         ? "HvacRightTemperatureRequest"
@@ -1140,6 +1158,52 @@ export default class VehicleDevice extends TeslemetryDevice {
     }
   }
 
+  /**
+   * Derives software_update_status/software_update_progress from the raw
+   * stream fields, mirroring the Teslemetry HA integration's streaming
+   * update entity (TeslemetryStreamingUpdateEntity._async_update_progress):
+   * an active download/install percentage wins, then a non-null scheduled
+   * start time, then a latest version that differs from the installed one,
+   * else idle. Always reads the merged cache rather than the single field
+   * that just changed - the SDK updates its per-vehicle cache synchronously
+   * before this signal callback runs, so every other field is already
+   * current.
+   */
+  private recomputeSoftwareUpdateStatus(): void {
+    const { data } = this.vehicle.sse.cache;
+    const download = data?.SoftwareUpdateDownloadPercentComplete;
+    const install = data?.SoftwareUpdateInstallationPercentComplete;
+    const scheduledStartTime = data?.SoftwareUpdateScheduledStartTime;
+    const installedVersion = data?.Version?.split(" ")[0];
+    const latestVersion =
+      data?.SoftwareUpdateVersion && data.SoftwareUpdateVersion !== " "
+        ? data.SoftwareUpdateVersion
+        : installedVersion;
+
+    if (download !== undefined && download !== null && download > 0 && download < 100) {
+      this.update("software_update_status", "downloading");
+      this.update("software_update_progress", download / 100);
+      return;
+    }
+    if (install !== undefined && install !== null && install > 10 && install < 100) {
+      this.update("software_update_status", "installing");
+      this.update("software_update_progress", install / 100);
+      return;
+    }
+    if (scheduledStartTime !== undefined && scheduledStartTime !== null) {
+      this.update("software_update_status", "scheduled");
+      this.update("software_update_progress", null);
+      return;
+    }
+    if (latestVersion && installedVersion && latestVersion !== installedVersion) {
+      this.update("software_update_status", "available");
+      this.update("software_update_progress", null);
+      return;
+    }
+    this.update("software_update_status", "idle");
+    this.update("software_update_progress", null);
+  }
+
   // Public action methods for Flow cards
   public async flowFlashLights(): Promise<void> {
     await this.vehicleAction(this.vehicle.api.flashLights());
@@ -1245,5 +1309,22 @@ export default class VehicleDevice extends TeslemetryDevice {
     level: string,
   ): Promise<void> {
     await this.vehicleAction(this.vehicle.api.setSeatCooler(seat, Number(level)));
+  }
+
+  /**
+   * Gated on the current software_update_status, not just Tesla's own
+   * command rejection - mirrors the Teslemetry HA integration's update
+   * entity, which only offers install while status is "available" or
+   * "scheduled". An offset of 0 means "install now" (HA's async_install
+   * does the same).
+   */
+  public async flowInstallSoftwareUpdate(): Promise<void> {
+    const status = this.getCapabilityValue("software_update_status");
+    if (status !== "available" && status !== "scheduled") {
+      throw new Error(
+        "No software update is available or scheduled to install",
+      );
+    }
+    return this.vehicleAction(this.vehicle.api.scheduleSoftwareUpdate(0));
   }
 }

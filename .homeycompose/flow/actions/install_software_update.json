@@ -1,0 +1,69 @@
+{
+  "title": {
+    "en": "Install software update",
+    "nl": "Softwareupdate installeren",
+    "da": "Installer softwareopdatering",
+    "de": "Software-Update installieren",
+    "es": "Instalar actualización de software",
+    "fr": "Installer la mise à jour du logiciel",
+    "it": "Installa aggiornamento software",
+    "no": "Installer programvareoppdatering",
+    "sv": "Installera programvaruuppdatering",
+    "pl": "Zainstaluj aktualizację oprogramowania",
+    "ru": "Установить обновление ПО",
+    "ko": "소프트웨어 업데이트 설치",
+    "ar": "تثبيت تحديث البرنامج"
+  },
+  "titleFormatted": {
+    "en": "Install the available software update on [[device]]",
+    "nl": "Installeer de beschikbare softwareupdate op [[device]]",
+    "da": "Installer den tilgængelige softwareopdatering på [[device]]",
+    "de": "Verfügbares Software-Update auf [[device]] installieren",
+    "es": "Instalar la actualización de software disponible en [[device]]",
+    "fr": "Installer la mise à jour logicielle disponible sur [[device]]",
+    "it": "Installa l'aggiornamento software disponibile su [[device]]",
+    "no": "Installer den tilgjengelige programvareoppdateringen på [[device]]",
+    "sv": "Installera den tillgängliga programvaruuppdateringen på [[device]]",
+    "pl": "Zainstaluj dostępną aktualizację oprogramowania na urządzeniu [[device]]",
+    "ru": "Установить доступное обновление ПО на [[device]]",
+    "ko": "[[device]]에서 사용 가능한 소프트웨어 업데이트 설치",
+    "ar": "تثبيت تحديث البرنامج المتاح على [[device]]"
+  },
+  "hint": {
+    "en": "Only takes effect while the update status is \"Available\" or \"Scheduled\" - Tesla rejects the command otherwise.",
+    "nl": "Werkt alleen als de updatestatus \"Beschikbaar\" of \"Gepland\" is - anders wijst Tesla de opdracht af.",
+    "da": "Virker kun, når opdateringsstatus er \"Tilgængelig\" eller \"Planlagt\" - ellers afviser Tesla kommandoen.",
+    "de": "Wirkt sich nur aus, wenn der Update-Status \"Verfügbar\" oder \"Geplant\" ist - andernfalls lehnt Tesla den Befehl ab.",
+    "es": "Solo surte efecto mientras el estado de la actualización sea \"Disponible\" o \"Programada\" - de lo contrario, Tesla rechaza el comando.",
+    "fr": "Ne prend effet que lorsque l'état de la mise à jour est \"Disponible\" ou \"Programmée\" - sinon Tesla rejette la commande.",
+    "it": "Ha effetto solo quando lo stato dell'aggiornamento è \"Disponibile\" o \"Pianificato\" - altrimenti Tesla rifiuta il comando.",
+    "no": "Har bare effekt mens oppdateringsstatusen er \"Tilgjengelig\" eller \"Planlagt\" - ellers avviser Tesla kommandoen.",
+    "sv": "Får bara effekt medan uppdateringsstatusen är \"Tillgänglig\" eller \"Schemalagd\" - annars avvisar Tesla kommandot.",
+    "pl": "Działa tylko wtedy, gdy status aktualizacji to \"Dostępna\" lub \"Zaplanowana\" - w przeciwnym razie Tesla odrzuci polecenie.",
+    "ru": "Действует, только если статус обновления \"Доступно\" или \"Запланировано\" - иначе Tesla отклонит команду.",
+    "ko": "업데이트 상태가 \"사용 가능\" 또는 \"예약됨\"일 때만 적용됩니다. 그렇지 않으면 Tesla가 명령을 거부합니다.",
+    "ar": "يسري فقط عندما تكون حالة التحديث \"متاح\" أو \"مجدول\" - وإلا يرفض Tesla الأمر."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=software_update_status",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
+      }
+    }
+  ]
+}

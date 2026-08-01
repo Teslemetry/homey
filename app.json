@@ -972,6 +972,112 @@
       },
       {
         "title": {
+          "en": "Software update status has changed",
+          "nl": "Softwareupdatestatus is gewijzigd",
+          "da": "Softwareopdateringsstatus er ændret",
+          "de": "Software-Update-Status hat sich geändert",
+          "es": "El estado de la actualización de software ha cambiado",
+          "fr": "L'état de la mise à jour du logiciel a changé",
+          "it": "Lo stato dell'aggiornamento software è cambiato",
+          "no": "Programvareoppdateringsstatus er endret",
+          "sv": "Programvaruuppdateringsstatus har ändrats",
+          "pl": "Status aktualizacji oprogramowania uległ zmianie",
+          "ru": "Статус обновления ПО изменился",
+          "ko": "소프트웨어 업데이트 상태가 변경되었습니다",
+          "ar": "تغيرت حالة تحديث البرنامج"
+        },
+        "titleFormatted": {
+          "en": "Software update status has changed on [[device]]",
+          "nl": "Softwareupdatestatus is gewijzigd op [[device]]",
+          "da": "Softwareopdateringsstatus er ændret på [[device]]",
+          "de": "Software-Update-Status hat sich auf [[device]] geändert",
+          "es": "El estado de la actualización de software ha cambiado en [[device]]",
+          "fr": "L'état de la mise à jour du logiciel a changé sur [[device]]",
+          "it": "Lo stato dell'aggiornamento software è cambiato su [[device]]",
+          "no": "Programvareoppdateringsstatus er endret på [[device]]",
+          "sv": "Programvaruuppdateringsstatus har ändrats på [[device]]",
+          "pl": "Status aktualizacji oprogramowania uległ zmianie na [[device]]",
+          "ru": "Статус обновления ПО изменился на [[device]]",
+          "ko": "[[device]]의 소프트웨어 업데이트 상태가 변경되었습니다",
+          "ar": "تغيرت حالة تحديث البرنامج على [[device]]"
+        },
+        "hint": {
+          "en": "This card triggers when a software update becomes available, is scheduled, starts downloading/installing, or returns to idle.",
+          "nl": "Deze kaart activeert wanneer een softwareupdate beschikbaar komt, wordt gepland, begint te downloaden/installeren, of terugkeert naar inactief.",
+          "da": "Dette kort udløses, når en softwareopdatering bliver tilgængelig, planlægges, begynder at downloade/installere, eller vender tilbage til inaktiv.",
+          "de": "Diese Karte wird ausgelöst, wenn ein Software-Update verfügbar wird, geplant wird, mit dem Herunterladen/Installieren beginnt oder wieder inaktiv wird.",
+          "es": "Esta tarjeta se activa cuando una actualización de software está disponible, se programa, comienza a descargarse/instalarse o vuelve a estar inactiva.",
+          "fr": "Cette carte se déclenche lorsqu'une mise à jour logicielle devient disponible, est programmée, commence à se télécharger/installer ou revient à l'état inactif.",
+          "it": "Questa scheda si attiva quando un aggiornamento software diventa disponibile, viene pianificato, inizia il download/l'installazione o torna inattivo.",
+          "no": "Dette kortet utløses når en programvareoppdatering blir tilgjengelig, planlegges, begynner å laste ned/installere, eller går tilbake til inaktiv.",
+          "sv": "Detta kort utlöses när en programvaruuppdatering blir tillgänglig, schemaläggs, börjar laddas ner/installeras eller återgår till inaktiv.",
+          "pl": "Ta karta uruchamia się, gdy aktualizacja oprogramowania staje się dostępna, zostaje zaplanowana, rozpoczyna pobieranie/instalację lub wraca do stanu bezczynności.",
+          "ru": "Эта карта срабатывает, когда обновление ПО становится доступным, запланировано, начинает загружаться/устанавливаться или возвращается в состояние ожидания.",
+          "ko": "소프트웨어 업데이트가 사용 가능해지거나, 예약되거나, 다운로드/설치가 시작되거나, 대기 상태로 돌아갈 때 이 카드가 트리거됩니다.",
+          "ar": "تتفاعل هذه البطاقة عندما يصبح تحديث البرنامج متاحًا، أو يتم جدولته، أو يبدأ التنزيل/التثبيت، أو يعود إلى الخمول."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=software_update_status",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "software_update_status",
+            "type": "string",
+            "title": {
+              "en": "Status",
+              "nl": "Status",
+              "da": "Status",
+              "de": "Status",
+              "es": "Estado",
+              "fr": "État",
+              "it": "Stato",
+              "no": "Status",
+              "sv": "Status",
+              "pl": "Status",
+              "ru": "Статус",
+              "ko": "상태",
+              "ar": "الحالة"
+            },
+            "example": {
+              "en": "available",
+              "nl": "beschikbaar",
+              "da": "tilgængelig",
+              "de": "verfügbar",
+              "es": "disponible",
+              "fr": "disponible",
+              "it": "disponibile",
+              "no": "tilgjengelig",
+              "sv": "tillgänglig",
+              "pl": "dostępna",
+              "ru": "доступно",
+              "ko": "사용 가능",
+              "ar": "متاح"
+            }
+          }
+        ],
+        "id": "software_update_status_changed"
+      },
+      {
+        "title": {
           "en": "The steering wheel heater level has changed",
           "nl": "Het stuurverwarmingsniveau is gewijzigd",
           "da": "Ratvarmeniveauet er ændret",
@@ -3052,6 +3158,172 @@
         "id": "operation_mode_is"
       },
       {
+        "title": {
+          "en": "Software update status is",
+          "nl": "Softwareupdatestatus is",
+          "da": "Softwareopdateringsstatus er",
+          "de": "Software-Update-Status ist",
+          "es": "El estado de la actualización de software es",
+          "fr": "L'état de la mise à jour du logiciel est",
+          "it": "Lo stato dell'aggiornamento software è",
+          "no": "Programvareoppdateringsstatus er",
+          "sv": "Programvaruuppdateringsstatus är",
+          "pl": "Status aktualizacji oprogramowania to",
+          "ru": "Статус обновления ПО: ",
+          "ko": "소프트웨어 업데이트 상태",
+          "ar": "حالة تحديث البرنامج هي"
+        },
+        "titleFormatted": {
+          "en": "Software update status of [[device]] is [[status]]",
+          "nl": "Softwareupdatestatus van [[device]] is [[status]]",
+          "da": "Softwareopdateringsstatus for [[device]] er [[status]]",
+          "de": "Software-Update-Status von [[device]] ist [[status]]",
+          "es": "El estado de la actualización de software de [[device]] es [[status]]",
+          "fr": "L'état de la mise à jour du logiciel de [[device]] est [[status]]",
+          "it": "Lo stato dell'aggiornamento software di [[device]] è [[status]]",
+          "no": "Programvareoppdateringsstatus for [[device]] er [[status]]",
+          "sv": "Programvaruuppdateringsstatus för [[device]] är [[status]]",
+          "pl": "Status aktualizacji oprogramowania urządzenia [[device]] to [[status]]",
+          "ru": "Статус обновления ПО [[device]]: [[status]]",
+          "ko": "[[device]]의 소프트웨어 업데이트 상태는 [[status]]입니다",
+          "ar": "حالة تحديث البرنامج لـ[[device]] هي [[status]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=software_update_status",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          },
+          {
+            "type": "dropdown",
+            "name": "status",
+            "title": {
+              "en": "Status",
+              "nl": "Status",
+              "da": "Status",
+              "de": "Status",
+              "es": "Estado",
+              "fr": "État",
+              "it": "Stato",
+              "no": "Status",
+              "sv": "Status",
+              "pl": "Status",
+              "ru": "Статус",
+              "ko": "상태",
+              "ar": "الحالة"
+            },
+            "values": [
+              {
+                "id": "idle",
+                "label": {
+                  "en": "Idle",
+                  "nl": "Inactief",
+                  "da": "Inaktiv",
+                  "de": "Inaktiv",
+                  "es": "Inactivo",
+                  "fr": "Inactif",
+                  "it": "Inattivo",
+                  "no": "Inaktiv",
+                  "sv": "Inaktiv",
+                  "pl": "Bezczynny",
+                  "ru": "Ожидание",
+                  "ko": "대기",
+                  "ar": "خامل"
+                }
+              },
+              {
+                "id": "available",
+                "label": {
+                  "en": "Available",
+                  "nl": "Beschikbaar",
+                  "da": "Tilgængelig",
+                  "de": "Verfügbar",
+                  "es": "Disponible",
+                  "fr": "Disponible",
+                  "it": "Disponibile",
+                  "no": "Tilgjengelig",
+                  "sv": "Tillgänglig",
+                  "pl": "Dostępna",
+                  "ru": "Доступно",
+                  "ko": "사용 가능",
+                  "ar": "متاح"
+                }
+              },
+              {
+                "id": "scheduled",
+                "label": {
+                  "en": "Scheduled",
+                  "nl": "Gepland",
+                  "da": "Planlagt",
+                  "de": "Geplant",
+                  "es": "Programada",
+                  "fr": "Programmée",
+                  "it": "Pianificato",
+                  "no": "Planlagt",
+                  "sv": "Schemalagd",
+                  "pl": "Zaplanowana",
+                  "ru": "Запланировано",
+                  "ko": "예약됨",
+                  "ar": "مجدول"
+                }
+              },
+              {
+                "id": "downloading",
+                "label": {
+                  "en": "Downloading",
+                  "nl": "Downloaden",
+                  "da": "Downloader",
+                  "de": "Wird heruntergeladen",
+                  "es": "Descargando",
+                  "fr": "Téléchargement",
+                  "it": "Download in corso",
+                  "no": "Laster ned",
+                  "sv": "Laddar ner",
+                  "pl": "Pobieranie",
+                  "ru": "Загрузка",
+                  "ko": "다운로드 중",
+                  "ar": "جارٍ التنزيل"
+                }
+              },
+              {
+                "id": "installing",
+                "label": {
+                  "en": "Installing",
+                  "nl": "Installeren",
+                  "da": "Installerer",
+                  "de": "Wird installiert",
+                  "es": "Instalando",
+                  "fr": "Installation",
+                  "it": "Installazione in corso",
+                  "no": "Installerer",
+                  "sv": "Installerar",
+                  "pl": "Instalowanie",
+                  "ru": "Установка",
+                  "ko": "설치 중",
+                  "ar": "جارٍ التثبيت"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "software_update_status_is"
+      },
+      {
         "id": "onoff.charge_grid",
         "title": {
           "en": "Charge from grid is !{{enabled|disabled}}",
@@ -3902,6 +4174,76 @@
           }
         ],
         "id": "honk_horn"
+      },
+      {
+        "title": {
+          "en": "Install software update",
+          "nl": "Softwareupdate installeren",
+          "da": "Installer softwareopdatering",
+          "de": "Software-Update installieren",
+          "es": "Instalar actualización de software",
+          "fr": "Installer la mise à jour du logiciel",
+          "it": "Installa aggiornamento software",
+          "no": "Installer programvareoppdatering",
+          "sv": "Installera programvaruuppdatering",
+          "pl": "Zainstaluj aktualizację oprogramowania",
+          "ru": "Установить обновление ПО",
+          "ko": "소프트웨어 업데이트 설치",
+          "ar": "تثبيت تحديث البرنامج"
+        },
+        "titleFormatted": {
+          "en": "Install the available software update on [[device]]",
+          "nl": "Installeer de beschikbare softwareupdate op [[device]]",
+          "da": "Installer den tilgængelige softwareopdatering på [[device]]",
+          "de": "Verfügbares Software-Update auf [[device]] installieren",
+          "es": "Instalar la actualización de software disponible en [[device]]",
+          "fr": "Installer la mise à jour logicielle disponible sur [[device]]",
+          "it": "Installa l'aggiornamento software disponibile su [[device]]",
+          "no": "Installer den tilgjengelige programvareoppdateringen på [[device]]",
+          "sv": "Installera den tillgängliga programvaruuppdateringen på [[device]]",
+          "pl": "Zainstaluj dostępną aktualizację oprogramowania na urządzeniu [[device]]",
+          "ru": "Установить доступное обновление ПО на [[device]]",
+          "ko": "[[device]]에서 사용 가능한 소프트웨어 업데이트 설치",
+          "ar": "تثبيت تحديث البرنامج المتاح على [[device]]"
+        },
+        "hint": {
+          "en": "Only takes effect while the update status is \"Available\" or \"Scheduled\" - Tesla rejects the command otherwise.",
+          "nl": "Werkt alleen als de updatestatus \"Beschikbaar\" of \"Gepland\" is - anders wijst Tesla de opdracht af.",
+          "da": "Virker kun, når opdateringsstatus er \"Tilgængelig\" eller \"Planlagt\" - ellers afviser Tesla kommandoen.",
+          "de": "Wirkt sich nur aus, wenn der Update-Status \"Verfügbar\" oder \"Geplant\" ist - andernfalls lehnt Tesla den Befehl ab.",
+          "es": "Solo surte efecto mientras el estado de la actualización sea \"Disponible\" o \"Programada\" - de lo contrario, Tesla rechaza el comando.",
+          "fr": "Ne prend effet que lorsque l'état de la mise à jour est \"Disponible\" ou \"Programmée\" - sinon Tesla rejette la commande.",
+          "it": "Ha effetto solo quando lo stato dell'aggiornamento è \"Disponibile\" o \"Pianificato\" - altrimenti Tesla rifiuta il comando.",
+          "no": "Har bare effekt mens oppdateringsstatusen er \"Tilgjengelig\" eller \"Planlagt\" - ellers avviser Tesla kommandoen.",
+          "sv": "Får bara effekt medan uppdateringsstatusen är \"Tillgänglig\" eller \"Schemalagd\" - annars avvisar Tesla kommandot.",
+          "pl": "Działa tylko wtedy, gdy status aktualizacji to \"Dostępna\" lub \"Zaplanowana\" - w przeciwnym razie Tesla odrzuci polecenie.",
+          "ru": "Действует, только если статус обновления \"Доступно\" или \"Запланировано\" - иначе Tesla отклонит команду.",
+          "ko": "업데이트 상태가 \"사용 가능\" 또는 \"예약됨\"일 때만 적용됩니다. 그렇지 않으면 Tesla가 명령을 거부합니다.",
+          "ar": "يسري فقط عندما تكون حالة التحديث \"متاح\" أو \"مجدول\" - وإلا يرفض Tesla الأمر."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=software_update_status",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
+            }
+          }
+        ],
+        "id": "install_software_update"
       },
       {
         "title": {
@@ -6471,7 +6813,9 @@
         "alarm_presence",
         "alarm_generic.at_work",
         "cop_mode",
-        "cop_temperature_limit"
+        "cop_temperature_limit",
+        "software_update_status",
+        "software_update_progress"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -8535,6 +8879,160 @@
             "ru": "Высокий",
             "ko": "높음",
             "ar": "مرتفع"
+          }
+        }
+      ]
+    },
+    "software_update_progress": {
+      "icon": "/assets/capabilities/software_update_progress.svg",
+      "type": "number",
+      "title": {
+        "en": "Software Update Progress",
+        "nl": "Softwareupdatevoortgang",
+        "da": "Softwareopdateringsfremskridt",
+        "de": "Software-Update-Fortschritt",
+        "es": "Progreso de la actualización de software",
+        "fr": "Progression de la mise à jour du logiciel",
+        "it": "Avanzamento aggiornamento software",
+        "no": "Fremdrift for programvareoppdatering",
+        "sv": "Förlopp för programvaruuppdatering",
+        "pl": "Postęp aktualizacji oprogramowania",
+        "ru": "Ход обновления ПО",
+        "ko": "소프트웨어 업데이트 진행률",
+        "ar": "تقدم تحديث البرنامج"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "%",
+        "nl": "%",
+        "da": "%",
+        "de": "%",
+        "es": "%",
+        "fr": "%",
+        "it": "%",
+        "no": "%",
+        "sv": "%",
+        "pl": "%",
+        "ru": "%",
+        "ko": "%",
+        "ar": "%"
+      },
+      "min": 0,
+      "max": 1,
+      "decimals": 2
+    },
+    "software_update_status": {
+      "icon": "/assets/capabilities/software_update_status.svg",
+      "type": "enum",
+      "title": {
+        "en": "Software Update Status",
+        "nl": "Softwareupdatestatus",
+        "da": "Softwareopdateringsstatus",
+        "de": "Software-Update-Status",
+        "es": "Estado de la actualización de software",
+        "fr": "État de la mise à jour du logiciel",
+        "it": "Stato dell'aggiornamento software",
+        "no": "Programvareoppdateringsstatus",
+        "sv": "Programvaruuppdateringsstatus",
+        "pl": "Status aktualizacji oprogramowania",
+        "ru": "Статус обновления ПО",
+        "ko": "소프트웨어 업데이트 상태",
+        "ar": "حالة تحديث البرنامج"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "values": [
+        {
+          "id": "idle",
+          "title": {
+            "en": "Idle",
+            "nl": "Inactief",
+            "da": "Inaktiv",
+            "de": "Inaktiv",
+            "es": "Inactivo",
+            "fr": "Inactif",
+            "it": "Inattivo",
+            "no": "Inaktiv",
+            "sv": "Inaktiv",
+            "pl": "Bezczynny",
+            "ru": "Ожидание",
+            "ko": "대기",
+            "ar": "خامل"
+          }
+        },
+        {
+          "id": "available",
+          "title": {
+            "en": "Available",
+            "nl": "Beschikbaar",
+            "da": "Tilgængelig",
+            "de": "Verfügbar",
+            "es": "Disponible",
+            "fr": "Disponible",
+            "it": "Disponibile",
+            "no": "Tilgjengelig",
+            "sv": "Tillgänglig",
+            "pl": "Dostępna",
+            "ru": "Доступно",
+            "ko": "사용 가능",
+            "ar": "متاح"
+          }
+        },
+        {
+          "id": "scheduled",
+          "title": {
+            "en": "Scheduled",
+            "nl": "Gepland",
+            "da": "Planlagt",
+            "de": "Geplant",
+            "es": "Programada",
+            "fr": "Programmée",
+            "it": "Pianificato",
+            "no": "Planlagt",
+            "sv": "Schemalagd",
+            "pl": "Zaplanowana",
+            "ru": "Запланировано",
+            "ko": "예약됨",
+            "ar": "مجدول"
+          }
+        },
+        {
+          "id": "downloading",
+          "title": {
+            "en": "Downloading",
+            "nl": "Downloaden",
+            "da": "Downloader",
+            "de": "Wird heruntergeladen",
+            "es": "Descargando",
+            "fr": "Téléchargement",
+            "it": "Download in corso",
+            "no": "Laster ned",
+            "sv": "Laddar ner",
+            "pl": "Pobieranie",
+            "ru": "Загрузка",
+            "ko": "다운로드 중",
+            "ar": "جارٍ التنزيل"
+          }
+        },
+        {
+          "id": "installing",
+          "title": {
+            "en": "Installing",
+            "nl": "Installeren",
+            "da": "Installerer",
+            "de": "Wird installiert",
+            "es": "Instalando",
+            "fr": "Installation",
+            "it": "Installazione in corso",
+            "no": "Installerer",
+            "sv": "Installerar",
+            "pl": "Instalowanie",
+            "ru": "Установка",
+            "ko": "설치 중",
+            "ar": "جارٍ التثبيت"
           }
         }
       ]

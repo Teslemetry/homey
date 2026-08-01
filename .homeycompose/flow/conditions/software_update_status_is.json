@@ -1,0 +1,165 @@
+{
+  "title": {
+    "en": "Software update status is",
+    "nl": "Softwareupdatestatus is",
+    "da": "Softwareopdateringsstatus er",
+    "de": "Software-Update-Status ist",
+    "es": "El estado de la actualización de software es",
+    "fr": "L'état de la mise à jour du logiciel est",
+    "it": "Lo stato dell'aggiornamento software è",
+    "no": "Programvareoppdateringsstatus er",
+    "sv": "Programvaruuppdateringsstatus är",
+    "pl": "Status aktualizacji oprogramowania to",
+    "ru": "Статус обновления ПО: ",
+    "ko": "소프트웨어 업데이트 상태",
+    "ar": "حالة تحديث البرنامج هي"
+  },
+  "titleFormatted": {
+    "en": "Software update status of [[device]] is [[status]]",
+    "nl": "Softwareupdatestatus van [[device]] is [[status]]",
+    "da": "Softwareopdateringsstatus for [[device]] er [[status]]",
+    "de": "Software-Update-Status von [[device]] ist [[status]]",
+    "es": "El estado de la actualización de software de [[device]] es [[status]]",
+    "fr": "L'état de la mise à jour du logiciel de [[device]] est [[status]]",
+    "it": "Lo stato dell'aggiornamento software di [[device]] è [[status]]",
+    "no": "Programvareoppdateringsstatus for [[device]] er [[status]]",
+    "sv": "Programvaruuppdateringsstatus för [[device]] är [[status]]",
+    "pl": "Status aktualizacji oprogramowania urządzenia [[device]] to [[status]]",
+    "ru": "Статус обновления ПО [[device]]: [[status]]",
+    "ko": "[[device]]의 소프트웨어 업데이트 상태는 [[status]]입니다",
+    "ar": "حالة تحديث البرنامج لـ[[device]] هي [[status]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=software_update_status",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    },
+    {
+      "type": "dropdown",
+      "name": "status",
+      "title": {
+        "en": "Status",
+        "nl": "Status",
+        "da": "Status",
+        "de": "Status",
+        "es": "Estado",
+        "fr": "État",
+        "it": "Stato",
+        "no": "Status",
+        "sv": "Status",
+        "pl": "Status",
+        "ru": "Статус",
+        "ko": "상태",
+        "ar": "الحالة"
+      },
+      "values": [
+        {
+          "id": "idle",
+          "label": {
+            "en": "Idle",
+            "nl": "Inactief",
+            "da": "Inaktiv",
+            "de": "Inaktiv",
+            "es": "Inactivo",
+            "fr": "Inactif",
+            "it": "Inattivo",
+            "no": "Inaktiv",
+            "sv": "Inaktiv",
+            "pl": "Bezczynny",
+            "ru": "Ожидание",
+            "ko": "대기",
+            "ar": "خامل"
+          }
+        },
+        {
+          "id": "available",
+          "label": {
+            "en": "Available",
+            "nl": "Beschikbaar",
+            "da": "Tilgængelig",
+            "de": "Verfügbar",
+            "es": "Disponible",
+            "fr": "Disponible",
+            "it": "Disponibile",
+            "no": "Tilgjengelig",
+            "sv": "Tillgänglig",
+            "pl": "Dostępna",
+            "ru": "Доступно",
+            "ko": "사용 가능",
+            "ar": "متاح"
+          }
+        },
+        {
+          "id": "scheduled",
+          "label": {
+            "en": "Scheduled",
+            "nl": "Gepland",
+            "da": "Planlagt",
+            "de": "Geplant",
+            "es": "Programada",
+            "fr": "Programmée",
+            "it": "Pianificato",
+            "no": "Planlagt",
+            "sv": "Schemalagd",
+            "pl": "Zaplanowana",
+            "ru": "Запланировано",
+            "ko": "예약됨",
+            "ar": "مجدول"
+          }
+        },
+        {
+          "id": "downloading",
+          "label": {
+            "en": "Downloading",
+            "nl": "Downloaden",
+            "da": "Downloader",
+            "de": "Wird heruntergeladen",
+            "es": "Descargando",
+            "fr": "Téléchargement",
+            "it": "Download in corso",
+            "no": "Laster ned",
+            "sv": "Laddar ner",
+            "pl": "Pobieranie",
+            "ru": "Загрузка",
+            "ko": "다운로드 중",
+            "ar": "جارٍ التنزيل"
+          }
+        },
+        {
+          "id": "installing",
+          "label": {
+            "en": "Installing",
+            "nl": "Installeren",
+            "da": "Installerer",
+            "de": "Wird installiert",
+            "es": "Instalando",
+            "fr": "Installation",
+            "it": "Installazione in corso",
+            "no": "Installerer",
+            "sv": "Installerar",
+            "pl": "Instalowanie",
+            "ru": "Установка",
+            "ko": "설치 중",
+            "ar": "جارٍ التثبيت"
+          }
+        }
+      ]
+    }
+  ]
+}
