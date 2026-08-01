@@ -37,7 +37,7 @@ function createDeviceStub(
   const store: Record<string, unknown> = {};
 
   let currentNow = opts.now ?? new Date("2026-07-30T12:00:00Z");
-  const timers: Array<{ id: number; callback: () => void; delay: number }> = [];
+  const timers: Array<{ id: number; callback: () => void | Promise<void>; delay: number }> = [];
   let nextTimerId = 1;
 
   const stub = Object.assign(Object.create(GatewayDevice.prototype), {
@@ -47,7 +47,7 @@ function createDeviceStub(
       flow: {
         getDeviceTriggerCard: () => ({ trigger: async () => {} }),
       },
-      setTimeout: (callback: () => void, delay: number) => {
+      setTimeout: (callback: () => void | Promise<void>, delay: number) => {
         const timerId = nextTimerId++;
         timers.push({ id: timerId, callback, delay });
         return timerId;
@@ -295,7 +295,7 @@ test("GatewayDevice's midnight reset zeroes grid_imported_today/grid_exported_to
   assert.equal(capabilities["home_usage_today"], 9);
 
   setNow(new Date("2026-07-31T00:00:05-04:00"));
-  timers[0].callback();
+  await timers[0].callback();
 
   assert.equal(capabilities["grid_imported_today"], 0);
   assert.equal(capabilities["grid_exported_today"], 0);

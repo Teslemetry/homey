@@ -59,16 +59,19 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.homey.clearTimeout(this.midnightTimer);
     }
     const delay = msUntilNextLocalMidnight(this.now(), timeZone);
-    this.midnightTimer = this.homey.setTimeout(async () => {
+    const midnightTimer = this.homey.setTimeout(async () => {
       try {
         for (const capability of TODAY_TOTAL_CAPABILITIES) {
           await this.update(capability, 0);
         }
-        this.scheduleMidnightReset(timeZone);
+        if (this.midnightTimer === midnightTimer && this.isLive()) {
+          this.scheduleMidnightReset(timeZone);
+        }
       } catch (e) {
         this.error("Failed to reset Powerwall midnight totals", e);
       }
     }, delay);
+    this.midnightTimer = midnightTimer;
   }
 
   async onInit() {
