@@ -38,8 +38,12 @@ export default class SolarDevice extends TeslemetryDevice {
     }
     const delay = msUntilNextLocalMidnight(this.now(), timeZone);
     this.midnightTimer = this.homey.setTimeout(() => {
-      this.update("solar_generation_today", 0);
-      this.scheduleMidnightReset(timeZone);
+      try {
+        this.update("solar_generation_today", 0);
+        this.scheduleMidnightReset(timeZone);
+      } catch (e) {
+        this.error("Failed to reset Solar midnight totals", e);
+      }
     }, delay);
   }
 
