@@ -74,6 +74,23 @@ test("an action card proceeds normally when the device is live", async () => {
   assert.deepEqual(calls, ["flowFlashLights"]);
 });
 
+test("the off-grid vehicle charging reserve action forwards its percentage to the Powerwall", async () => {
+  const { actionListeners } = createAppStub();
+  const percentages: number[] = [];
+  const device = {
+    flowSetOffGridVehicleChargingReserve: async (percentage: number) => {
+      percentages.push(percentage);
+    },
+  };
+
+  await actionListeners["set_off_grid_vehicle_charging_reserve"]({
+    device,
+    percentage: 40,
+  });
+
+  assert.deepEqual(percentages, [40]);
+});
+
 // --- conditions: a stale device must fail closed (false), never true ---
 
 test("a condition card returns false instead of throwing when the device is a stale/missing runtime reference", async () => {

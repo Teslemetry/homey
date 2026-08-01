@@ -30,17 +30,17 @@ The Homey energy tab shows energy flowing from the grid into the house even when
 
 ## ~~4. Missing action ('then') flow cards for energy products~~ DONE
 
-Current energy action cards: `set_allow_export`, `set_backup_reserve`, `set_operation_mode`.
+The current energy action-card inventory is defined authoritatively in
+`.homeycompose/flow/actions/` and the energy drivers' `driver.flow.compose.json`
+files.
 
 **Resolution:** Added action flow cards for `onoff.charge_grid` (on/off/toggle) and `onoff.storm` (on/off/toggle) in `drivers/battery/driver.flow.compose.json`.
 
 ## ~~5. Vehicle flow cards visible to energy-only users~~ DONE
 
-**Resolution:** Added device capability filters (`args` with `filter`) to all 4 app-level trigger cards in `.homeycompose/flow/triggers/`. Also added missing `titleFormatted` (required for verified apps):
-- `steering_wheel_heater_changed` → filter: `capabilities=steering_wheel_heater`
-- `operation_mode_changed` → filter: `capabilities=operation_mode`
-- `allow_export_changed` → filter: `capabilities=allow_export`
-- `backup_reserve_changed` → filter: `capabilities=backup_reserve`
+**Resolution:** Added device capability filters (`args` with `filter`) and the
+required `titleFormatted` to app-level trigger cards. The authoritative card
+definitions and filters are in `.homeycompose/flow/triggers/`.
 
 ## ~~6. Grid status / power outage detection in flows~~ DONE
 

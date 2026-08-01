@@ -44,6 +44,21 @@ test("update() fires the matching *_changed trigger card with the new value when
   ]);
 });
 
+test("update() fires off_grid_vehicle_charging_reserve_changed with the new reserve", async () => {
+  const { stub, triggerCalls } = createDeviceStub({
+    off_grid_vehicle_charging_reserve: 0.2,
+  });
+
+  await stub.update("off_grid_vehicle_charging_reserve", 0.4);
+
+  assert.deepEqual(triggerCalls, [
+    {
+      cardId: "off_grid_vehicle_charging_reserve_changed",
+      tokens: { off_grid_vehicle_charging_reserve: 0.4 },
+    },
+  ]);
+});
+
 test("update() does not fire the trigger card when the value is unchanged", async () => {
   const { stub, triggerCalls } = createDeviceStub({ backup_reserve: 0.2 });
 

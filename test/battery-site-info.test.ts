@@ -45,6 +45,7 @@ function createDeviceStub(
 
   const capabilities: Record<string, unknown> = {
     backup_reserve: 0.2,
+    off_grid_vehicle_charging_reserve: undefined,
     allow_export: "battery_ok",
     operation_mode: "self_consumption",
     "onoff.charge_grid": true,
@@ -133,6 +134,35 @@ test("PowerwallDevice's site_info handler maps backup_reserve_percent and defaul
 
   assert.equal(capabilities.backup_reserve, 0.35);
   assert.equal(capabilities.operation_mode, "backup");
+});
+
+test("PowerwallDevice's site_info handler maps off_grid_vehicle_charging_reserve_percent when the site supports it", async () => {
+  const { stub, capabilities } = createDeviceStub({
+    off_grid_vehicle_charging_reserve_percent: 40,
+    components: { off_grid_vehicle_charging_reserve_supported: true },
+  });
+  await stub.onInit();
+
+  assert.equal(capabilities.off_grid_vehicle_charging_reserve, 0.4);
+});
+
+test("PowerwallDevice's site_info handler clears off_grid_vehicle_charging_reserve when the site doesn't support it", async () => {
+  const { stub, capabilities } = createDeviceStub({
+    off_grid_vehicle_charging_reserve_percent: 40,
+    components: { off_grid_vehicle_charging_reserve_supported: false },
+  });
+  await stub.onInit();
+
+  assert.equal(capabilities.off_grid_vehicle_charging_reserve, null);
+});
+
+test("PowerwallDevice's off_grid_vehicle_charging_reserve command listener calls setOffGridVehicleChargingReserve with the rounded percentage", async () => {
+  const { stub, apiCalls, capabilityListeners } = createDeviceStub();
+  await stub.onInit();
+
+  await capabilityListeners.off_grid_vehicle_charging_reserve(0.4);
+
+  assert.deepEqual(apiCalls, [["setOffGridVehicleChargingReserve", [40]]]);
 });
 
 test("PowerwallDevice's site_info handler maps allow_export to the explicit customer_preferred_export_rule when present", async () => {

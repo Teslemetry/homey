@@ -1,0 +1,41 @@
+{
+  "icon": "/assets/capabilities/backup_reserve.svg",
+  "type": "number",
+  "title": {
+    "en": "Off-Grid Vehicle Charging Reserve",
+    "nl": "Off-Grid Voertuigoplaadreserve",
+    "da": "Off-Grid Køretøjsopladningsreserve",
+    "de": "Off-Grid-Fahrzeugladereserve",
+    "es": "Reserva de Carga de Vehículo Fuera de Red",
+    "fr": "Réserve de Charge de Véhicule Hors Réseau",
+    "it": "Riserva di Ricarica Veicolo Fuori Rete",
+    "no": "Off-Grid Kjøretøyladereserve",
+    "sv": "Off-Grid Fordonsladdningsreserv",
+    "pl": "Rezerwa Ładowania Pojazdu Poza Siecią",
+    "ru": "Резерв Зарядки Автомобиля Вне Сети",
+    "ko": "오프그리드 차량 충전 예비",
+    "ar": "احتياطي شحن المركبة خارج الشبكة"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "slider",
+  "units": {
+    "en": "%",
+    "nl": "%",
+    "da": "%",
+    "de": "%",
+    "es": "%",
+    "fr": "%",
+    "it": "%",
+    "no": "%",
+    "sv": "%",
+    "pl": "%",
+    "ru": "%",
+    "ko": "%",
+    "ar": "%"
+  },
+  "min": 0,
+  "max": 1,
+  "decimals": 2,
+  "step": 0.01
+}

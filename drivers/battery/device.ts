@@ -18,11 +18,13 @@ const TODAY_TOTAL_CAPABILITIES = [
  *  otherwise an untyped `Record<string, unknown>`. */
 interface SiteInfoDocument {
   backup_reserve_percent?: number;
+  off_grid_vehicle_charging_reserve_percent?: number;
   default_real_mode?: string;
   components?: {
     customer_preferred_export_rule?: string;
     non_export_configured?: boolean;
     disallow_charge_from_grid_with_solar_installed?: boolean;
+    off_grid_vehicle_charging_reserve_supported?: boolean;
   };
   user_settings?: { storm_mode_enabled?: boolean | null };
   installation_time_zone?: string;
@@ -160,6 +162,13 @@ export default class PowerwallDevice extends TeslemetryDevice {
           ? data.backup_reserve_percent / 100
           : undefined,
       );
+      this.update(
+        "off_grid_vehicle_charging_reserve",
+        data.components?.off_grid_vehicle_charging_reserve_supported &&
+          data.off_grid_vehicle_charging_reserve_percent !== undefined
+          ? data.off_grid_vehicle_charging_reserve_percent / 100
+          : null,
+      );
       this.update("operation_mode", data.default_real_mode);
       this.update(
         "allow_export",
@@ -237,6 +246,20 @@ export default class PowerwallDevice extends TeslemetryDevice {
         this.site.api.setBackupReserve(Math.round(value * 100)),
       );
     });
+
+    this.registerCapabilityListener(
+      "off_grid_vehicle_charging_reserve",
+      async (value) => {
+        this.log(
+          `Setting off-grid vehicle charging reserve to ${Math.round(value * 100)} (from ${value})`,
+        );
+        return this.action(
+          this.site.api.setOffGridVehicleChargingReserve(
+            Math.round(value * 100),
+          ),
+        );
+      },
+    );
 
     this.registerCapabilityListener("allow_export", async (value) => {
       this.log(`Setting allow export to ${value}`);
@@ -390,6 +413,15 @@ export default class PowerwallDevice extends TeslemetryDevice {
   public async flowSetBackupReserve(percentage: number): Promise<void> {
     this.log(`Setting backup reserve to ${percentage}%`);
     await this.action(this.site.api.setBackupReserve(percentage));
+  }
+
+  public async flowSetOffGridVehicleChargingReserve(
+    percentage: number,
+  ): Promise<void> {
+    this.log(`Setting off-grid vehicle charging reserve to ${percentage}%`);
+    await this.action(
+      this.site.api.setOffGridVehicleChargingReserve(percentage),
+    );
   }
 
   public async flowSetAllowExport(
