@@ -44,8 +44,9 @@ that gap: it runs the real `homey app build`, copies the result to an isolated
 directory with no such ancestor `node_modules` to fall back to, and imports
 every compiled `app.js`/`api.js`/`driver.js`/`device.js` from there (same
 `homey`/`@teslemetry/api` stubs as the unit tests) to confirm each one still
-resolves every import with nothing else available. See "tesla-fleet-api is
-pinned to a commit SHA" below for the exact bug class this exists to catch.
+resolves every import with nothing else available - a general safety net for
+any dependency that resolves fine from this repo's own `node_modules` but is
+missing or incomplete in the packaged bundle.
 
 ## Architecture
 
@@ -263,7 +264,7 @@ The remaining `ENERGY_HISTORY_FIELDS` (per-source breakdowns like `battery_energ
 ### Grid Tariff Rate (`grid_buy_rate` / `grid_sell_rate`)
 
 The Powerwall driver resolves the live buy/sell grid rate via `getTariffPeriods`
-from the `tesla-fleet-api` package, called from `PowerwallDevice.recomputeTariffRates`.
+from `@teslemetry/api`, called from `PowerwallDevice.recomputeTariffRates`.
 The SSE protocol splits `tariff_content_v2` out of a now-slim `site_info` event
 (a `null` body means the tariff was removed), so `PowerwallDevice` subscribes to
 both `site.sse` `site_info` and `tariff_content_v2` events and, on either, re-reads
@@ -285,41 +286,23 @@ unresolvable (no timezone, or `getTariffPeriods` finds no matching season),
 rather than leaving a stale price in place; the boundary timer is cleaned up
 in `onUninit` via the same `pollingCleanup` array every other listener uses.
 
-- `tesla-fleet-api` is pinned to a commit SHA via a `github:` dependency
-  (`Teslemetry/node-tesla-fleet-api`), not a published npm version - as of this
-  writing npm has a `0.2.0` release, but it's behind the pinned commit (missing
-  `tariff.ts`, `commands.ts`, the `signing/` module) so it can't be swapped in
-  yet. Check `npm view tesla-fleet-api versions` and compare the release's
-  `gitHead` (`npm view tesla-fleet-api@<version> gitHead`) against the pinned
-  SHA before bumping; switch to a real semver range once a release catches up.
-- Because it's a `github:` dependency, its own `dist/` is built by its
-  `prepare` script (`tsc`), which `npm install`/`npm ci` normally run
-  automatically. The Homey app-publish action (`athombv/github-action-homey-app-publish`)
-  runs `npm ci --ignore-scripts`, which skips that script for every installed
-  package, so `dist/` never gets built there and every import from
-  `tesla-fleet-api` fails to resolve during `tsc`. `scripts/build-tesla-fleet-api.mjs`
-  (invoked from the `build` npm script, ahead of `tsc`) compiles it explicitly
-  as an ordinary build step, which runs regardless of `--ignore-scripts`; it's a
-  no-op once `dist/` already exists (e.g. under a normal `npm install`).
-  This alone is not sufficient, though: Homey CLI's own `preprocess()`
-  (`node_modules/homey/lib/App.js`, the shared pipeline behind `build`/
-  `validate`/`run`/`publish`) copies production `node_modules` into
-  `.homeybuild/node_modules` *before* it runs the project's `build` npm
-  script - so that copy of `tesla-fleet-api` is taken with no `dist/` yet,
-  and building `dist/` afterward into the *root* `node_modules/tesla-fleet-api`
-  never reaches the already-copied `.homeybuild` bundle, which is what
-  actually ships. `scripts/build-tesla-fleet-api.mjs` also mirrors its
-  freshly-built `dist/` into `.homeybuild/node_modules/tesla-fleet-api/dist`
-  when that copy already exists. Use `npm run smoke:packaged-build` to verify
-  the published bundle contains the dependency and every compiled entry point
-  resolves in isolation.
-- `tesla-fleet-api`'s public entry point does not re-export the `TariffContentV2`
-  input type `getTariffPeriods` requires, so it's imported from the package's
-  internal `tesla-fleet-api/dist/types/site_info.js` path instead; `@teslemetry/api`
-  types both the merged `siteInfoDocument` and the raw `live_status`/`site_info` SSE
-  payloads as opaque `Record<string, unknown>`, so each device declares a local
-  interface for the fields it actually reads and casts to it, and tariff data still
-  needs an `as unknown as TariffContentV2` cast on top for `getTariffPeriods`.
+- `getTariffPeriods`/`TariffContentV2` are imported directly from
+  `@teslemetry/api` (>= 0.11.0, which vendors and re-exports them from
+  `tesla-fleet-api`) - no separate `tesla-fleet-api` dependency or custom
+  build step is needed. `@teslemetry/api` types both the merged
+  `siteInfoDocument` and the raw `live_status`/`site_info` SSE payloads as
+  opaque `Record<string, unknown>`, so each device still declares a local
+  interface for the fields it actually reads and casts to it, and tariff
+  data still needs an `as unknown as TariffContentV2` cast on top for
+  `getTariffPeriods`.
+- `test/support/teslemetry-api-stub.js` (the redirect target every
+  `@teslemetry/api` import resolves to under test - see the Testing section
+  above) re-exports the real `getTariffPeriods` via a relative path into
+  `node_modules/@teslemetry/api/dist/index.mjs`, bypassing both the test
+  loader's redirect (a bare `"@teslemetry/api"` re-import there would just
+  recurse into itself) and the package's `exports` map (which doesn't
+  declare that subpath for package-name imports). This keeps the tariff
+  tests exercising real tariff-window math instead of a hand-rolled fake.
 - Surfaced as two plain (non-dotted) custom capabilities, `grid_buy_rate` /
   `grid_sell_rate` - a base capability name may not contain a `.` at all (that's
   reserved for subcapabilities of an existing base), so this can't reuse the
@@ -705,7 +688,7 @@ removal first, not a direct early `onUninit()` call).
 
 ### Dependency Vulnerabilities (`npm audit`)
 
-`@teslemetry/api` and `tesla-fleet-api` (the two runtime dependencies) pull in
+`@teslemetry/api` and `source-map-support` (the runtime dependencies) pull in
 no transitive dependencies of their own - every `npm audit` finding traces
 back to the `homey` devDependency (the CLI/release toolchain), so treat audit
 findings as toolchain hygiene, not runtime exposure. `homey` itself is pinned

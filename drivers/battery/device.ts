@@ -1,6 +1,10 @@
-import { EnergyDetails, SseEnergyTotals, SseLiveStatus } from "@teslemetry/api";
-import { getTariffPeriods } from "tesla-fleet-api";
-import type { TariffContentV2 } from "tesla-fleet-api/dist/types/site_info.js";
+import {
+  EnergyDetails,
+  getTariffPeriods,
+  SseEnergyTotals,
+  SseLiveStatus,
+  type TariffContentV2,
+} from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 import msUntilNextLocalMidnight from "../../lib/localMidnight.js";
 
