@@ -314,3 +314,31 @@ test("volume_mute capability listener mutes to 0 and unmute restores the last kn
   assert.deepEqual(apiCalls, [{ method: "adjustVolume", args: [0.5 * 10.333] }]);
   assert.equal(capabilities.volume_set, 0.5);
 });
+
+test("volume_up/volume_down capability listeners step by the vehicle's own reported increment", async () => {
+  const { capabilityListeners, apiCalls } = await createDeviceStub();
+
+  await capabilityListeners.volume_up();
+  await capabilityListeners.volume_down();
+
+  assert.deepEqual(apiCalls, [
+    { method: "adjustVolume", args: [0.5 * 10.333 + 0.333] },
+    { method: "adjustVolume", args: [(0.5 * 10.333 + 0.333) - 0.333] },
+  ]);
+});
+
+test("volume_up/volume_down clamp at the reported max and zero", async () => {
+  const { capabilityListeners, apiCalls, sse } = await createDeviceStub();
+
+  sse.data.emit("MediaAudioVolumeMax", 1);
+  sse.data.emit("MediaAudioVolumeIncrement", 5);
+  sse.data.emit("MediaAudioVolume", 0.9);
+
+  await capabilityListeners.volume_up();
+  assert.deepEqual(apiCalls, [{ method: "adjustVolume", args: [1] }]);
+
+  apiCalls.length = 0;
+  sse.data.emit("MediaAudioVolume", 0.1);
+  await capabilityListeners.volume_down();
+  assert.deepEqual(apiCalls, [{ method: "adjustVolume", args: [0] }]);
+});

@@ -117,6 +117,7 @@ const ACTIVE_CHARGE_STATES = new Set<SseData["data"]["DetailedChargeState"]>([
 export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
   private volumeMax: number = 10.333;
+  private volumeIncrement: number = 0.333;
   private muted: boolean = false;
   private lastVolume: number = 0.5;
 
@@ -689,6 +690,12 @@ export default class VehicleDevice extends TeslemetryDevice {
       }
     });
 
+    this.onSignal("MediaAudioVolumeIncrement", (value) => {
+      if (value !== undefined && value !== null) {
+        this.volumeIncrement = value;
+      }
+    });
+
     // Media Playback Status
     const handlePlaybackStatus = (
       value:
@@ -1002,6 +1009,27 @@ export default class VehicleDevice extends TeslemetryDevice {
       // Unmute: restore last volume
       const volume = this.lastVolume * this.volumeMax;
       this.update("volume_set", this.lastVolume);
+      return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
+    });
+
+    // Media Volume Step (relative, using Tesla's own reported increment)
+    this.registerCapabilityListener("volume_up", async () => {
+      this.muted = false;
+      const volume = Math.min(
+        this.volumeMax,
+        this.lastVolume * this.volumeMax + this.volumeIncrement,
+      );
+      this.lastVolume = volume / this.volumeMax;
+      return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
+    });
+
+    this.registerCapabilityListener("volume_down", async () => {
+      this.muted = false;
+      const volume = Math.max(
+        0,
+        this.lastVolume * this.volumeMax - this.volumeIncrement,
+      );
+      this.lastVolume = volume / this.volumeMax;
       return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
     });
   }
