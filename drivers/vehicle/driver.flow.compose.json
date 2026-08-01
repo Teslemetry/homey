@@ -1699,6 +1699,60 @@
       "titleFormatted": {
         "en": "Set passenger seat cooler to [[level]]"
       }
+    },
+    {
+      "id": "windowcoverings_closed.tonneau_close",
+      "title": {
+        "en": "Close tonneau cover",
+        "nl": "Sluit de laadbakafdekking",
+        "da": "Luk laddækslet",
+        "de": "Laderaumabdeckung schließen",
+        "es": "Cerrar la cubierta de la caja",
+        "fr": "Fermer le couvre-benne",
+        "it": "Chiudi la copertura del cassone",
+        "no": "Lukk lastromsdekselet",
+        "sv": "Stäng flakluckan",
+        "pl": "Zamknij pokrywę skrzyni",
+        "ru": "Закрыть крышку кузова",
+        "ko": "적재함 커버 닫기",
+        "ar": "أغلق غطاء صندوق الحمولة"
+      }
+    },
+    {
+      "id": "windowcoverings_closed.tonneau_open",
+      "title": {
+        "en": "Open tonneau cover",
+        "nl": "Open de laadbakafdekking",
+        "da": "Åbn laddækslet",
+        "de": "Laderaumabdeckung öffnen",
+        "es": "Abrir la cubierta de la caja",
+        "fr": "Ouvrir le couvre-benne",
+        "it": "Apri la copertura del cassone",
+        "no": "Åpne lastromsdekselet",
+        "sv": "Öppna flakluckan",
+        "pl": "Otwórz pokrywę skrzyni",
+        "ru": "Открыть крышку кузова",
+        "ko": "적재함 커버 열기",
+        "ar": "افتح غطاء صندوق الحمولة"
+      }
+    },
+    {
+      "id": "windowcoverings_closed.tonneau_toggle",
+      "title": {
+        "en": "Toggle tonneau cover",
+        "nl": "Wissel de laadbakafdekking",
+        "da": "Skift laddækslet",
+        "de": "Laderaumabdeckung umschalten",
+        "es": "Cambiar la cubierta de la caja",
+        "fr": "Basculer le couvre-benne",
+        "it": "Attiva/disattiva la copertura del cassone",
+        "no": "Veksle lastromsdekselet",
+        "sv": "Växla flakluckan",
+        "pl": "Przełącz pokrywę skrzyni",
+        "ru": "Переключить крышку кузова",
+        "ko": "적재함 커버 전환",
+        "ar": "بدّل غطاء صندوق الحمولة"
+      }
     }
   ]
 }

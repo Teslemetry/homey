@@ -979,7 +979,7 @@
         "ko": "적재함 커버",
         "ar": "غطاء صندوق الحمولة"
       },
-      "setable": false
+      "setable": true
     },
     "windowcoverings_set.tonneau": {
       "title": {

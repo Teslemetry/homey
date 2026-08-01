@@ -247,6 +247,17 @@ test("onoff.trunk capability listener actuates the rear trunk regardless of valu
   assert.deepEqual(apiCalls, [{ method: "actuateTrunk", args: ["rear"] }]);
 });
 
+test("windowcoverings_closed.tonneau capability listener sends the closure command's open/close endpoint", async () => {
+  const { capabilityListeners, apiCalls } = await createDeviceStub();
+
+  await capabilityListeners["windowcoverings_closed.tonneau"](true);
+  assert.deepEqual(apiCalls, [{ method: "closure", args: [{ tonneau: "close" }] }]);
+
+  apiCalls.length = 0;
+  await capabilityListeners["windowcoverings_closed.tonneau"](false);
+  assert.deepEqual(apiCalls, [{ method: "closure", args: [{ tonneau: "open" }] }]);
+});
+
 test("windowcoverings_closed capability listener uses the cached Location, defaulting to 0/0 when absent", async () => {
   const { capabilityListeners, apiCalls } = await createDeviceStub();
 
