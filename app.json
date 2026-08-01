@@ -621,6 +621,94 @@
       },
       {
         "title": {
+          "en": "Battery at arrival rises above"
+        },
+        "titleFormatted": {
+          "en": "Battery at arrival on [[device]] rises above [[percentage]]%"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_battery.arrival",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "range",
+            "name": "percentage",
+            "title": {
+              "en": "Percentage"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "labelMultiplier": 1,
+            "labelDecimals": 0
+          }
+        ],
+        "tokens": [
+          {
+            "name": "percentage",
+            "type": "number",
+            "title": {
+              "en": "Battery at arrival"
+            },
+            "example": {
+              "en": "25"
+            }
+          }
+        ],
+        "id": "energy_at_arrival_above"
+      },
+      {
+        "title": {
+          "en": "Battery at arrival drops below"
+        },
+        "titleFormatted": {
+          "en": "Battery at arrival on [[device]] drops below [[percentage]]%"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_battery.arrival",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "range",
+            "name": "percentage",
+            "title": {
+              "en": "Percentage"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "labelMultiplier": 1,
+            "labelDecimals": 0
+          }
+        ],
+        "tokens": [
+          {
+            "name": "percentage",
+            "type": "number",
+            "title": {
+              "en": "Battery at arrival"
+            },
+            "example": {
+              "en": "25"
+            }
+          }
+        ],
+        "id": "energy_at_arrival_below"
+      },
+      {
+        "title": {
           "en": "Buy rate rises above"
         },
         "titleFormatted": {
@@ -847,6 +935,88 @@
       },
       {
         "title": {
+          "en": "Time to arrival rises above"
+        },
+        "titleFormatted": {
+          "en": "Time to arrival on [[device]] rises above [[minutes]] minutes"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=minutes_to_arrival",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "minutes",
+            "title": {
+              "en": "Minutes"
+            },
+            "min": 0,
+            "max": 1440,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "minutes",
+            "type": "number",
+            "title": {
+              "en": "Minutes to arrival"
+            },
+            "example": {
+              "en": "12"
+            }
+          }
+        ],
+        "id": "minutes_to_arrival_above"
+      },
+      {
+        "title": {
+          "en": "Time to arrival drops below"
+        },
+        "titleFormatted": {
+          "en": "Time to arrival on [[device]] drops below [[minutes]] minutes"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=minutes_to_arrival",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "minutes",
+            "title": {
+              "en": "Minutes"
+            },
+            "min": 0,
+            "max": 1440,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "minutes",
+            "type": "number",
+            "title": {
+              "en": "Minutes to arrival"
+            },
+            "example": {
+              "en": "12"
+            }
+          }
+        ],
+        "id": "minutes_to_arrival_below"
+      },
+      {
+        "title": {
           "en": "The off-grid vehicle charging reserve has changed"
         },
         "titleFormatted": {
@@ -1003,6 +1173,88 @@
           }
         ],
         "id": "plugged_in"
+      },
+      {
+        "title": {
+          "en": "Route traffic delay rises above"
+        },
+        "titleFormatted": {
+          "en": "Route traffic delay on [[device]] rises above [[minutes]] minutes"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=route_traffic_delay",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "minutes",
+            "title": {
+              "en": "Minutes"
+            },
+            "min": 0,
+            "max": 180,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "minutes",
+            "type": "number",
+            "title": {
+              "en": "Traffic delay"
+            },
+            "example": {
+              "en": "15"
+            }
+          }
+        ],
+        "id": "route_traffic_delay_above"
+      },
+      {
+        "title": {
+          "en": "Route traffic delay drops below"
+        },
+        "titleFormatted": {
+          "en": "Route traffic delay on [[device]] drops below [[minutes]] minutes"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=route_traffic_delay",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "minutes",
+            "title": {
+              "en": "Minutes"
+            },
+            "min": 0,
+            "max": 180,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "minutes",
+            "type": "number",
+            "title": {
+              "en": "Traffic delay"
+            },
+            "example": {
+              "en": "15"
+            }
+          }
+        ],
+        "id": "route_traffic_delay_below"
       },
       {
         "title": {
@@ -3405,6 +3657,38 @@
       },
       {
         "title": {
+          "en": "Battery at arrival comparison"
+        },
+        "titleFormatted": {
+          "en": "Battery at arrival on [[device]] is above [[percentage]]%"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_battery.arrival",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "range",
+            "name": "percentage",
+            "title": {
+              "en": "Percentage"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "labelMultiplier": 1,
+            "labelDecimals": 0
+          }
+        ],
+        "id": "energy_at_arrival"
+      },
+      {
+        "title": {
           "en": "Buy rate comparison"
         },
         "titleFormatted": {
@@ -3498,6 +3782,35 @@
           }
         ],
         "id": "is_plugged_in"
+      },
+      {
+        "title": {
+          "en": "Time to arrival comparison"
+        },
+        "titleFormatted": {
+          "en": "Time to arrival on [[device]] is above [[minutes]] minutes"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=minutes_to_arrival",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "minutes",
+            "title": {
+              "en": "Minutes"
+            },
+            "min": 0,
+            "max": 1440,
+            "step": 1
+          }
+        ],
+        "id": "minutes_to_arrival"
       },
       {
         "title": {
@@ -3628,6 +3941,35 @@
           }
         ],
         "id": "operation_mode_is"
+      },
+      {
+        "title": {
+          "en": "Route traffic delay comparison"
+        },
+        "titleFormatted": {
+          "en": "Route traffic delay on [[device]] is above [[minutes]] minutes"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=route_traffic_delay",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "minutes",
+            "title": {
+              "en": "Minutes"
+            },
+            "min": 0,
+            "max": 180,
+            "step": 1
+          }
+        ],
+        "id": "route_traffic_delay"
       },
       {
         "title": {
@@ -8073,6 +8415,9 @@
         "seat_cooler.front_right",
         "navigation_destination",
         "minutes_to_arrival",
+        "measure_distance.arrival",
+        "route_traffic_delay",
+        "measure_battery.arrival",
         "onoff.guest_mode",
         "onoff.auto_seat_climate_left",
         "onoff.auto_seat_climate_right",
@@ -8137,6 +8482,43 @@
           },
           "units": {
             "en": "km"
+          }
+        },
+        "measure_distance.arrival": {
+          "title": {
+            "en": "Distance to Arrival",
+            "nl": "Afstand tot Aankomst",
+            "da": "Afstand til Ankomst",
+            "de": "Entfernung bis zur Ankunft",
+            "es": "Distancia hasta la Llegada",
+            "fr": "Distance jusqu'à l'Arrivée",
+            "it": "Distanza all'Arrivo",
+            "no": "Avstand til Ankomst",
+            "sv": "Avstånd till Ankomst",
+            "pl": "Odległość do Przyjazdu",
+            "ru": "Расстояние до прибытия",
+            "ko": "도착까지 거리",
+            "ar": "المسافة حتى الوصول"
+          },
+          "units": {
+            "en": "km"
+          }
+        },
+        "measure_battery.arrival": {
+          "title": {
+            "en": "Battery at Arrival",
+            "nl": "Batterij bij Aankomst",
+            "da": "Batteri ved Ankomst",
+            "de": "Akku bei Ankunft",
+            "es": "Batería a la Llegada",
+            "fr": "Batterie à l'Arrivée",
+            "it": "Batteria all'Arrivo",
+            "no": "Batteri ved Ankomst",
+            "sv": "Batteri vid Ankomst",
+            "pl": "Bateria po Przyjeździe",
+            "ru": "Заряд батареи по прибытии",
+            "ko": "도착 시 배터리",
+            "ar": "البطارية عند الوصول"
           }
         },
         "measure_speed": {
@@ -10079,6 +10461,44 @@
           }
         }
       ]
+    },
+    "route_traffic_delay": {
+      "icon": "/assets/capabilities/route_traffic_delay.svg",
+      "type": "number",
+      "title": {
+        "en": "Route Traffic Delay",
+        "nl": "Verkeersvertraging Route",
+        "da": "Rutetrafikforsinkelse",
+        "de": "Routen-Verkehrsverzögerung",
+        "es": "Retraso de Tráfico de la Ruta",
+        "fr": "Retard de Trafic de l'Itinéraire",
+        "it": "Ritardo Traffico Percorso",
+        "no": "Rutetrafikkforsinkelse",
+        "sv": "Ruttrafikförsening",
+        "pl": "Opóźnienie Ruchu na Trasie",
+        "ru": "Задержка из-за трафика на маршруте",
+        "ko": "경로 교통 지연",
+        "ar": "تأخير حركة المرور في المسار"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "min",
+        "nl": "min",
+        "da": "min",
+        "de": "min",
+        "es": "min",
+        "fr": "min",
+        "it": "min",
+        "no": "min",
+        "sv": "min",
+        "pl": "min",
+        "ru": "мин",
+        "ko": "분",
+        "ar": "دقيقة"
+      },
+      "decimals": 0
     },
     "scheduled_charging_mode": {
       "icon": "/assets/capabilities/time_to_full_charge.svg",

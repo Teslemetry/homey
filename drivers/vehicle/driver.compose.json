@@ -83,6 +83,9 @@
     "seat_cooler.front_right",
     "navigation_destination",
     "minutes_to_arrival",
+    "measure_distance.arrival",
+    "route_traffic_delay",
+    "measure_battery.arrival",
     "onoff.guest_mode",
     "onoff.auto_seat_climate_left",
     "onoff.auto_seat_climate_right",
@@ -147,6 +150,43 @@
       },
       "units": {
         "en": "km"
+      }
+    },
+    "measure_distance.arrival": {
+      "title": {
+        "en": "Distance to Arrival",
+        "nl": "Afstand tot Aankomst",
+        "da": "Afstand til Ankomst",
+        "de": "Entfernung bis zur Ankunft",
+        "es": "Distancia hasta la Llegada",
+        "fr": "Distance jusqu'à l'Arrivée",
+        "it": "Distanza all'Arrivo",
+        "no": "Avstand til Ankomst",
+        "sv": "Avstånd till Ankomst",
+        "pl": "Odległość do Przyjazdu",
+        "ru": "Расстояние до прибытия",
+        "ko": "도착까지 거리",
+        "ar": "المسافة حتى الوصول"
+      },
+      "units": {
+        "en": "km"
+      }
+    },
+    "measure_battery.arrival": {
+      "title": {
+        "en": "Battery at Arrival",
+        "nl": "Batterij bij Aankomst",
+        "da": "Batteri ved Ankomst",
+        "de": "Akku bei Ankunft",
+        "es": "Batería a la Llegada",
+        "fr": "Batterie à l'Arrivée",
+        "it": "Batteria all'Arrivo",
+        "no": "Batteri ved Ankomst",
+        "sv": "Batteri vid Ankomst",
+        "pl": "Bateria po Przyjeździe",
+        "ru": "Заряд батареи по прибытии",
+        "ko": "도착 시 배터리",
+        "ar": "البطارية عند الوصول"
       }
     },
     "measure_speed": {

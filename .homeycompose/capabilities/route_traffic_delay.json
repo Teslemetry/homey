@@ -1,0 +1,38 @@
+{
+  "icon": "/assets/capabilities/route_traffic_delay.svg",
+  "type": "number",
+  "title": {
+    "en": "Route Traffic Delay",
+    "nl": "Verkeersvertraging Route",
+    "da": "Rutetrafikforsinkelse",
+    "de": "Routen-Verkehrsverzögerung",
+    "es": "Retraso de Tráfico de la Ruta",
+    "fr": "Retard de Trafic de l'Itinéraire",
+    "it": "Ritardo Traffico Percorso",
+    "no": "Rutetrafikkforsinkelse",
+    "sv": "Ruttrafikförsening",
+    "pl": "Opóźnienie Ruchu na Trasie",
+    "ru": "Задержка из-за трафика на маршруте",
+    "ko": "경로 교통 지연",
+    "ar": "تأخير حركة المرور في المسار"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "units": {
+    "en": "min",
+    "nl": "min",
+    "da": "min",
+    "de": "min",
+    "es": "min",
+    "fr": "min",
+    "it": "min",
+    "no": "min",
+    "sv": "min",
+    "pl": "min",
+    "ru": "мин",
+    "ko": "분",
+    "ar": "دقيقة"
+  },
+  "decimals": 0
+}
