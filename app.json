@@ -2384,6 +2384,156 @@
         ]
       },
       {
+        "id": "onoff.auto_seat_climate_left_true",
+        "title": {
+          "en": "Auto seat climate (front left) has been enabled",
+          "nl": "Automatische stoelklimaat (voor links) is ingeschakeld",
+          "da": "Automatisk sædeklima (foran venstre) er aktiveret",
+          "de": "Automatisches Sitzklima (vorne links) wurde aktiviert",
+          "es": "El clima automático del asiento (delantero izquierdo) ha sido activado",
+          "fr": "Le climat automatique du siège (avant gauche) a été activé",
+          "it": "Il clima automatico del sedile (anteriore sinistra) è stato attivato",
+          "no": "Automatisk seteklima (foran venstre) er aktivert",
+          "sv": "Automatiskt sätesklimat (främre vänster) har aktiverats",
+          "pl": "Automatyczny klimat siedzenia (przód lewy) został włączony",
+          "ru": "Автоклимат сиденья (переднее левое) включен",
+          "ko": "자동 시트 온도 조절(앞 왼쪽)이 활성화되었습니다",
+          "ar": "تم تفعيل مناخ المقعد التلقائي (أمام يسار)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_seat_climate_left_false",
+        "title": {
+          "en": "Auto seat climate (front left) has been disabled",
+          "nl": "Automatische stoelklimaat (voor links) is uitgeschakeld",
+          "da": "Automatisk sædeklima (foran venstre) er deaktiveret",
+          "de": "Automatisches Sitzklima (vorne links) wurde deaktiviert",
+          "es": "El clima automático del asiento (delantero izquierdo) ha sido desactivado",
+          "fr": "Le climat automatique du siège (avant gauche) a été désactivé",
+          "it": "Il clima automatico del sedile (anteriore sinistra) è stato disattivato",
+          "no": "Automatisk seteklima (foran venstre) er deaktivert",
+          "sv": "Automatiskt sätesklimat (främre vänster) har avaktiverats",
+          "pl": "Automatyczny klimat siedzenia (przód lewy) został wyłączony",
+          "ru": "Автоклимат сиденья (переднее левое) отключен",
+          "ko": "자동 시트 온도 조절(앞 왼쪽)이 비활성화되었습니다",
+          "ar": "تم تعطيل مناخ المقعد التلقائي (أمام يسار)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_seat_climate_right_true",
+        "title": {
+          "en": "Auto seat climate (front right) has been enabled",
+          "nl": "Automatische stoelklimaat (voor rechts) is ingeschakeld",
+          "da": "Automatisk sædeklima (foran højre) er aktiveret",
+          "de": "Automatisches Sitzklima (vorne rechts) wurde aktiviert",
+          "es": "El clima automático del asiento (delantero derecho) ha sido activado",
+          "fr": "Le climat automatique du siège (avant droit) a été activé",
+          "it": "Il clima automatico del sedile (anteriore destra) è stato attivato",
+          "no": "Automatisk seteklima (foran høyre) er aktivert",
+          "sv": "Automatiskt sätesklimat (främre höger) har aktiverats",
+          "pl": "Automatyczny klimat siedzenia (przód prawy) został włączony",
+          "ru": "Автоклимат сиденья (переднее правое) включен",
+          "ko": "자동 시트 온도 조절(앞 오른쪽)이 활성화되었습니다",
+          "ar": "تم تفعيل مناخ المقعد التلقائي (أمام يمين)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_seat_climate_right_false",
+        "title": {
+          "en": "Auto seat climate (front right) has been disabled",
+          "nl": "Automatische stoelklimaat (voor rechts) is uitgeschakeld",
+          "da": "Automatisk sædeklima (foran højre) er deaktiveret",
+          "de": "Automatisches Sitzklima (vorne rechts) wurde deaktiviert",
+          "es": "El clima automático del asiento (delantero derecho) ha sido desactivado",
+          "fr": "Le climat automatique du siège (avant droit) a été désactivé",
+          "it": "Il clima automatico del sedile (anteriore destra) è stato disattivato",
+          "no": "Automatisk seteklima (foran høyre) er deaktivert",
+          "sv": "Automatiskt sätesklimat (främre höger) har avaktiverats",
+          "pl": "Automatyczny klimat siedzenia (przód prawy) został wyłączony",
+          "ru": "Автоклимат сиденья (переднее правое) отключен",
+          "ko": "자동 시트 온도 조절(앞 오른쪽)이 비활성화되었습니다",
+          "ar": "تم تعطيل مناخ المقعد التلقائي (أمام يمين)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_steering_wheel_heat_true",
+        "title": {
+          "en": "Auto steering wheel heat has been enabled",
+          "nl": "Automatische stuurwielverwarming is ingeschakeld",
+          "da": "Automatisk rattopvarmning er aktiveret",
+          "de": "Automatische Lenkradheizung wurde aktiviert",
+          "es": "La calefacción automática del volante ha sido activada",
+          "fr": "Le chauffage automatique du volant a été activé",
+          "it": "Il riscaldamento automatico del volante è stato attivato",
+          "no": "Automatisk rattoppvarming er aktivert",
+          "sv": "Automatisk ratt värmare har aktiverats",
+          "pl": "Automatyczne podgrzewanie kierownicy zostało włączone",
+          "ru": "Автоподогрев руля включен",
+          "ko": "자동 스티어링 휠 열선이 활성화되었습니다",
+          "ar": "تم تفعيل تدفئة عجلة القيادة التلقائية"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_steering_wheel_heat_false",
+        "title": {
+          "en": "Auto steering wheel heat has been disabled",
+          "nl": "Automatische stuurwielverwarming is uitgeschakeld",
+          "da": "Automatisk rattopvarmning er deaktiveret",
+          "de": "Automatische Lenkradheizung wurde deaktiviert",
+          "es": "La calefacción automática del volante ha sido desactivada",
+          "fr": "Le chauffage automatique du volant a été désactivé",
+          "it": "Il riscaldamento automatico del volante è stato disattivato",
+          "no": "Automatisk rattoppvarming er deaktivert",
+          "sv": "Automatisk ratt värmare har avaktiverats",
+          "pl": "Automatyczne podgrzewanie kierownicy zostało wyłączone",
+          "ru": "Автоподогрев руля отключен",
+          "ko": "자동 스티어링 휠 열선이 비활성화되었습니다",
+          "ar": "تم تعطيل تدفئة عجلة القيادة التلقائية"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
         "id": "locked.charge_latch_true",
         "title": {
           "en": "The charge port latch has engaged",
@@ -4020,6 +4170,81 @@
           "ru": "Гостевой режим !{{enabled|disabled}}",
           "ko": "게스트 모드가 !{{enabled|disabled}}",
           "ar": "وضع الضيف !{{enabled|disabled}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_seat_climate_left",
+        "title": {
+          "en": "Auto seat climate (front left) is !{{enabled|disabled}}",
+          "nl": "Automatische stoelklimaat (voor links) is !{{enabled|disabled}}",
+          "da": "Automatisk sædeklima (foran venstre) er !{{enabled|disabled}}",
+          "de": "Automatisches Sitzklima (vorne links) ist !{{enabled|disabled}}",
+          "es": "El clima automático del asiento (delantero izquierdo) está !{{enabled|disabled}}",
+          "fr": "Le climat automatique du siège (avant gauche) est !{{enabled|disabled}}",
+          "it": "Il clima automatico del sedile (anteriore sinistra) è !{{enabled|disabled}}",
+          "no": "Automatisk seteklima (foran venstre) er !{{enabled|disabled}}",
+          "sv": "Automatiskt sätesklimat (främre vänster) är !{{enabled|disabled}}",
+          "pl": "Automatyczny klimat siedzenia (przód lewy) jest !{{enabled|disabled}}",
+          "ru": "Автоклимат сиденья (переднее левое) !{{enabled|disabled}}",
+          "ko": "자동 시트 온도 조절(앞 왼쪽)이 !{{enabled|disabled}}",
+          "ar": "مناخ المقعد التلقائي (أمام يسار) !{{enabled|disabled}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_seat_climate_right",
+        "title": {
+          "en": "Auto seat climate (front right) is !{{enabled|disabled}}",
+          "nl": "Automatische stoelklimaat (voor rechts) is !{{enabled|disabled}}",
+          "da": "Automatisk sædeklima (foran højre) er !{{enabled|disabled}}",
+          "de": "Automatisches Sitzklima (vorne rechts) ist !{{enabled|disabled}}",
+          "es": "El clima automático del asiento (delantero derecho) está !{{enabled|disabled}}",
+          "fr": "Le climat automatique du siège (avant droit) est !{{enabled|disabled}}",
+          "it": "Il clima automatico del sedile (anteriore destra) è !{{enabled|disabled}}",
+          "no": "Automatisk seteklima (foran høyre) er !{{enabled|disabled}}",
+          "sv": "Automatiskt sätesklimat (främre höger) är !{{enabled|disabled}}",
+          "pl": "Automatyczny klimat siedzenia (przód prawy) jest !{{enabled|disabled}}",
+          "ru": "Автоклимат сиденья (переднее правое) !{{enabled|disabled}}",
+          "ko": "자동 시트 온도 조절(앞 오른쪽)이 !{{enabled|disabled}}",
+          "ar": "مناخ المقعد التلقائي (أمام يمين) !{{enabled|disabled}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_steering_wheel_heat",
+        "title": {
+          "en": "Auto steering wheel heat is !{{enabled|disabled}}",
+          "nl": "Automatische stuurwielverwarming is !{{enabled|disabled}}",
+          "da": "Automatisk rattopvarmning er !{{enabled|disabled}}",
+          "de": "Automatische Lenkradheizung ist !{{enabled|disabled}}",
+          "es": "La calefacción automática del volante está !{{enabled|disabled}}",
+          "fr": "Le chauffage automatique du volant est !{{enabled|disabled}}",
+          "it": "Il riscaldamento automatico del volante è !{{enabled|disabled}}",
+          "no": "Automatisk rattoppvarming er !{{enabled|disabled}}",
+          "sv": "Automatisk ratt värmare är !{{enabled|disabled}}",
+          "pl": "Automatyczne podgrzewanie kierownicy jest !{{enabled|disabled}}",
+          "ru": "Автоподогрев руля !{{enabled|disabled}}",
+          "ko": "자동 스티어링 휠 열선이 !{{enabled|disabled}}",
+          "ar": "تدفئة عجلة القيادة التلقائية !{{enabled|disabled}}"
         },
         "args": [
           {
@@ -6610,6 +6835,231 @@
         ]
       },
       {
+        "id": "onoff.auto_seat_climate_left_on",
+        "title": {
+          "en": "Enable auto seat climate (front left)",
+          "nl": "Schakel automatische stoelklimaat (voor links) in",
+          "da": "Aktivér automatisk sædeklima (foran venstre)",
+          "de": "Automatisches Sitzklima (vorne links) aktivieren",
+          "es": "Activar clima automático del asiento (delantero izquierdo)",
+          "fr": "Activer le climat automatique du siège (avant gauche)",
+          "it": "Attiva clima automatico del sedile (anteriore sinistra)",
+          "no": "Aktiver automatisk seteklima (foran venstre)",
+          "sv": "Aktivera automatiskt sätesklimat (främre vänster)",
+          "pl": "Włącz automatyczny klimat siedzenia (przód lewy)",
+          "ru": "Включить автоклимат сиденья (переднее левое)",
+          "ko": "자동 시트 온도 조절(앞 왼쪽) 활성화",
+          "ar": "تفعيل مناخ المقعد التلقائي (أمام يسار)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_seat_climate_left_off",
+        "title": {
+          "en": "Disable auto seat climate (front left)",
+          "nl": "Schakel automatische stoelklimaat (voor links) uit",
+          "da": "Deaktivér automatisk sædeklima (foran venstre)",
+          "de": "Automatisches Sitzklima (vorne links) deaktivieren",
+          "es": "Desactivar clima automático del asiento (delantero izquierdo)",
+          "fr": "Désactiver le climat automatique du siège (avant gauche)",
+          "it": "Disattiva clima automatico del sedile (anteriore sinistra)",
+          "no": "Deaktiver automatisk seteklima (foran venstre)",
+          "sv": "Inaktivera automatiskt sätesklimat (främre vänster)",
+          "pl": "Wyłącz automatyczny klimat siedzenia (przód lewy)",
+          "ru": "Выключить автоклимат сиденья (переднее левое)",
+          "ko": "자동 시트 온도 조절(앞 왼쪽) 비활성화",
+          "ar": "تعطيل مناخ المقعد التلقائي (أمام يسار)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_seat_climate_left_toggle",
+        "title": {
+          "en": "Toggle auto seat climate (front left)",
+          "nl": "Wissel automatische stoelklimaat (voor links)",
+          "da": "Skift automatisk sædeklima (foran venstre)",
+          "de": "Automatisches Sitzklima (vorne links) umschalten",
+          "es": "Cambiar clima automático del asiento (delantero izquierdo)",
+          "fr": "Basculer le climat automatique du siège (avant gauche)",
+          "it": "Attiva/disattiva clima automatico del sedile (anteriore sinistra)",
+          "no": "Veksle automatisk seteklima (foran venstre)",
+          "sv": "Växla automatiskt sätesklimat (främre vänster)",
+          "pl": "Przełącz automatyczny klimat siedzenia (przód lewy)",
+          "ru": "Переключить автоклимат сиденья (переднее левое)",
+          "ko": "자동 시트 온도 조절(앞 왼쪽) 전환",
+          "ar": "تبديل مناخ المقعد التلقائي (أمام يسار)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_seat_climate_right_on",
+        "title": {
+          "en": "Enable auto seat climate (front right)",
+          "nl": "Schakel automatische stoelklimaat (voor rechts) in",
+          "da": "Aktivér automatisk sædeklima (foran højre)",
+          "de": "Automatisches Sitzklima (vorne rechts) aktivieren",
+          "es": "Activar clima automático del asiento (delantero derecho)",
+          "fr": "Activer le climat automatique du siège (avant droit)",
+          "it": "Attiva clima automatico del sedile (anteriore destra)",
+          "no": "Aktiver automatisk seteklima (foran høyre)",
+          "sv": "Aktivera automatiskt sätesklimat (främre höger)",
+          "pl": "Włącz automatyczny klimat siedzenia (przód prawy)",
+          "ru": "Включить автоклимат сиденья (переднее правое)",
+          "ko": "자동 시트 온도 조절(앞 오른쪽) 활성화",
+          "ar": "تفعيل مناخ المقعد التلقائي (أمام يمين)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_seat_climate_right_off",
+        "title": {
+          "en": "Disable auto seat climate (front right)",
+          "nl": "Schakel automatische stoelklimaat (voor rechts) uit",
+          "da": "Deaktivér automatisk sædeklima (foran højre)",
+          "de": "Automatisches Sitzklima (vorne rechts) deaktivieren",
+          "es": "Desactivar clima automático del asiento (delantero derecho)",
+          "fr": "Désactiver le climat automatique du siège (avant droit)",
+          "it": "Disattiva clima automatico del sedile (anteriore destra)",
+          "no": "Deaktiver automatisk seteklima (foran høyre)",
+          "sv": "Inaktivera automatiskt sätesklimat (främre höger)",
+          "pl": "Wyłącz automatyczny klimat siedzenia (przód prawy)",
+          "ru": "Выключить автоклимат сиденья (переднее правое)",
+          "ko": "자동 시트 온도 조절(앞 오른쪽) 비활성화",
+          "ar": "تعطيل مناخ المقعد التلقائي (أمام يمين)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_seat_climate_right_toggle",
+        "title": {
+          "en": "Toggle auto seat climate (front right)",
+          "nl": "Wissel automatische stoelklimaat (voor rechts)",
+          "da": "Skift automatisk sædeklima (foran højre)",
+          "de": "Automatisches Sitzklima (vorne rechts) umschalten",
+          "es": "Cambiar clima automático del asiento (delantero derecho)",
+          "fr": "Basculer le climat automatique du siège (avant droit)",
+          "it": "Attiva/disattiva clima automatico del sedile (anteriore destra)",
+          "no": "Veksle automatisk seteklima (foran høyre)",
+          "sv": "Växla automatiskt sätesklimat (främre höger)",
+          "pl": "Przełącz automatyczny klimat siedzenia (przód prawy)",
+          "ru": "Переключить автоклимат сиденья (переднее правое)",
+          "ko": "자동 시트 온도 조절(앞 오른쪽) 전환",
+          "ar": "تبديل مناخ المقعد التلقائي (أمام يمين)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_steering_wheel_heat_on",
+        "title": {
+          "en": "Enable auto steering wheel heat",
+          "nl": "Schakel automatische stuurwielverwarming in",
+          "da": "Aktivér automatisk rattopvarmning",
+          "de": "Automatische Lenkradheizung aktivieren",
+          "es": "Activar calefacción automática del volante",
+          "fr": "Activer le chauffage automatique du volant",
+          "it": "Attiva riscaldamento automatico del volante",
+          "no": "Aktiver automatisk rattoppvarming",
+          "sv": "Aktivera automatisk ratt värmare",
+          "pl": "Włącz automatyczne podgrzewanie kierownicy",
+          "ru": "Включить автоподогрев руля",
+          "ko": "자동 스티어링 휠 열선 활성화",
+          "ar": "تفعيل تدفئة عجلة القيادة التلقائية"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_steering_wheel_heat_off",
+        "title": {
+          "en": "Disable auto steering wheel heat",
+          "nl": "Schakel automatische stuurwielverwarming uit",
+          "da": "Deaktivér automatisk rattopvarmning",
+          "de": "Automatische Lenkradheizung deaktivieren",
+          "es": "Desactivar calefacción automática del volante",
+          "fr": "Désactiver le chauffage automatique du volant",
+          "it": "Disattiva riscaldamento automatico del volante",
+          "no": "Deaktiver automatisk rattoppvarming",
+          "sv": "Inaktivera automatisk ratt värmare",
+          "pl": "Wyłącz automatyczne podgrzewanie kierownicy",
+          "ru": "Выключить автоподогрев руля",
+          "ko": "자동 스티어링 휠 열선 비활성화",
+          "ar": "تعطيل تدفئة عجلة القيادة التلقائية"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "onoff.auto_steering_wheel_heat_toggle",
+        "title": {
+          "en": "Toggle auto steering wheel heat",
+          "nl": "Wissel automatische stuurwielverwarming",
+          "da": "Skift automatisk rattopvarmning",
+          "de": "Automatische Lenkradheizung umschalten",
+          "es": "Cambiar calefacción automática del volante",
+          "fr": "Basculer le chauffage automatique du volant",
+          "it": "Attiva/disattiva riscaldamento automatico del volante",
+          "no": "Veksle automatisk rattoppvarming",
+          "sv": "Växla automatisk ratt värmare",
+          "pl": "Przełącz automatyczne podgrzewanie kierownicy",
+          "ru": "Переключить автоподогрев руля",
+          "ko": "자동 스티어링 휠 열선 전환",
+          "ar": "تبديل تدفئة عجلة القيادة التلقائية"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
         "id": "seat_heater.front_left_set",
         "title": {
           "en": "Set driver seat heater"
@@ -7549,6 +7999,9 @@
         "navigation_destination",
         "minutes_to_arrival",
         "onoff.guest_mode",
+        "onoff.auto_seat_climate_left",
+        "onoff.auto_seat_climate_right",
+        "onoff.auto_steering_wheel_heat",
         "vehicle_state",
         "wifi_connected",
         "cellular_connected",
@@ -8171,6 +8624,57 @@
             "ru": "Гостевой режим",
             "ko": "손님 모드",
             "ar": "وضع الضيف"
+          }
+        },
+        "onoff.auto_seat_climate_left": {
+          "title": {
+            "en": "Auto Seat Climate (Front Left)",
+            "nl": "Automatische Stoelklimaat (Voor Links)",
+            "da": "Automatisk Sædeklima (Foran Venstre)",
+            "de": "Automatisches Sitzklima (Vorne Links)",
+            "es": "Clima Automático del Asiento (Delantero Izquierdo)",
+            "fr": "Climat Automatique du Siège (Avant Gauche)",
+            "it": "Clima Automatico del Sedile (Anteriore Sinistra)",
+            "no": "Automatisk Seteklima (Foran Venstre)",
+            "sv": "Automatiskt Sätesklimat (Främre Vänster)",
+            "pl": "Automatyczny Klimat Siedzenia (Przód Lewy)",
+            "ru": "Автоклимат сиденья (переднее левое)",
+            "ko": "자동 시트 온도 조절 (앞 왼쪽)",
+            "ar": "مناخ المقعد التلقائي (أمام يسار)"
+          }
+        },
+        "onoff.auto_seat_climate_right": {
+          "title": {
+            "en": "Auto Seat Climate (Front Right)",
+            "nl": "Automatische Stoelklimaat (Voor Rechts)",
+            "da": "Automatisk Sædeklima (Foran Højre)",
+            "de": "Automatisches Sitzklima (Vorne Rechts)",
+            "es": "Clima Automático del Asiento (Delantero Derecho)",
+            "fr": "Climat Automatique du Siège (Avant Droit)",
+            "it": "Clima Automatico del Sedile (Anteriore Destra)",
+            "no": "Automatisk Seteklima (Foran Høyre)",
+            "sv": "Automatiskt Sätesklimat (Främre Höger)",
+            "pl": "Automatyczny Klimat Siedzenia (Przód Prawy)",
+            "ru": "Автоклимат сиденья (переднее правое)",
+            "ko": "자동 시트 온도 조절 (앞 오른쪽)",
+            "ar": "مناخ المقعد التلقائي (أمام يمين)"
+          }
+        },
+        "onoff.auto_steering_wheel_heat": {
+          "title": {
+            "en": "Auto Steering Wheel Heat",
+            "nl": "Automatische Stuurwielverwarming",
+            "da": "Automatisk Rattopvarmning",
+            "de": "Automatische Lenkradheizung",
+            "es": "Calefacción Automática del Volante",
+            "fr": "Chauffage Automatique du Volant",
+            "it": "Riscaldamento Automatico del Volante",
+            "no": "Automatisk Rattoppvarming",
+            "sv": "Automatisk Ratt värmare",
+            "pl": "Automatyczne Podgrzewanie Kierownicy",
+            "ru": "Автоподогрев руля",
+            "ko": "자동 스티어링 휠 열선",
+            "ar": "تدفئة عجلة القيادة التلقائية"
           }
         },
         "thermostat_mode": {

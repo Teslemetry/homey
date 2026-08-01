@@ -84,6 +84,9 @@
     "navigation_destination",
     "minutes_to_arrival",
     "onoff.guest_mode",
+    "onoff.auto_seat_climate_left",
+    "onoff.auto_seat_climate_right",
+    "onoff.auto_steering_wheel_heat",
     "vehicle_state",
     "wifi_connected",
     "cellular_connected",
@@ -706,6 +709,57 @@
         "ru": "Гостевой режим",
         "ko": "손님 모드",
         "ar": "وضع الضيف"
+      }
+    },
+    "onoff.auto_seat_climate_left": {
+      "title": {
+        "en": "Auto Seat Climate (Front Left)",
+        "nl": "Automatische Stoelklimaat (Voor Links)",
+        "da": "Automatisk Sædeklima (Foran Venstre)",
+        "de": "Automatisches Sitzklima (Vorne Links)",
+        "es": "Clima Automático del Asiento (Delantero Izquierdo)",
+        "fr": "Climat Automatique du Siège (Avant Gauche)",
+        "it": "Clima Automatico del Sedile (Anteriore Sinistra)",
+        "no": "Automatisk Seteklima (Foran Venstre)",
+        "sv": "Automatiskt Sätesklimat (Främre Vänster)",
+        "pl": "Automatyczny Klimat Siedzenia (Przód Lewy)",
+        "ru": "Автоклимат сиденья (переднее левое)",
+        "ko": "자동 시트 온도 조절 (앞 왼쪽)",
+        "ar": "مناخ المقعد التلقائي (أمام يسار)"
+      }
+    },
+    "onoff.auto_seat_climate_right": {
+      "title": {
+        "en": "Auto Seat Climate (Front Right)",
+        "nl": "Automatische Stoelklimaat (Voor Rechts)",
+        "da": "Automatisk Sædeklima (Foran Højre)",
+        "de": "Automatisches Sitzklima (Vorne Rechts)",
+        "es": "Clima Automático del Asiento (Delantero Derecho)",
+        "fr": "Climat Automatique du Siège (Avant Droit)",
+        "it": "Clima Automatico del Sedile (Anteriore Destra)",
+        "no": "Automatisk Seteklima (Foran Høyre)",
+        "sv": "Automatiskt Sätesklimat (Främre Höger)",
+        "pl": "Automatyczny Klimat Siedzenia (Przód Prawy)",
+        "ru": "Автоклимат сиденья (переднее правое)",
+        "ko": "자동 시트 온도 조절 (앞 오른쪽)",
+        "ar": "مناخ المقعد التلقائي (أمام يمين)"
+      }
+    },
+    "onoff.auto_steering_wheel_heat": {
+      "title": {
+        "en": "Auto Steering Wheel Heat",
+        "nl": "Automatische Stuurwielverwarming",
+        "da": "Automatisk Rattopvarmning",
+        "de": "Automatische Lenkradheizung",
+        "es": "Calefacción Automática del Volante",
+        "fr": "Chauffage Automatique du Volant",
+        "it": "Riscaldamento Automatico del Volante",
+        "no": "Automatisk Rattoppvarming",
+        "sv": "Automatisk Ratt värmare",
+        "pl": "Automatyczne Podgrzewanie Kierownicy",
+        "ru": "Автоподогрев руля",
+        "ko": "자동 스티어링 휠 열선",
+        "ar": "تدفئة عجلة القيادة التلقائية"
       }
     },
     "thermostat_mode": {
