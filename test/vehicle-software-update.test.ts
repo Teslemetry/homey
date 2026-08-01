@@ -146,7 +146,7 @@ const flushMicrotasks = () => new Promise((resolve) => setImmediate(resolve));
 
 test("software_update_status_changed fires only on a real transition", async () => {
   const { stub, sse, triggeredCards } = createDeviceStub({
-    software_update_status: undefined,
+    software_update_status: "idle",
     software_update_progress: undefined,
   });
   await stub.onInit();
@@ -161,6 +161,20 @@ test("software_update_status_changed fires only on a real transition", async () 
   sse.data.emit("Version", sse.cache.data.Version);
   await flushMicrotasks();
   assert.equal(triggeredCards.filter((c) => c === "software_update_status_changed").length, 1);
+});
+
+test("software_update_status_changed does not fire on the first-ever reading", async () => {
+  const { stub, sse, triggeredCards } = createDeviceStub({
+    software_update_status: undefined,
+    software_update_progress: undefined,
+  });
+  await stub.onInit();
+
+  sse.cache.data.SoftwareUpdateVersion = "2024.44.30";
+  sse.cache.data.Version = "2024.44.25 abcdef";
+  sse.data.emit("SoftwareUpdateVersion", sse.cache.data.SoftwareUpdateVersion);
+  await flushMicrotasks();
+  assert.equal(triggeredCards.filter((c) => c === "software_update_status_changed").length, 0);
 });
 
 test("flowInstallSoftwareUpdate rejects while idle/downloading/installing and succeeds while available/scheduled", async () => {
