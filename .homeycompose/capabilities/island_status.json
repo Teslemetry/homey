@@ -1,0 +1,36 @@
+{
+  "icon": "/assets/capabilities/island-mode.svg",
+  "type": "enum",
+  "title": {
+    "en": "Island Status"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "values": [
+    {
+      "id": "on_grid",
+      "title": {
+        "en": "On-grid"
+      }
+    },
+    {
+      "id": "off_grid_intentional",
+      "title": {
+        "en": "Off-grid (intentional)"
+      }
+    },
+    {
+      "id": "off_grid_unintentional",
+      "title": {
+        "en": "Off-grid (unintentional)"
+      }
+    },
+    {
+      "id": "island_status_unknown",
+      "title": {
+        "en": "Unknown"
+      }
+    }
+  ]
+}

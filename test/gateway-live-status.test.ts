@@ -136,6 +136,7 @@ test("GatewayDevice's live_status handler leaves off_grid/island untouched for a
   const { stub, sse, capabilities } = createDeviceStub({
     "alarm_generic.off_grid": undefined,
     "alarm_generic.island": undefined,
+    island_status: undefined,
     measure_power: undefined,
     "measure_power.load": undefined,
   });
@@ -147,6 +148,50 @@ test("GatewayDevice's live_status handler leaves off_grid/island untouched for a
 
   assert.equal(capabilities["alarm_generic.off_grid"], undefined);
   assert.equal(capabilities["alarm_generic.island"], undefined);
+  assert.equal(capabilities["island_status"], undefined);
+});
+
+test("GatewayDevice's live_status handler maps island_status straight through for a known value", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    island_status: undefined,
+  });
+  await stub.onInit();
+
+  getListener(sse, "live_status")({
+    live_status: { island_status: "off_grid_unintentional" },
+  });
+
+  assert.equal(capabilities["island_status"], "off_grid_unintentional");
+});
+
+test("GatewayDevice's live_status handler fires grid_outage_started/ended only for off_grid_unintentional, not a Go Off-Grid test", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    island_status: undefined,
+  });
+  const triggered: string[] = [];
+  stub.homey.flow.getDeviceTriggerCard = (id: string) => ({
+    trigger: async () => {
+      triggered.push(id);
+    },
+  });
+  await stub.onInit();
+
+  const emit = (island_status: string) =>
+    getListener(sse, "live_status")({ live_status: { island_status } });
+
+  emit("on_grid");
+  emit("off_grid_unintentional");
+  emit("on_grid");
+  emit("off_grid_intentional");
+  emit("on_grid");
+
+  assert.deepEqual(triggered, [
+    "grid_outage_started",
+    "grid_outage_ended",
+    "island_test_started",
+    "island_test_ended",
+  ]);
+  assert.equal(capabilities["island_status"], "on_grid");
 });
 
 test("GatewayDevice's live_status handler fires grid and load power thresholds independently", async () => {

@@ -26,6 +26,7 @@
     "measure_power.load",
     "alarm_generic.off_grid",
     "alarm_generic.island",
+    "island_status",
     "meter_power.imported",
     "meter_power.exported",
     "grid_imported_today",

@@ -13,6 +13,21 @@ const islandStatusMap = new Map<any, boolean>([
   ["on_grid", false],
 ]);
 
+/**
+ * The raw `island_status` strings the `island_status` capability accepts -
+ * mirrors the Teslemetry Home Assistant integration's `sensor.island_status`
+ * enum exactly (`off_grid`, HA's fifth option, is a polling-only synonym
+ * this streaming-only app never receives). An unrecognized future value is
+ * left untouched rather than passed straight through to setCapabilityValue,
+ * which would reject a value outside the capability's declared enum.
+ */
+const KNOWN_ISLAND_STATUSES = new Set([
+  "on_grid",
+  "off_grid_intentional",
+  "off_grid_unintentional",
+  "island_status_unknown",
+]);
+
 /** The fields this device reads off the opaque `live_status` SSE payload. */
 interface LiveStatusResponse {
   grid_power?: number;
@@ -38,6 +53,7 @@ export default class GatewayDevice extends TeslemetryDevice {
   pollingCleanup!: Array<() => void>;
   private timeZone: string | undefined;
   private midnightTimer: NodeJS.Timeout | undefined;
+  private previousIslandStatus: string | undefined;
 
   /** Overridden by tests to control the clock without waiting real time. */
   protected now(): Date {
@@ -148,6 +164,7 @@ export default class GatewayDevice extends TeslemetryDevice {
         "alarm_generic.island",
         islandStatusMap.get(data.island_status),
       );
+      this.handleIslandStatus(data.island_status);
     };
 
     const handleEnergyTotals = async (event: SseEnergyTotals) => {
@@ -228,6 +245,39 @@ export default class GatewayDevice extends TeslemetryDevice {
     this.pollingCleanup.push(() =>
       this.site.sse.off("site_info", applySiteInfo),
     );
+  }
+
+  /**
+   * Updates island_status and fires the distinct outage/test lifecycle
+   * triggers a plain changed card can't express - a real grid outage
+   * (off_grid_unintentional) and a user-initiated Go Off-Grid test
+   * (off_grid_intentional) need separate automations, mirroring
+   * VehicleDevice.handleDetailedChargeState's value-specific branching.
+   */
+  private handleIslandStatus(value: string | undefined): void {
+    if (value === undefined || !KNOWN_ISLAND_STATUSES.has(value)) return;
+    const previous = this.previousIslandStatus;
+    this.previousIslandStatus = value;
+    this.update("island_status", value);
+
+    if (previous === undefined || previous === value) return;
+
+    if (value === "off_grid_unintentional") {
+      this.triggerFlow("grid_outage_started");
+    } else if (previous === "off_grid_unintentional" && value === "on_grid") {
+      this.triggerFlow("grid_outage_ended");
+    }
+
+    if (value === "off_grid_intentional") {
+      this.triggerFlow("island_test_started");
+    } else if (previous === "off_grid_intentional" && value === "on_grid") {
+      this.triggerFlow("island_test_ended");
+    }
+  }
+
+  private triggerFlow(cardId: string): void {
+    if (!this.isLive()) return;
+    this.homey.flow.getDeviceTriggerCard(cardId).trigger(this).catch(this.error);
   }
 
   async onUninit(): Promise<void> {

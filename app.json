@@ -1366,6 +1366,64 @@
         }
       },
       {
+        "id": "grid_outage_started",
+        "title": {
+          "en": "A real grid outage has started"
+        },
+        "hint": {
+          "en": "Fires for an unplanned, unintentional grid outage - not a user-initiated Go Off-Grid test."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          }
+        ]
+      },
+      {
+        "id": "grid_outage_ended",
+        "title": {
+          "en": "A real grid outage has ended"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          }
+        ]
+      },
+      {
+        "id": "island_test_started",
+        "title": {
+          "en": "A Go Off-Grid test has started"
+        },
+        "hint": {
+          "en": "Fires for a user-initiated Go Off-Grid test - not an unplanned grid outage."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          }
+        ]
+      },
+      {
+        "id": "island_test_ended",
+        "title": {
+          "en": "A Go Off-Grid test has ended"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          }
+        ]
+      },
+      {
         "id": "alarm_generic.off_grid_true",
         "title": {
           "en": "Grid power has been lost",
@@ -3119,6 +3177,55 @@
             "type": "device",
             "name": "device",
             "filter": "driver_id=gateway"
+          }
+        ]
+      },
+      {
+        "id": "island_status",
+        "title": {
+          "en": "Island status is"
+        },
+        "titleFormatted": {
+          "en": "Island status is [[status]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=gateway"
+          },
+          {
+            "type": "dropdown",
+            "name": "status",
+            "title": {
+              "en": "Status"
+            },
+            "values": [
+              {
+                "id": "on_grid",
+                "label": {
+                  "en": "On-grid"
+                }
+              },
+              {
+                "id": "off_grid_intentional",
+                "label": {
+                  "en": "Off-grid (intentional)"
+                }
+              },
+              {
+                "id": "off_grid_unintentional",
+                "label": {
+                  "en": "Off-grid (unintentional)"
+                }
+              },
+              {
+                "id": "island_status_unknown",
+                "label": {
+                  "en": "Unknown"
+                }
+              }
+            ]
           }
         ]
       },
@@ -6009,6 +6116,7 @@
         "measure_power.load",
         "alarm_generic.off_grid",
         "alarm_generic.island",
+        "island_status",
         "meter_power.imported",
         "meter_power.exported",
         "grid_imported_today",
@@ -8026,6 +8134,42 @@
       },
       "decimals": 2,
       "insights": true
+    },
+    "island_status": {
+      "icon": "/assets/capabilities/island-mode.svg",
+      "type": "enum",
+      "title": {
+        "en": "Island Status"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "values": [
+        {
+          "id": "on_grid",
+          "title": {
+            "en": "On-grid"
+          }
+        },
+        {
+          "id": "off_grid_intentional",
+          "title": {
+            "en": "Off-grid (intentional)"
+          }
+        },
+        {
+          "id": "off_grid_unintentional",
+          "title": {
+            "en": "Off-grid (unintentional)"
+          }
+        },
+        {
+          "id": "island_status_unknown",
+          "title": {
+            "en": "Unknown"
+          }
+        }
+      ]
     },
     "measure_pressure": {
       "icon": "/assets/capabilities/measure_pressure.svg",
