@@ -101,6 +101,7 @@
     "alarm_generic.rear_defrost",
     "windowcoverings_closed.tonneau",
     "windowcoverings_set.tonneau",
+    "windowcoverings_closed.sunroof",
     "tpms_warning",
     "alarm_presence",
     "alarm_generic.at_work",
@@ -1040,6 +1041,24 @@
         "ar": "موضع غطاء صندوق الحمولة"
       },
       "setable": false
+    },
+    "windowcoverings_closed.sunroof": {
+      "title": {
+        "en": "Sunroof",
+        "nl": "Zonnedak",
+        "da": "Soltag",
+        "de": "Schiebedach",
+        "es": "Techo Solar",
+        "fr": "Toit Ouvrant",
+        "it": "Tettuccio Apribile",
+        "no": "Soltak",
+        "sv": "Soltak",
+        "pl": "Szyberdach",
+        "ru": "Люк",
+        "ko": "선루프",
+        "ar": "فتحة السقف"
+      },
+      "setable": true
     },
     "alarm_presence": {
       "title": {

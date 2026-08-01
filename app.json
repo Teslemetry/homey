@@ -3136,6 +3136,56 @@
         ]
       },
       {
+        "id": "windowcoverings_closed.sunroof_true",
+        "title": {
+          "en": "The sunroof has closed",
+          "nl": "Het zonnedak is gesloten",
+          "da": "Soltaget er lukket",
+          "de": "Das Schiebedach hat sich geschlossen",
+          "es": "El techo solar se ha cerrado",
+          "fr": "Le toit ouvrant s'est fermé",
+          "it": "Il tettuccio si è chiuso",
+          "no": "Soltaket har lukket",
+          "sv": "Soltaket har stängts",
+          "pl": "Szyberdach został zamknięty",
+          "ru": "Люк закрылся",
+          "ko": "선루프가 닫혔습니다",
+          "ar": "أُغلقت فتحة السقف"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "windowcoverings_closed.sunroof_false",
+        "title": {
+          "en": "The sunroof has opened",
+          "nl": "Het zonnedak is geopend",
+          "da": "Soltaget er åbnet",
+          "de": "Das Schiebedach hat sich geöffnet",
+          "es": "El techo solar se ha abierto",
+          "fr": "Le toit ouvrant s'est ouvert",
+          "it": "Il tettuccio si è aperto",
+          "no": "Soltaket har åpnet",
+          "sv": "Soltaket har öppnats",
+          "pl": "Szyberdach został otwarty",
+          "ru": "Люк открылся",
+          "ko": "선루프가 열렸습니다",
+          "ar": "فُتحت فتحة السقف"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
         "id": "alarm_generic.at_work_true",
         "title": {
           "en": "The vehicle has arrived at work",
@@ -4813,6 +4863,31 @@
           "ru": "Крышка кузова !{{closed|open}}",
           "ko": "적재함 커버가 !{{closed|open}}",
           "ar": "غطاء صندوق الحمولة !{{closed|open}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "windowcoverings_closed.sunroof",
+        "title": {
+          "en": "The sunroof is !{{closed|open}}",
+          "nl": "Het zonnedak is !{{gesloten|open}}",
+          "da": "Soltaget er !{{lukket|åbent}}",
+          "de": "Das Schiebedach ist !{{geschlossen|offen}}",
+          "es": "El techo solar está !{{cerrado|abierto}}",
+          "fr": "Le toit ouvrant est !{{fermé|ouvert}}",
+          "it": "Il tettuccio è !{{chiuso|aperto}}",
+          "no": "Soltaket er !{{lukket|åpent}}",
+          "sv": "Soltaket är !{{stängt|öppet}}",
+          "pl": "Szyberdach jest !{{zamknięty|otwarty}}",
+          "ru": "Люк !{{закрыт|открыт}}",
+          "ko": "선루프가 !{{닫힘|열림}} 상태입니다",
+          "ar": "فتحة السقف !{{مغلقة|مفتوحة}}"
         },
         "args": [
           {
@@ -7818,6 +7893,84 @@
             "filter": "driver_id=vehicle"
           }
         ]
+      },
+      {
+        "id": "windowcoverings_closed.sunroof_close",
+        "title": {
+          "en": "Close sunroof",
+          "nl": "Zonnedak sluiten",
+          "da": "Luk soltag",
+          "de": "Schiebedach schließen",
+          "es": "Cerrar el techo solar",
+          "fr": "Fermer le toit ouvrant",
+          "it": "Chiudi il tettuccio",
+          "no": "Lukk soltaket",
+          "sv": "Stäng soltaket",
+          "pl": "Zamknij szyberdach",
+          "ru": "Закрыть люк",
+          "ko": "선루프 닫기",
+          "ar": "أغلق فتحة السقف"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "windowcoverings_closed.sunroof_open",
+        "title": {
+          "en": "Open sunroof",
+          "nl": "Zonnedak openen",
+          "da": "Åbn soltag",
+          "de": "Schiebedach öffnen",
+          "es": "Abrir el techo solar",
+          "fr": "Ouvrir le toit ouvrant",
+          "it": "Apri il tettuccio",
+          "no": "Åpne soltaket",
+          "sv": "Öppna soltaket",
+          "pl": "Otwórz szyberdach",
+          "ru": "Открыть люк",
+          "ko": "선루프 열기",
+          "ar": "افتح فتحة السقف"
+        },
+        "hint": {
+          "en": "Vents the sunroof rather than fully retracting it - the only \"open\" endpoint Tesla's API exposes."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "windowcoverings_closed.sunroof_toggle",
+        "title": {
+          "en": "Toggle sunroof",
+          "nl": "Wissel het zonnedak",
+          "da": "Skift soltag",
+          "de": "Schiebedach umschalten",
+          "es": "Cambiar el techo solar",
+          "fr": "Basculer le toit ouvrant",
+          "it": "Attiva/disattiva il tettuccio",
+          "no": "Veksle soltaket",
+          "sv": "Växla soltaket",
+          "pl": "Przełącz szyberdach",
+          "ru": "Переключить люк",
+          "ko": "선루프 전환",
+          "ar": "بدّل فتحة السقف"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
       }
     ]
   },
@@ -8433,6 +8586,7 @@
         "alarm_generic.rear_defrost",
         "windowcoverings_closed.tonneau",
         "windowcoverings_set.tonneau",
+        "windowcoverings_closed.sunroof",
         "tpms_warning",
         "alarm_presence",
         "alarm_generic.at_work",
@@ -9372,6 +9526,24 @@
             "ar": "موضع غطاء صندوق الحمولة"
           },
           "setable": false
+        },
+        "windowcoverings_closed.sunroof": {
+          "title": {
+            "en": "Sunroof",
+            "nl": "Zonnedak",
+            "da": "Soltag",
+            "de": "Schiebedach",
+            "es": "Techo Solar",
+            "fr": "Toit Ouvrant",
+            "it": "Tettuccio Apribile",
+            "no": "Soltak",
+            "sv": "Soltak",
+            "pl": "Szyberdach",
+            "ru": "Люк",
+            "ko": "선루프",
+            "ar": "فتحة السقف"
+          },
+          "setable": true
         },
         "alarm_presence": {
           "title": {

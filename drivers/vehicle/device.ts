@@ -949,6 +949,18 @@ export default class VehicleDevice extends TeslemetryDevice {
       },
     );
 
+    // Legacy S/X sunroof: sunRoofControl only supports vent/close/stop
+    // endpoints, not an arbitrary position, so this is the sole settable
+    // sunroof control (no continuous position telemetry exists to read back).
+    this.registerCapabilityListener(
+      "windowcoverings_closed.sunroof",
+      async (value) => {
+        return this.vehicleAction(
+          this.vehicle.api.sunRoofControl(value ? "close" : "vent"),
+        );
+      },
+    );
+
     // Buttons
     this.registerCapabilityListener("button.flash", async () => {
       return this.vehicleAction(this.vehicle.api.flashLights());

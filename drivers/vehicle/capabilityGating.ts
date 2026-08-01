@@ -21,6 +21,7 @@ const METADATA_GATED_CAPABILITIES = new Set([
   "seat_heater.rear_left",
   "seat_heater.rear_right",
   "seat_heater.rear_center",
+  "windowcoverings_closed.sunroof",
 ]);
 
 /**
@@ -48,6 +49,9 @@ export function isCapabilitySupported(
   }
   if (capability === "seat_heater.rear_center") {
     return (config?.rear_seat_heaters ?? 0) >= 3;
+  }
+  if (capability === "windowcoverings_closed.sunroof") {
+    return !!config?.sun_roof_installed;
   }
   if (CYBERTRUCK_ONLY_CAPABILITIES.has(capability)) {
     return isCybertruck(vin);
