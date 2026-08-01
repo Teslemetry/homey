@@ -1122,6 +1122,12 @@ export default class VehicleDevice extends TeslemetryDevice {
    * read-only (see resolveAndBindVehicle's setCapabilityOptions call).
    */
   private async setCopTemperatureLimit(value: string): Promise<void> {
+    if (!this.vehicle.metadata.config?.cop_user_set_temp_supported) {
+      throw new Error(
+        "Cabin overheat protection temperature limit is not supported",
+      );
+    }
+
     switch (value) {
       case "low":
         return this.vehicleAction(this.vehicle.api.setCopTemp(0));

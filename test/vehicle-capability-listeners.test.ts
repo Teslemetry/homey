@@ -17,6 +17,7 @@ class FakeVehicleStream extends EventEmitter {
 async function createDeviceStub(
   capabilities: Record<string, unknown> = {},
   cacheData: Record<string, unknown> = {},
+  copUserSetTempSupported: boolean | undefined = true,
 ) {
   const sse = new FakeVehicleStream();
   sse.cache.data = cacheData;
@@ -36,7 +37,13 @@ async function createDeviceStub(
   const vehicle = {
     sse,
     api,
-    metadata: { config: { rhd: false, can_actuate_trunks: false } },
+    metadata: {
+      config: {
+        rhd: false,
+        can_actuate_trunks: false,
+        cop_user_set_temp_supported: copUserSetTempSupported,
+      },
+    },
   };
   const capabilityListeners: Record<string, (value: unknown) => Promise<void>> = {};
 
@@ -151,6 +158,26 @@ test("cop_temperature_limit capability listener throws on an invalid limit", asy
     () => capabilityListeners.cop_temperature_limit("invalid"),
     /Invalid cabin overheat protection temperature limit/,
   );
+});
+
+test("cop_temperature_limit capability listener rejects unsupported vehicles", async () => {
+  const { capabilityListeners, apiCalls } = await createDeviceStub({}, {}, false);
+
+  await assert.rejects(
+    () => capabilityListeners.cop_temperature_limit("low"),
+    /temperature limit is not supported/,
+  );
+  assert.deepEqual(apiCalls, []);
+});
+
+test("cop_temperature_limit flow action rejects when support is absent", async () => {
+  const { stub, apiCalls } = await createDeviceStub({}, {}, undefined);
+
+  await assert.rejects(
+    () => stub.flowSetCopTemperatureLimit("high"),
+    /temperature limit is not supported/,
+  );
+  assert.deepEqual(apiCalls, []);
 });
 
 test("onoff.sentry capability listener calls setSentryMode", async () => {
