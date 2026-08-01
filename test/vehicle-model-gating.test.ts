@@ -22,10 +22,16 @@ const SEAT_FEATURE_CAPABILITIES = [
   "seat_cooler.front_right",
 ];
 
+const SUNROOF_CAPABILITIES = ["windowcoverings_closed.sunroof"];
+
 function createDeviceStub(
   vin: string,
   existingCapabilities: string[],
-  config?: { has_seat_cooling?: boolean; rear_seat_heaters?: number },
+  config?: {
+    has_seat_cooling?: boolean;
+    rear_seat_heaters?: number;
+    sun_roof_installed?: boolean;
+  },
 ) {
   const added: string[] = [];
   const removed: string[] = [];
@@ -45,6 +51,7 @@ function createDeviceStub(
           "measure_battery",
           ...TONNEAU_CAPABILITIES,
           ...SEAT_FEATURE_CAPABILITIES,
+          ...SUNROOF_CAPABILITIES,
         ],
         capabilitiesOptions: {},
       },
@@ -217,6 +224,59 @@ test("ensureCapabilities still filters Cybertruck tonneau capabilities by VIN wh
 
   assert.deepEqual(
     added.filter((cap) => TONNEAU_CAPABILITIES.includes(cap)),
+    [],
+  );
+});
+
+test("ensureCapabilities adds the sunroof capability for a vehicle with sun_roof_installed", async () => {
+  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"], {
+    sun_roof_installed: true,
+  });
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(new Set(added), new Set(SUNROOF_CAPABILITIES));
+});
+
+test("ensureCapabilities does not add the sunroof capability for a vehicle without one", async () => {
+  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"], {
+    sun_roof_installed: false,
+  });
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    added.filter((cap) => SUNROOF_CAPABILITIES.includes(cap)),
+    [],
+  );
+});
+
+test("ensureCapabilities removes the sunroof capability already present on a vehicle without one", async () => {
+  const { stub, removed } = createDeviceStub(
+    MODEL_Y_VIN,
+    ["measure_battery", ...SUNROOF_CAPABILITIES],
+    { sun_roof_installed: false },
+  );
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(new Set(removed), new Set(SUNROOF_CAPABILITIES));
+});
+
+test("ensureCapabilities preserves the sunroof capability (no widening) when vehicle metadata is temporarily absent", async () => {
+  const { stub, added, removed } = createDeviceStub(MODEL_Y_VIN, [
+    "measure_battery",
+    ...SUNROOF_CAPABILITIES,
+  ]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    removed.filter((cap) => SUNROOF_CAPABILITIES.includes(cap)),
+    [],
+  );
+  assert.deepEqual(
+    added.filter((cap) => SUNROOF_CAPABILITIES.includes(cap)),
     [],
   );
 });

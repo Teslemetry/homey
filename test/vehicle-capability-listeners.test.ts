@@ -258,6 +258,17 @@ test("windowcoverings_closed.tonneau capability listener sends the closure comma
   assert.deepEqual(apiCalls, [{ method: "closure", args: [{ tonneau: "open" }] }]);
 });
 
+test("windowcoverings_closed.sunroof capability listener sends the sunRoofControl vent/close endpoint", async () => {
+  const { capabilityListeners, apiCalls } = await createDeviceStub();
+
+  await capabilityListeners["windowcoverings_closed.sunroof"](true);
+  assert.deepEqual(apiCalls, [{ method: "sunRoofControl", args: ["close"] }]);
+
+  apiCalls.length = 0;
+  await capabilityListeners["windowcoverings_closed.sunroof"](false);
+  assert.deepEqual(apiCalls, [{ method: "sunRoofControl", args: ["vent"] }]);
+});
+
 test("windowcoverings_closed capability listener uses the cached Location, defaulting to 0/0 when absent", async () => {
   const { capabilityListeners, apiCalls } = await createDeviceStub();
 
