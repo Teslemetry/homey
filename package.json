@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/build-tesla-fleet-api.mjs && tsc",
+    "build": "tsc",
     "test": "npm run build && node --experimental-loader ./test/support/loader.mjs --test 'test/*.test.ts'",
     "lint": "oxlint .",
     "dev": "homey app run",
@@ -20,9 +20,8 @@
     "size": "du -sh .homeybuild"
   },
   "dependencies": {
-    "@teslemetry/api": "^0.10.0",
-    "source-map-support": "^0.5.21",
-    "tesla-fleet-api": "github:Teslemetry/node-tesla-fleet-api#78f36b7dcd050d04e2841f1e2891026f813d02e2"
+    "@teslemetry/api": "^0.11.0",
+    "source-map-support": "^0.5.21"
   },
   "devDependencies": {
     "@tsconfig/node16": "^16.1.8",

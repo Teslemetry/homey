@@ -5,6 +5,15 @@
 // instance's behavior via configureTeslemetryStub() before triggering a
 // build, so it controls createProducts() timing/outcome and can drive the
 // returned sse EventEmitter directly.
+//
+// battery/device.ts also has a runtime import of getTariffPeriods from this
+// package, so every "@teslemetry/api" import - not just app.js's - resolves
+// here. Re-export the real getTariffPeriods (pure tariff-window math, no
+// network I/O) via a relative file path so the tariff tests still exercise
+// actual behavior instead of a hand-rolled fake; a bare "@teslemetry/api"
+// re-import here would just recurse back into this same redirect.
+export { getTariffPeriods } from "../../node_modules/@teslemetry/api/dist/index.mjs";
+
 let nextFactory = null;
 
 export function configureTeslemetryStub(factory) {
