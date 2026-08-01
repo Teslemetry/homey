@@ -111,7 +111,7 @@ Use the subcapability ID in the flow card ID following the pattern `<capability>
 ID patterns by capability type:
 - **Boolean triggers** (`alarm_generic`, `onoff`): `<cap>.<sub>_true`, `<cap>.<sub>_false`
 - **On/off actions**: `<cap>.<sub>_on`, `<cap>.<sub>_off`, `<cap>.<sub>_toggle`
-- **Other boolean capabilities' own action ids**: Homey auto-wires a manually-defined subcapability action card whenever its id is `<cap>.<sub>_<action>`, where `<action>` is one of the base capability's own `$flow.actions` ids (`node_modules/homey/node_modules/homey-lib/assets/capability/capabilities/<cap>.json`) - not always `on`/`off`. `windowcoverings_closed`'s own actions are `close`/`open`/`toggle`, so its tonneau subcapability actions are `windowcoverings_closed.tonneau_close`/`_open`/`_toggle` (see `VehicleDevice`'s tonneau `registerCapabilityListener`). Check that file before naming a new subcapability action card.
+- **Other boolean capabilities' own action ids**: Homey auto-wires a manually-defined subcapability action card whenever its id is `<cap>.<sub>_<action>`, where `<action>` is one of the base capability's own `$flow.actions` ids (`assets/capability/capabilities/<cap>.json` in the installed `homey-lib` package) - not always `on`/`off`. `windowcoverings_closed`'s own actions are `close`/`open`/`toggle`, so its tonneau subcapability actions are `windowcoverings_closed.tonneau_close`/`_open`/`_toggle` (see `VehicleDevice`'s tonneau `registerCapabilityListener`). Check that file before naming a new subcapability action card.
 
 ### Flow Card Device Filters
 
