@@ -8399,6 +8399,8 @@
         "speaker_position",
         "volume_set",
         "volume_mute",
+        "volume_up",
+        "volume_down",
         "measure_pressure.fl",
         "measure_pressure.fr",
         "measure_pressure.rl",

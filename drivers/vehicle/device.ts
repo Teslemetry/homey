@@ -117,8 +117,10 @@ const ACTIVE_CHARGE_STATES = new Set<SseData["data"]["DetailedChargeState"]>([
 export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
   private volumeMax: number = 10.333;
+  /** Tesla's default step until MediaAudioVolumeIncrement is reported. */
+  private volumeIncrement: number = 0.333;
   private muted: boolean = false;
-  private lastVolume: number = 0.5;
+  private lastVolume: number = 0.5 * 10.333;
 
   /**
    * The last DetailedChargeState signal value. Not exposed as a capability -
@@ -675,10 +677,9 @@ export default class VehicleDevice extends TeslemetryDevice {
     // Media Volume
     this.onSignal("MediaAudioVolume", (value) => {
       if (value !== undefined && value !== null) {
-        const normalizedVolume = value / this.volumeMax;
-        this.lastVolume = normalizedVolume;
+        this.lastVolume = value;
         if (!this.muted) {
-          this.update("volume_set", normalizedVolume);
+          this.update("volume_set", value / this.volumeMax);
         }
       }
     });
@@ -686,6 +687,12 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.onSignal("MediaAudioVolumeMax", (value) => {
       if (value !== undefined && value !== null) {
         this.volumeMax = value;
+      }
+    });
+
+    this.onSignal("MediaAudioVolumeIncrement", (value) => {
+      if (value !== undefined && value !== null) {
+        this.volumeIncrement = value;
       }
     });
 
@@ -988,6 +995,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.registerCapabilityListener("volume_set", async (value: number) => {
       this.muted = false;
       const volume = value * this.volumeMax;
+      this.lastVolume = volume;
       return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
     });
 
@@ -1000,8 +1008,29 @@ export default class VehicleDevice extends TeslemetryDevice {
         return this.vehicleAction(this.vehicle.api.adjustVolume(0));
       }
       // Unmute: restore last volume
-      const volume = this.lastVolume * this.volumeMax;
-      this.update("volume_set", this.lastVolume);
+      const volume = this.lastVolume;
+      this.update("volume_set", volume / this.volumeMax);
+      return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
+    });
+
+    // Media Volume Step (relative, using Tesla's own reported increment)
+    this.registerCapabilityListener("volume_up", async () => {
+      this.muted = false;
+      const volume = Math.min(
+        this.volumeMax,
+        this.lastVolume + this.volumeIncrement,
+      );
+      this.lastVolume = volume;
+      return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
+    });
+
+    this.registerCapabilityListener("volume_down", async () => {
+      this.muted = false;
+      const volume = Math.max(
+        0,
+        this.lastVolume - this.volumeIncrement,
+      );
+      this.lastVolume = volume;
       return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
     });
   }
