@@ -18,7 +18,7 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
 const homeyBuildPath = path.join(repoRoot, ".homeybuild");
-const loaderPath = path.join(repoRoot, "test", "support", "loader.mjs");
+const loaderPath = path.join(repoRoot, "test", "support", "packaged-build-loader.mjs");
 
 execFileSync("npx", ["homey", "app", "build"], { cwd: repoRoot, stdio: "inherit" });
 
