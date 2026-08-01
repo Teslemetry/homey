@@ -426,8 +426,8 @@ to be safe.
 
 Homey does not reliably auto-fire trigger cards for this app's capabilities,
 so every trigger card is fired explicitly from device code - always guarded
-by comparing the old value to the new one, never firing on the first signal
-received (no baseline to compare against) or on a repeated identical value.
+by comparing the old value to the new one, never firing when no prior value
+exists (no baseline to compare against) or on a repeated identical value.
 
 - **Simple 1:1 capability-changed cards** (`<capability>_changed`, one card
   per capability, token name matches the capability): add the capability to
@@ -435,8 +435,9 @@ received (no baseline to compare against) or on a repeated identical value.
   automatically whenever `setCapabilityValue` actually changes the value from
   a known prior value - it compares against the *persisted* capability value
   (`getCapabilityValue()`, which Homey retains across an app restart) and
-  requires that prior value to be present, so the first reading after a
-  restart or a fresh device pairing only sets the baseline and never fires.
+  requires that prior value to be present, so a fresh device's first reading
+  only sets the baseline and never fires. After an app restart, the persisted
+  value remains the baseline, so only a genuine change fires the trigger.
   Numeric-token cards must also be listed in
   `NUMERIC_CHANGE_TRIGGER_CAPABILITIES`; `update()` still writes the capability
   value but suppresses the Flow trigger unless the new token is a finite

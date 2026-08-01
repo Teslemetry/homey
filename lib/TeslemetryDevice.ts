@@ -249,9 +249,8 @@ export default class TeslemetryDevice extends Homey.Device {
     );
     // getCapabilityValue reads Homey's own persisted value, which survives
     // an app restart - a null/undefined previousValue means no genuine prior
-    // value exists yet (fresh device or nothing received before this app
-    // instance's first write), so that first write must only set a baseline,
-    // never fire the change trigger.
+    // value exists yet (for example, on a fresh device), so that first write
+    // must only set a baseline, never fire the change trigger.
     const previousValue = hasChangeTrigger
       ? this.getCapabilityValue(capability)
       : undefined;
