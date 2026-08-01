@@ -432,7 +432,11 @@ received (no baseline to compare against) or on a repeated identical value.
 - **Simple 1:1 capability-changed cards** (`<capability>_changed`, one card
   per capability, token name matches the capability): add the capability to
   `TeslemetryDevice.CHANGE_TRIGGER_CAPABILITIES`. `update()` then fires it
-  automatically whenever `setCapabilityValue` actually changes the value.
+  automatically whenever `setCapabilityValue` actually changes the value from
+  a known prior value - it compares against the *persisted* capability value
+  (`getCapabilityValue()`, which Homey retains across an app restart) and
+  requires that prior value to be present, so the first reading after a
+  restart or a fresh device pairing only sets the baseline and never fires.
   Numeric-token cards must also be listed in
   `NUMERIC_CHANGE_TRIGGER_CAPABILITIES`; `update()` still writes the capability
   value but suppresses the Flow trigger unless the new token is a finite
