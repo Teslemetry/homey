@@ -469,6 +469,30 @@
       }
     },
     {
+      "id": "alarm_generic.pin_to_drive_true",
+      "title": {
+        "en": "PIN to Drive has been enabled"
+      }
+    },
+    {
+      "id": "alarm_generic.pin_to_drive_false",
+      "title": {
+        "en": "PIN to Drive has been disabled"
+      }
+    },
+    {
+      "id": "alarm_generic.valet_mode_true",
+      "title": {
+        "en": "Valet Mode has been enabled"
+      }
+    },
+    {
+      "id": "alarm_generic.valet_mode_false",
+      "title": {
+        "en": "Valet Mode has been disabled"
+      }
+    },
+    {
       "id": "tpms_warning_changed",
       "title": {
         "en": "The tire pressure warning level has changed"
@@ -702,6 +726,18 @@
         "ru": "Автомобиль !{{на работе|не на работе}}",
         "ko": "차량이 !{{직장에 있음|직장에 없음}}",
         "ar": "المركبة !{{في العمل|ليست في العمل}}"
+      }
+    },
+    {
+      "id": "alarm_generic.pin_to_drive",
+      "title": {
+        "en": "PIN to Drive is !{{enabled|disabled}}"
+      }
+    },
+    {
+      "id": "alarm_generic.valet_mode",
+      "title": {
+        "en": "Valet Mode is !{{enabled|disabled}}"
       }
     },
     {
