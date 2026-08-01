@@ -263,6 +263,12 @@ export default class TeslemetryApp extends Homey.App {
         },
       );
 
+    this.homey.flow
+      .getActionCard('install_software_update')
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowInstallSoftwareUpdate();
+      });
+
     // Vehicle seat climate action cards (subcapabilities get no auto-generated
     // Flow cards; the device capability filter Homey applies to driver-scoped
     // cards already hides these for seats a device wasn't paired with).
@@ -398,6 +404,18 @@ export default class TeslemetryApp extends Homey.App {
           return (
             args.device.getCapabilityValue('cop_temperature_limit') ===
             args.limit
+          );
+        },
+      );
+
+    this.homey.flow
+      .getConditionCard('software_update_status_is')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; status: string }) => {
+          if (!args.device) return false;
+          return (
+            args.device.getCapabilityValue('software_update_status') ===
+            args.status
           );
         },
       );

@@ -124,6 +124,7 @@ export default class TeslemetryDevice extends Homey.Device {
     "tpms_warning",
     "cop_mode",
     "cop_temperature_limit",
+    "software_update_status",
   ]);
 
   /**

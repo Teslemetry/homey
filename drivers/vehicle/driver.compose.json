@@ -97,7 +97,9 @@
     "alarm_presence",
     "alarm_generic.at_work",
     "cop_mode",
-    "cop_temperature_limit"
+    "cop_temperature_limit",
+    "software_update_status",
+    "software_update_progress"
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {

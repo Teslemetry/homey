@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>software_update_progress</title>
+    <g id="software_update_progress" stroke="none" fill="none" fill-rule="evenodd">
+        <path d="M32,8 C44.1502645,8 54,17.8497355 54,30 C54,42.1502645 44.1502645,52 32,52 C19.8497355,52 10,42.1502645 10,30 L14,30 C14,39.9411255 22.0588745,48 32,48 C41.9411255,48 50,39.9411255 50,30 C50,20.0588745 41.9411255,12 32,12 C25.8887631,12 20.4958837,15.2078745 17.4497475,20.0397408 L22,20 L22,24 L11,24 L11,13 L15,13 L15,17.5754989 C18.9663116,11.6801709 25.0269721,8 32,8 Z" id="Shape" fill="#000000"></path>
+    </g>
+</svg>

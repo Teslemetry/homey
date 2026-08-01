@@ -1,0 +1,105 @@
+{
+  "title": {
+    "en": "Software update status has changed",
+    "nl": "Softwareupdatestatus is gewijzigd",
+    "da": "Softwareopdateringsstatus er ændret",
+    "de": "Software-Update-Status hat sich geändert",
+    "es": "El estado de la actualización de software ha cambiado",
+    "fr": "L'état de la mise à jour du logiciel a changé",
+    "it": "Lo stato dell'aggiornamento software è cambiato",
+    "no": "Programvareoppdateringsstatus er endret",
+    "sv": "Programvaruuppdateringsstatus har ändrats",
+    "pl": "Status aktualizacji oprogramowania uległ zmianie",
+    "ru": "Статус обновления ПО изменился",
+    "ko": "소프트웨어 업데이트 상태가 변경되었습니다",
+    "ar": "تغيرت حالة تحديث البرنامج"
+  },
+  "titleFormatted": {
+    "en": "Software update status has changed on [[device]]",
+    "nl": "Softwareupdatestatus is gewijzigd op [[device]]",
+    "da": "Softwareopdateringsstatus er ændret på [[device]]",
+    "de": "Software-Update-Status hat sich auf [[device]] geändert",
+    "es": "El estado de la actualización de software ha cambiado en [[device]]",
+    "fr": "L'état de la mise à jour du logiciel a changé sur [[device]]",
+    "it": "Lo stato dell'aggiornamento software è cambiato su [[device]]",
+    "no": "Programvareoppdateringsstatus er endret på [[device]]",
+    "sv": "Programvaruuppdateringsstatus har ändrats på [[device]]",
+    "pl": "Status aktualizacji oprogramowania uległ zmianie na [[device]]",
+    "ru": "Статус обновления ПО изменился на [[device]]",
+    "ko": "[[device]]의 소프트웨어 업데이트 상태가 변경되었습니다",
+    "ar": "تغيرت حالة تحديث البرنامج على [[device]]"
+  },
+  "hint": {
+    "en": "This card triggers when a software update becomes available, is scheduled, starts downloading/installing, or returns to idle.",
+    "nl": "Deze kaart activeert wanneer een softwareupdate beschikbaar komt, wordt gepland, begint te downloaden/installeren, of terugkeert naar inactief.",
+    "da": "Dette kort udløses, når en softwareopdatering bliver tilgængelig, planlægges, begynder at downloade/installere, eller vender tilbage til inaktiv.",
+    "de": "Diese Karte wird ausgelöst, wenn ein Software-Update verfügbar wird, geplant wird, mit dem Herunterladen/Installieren beginnt oder wieder inaktiv wird.",
+    "es": "Esta tarjeta se activa cuando una actualización de software está disponible, se programa, comienza a descargarse/instalarse o vuelve a estar inactiva.",
+    "fr": "Cette carte se déclenche lorsqu'une mise à jour logicielle devient disponible, est programmée, commence à se télécharger/installer ou revient à l'état inactif.",
+    "it": "Questa scheda si attiva quando un aggiornamento software diventa disponibile, viene pianificato, inizia il download/l'installazione o torna inattivo.",
+    "no": "Dette kortet utløses når en programvareoppdatering blir tilgjengelig, planlegges, begynner å laste ned/installere, eller går tilbake til inaktiv.",
+    "sv": "Detta kort utlöses när en programvaruuppdatering blir tillgänglig, schemaläggs, börjar laddas ner/installeras eller återgår till inaktiv.",
+    "pl": "Ta karta uruchamia się, gdy aktualizacja oprogramowania staje się dostępna, zostaje zaplanowana, rozpoczyna pobieranie/instalację lub wraca do stanu bezczynności.",
+    "ru": "Эта карта срабатывает, когда обновление ПО становится доступным, запланировано, начинает загружаться/устанавливаться или возвращается в состояние ожидания.",
+    "ko": "소프트웨어 업데이트가 사용 가능해지거나, 예약되거나, 다운로드/설치가 시작되거나, 대기 상태로 돌아갈 때 이 카드가 트리거됩니다.",
+    "ar": "تتفاعل هذه البطاقة عندما يصبح تحديث البرنامج متاحًا، أو يتم جدولته، أو يبدأ التنزيل/التثبيت، أو يعود إلى الخمول."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=software_update_status",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "software_update_status",
+      "type": "string",
+      "title": {
+        "en": "Status",
+        "nl": "Status",
+        "da": "Status",
+        "de": "Status",
+        "es": "Estado",
+        "fr": "État",
+        "it": "Stato",
+        "no": "Status",
+        "sv": "Status",
+        "pl": "Status",
+        "ru": "Статус",
+        "ko": "상태",
+        "ar": "الحالة"
+      },
+      "example": {
+        "en": "available",
+        "nl": "beschikbaar",
+        "da": "tilgængelig",
+        "de": "verfügbar",
+        "es": "disponible",
+        "fr": "disponible",
+        "it": "disponibile",
+        "no": "tilgjengelig",
+        "sv": "tillgänglig",
+        "pl": "dostępna",
+        "ru": "доступно",
+        "ko": "사용 가능",
+        "ar": "متاح"
+      }
+    }
+  ]
+}
