@@ -67,6 +67,39 @@ test("update() does not fire the trigger card when the value is unchanged", asyn
   assert.deepEqual(triggerCalls, []);
 });
 
+test("update() does not fire the trigger card on the first-ever reading (no prior value)", async () => {
+  const { stub, triggerCalls } = createDeviceStub({ backup_reserve: null });
+
+  await stub.update("backup_reserve", 0.35);
+
+  assert.equal(stub.getCapabilityValue("backup_reserve"), 0.35);
+  assert.deepEqual(triggerCalls, []);
+});
+
+test("update() does not fire the trigger card when the persisted value is unchanged across a restart", async () => {
+  // getCapabilityValue reads Homey's persisted value, which survives an app
+  // restart - an in-memory baseline would instead read undefined here and
+  // spuriously treat this as a change.
+  const { stub, triggerCalls } = createDeviceStub({ operation_mode: "backup" });
+
+  await stub.update("operation_mode", "backup");
+
+  assert.deepEqual(triggerCalls, []);
+});
+
+test("update() fires the trigger card when a persisted prior value genuinely changes", async () => {
+  const { stub, triggerCalls } = createDeviceStub({ operation_mode: "backup" });
+
+  await stub.update("operation_mode", "self_consumption");
+
+  assert.deepEqual(triggerCalls, [
+    {
+      cardId: "operation_mode_changed",
+      tokens: { operation_mode: "self_consumption" },
+    },
+  ]);
+});
+
 test("update() fires steering_wheel_heater_changed with a string token", async () => {
   const { stub, triggerCalls } = createDeviceStub({
     steering_wheel_heater: "0",

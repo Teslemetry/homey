@@ -61,7 +61,7 @@ const flushMicrotasks = () => new Promise((resolve) => setImmediate(resolve));
 
 test("ScheduledChargingMode maps onto scheduled_charging_mode and fires its changed trigger", async () => {
   const { stub, sse, capabilities, triggeredCards } = createDeviceStub({
-    scheduled_charging_mode: undefined,
+    scheduled_charging_mode: "off",
   });
   await stub.onInit();
 
@@ -79,6 +79,23 @@ test("ScheduledChargingMode maps onto scheduled_charging_mode and fires its chan
   sse.data.emit("ScheduledChargingMode", sse.cache.data.ScheduledChargingMode);
   await flushMicrotasks();
   assert.equal(capabilities["scheduled_charging_mode"], "off");
+});
+
+test("ScheduledChargingMode does not fire its changed trigger on the first-ever reading", async () => {
+  const { stub, sse, capabilities, triggeredCards } = createDeviceStub({
+    scheduled_charging_mode: undefined,
+  });
+  await stub.onInit();
+
+  sse.cache.data.ScheduledChargingMode = "ScheduledChargingModeDepartBy";
+  sse.data.emit("ScheduledChargingMode", sse.cache.data.ScheduledChargingMode);
+  await flushMicrotasks();
+
+  assert.equal(capabilities["scheduled_charging_mode"], "depart_by");
+  assert.deepEqual(
+    triggeredCards.filter((c) => c === "scheduled_charging_mode_changed"),
+    [],
+  );
 });
 
 test("an unrecognized ScheduledChargingMode value is not written", async () => {
