@@ -10,6 +10,7 @@ npm test                # Build, then run test/*.test.ts with Node's built-in te
 npm run lint            # oxlint check (see .oxlintrc.json)
 npm run dev             # Run app on local Homey
 npm run app:validate    # Validate app (required before commit)
+npm run smoke:packaged-build  # Verify every driver actually loads out of a real .homeybuild bundle
 ```
 
 Always run `npm run app:validate` before committing changes.
@@ -33,6 +34,18 @@ class would issue live network calls. Each test calls the stub's
 `configureTeslemetryStub(factory)` before triggering a build to control
 `createProducts()` timing/outcome and drive the returned `sse` EventEmitter
 directly - see `test/app-connection-lifecycle.test.ts`.
+
+`npm test`'s module resolution (Node's own `node_modules` upward search) always
+falls back to this repo's own root `node_modules`, which always has every
+dependency built - so it can't catch a dependency missing specifically from
+the *packaged* `.homeybuild/` bundle Homey actually uploads and runs on-device.
+`npm run smoke:packaged-build` (`scripts/smoke-test-packaged-build.mjs`) closes
+that gap: it runs the real `homey app build`, copies the result to an isolated
+directory with no such ancestor `node_modules` to fall back to, and imports
+every compiled `app.js`/`api.js`/`driver.js`/`device.js` from there (same
+`homey`/`@teslemetry/api` stubs as the unit tests) to confirm each one still
+resolves every import with nothing else available. See "tesla-fleet-api is
+pinned to a commit SHA" below for the exact bug class this exists to catch.
 
 ## Architecture
 
@@ -232,6 +245,8 @@ The `energy_totals` SSE event carries per-type daily totals (midnight to now, al
 
 Unlike the cumulative meters above, each `*_today` capability is a plain (non-`cumulative`) gauge with `insights: true` that should read 0 from local midnight until the day's first activity. `energy_totals` only pushes when a value actually changes, so once the underlying activity stops for a stretch the event goes silent and the last-received total just sits there - it does not get zeroed by a late-night/quiet-period event. Every device with a `*_today` capability compensates with its own timer, scheduled via `msUntilNextLocalMidnight()` (`lib/localMidnight.ts`) off the site's `installation_time_zone` (read from `site_info`/`siteInfoDocument`, the same source `PowerwallDevice` trusts for tariff resolution below - not `this.homey.clock.getTimezone()`, which is the Homey box's own location and may differ from the site's), that force-resets the capability(ies) at the actual local-midnight boundary and reschedules itself for the next one. `GatewayDevice`/`PowerwallDevice` each hand-roll their own copy of this timer (matching this codebase's existing per-device duplication convention rather than a shared base-class helper), resetting every `*_today` capability on that device in one callback. See `test/solar-generation-today.test.ts` for the time-controlled repro pattern (a stubbed `now()` plus a fake `homey.setTimeout`/`clearTimeout` capturing the scheduled callback, so the boundary crossing is asserted without waiting real time), `test/gateway-live-status.test.ts`/`test/battery-site-info.test.ts` for the same pattern applied to Gateway/Powerwall, and `test/local-midnight.test.ts` for the boundary-math unit tests.
 
+Every recurring `homey.setTimeout` reschedule body (this one and `PowerwallDevice`'s `tariffTimer` below) must wrap its own callback in `try`/`catch`, exactly like the guarded cached-SSE-replay handlers elsewhere in this file - a raw `setTimeout` callback has no caller to catch a synchronous throw, so an unguarded one crashes the whole app process on its next scheduled fire, not just this device. The three midnight-reset test files above verify that callback failures do not escape uncaught.
+
 These gauges exist to mirror the Home Assistant teslemetry integration's default-enabled energy-history sensors (`ENERGY_HISTORY_FIELDS` in `home-assistant/core`'s `homeassistant/components/teslemetry/const.py`, filtered to `entity_registry_enabled_default` in `sensor.py`: every `total_*`-prefixed key plus `grid_energy_imported`) as Homey Insights, driven from the same server-side `energy_totals` SSE push already consumed for the cumulative meters above - not HA's separate REST-polled history coordinator. The exact `@teslemetry/api` `SseEnergyTotals.totals` field names (`node_modules/@teslemetry/api/dist/index.d.mts`, `ENERGY_HISTORY_TOTAL_FIELDS`) mirror HA's list field-for-field:
 
 | Capability | Device | `energy_totals` field | HA entity translation key (`strings.json`) |
@@ -286,6 +301,18 @@ in `onUninit` via the same `pollingCleanup` array every other listener uses.
   (invoked from the `build` npm script, ahead of `tsc`) compiles it explicitly
   as an ordinary build step, which runs regardless of `--ignore-scripts`; it's a
   no-op once `dist/` already exists (e.g. under a normal `npm install`).
+  This alone is not sufficient, though: Homey CLI's own `preprocess()`
+  (`node_modules/homey/lib/App.js`, the shared pipeline behind `build`/
+  `validate`/`run`/`publish`) copies production `node_modules` into
+  `.homeybuild/node_modules` *before* it runs the project's `build` npm
+  script - so that copy of `tesla-fleet-api` is taken with no `dist/` yet,
+  and building `dist/` afterward into the *root* `node_modules/tesla-fleet-api`
+  never reaches the already-copied `.homeybuild` bundle, which is what
+  actually ships. `scripts/build-tesla-fleet-api.mjs` also mirrors its
+  freshly-built `dist/` into `.homeybuild/node_modules/tesla-fleet-api/dist`
+  when that copy already exists. Use `npm run smoke:packaged-build` to verify
+  the published bundle contains the dependency and every compiled entry point
+  resolves in isolation.
 - `tesla-fleet-api`'s public entry point does not re-export the `TariffContentV2`
   input type `getTariffPeriods` requires, so it's imported from the package's
   internal `tesla-fleet-api/dist/types/site_info.js` path instead; `@teslemetry/api`

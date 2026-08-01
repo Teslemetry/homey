@@ -57,12 +57,19 @@ export default class GatewayDevice extends TeslemetryDevice {
       this.homey.clearTimeout(this.midnightTimer);
     }
     const delay = msUntilNextLocalMidnight(this.now(), timeZone);
-    this.midnightTimer = this.homey.setTimeout(() => {
-      for (const capability of TODAY_TOTAL_CAPABILITIES) {
-        this.update(capability, 0);
+    const midnightTimer = this.homey.setTimeout(async () => {
+      try {
+        for (const capability of TODAY_TOTAL_CAPABILITIES) {
+          await this.update(capability, 0);
+        }
+        if (this.midnightTimer === midnightTimer && this.isLive()) {
+          this.scheduleMidnightReset(timeZone);
+        }
+      } catch (e) {
+        this.error("Failed to reset Gateway midnight totals", e);
       }
-      this.scheduleMidnightReset(timeZone);
     }, delay);
+    this.midnightTimer = midnightTimer;
   }
 
   async onInit() {
@@ -195,6 +202,7 @@ export default class GatewayDevice extends TeslemetryDevice {
       () => {
         if (this.midnightTimer !== undefined) {
           this.homey.clearTimeout(this.midnightTimer);
+          this.midnightTimer = undefined;
         }
       },
     ];

@@ -61,7 +61,7 @@ function createDeviceStub(
   const capabilityOptions: Array<{ capability: string; options: unknown }> = [];
   const store: Record<string, unknown> = {};
   const capabilityListeners: Record<string, (value: unknown) => Promise<void>> = {};
-  const timers: Array<{ id: number; callback: () => void; delay: number }> = [];
+  const timers: Array<{ id: number; callback: () => void | Promise<void>; delay: number }> = [];
   let nextTimerId = 1;
   let currentNow = opts.now ?? new Date("2026-07-30T12:00:00Z");
 
@@ -72,7 +72,7 @@ function createDeviceStub(
       flow: {
         getDeviceTriggerCard: () => ({ trigger: async () => {} }),
       },
-      setTimeout: (callback: () => void, delay: number) => {
+      setTimeout: (callback: () => void | Promise<void>, delay: number) => {
         const timerId = nextTimerId++;
         timers.push({ id: timerId, callback, delay });
         return timerId;
@@ -315,11 +315,27 @@ test("PowerwallDevice's midnight reset zeroes battery_charged_today/battery_disc
   assert.ok(midnightTimer);
 
   setNow(new Date("2026-07-31T00:00:05-04:00"));
-  midnightTimer!.callback();
+  await midnightTimer!.callback();
 
   assert.equal(capabilities["battery_charged_today"], 0);
   assert.equal(capabilities["battery_discharged_today"], 0);
   assert.equal(timers.length, timersBeforeReset, "next midnight reset rescheduled");
+});
+
+test("an async rejection inside the midnight reset timer callback does not escape uncaught", async () => {
+  const { stub, timers } = createDeviceStub(
+    { installation_time_zone: "America/New_York" },
+    { now: new Date("2026-07-30T23:59:00-04:00") },
+  );
+  await stub.onInit();
+
+  const midnightTimer = timers.find((timer) => timer.delay === 60_000);
+  assert.ok(midnightTimer);
+
+  stub.update = () =>
+    Promise.reject(new Error("simulated failure during midnight reset"));
+
+  await assert.doesNotReject(() => midnightTimer!.callback());
 });
 
 test("PowerwallDevice's allow_export command listener calls gridImportExport with the mode and inverted onoff.charge_grid", async () => {
