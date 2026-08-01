@@ -58,5 +58,8 @@
   },
   "1.0.7": {
     "en": "Fix Powerwall device that could stop updating and stop accepting commands after losing its energy-site link, now with a repair that preserves the device. Fix Solar generated today so it resets at local midnight."
+  },
+  "1.0.8": {
+    "en": "New: vehicle at-home/at-work presence with arrival and departure triggers, and daily energy Insights (solar, grid import/export, home usage, battery charge/discharge). Improved energy-site device handling across app updates, and fixed several stability issues including tariff rate updates and device recovery."
   }
 }
