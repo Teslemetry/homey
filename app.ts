@@ -506,6 +506,11 @@ export default class TeslemetryApp extends Homey.App {
     this.registerThresholdCards('solar_power', 'measure_power', 'watts');
     this.registerThresholdCards('grid_power', 'measure_power', 'watts');
     this.registerThresholdCards('load_power', 'measure_power.load', 'watts');
+    this.registerThresholdCards(
+      'generator_power',
+      'measure_power.generator',
+      'watts',
+    );
     this.registerThresholdCards('battery_power', 'measure_power', 'watts');
     this.registerThresholdCards('grid_buy_rate', 'grid_buy_rate', 'rate');
     this.registerThresholdCards('grid_sell_rate', 'grid_sell_rate', 'rate');
