@@ -26,6 +26,7 @@
     "measure_power",
     "operation_mode",
     "backup_reserve",
+    "off_grid_vehicle_charging_reserve",
     "onoff.charge_grid",
     "allow_export",
     "onoff.storm",

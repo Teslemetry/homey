@@ -1,0 +1,31 @@
+{
+  "title": {
+    "en": "Set off-grid vehicle charging reserve"
+  },
+  "titleFormatted": {
+    "en": "Set [[device]] off-grid vehicle charging reserve to [[percentage]]%"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=off_grid_vehicle_charging_reserve",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "range",
+      "name": "percentage",
+      "title": {
+        "en": "Percentage"
+      },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "label": "%",
+      "labelMultiplier": 1,
+      "labelDecimals": 0
+    }
+  ]
+}

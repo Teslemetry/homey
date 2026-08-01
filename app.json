@@ -847,6 +847,40 @@
       },
       {
         "title": {
+          "en": "The off-grid vehicle charging reserve has changed"
+        },
+        "titleFormatted": {
+          "en": "The off-grid vehicle charging reserve has changed on [[device]]"
+        },
+        "hint": {
+          "en": "This card triggers when the off-grid vehicle charging reserve percentage changes."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=off_grid_vehicle_charging_reserve",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "off_grid_vehicle_charging_reserve",
+            "type": "number",
+            "title": {
+              "en": "Reserve"
+            },
+            "example": {
+              "en": "20"
+            }
+          }
+        ],
+        "id": "off_grid_vehicle_charging_reserve_changed"
+      },
+      {
+        "title": {
           "en": "The operation mode has changed",
           "nl": "De bedieningsmodus is gewijzigd",
           "da": "Driftsindstillingen er ændret",
@@ -5652,6 +5686,38 @@
       },
       {
         "title": {
+          "en": "Set off-grid vehicle charging reserve"
+        },
+        "titleFormatted": {
+          "en": "Set [[device]] off-grid vehicle charging reserve to [[percentage]]%"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=off_grid_vehicle_charging_reserve",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "range",
+            "name": "percentage",
+            "title": {
+              "en": "Percentage"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "labelMultiplier": 1,
+            "labelDecimals": 0
+          }
+        ],
+        "id": "set_off_grid_vehicle_charging_reserve"
+      },
+      {
+        "title": {
           "en": "Set operation mode",
           "nl": "Instelmodus instellen",
           "da": "Indstil driftsmåde",
@@ -6962,6 +7028,7 @@
         "measure_power",
         "operation_mode",
         "backup_reserve",
+        "off_grid_vehicle_charging_reserve",
         "onoff.charge_grid",
         "allow_export",
         "onoff.storm",
@@ -9314,6 +9381,47 @@
       "getable": true,
       "setable": false,
       "uiComponent": "sensor"
+    },
+    "off_grid_vehicle_charging_reserve": {
+      "icon": "/assets/capabilities/backup_reserve.svg",
+      "type": "number",
+      "title": {
+        "en": "Off-Grid Vehicle Charging Reserve",
+        "nl": "Off-Grid Voertuigoplaadreserve",
+        "da": "Off-Grid Køretøjsopladningsreserve",
+        "de": "Off-Grid-Fahrzeugladereserve",
+        "es": "Reserva de Carga de Vehículo Fuera de Red",
+        "fr": "Réserve de Charge de Véhicule Hors Réseau",
+        "it": "Riserva di Ricarica Veicolo Fuori Rete",
+        "no": "Off-Grid Kjøretøyladereserve",
+        "sv": "Off-Grid Fordonsladdningsreserv",
+        "pl": "Rezerwa Ładowania Pojazdu Poza Siecią",
+        "ru": "Резерв Зарядки Автомобиля Вне Сети",
+        "ko": "오프그리드 차량 충전 예비",
+        "ar": "احتياطي شحن المركبة خارج الشبكة"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "slider",
+      "units": {
+        "en": "%",
+        "nl": "%",
+        "da": "%",
+        "de": "%",
+        "es": "%",
+        "fr": "%",
+        "it": "%",
+        "no": "%",
+        "sv": "%",
+        "pl": "%",
+        "ru": "%",
+        "ko": "%",
+        "ar": "%"
+      },
+      "min": 0,
+      "max": 1,
+      "decimals": 2,
+      "step": 0.01
     },
     "operation_mode": {
       "icon": "/assets/capabilities/operation_mode.svg",

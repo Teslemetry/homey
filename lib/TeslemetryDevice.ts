@@ -117,6 +117,7 @@ export default class TeslemetryDevice extends Homey.Device {
   private static readonly CHANGE_TRIGGER_CAPABILITIES = new Set([
     "allow_export",
     "backup_reserve",
+    "off_grid_vehicle_charging_reserve",
     "operation_mode",
     "steering_wheel_heater",
     "grid_buy_rate",
@@ -137,6 +138,7 @@ export default class TeslemetryDevice extends Homey.Device {
    */
   private static readonly NUMERIC_CHANGE_TRIGGER_CAPABILITIES = new Set([
     "backup_reserve",
+    "off_grid_vehicle_charging_reserve",
     "grid_buy_rate",
     "grid_sell_rate",
   ]);

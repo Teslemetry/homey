@@ -363,6 +363,16 @@ export default class TeslemetryApp extends Homey.App {
       );
 
     this.homey.flow
+      .getActionCard('set_off_grid_vehicle_charging_reserve')
+      .registerRunListener(
+        async (args: { device?: PowerwallDevice; percentage: number }) => {
+          await this.requireFlowDevice(
+            args.device,
+          ).flowSetOffGridVehicleChargingReserve(args.percentage);
+        },
+      );
+
+    this.homey.flow
       .getActionCard('set_allow_export')
       .registerRunListener(
         async (args: {

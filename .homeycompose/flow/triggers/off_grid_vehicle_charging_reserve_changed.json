@@ -1,0 +1,33 @@
+{
+  "title": {
+    "en": "The off-grid vehicle charging reserve has changed"
+  },
+  "titleFormatted": {
+    "en": "The off-grid vehicle charging reserve has changed on [[device]]"
+  },
+  "hint": {
+    "en": "This card triggers when the off-grid vehicle charging reserve percentage changes."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=off_grid_vehicle_charging_reserve",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "off_grid_vehicle_charging_reserve",
+      "type": "number",
+      "title": {
+        "en": "Reserve"
+      },
+      "example": {
+        "en": "20"
+      }
+    }
+  ]
+}
