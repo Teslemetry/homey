@@ -342,3 +342,27 @@ test("volume_up/volume_down clamp at the reported max and zero", async () => {
   await capabilityListeners.volume_down();
   assert.deepEqual(apiCalls, [{ method: "adjustVolume", args: [0] }]);
 });
+
+test("volume step retains the absolute volume when the max arrives later", async () => {
+  const { capabilityListeners, apiCalls, sse } = await createDeviceStub();
+
+  sse.data.emit("MediaAudioVolume", 5);
+  sse.data.emit("MediaAudioVolumeMax", 20);
+  sse.data.emit("MediaAudioVolumeIncrement", 1);
+
+  await capabilityListeners.volume_up();
+
+  assert.deepEqual(apiCalls, [{ method: "adjustVolume", args: [6] }]);
+});
+
+test("volume step follows a locally requested absolute volume", async () => {
+  const { capabilityListeners, apiCalls } = await createDeviceStub();
+
+  await capabilityListeners.volume_set(0.25);
+  await capabilityListeners.volume_up();
+
+  assert.deepEqual(apiCalls, [
+    { method: "adjustVolume", args: [0.25 * 10.333] },
+    { method: "adjustVolume", args: [0.25 * 10.333 + 0.333] },
+  ]);
+});
