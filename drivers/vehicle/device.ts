@@ -627,7 +627,36 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("navigation_destination", value ?? ""),
     );
     this.onSignal("MinutesToArrival", (value) =>
-      this.update("minutes_to_arrival", value),
+      this.updateWithThresholdTriggers(
+        "minutes_to_arrival",
+        value,
+        "minutes_to_arrival_above",
+        "minutes_to_arrival_below",
+        "minutes",
+      ),
+    );
+    this.onSignal("MilesToArrival", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("measure_distance.arrival", value * MILES_TO_KILOMETERS);
+      }
+    });
+    this.onSignal("RouteTrafficMinutesDelay", (value) =>
+      this.updateWithThresholdTriggers(
+        "route_traffic_delay",
+        value,
+        "route_traffic_delay_above",
+        "route_traffic_delay_below",
+        "minutes",
+      ),
+    );
+    this.onSignal("ExpectedEnergyPercentAtTripArrival", (value) =>
+      this.updateWithThresholdTriggers(
+        "measure_battery.arrival",
+        value,
+        "energy_at_arrival_above",
+        "energy_at_arrival_below",
+        "percentage",
+      ),
     );
 
     // Presence (native vehicle-reported at-home/at-work, not derived from

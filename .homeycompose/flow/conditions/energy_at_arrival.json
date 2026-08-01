@@ -1,0 +1,31 @@
+{
+  "title": {
+    "en": "Battery at arrival comparison"
+  },
+  "titleFormatted": {
+    "en": "Battery at arrival on [[device]] is above [[percentage]]%"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_battery.arrival",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "range",
+      "name": "percentage",
+      "title": {
+        "en": "Percentage"
+      },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "label": "%",
+      "labelMultiplier": 1,
+      "labelDecimals": 0
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "title": {
+    "en": "Time to arrival drops below"
+  },
+  "titleFormatted": {
+    "en": "Time to arrival on [[device]] drops below [[minutes]] minutes"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=minutes_to_arrival",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "minutes",
+      "title": {
+        "en": "Minutes"
+      },
+      "min": 0,
+      "max": 1440,
+      "step": 1
+    }
+  ],
+  "tokens": [
+    {
+      "name": "minutes",
+      "type": "number",
+      "title": {
+        "en": "Minutes to arrival"
+      },
+      "example": {
+        "en": "12"
+      }
+    }
+  ]
+}

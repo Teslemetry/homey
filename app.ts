@@ -510,6 +510,23 @@ export default class TeslemetryApp extends Homey.App {
     this.registerThresholdCards('grid_buy_rate', 'grid_buy_rate', 'rate');
     this.registerThresholdCards('grid_sell_rate', 'grid_sell_rate', 'rate');
 
+    // Route/ETA threshold cards: same pattern, Vehicle-only.
+    this.registerThresholdCards(
+      'minutes_to_arrival',
+      'minutes_to_arrival',
+      'minutes',
+    );
+    this.registerThresholdCards(
+      'route_traffic_delay',
+      'route_traffic_delay',
+      'minutes',
+    );
+    this.registerThresholdCards(
+      'energy_at_arrival',
+      'measure_battery.arrival',
+      'percentage',
+    );
+
     this.log('Flow card handlers registered');
   }
 
@@ -527,7 +544,7 @@ export default class TeslemetryApp extends Homey.App {
     argName: string,
   ): void {
     type ThresholdArgs = {
-      device?: SolarDevice | GatewayDevice | PowerwallDevice;
+      device?: SolarDevice | GatewayDevice | PowerwallDevice | VehicleDevice;
       [key: string]: unknown;
     };
 

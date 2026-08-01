@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Route traffic delay comparison"
+  },
+  "titleFormatted": {
+    "en": "Route traffic delay on [[device]] is above [[minutes]] minutes"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=route_traffic_delay",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "minutes",
+      "title": {
+        "en": "Minutes"
+      },
+      "min": 0,
+      "max": 180,
+      "step": 1
+    }
+  ]
+}
