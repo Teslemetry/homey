@@ -64,5 +64,8 @@
   },
   "1.0.9": {
     "en": "Fixes Powerwall and Gateway devices not updating and flows not running (a packaging issue that prevented the tariff library from loading), plus a related crash."
+  },
+  "1.0.10": {
+    "en": "Improved reliability: internal dependency cleanup so the app always packages correctly (follow-up to the 1.0.9 Powerwall fix)."
   }
 }
