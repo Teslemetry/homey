@@ -122,6 +122,8 @@ export default class TeslemetryDevice extends Homey.Device {
     "grid_buy_rate",
     "grid_sell_rate",
     "tpms_warning",
+    "cop_mode",
+    "cop_temperature_limit",
   ]);
 
   /**

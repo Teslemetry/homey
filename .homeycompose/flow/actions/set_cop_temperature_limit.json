@@ -1,0 +1,129 @@
+{
+  "title": {
+    "en": "Set cabin overheat protection temperature limit",
+    "nl": "Temperatuurlimiet cabinebeveiliging tegen oververhitting instellen",
+    "da": "Indstil temperaturgrænse for kabine overophedningsbeskyttelse",
+    "de": "Temperaturgrenze für Kabinen-Überhitzungsschutz einstellen",
+    "es": "Configurar límite de temperatura de protección contra sobrecalentamiento",
+    "fr": "Régler la limite de température de protection contre la surchauffe",
+    "it": "Imposta limite di temperatura per la protezione dal surriscaldamento",
+    "no": "Sett temperaturgrense for kabinbeskyttelse mot overoppheting",
+    "sv": "Ställ in temperaturgräns för kupéskydd mot överhettning",
+    "pl": "Ustaw limit temperatury ochrony kabiny przed przegrzaniem",
+    "ru": "Установить температурный предел защиты салона от перегрева",
+    "ko": "캐빈 과열 보호 온도 제한 설정",
+    "ar": "تعيين حد درجة حرارة حماية المقصورة من ارتفاع الحرارة"
+  },
+  "titleFormatted": {
+    "en": "Set [[device]] cabin overheat protection temperature limit to [[limit]]",
+    "nl": "Zet temperatuurlimiet cabinebeveiliging van [[device]] op [[limit]]",
+    "da": "Indstil temperaturgrænse for kabine overophedningsbeskyttelse for [[device]] til [[limit]]",
+    "de": "Temperaturgrenze für Kabinen-Überhitzungsschutz von [[device]] auf [[limit]] einstellen",
+    "es": "Configura el límite de temperatura de protección de [[device]] a [[limit]]",
+    "fr": "Régler la limite de température de protection de [[device]] sur [[limit]]",
+    "it": "Imposta il limite di temperatura per la protezione di [[device]] su [[limit]]",
+    "no": "Sett temperaturgrense for kabinbeskyttelse for [[device]] til [[limit]]",
+    "sv": "Ställ in temperaturgräns för kupéskydd för [[device]] till [[limit]]",
+    "pl": "Ustaw limit temperatury ochrony kabiny urządzenia [[device]] na [[limit]]",
+    "ru": "Установить температурный предел защиты салона [[device]] на [[limit]]",
+    "ko": "[[device]]의 캐빈 과열 보호 온도 제한을 [[limit]]로 설정",
+    "ar": "تعيين حد درجة حرارة حماية المقصورة لـ[[device]] إلى [[limit]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=cop_temperature_limit",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
+      }
+    },
+    {
+      "type": "dropdown",
+      "name": "limit",
+      "title": {
+        "en": "Temperature Limit",
+        "nl": "Temperatuurlimiet",
+        "da": "Temperaturgrænse",
+        "de": "Temperaturgrenze",
+        "es": "Límite de Temperatura",
+        "fr": "Limite de Température",
+        "it": "Limite di Temperatura",
+        "no": "Temperaturgrense",
+        "sv": "Temperaturgräns",
+        "pl": "Limit Temperatury",
+        "ru": "Температурный Предел",
+        "ko": "온도 제한",
+        "ar": "حد درجة الحرارة"
+      },
+      "values": [
+        {
+          "id": "low",
+          "label": {
+            "en": "Low",
+            "nl": "Laag",
+            "da": "Lav",
+            "de": "Niedrig",
+            "es": "Bajo",
+            "fr": "Bas",
+            "it": "Basso",
+            "no": "Lav",
+            "sv": "Låg",
+            "pl": "Niski",
+            "ru": "Низкий",
+            "ko": "낮음",
+            "ar": "منخفض"
+          }
+        },
+        {
+          "id": "medium",
+          "label": {
+            "en": "Medium",
+            "nl": "Gemiddeld",
+            "da": "Middel",
+            "de": "Mittel",
+            "es": "Medio",
+            "fr": "Moyen",
+            "it": "Medio",
+            "no": "Middels",
+            "sv": "Medel",
+            "pl": "Średni",
+            "ru": "Средний",
+            "ko": "중간",
+            "ar": "متوسط"
+          }
+        },
+        {
+          "id": "high",
+          "label": {
+            "en": "High",
+            "nl": "Hoog",
+            "da": "Høj",
+            "de": "Hoch",
+            "es": "Alto",
+            "fr": "Élevé",
+            "it": "Alto",
+            "no": "Høy",
+            "sv": "Hög",
+            "pl": "Wysoki",
+            "ru": "Высокий",
+            "ko": "높음",
+            "ar": "مرتفع"
+          }
+        }
+      ]
+    }
+  ]
+}

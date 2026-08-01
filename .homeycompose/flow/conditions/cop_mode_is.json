@@ -1,0 +1,129 @@
+{
+  "title": {
+    "en": "Cabin overheat protection is",
+    "nl": "Cabinebeveiliging tegen oververhitting is",
+    "da": "Kabine overophedningsbeskyttelse er",
+    "de": "Kabinen-Überhitzungsschutz ist",
+    "es": "La protección contra sobrecalentamiento de la cabina es",
+    "fr": "La protection contre la surchauffe de l'habitacle est",
+    "it": "La protezione dal surriscaldamento dell'abitacolo è",
+    "no": "Kabinbeskyttelse mot overoppheting er",
+    "sv": "Kupéskydd mot överhettning är",
+    "pl": "Ochrona kabiny przed przegrzaniem to",
+    "ru": "Защита салона от перегрева: ",
+    "ko": "캐빈 과열 보호 상태",
+    "ar": "حماية المقصورة من ارتفاع الحرارة هي"
+  },
+  "titleFormatted": {
+    "en": "Cabin overheat protection of [[device]] is [[mode]]",
+    "nl": "Cabinebeveiliging tegen oververhitting van [[device]] is [[mode]]",
+    "da": "Kabine overophedningsbeskyttelse for [[device]] er [[mode]]",
+    "de": "Kabinen-Überhitzungsschutz von [[device]] ist [[mode]]",
+    "es": "La protección contra sobrecalentamiento de [[device]] es [[mode]]",
+    "fr": "La protection contre la surchauffe de [[device]] est [[mode]]",
+    "it": "La protezione dal surriscaldamento di [[device]] è [[mode]]",
+    "no": "Kabinbeskyttelse mot overoppheting for [[device]] er [[mode]]",
+    "sv": "Kupéskydd mot överhettning för [[device]] är [[mode]]",
+    "pl": "Ochrona kabiny przed przegrzaniem urządzenia [[device]] to [[mode]]",
+    "ru": "Защита салона от перегрева [[device]]: [[mode]]",
+    "ko": "[[device]]의 캐빈 과열 보호 상태는 [[mode]]입니다",
+    "ar": "حماية المقصورة من ارتفاع الحرارة لـ[[device]] هي [[mode]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=cop_mode",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    },
+    {
+      "type": "dropdown",
+      "name": "mode",
+      "title": {
+        "en": "Mode",
+        "nl": "Modus",
+        "da": "Tilstand",
+        "de": "Modus",
+        "es": "Modo",
+        "fr": "Mode",
+        "it": "Modalità",
+        "no": "Modus",
+        "sv": "Läge",
+        "pl": "Tryb",
+        "ru": "Режим",
+        "ko": "모드",
+        "ar": "الوضع"
+      },
+      "values": [
+        {
+          "id": "off",
+          "label": {
+            "en": "Off",
+            "nl": "Uit",
+            "da": "Fra",
+            "de": "Aus",
+            "es": "Apagado",
+            "fr": "Éteint",
+            "it": "Spento",
+            "no": "Av",
+            "sv": "Av",
+            "pl": "Wyłączony",
+            "ru": "Выкл.",
+            "ko": "꺼짐",
+            "ar": "إيقاف"
+          }
+        },
+        {
+          "id": "on",
+          "label": {
+            "en": "On",
+            "nl": "Aan",
+            "da": "Til",
+            "de": "An",
+            "es": "Encendido",
+            "fr": "Allumé",
+            "it": "Acceso",
+            "no": "På",
+            "sv": "På",
+            "pl": "Włączony",
+            "ru": "Вкл.",
+            "ko": "켜짐",
+            "ar": "تشغيل"
+          }
+        },
+        {
+          "id": "fan_only",
+          "label": {
+            "en": "Fan Only",
+            "nl": "Alleen Ventilator",
+            "da": "Kun Blæser",
+            "de": "Nur Lüfter",
+            "es": "Solo Ventilador",
+            "fr": "Ventilateur Seulement",
+            "it": "Solo Ventola",
+            "no": "Kun Vifte",
+            "sv": "Endast Fläkt",
+            "pl": "Tylko Wentylator",
+            "ru": "Только Вентилятор",
+            "ko": "팬만",
+            "ar": "المروحة فقط"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "icon": "/assets/capabilities/cop_temperature_limit.svg",
+  "type": "enum",
+  "title": {
+    "en": "Cabin Overheat Protection Temperature Limit",
+    "nl": "Temperatuurlimiet Cabinebeveiliging tegen Oververhitting",
+    "da": "Temperaturgrænse for Kabine Overophedningsbeskyttelse",
+    "de": "Temperaturgrenze für Kabinen-Überhitzungsschutz",
+    "es": "Límite de Temperatura de Protección contra Sobrecalentamiento",
+    "fr": "Limite de Température de Protection contre la Surchauffe",
+    "it": "Limite di Temperatura Protezione dal Surriscaldamento",
+    "no": "Temperaturgrense for Kabinbeskyttelse mot Overoppheting",
+    "sv": "Temperaturgräns för Kupéskydd mot Överhettning",
+    "pl": "Limit Temperatury Ochrony Kabiny przed Przegrzaniem",
+    "ru": "Температурный Предел Защиты Салона от Перегрева",
+    "ko": "캐빈 과열 보호 온도 제한",
+    "ar": "حد درجة حرارة حماية المقصورة من ارتفاع الحرارة"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker",
+  "values": [
+    {
+      "id": "low",
+      "title": {
+        "en": "Low",
+        "nl": "Laag",
+        "da": "Lav",
+        "de": "Niedrig",
+        "es": "Bajo",
+        "fr": "Bas",
+        "it": "Basso",
+        "no": "Lav",
+        "sv": "Låg",
+        "pl": "Niski",
+        "ru": "Низкий",
+        "ko": "낮음",
+        "ar": "منخفض"
+      }
+    },
+    {
+      "id": "medium",
+      "title": {
+        "en": "Medium",
+        "nl": "Gemiddeld",
+        "da": "Middel",
+        "de": "Mittel",
+        "es": "Medio",
+        "fr": "Moyen",
+        "it": "Medio",
+        "no": "Middels",
+        "sv": "Medel",
+        "pl": "Średni",
+        "ru": "Средний",
+        "ko": "중간",
+        "ar": "متوسط"
+      }
+    },
+    {
+      "id": "high",
+      "title": {
+        "en": "High",
+        "nl": "Hoog",
+        "da": "Høj",
+        "de": "Hoch",
+        "es": "Alto",
+        "fr": "Élevé",
+        "it": "Alto",
+        "no": "Høy",
+        "sv": "Hög",
+        "pl": "Wysoki",
+        "ru": "Высокий",
+        "ko": "높음",
+        "ar": "مرتفع"
+      }
+    }
+  ]
+}

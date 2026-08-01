@@ -1,0 +1,105 @@
+{
+  "title": {
+    "en": "Cabin overheat protection has changed",
+    "nl": "Cabinebeveiliging tegen oververhitting is gewijzigd",
+    "da": "Kabine overophedningsbeskyttelse er ændret",
+    "de": "Kabinen-Überhitzungsschutz hat sich geändert",
+    "es": "La protección contra sobrecalentamiento de la cabina ha cambiado",
+    "fr": "La protection contre la surchauffe de l'habitacle a changé",
+    "it": "La protezione dal surriscaldamento dell'abitacolo è cambiata",
+    "no": "Kabinbeskyttelse mot overoppheting er endret",
+    "sv": "Kupéskydd mot överhettning har ändrats",
+    "pl": "Ochrona kabiny przed przegrzaniem uległa zmianie",
+    "ru": "Защита салона от перегрева изменилась",
+    "ko": "캐빈 과열 보호가 변경되었습니다",
+    "ar": "تغيرت حماية المقصورة من ارتفاع الحرارة"
+  },
+  "titleFormatted": {
+    "en": "Cabin overheat protection has changed on [[device]]",
+    "nl": "Cabinebeveiliging tegen oververhitting is gewijzigd op [[device]]",
+    "da": "Kabine overophedningsbeskyttelse er ændret på [[device]]",
+    "de": "Kabinen-Überhitzungsschutz hat sich auf [[device]] geändert",
+    "es": "La protección contra sobrecalentamiento de la cabina ha cambiado en [[device]]",
+    "fr": "La protection contre la surchauffe de l'habitacle a changé sur [[device]]",
+    "it": "La protezione dal surriscaldamento dell'abitacolo è cambiata su [[device]]",
+    "no": "Kabinbeskyttelse mot overoppheting er endret på [[device]]",
+    "sv": "Kupéskydd mot överhettning har ändrats på [[device]]",
+    "pl": "Ochrona kabiny przed przegrzaniem uległa zmianie na [[device]]",
+    "ru": "Защита салона от перегрева изменилась на [[device]]",
+    "ko": "[[device]]의 캐빈 과열 보호가 변경되었습니다",
+    "ar": "تغيرت حماية المقصورة من ارتفاع الحرارة على [[device]]"
+  },
+  "hint": {
+    "en": "This card triggers when cabin overheat protection changes mode.",
+    "nl": "Deze kaart activeert wanneer de modus van cabinebeveiliging tegen oververhitting verandert.",
+    "da": "Dette kort udløses, når kabine overophedningsbeskyttelse skifter tilstand.",
+    "de": "Diese Karte wird ausgelöst, wenn der Kabinen-Überhitzungsschutz den Modus wechselt.",
+    "es": "Esta tarjeta se activa cuando la protección contra sobrecalentamiento de la cabina cambia de modo.",
+    "fr": "Cette carte se déclenche lorsque le mode de la protection contre la surchauffe de l'habitacle change.",
+    "it": "Questa scheda si attiva quando la modalità della protezione dal surriscaldamento dell'abitacolo cambia.",
+    "no": "Dette kortet utløses når kabinbeskyttelse mot overoppheting bytter modus.",
+    "sv": "Detta kort utlöses när kupéskyddet mot överhettning byter läge.",
+    "pl": "Ta karta uruchamia się, gdy zmienia się tryb ochrony kabiny przed przegrzaniem.",
+    "ru": "Эта карта срабатывает при изменении режима защиты салона от перегрева.",
+    "ko": "캐빈 과열 보호 모드가 변경되면 이 카드가 트리거됩니다.",
+    "ar": "تتفاعل هذه البطاقة عندما يتغير وضع حماية المقصورة من ارتفاع الحرارة."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=cop_mode",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "cop_mode",
+      "type": "string",
+      "title": {
+        "en": "Mode",
+        "nl": "Modus",
+        "da": "Tilstand",
+        "de": "Modus",
+        "es": "Modo",
+        "fr": "Mode",
+        "it": "Modalità",
+        "no": "Modus",
+        "sv": "Läge",
+        "pl": "Tryb",
+        "ru": "Режим",
+        "ko": "모드",
+        "ar": "الوضع"
+      },
+      "example": {
+        "en": "On",
+        "nl": "Aan",
+        "da": "Til",
+        "de": "An",
+        "es": "Encendido",
+        "fr": "Allumé",
+        "it": "Acceso",
+        "no": "På",
+        "sv": "På",
+        "pl": "Włączony",
+        "ru": "Вкл.",
+        "ko": "켜짐",
+        "ar": "تشغيل"
+      }
+    }
+  ]
+}

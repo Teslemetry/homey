@@ -1,0 +1,129 @@
+{
+  "title": {
+    "en": "Set cabin overheat protection",
+    "nl": "Cabinebeveiliging tegen oververhitting instellen",
+    "da": "Indstil kabine overophedningsbeskyttelse",
+    "de": "Kabinen-Überhitzungsschutz einstellen",
+    "es": "Configurar protección contra sobrecalentamiento de la cabina",
+    "fr": "Régler la protection contre la surchauffe de l'habitacle",
+    "it": "Imposta protezione dal surriscaldamento dell'abitacolo",
+    "no": "Sett kabinbeskyttelse mot overoppheting",
+    "sv": "Ställ in kupéskydd mot överhettning",
+    "pl": "Ustaw ochronę kabiny przed przegrzaniem",
+    "ru": "Установить защиту салона от перегрева",
+    "ko": "캐빈 과열 보호 설정",
+    "ar": "تعيين حماية المقصورة من ارتفاع الحرارة"
+  },
+  "titleFormatted": {
+    "en": "Set [[device]] cabin overheat protection to [[mode]]",
+    "nl": "Zet cabinebeveiliging tegen oververhitting van [[device]] op [[mode]]",
+    "da": "Indstil kabine overophedningsbeskyttelse for [[device]] til [[mode]]",
+    "de": "Kabinen-Überhitzungsschutz von [[device]] auf [[mode]] einstellen",
+    "es": "Configura la protección contra sobrecalentamiento de [[device]] a [[mode]]",
+    "fr": "Régler la protection contre la surchauffe de [[device]] sur [[mode]]",
+    "it": "Imposta la protezione dal surriscaldamento di [[device]] su [[mode]]",
+    "no": "Sett kabinbeskyttelse mot overoppheting for [[device]] til [[mode]]",
+    "sv": "Ställ in kupéskydd mot överhettning för [[device]] till [[mode]]",
+    "pl": "Ustaw ochronę kabiny przed przegrzaniem urządzenia [[device]] na [[mode]]",
+    "ru": "Установить защиту салона от перегрева [[device]] на [[mode]]",
+    "ko": "[[device]]의 캐빈 과열 보호를 [[mode]]로 설정",
+    "ar": "تعيين حماية المقصورة من ارتفاع الحرارة لـ[[device]] إلى [[mode]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=cop_mode",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
+      }
+    },
+    {
+      "type": "dropdown",
+      "name": "mode",
+      "title": {
+        "en": "Mode",
+        "nl": "Modus",
+        "da": "Tilstand",
+        "de": "Modus",
+        "es": "Modo",
+        "fr": "Mode",
+        "it": "Modalità",
+        "no": "Modus",
+        "sv": "Läge",
+        "pl": "Tryb",
+        "ru": "Режим",
+        "ko": "모드",
+        "ar": "الوضع"
+      },
+      "values": [
+        {
+          "id": "off",
+          "label": {
+            "en": "Off",
+            "nl": "Uit",
+            "da": "Fra",
+            "de": "Aus",
+            "es": "Apagado",
+            "fr": "Éteint",
+            "it": "Spento",
+            "no": "Av",
+            "sv": "Av",
+            "pl": "Wyłączony",
+            "ru": "Выкл.",
+            "ko": "꺼짐",
+            "ar": "إيقاف"
+          }
+        },
+        {
+          "id": "on",
+          "label": {
+            "en": "On",
+            "nl": "Aan",
+            "da": "Til",
+            "de": "An",
+            "es": "Encendido",
+            "fr": "Allumé",
+            "it": "Acceso",
+            "no": "På",
+            "sv": "På",
+            "pl": "Włączony",
+            "ru": "Вкл.",
+            "ko": "켜짐",
+            "ar": "تشغيل"
+          }
+        },
+        {
+          "id": "fan_only",
+          "label": {
+            "en": "Fan Only",
+            "nl": "Alleen Ventilator",
+            "da": "Kun Blæser",
+            "de": "Nur Lüfter",
+            "es": "Solo Ventilador",
+            "fr": "Ventilateur Seulement",
+            "it": "Solo Ventola",
+            "no": "Kun Vifte",
+            "sv": "Endast Fläkt",
+            "pl": "Tylko Wentylator",
+            "ru": "Только Вентилятор",
+            "ko": "팬만",
+            "ar": "المروحة فقط"
+          }
+        }
+      ]
+    }
+  ]
+}

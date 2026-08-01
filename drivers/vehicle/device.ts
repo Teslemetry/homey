@@ -42,6 +42,24 @@ const tonneauPositionClosedMap = new Map<
   ["TonneauPositionStateFullyOpen", false],
 ]);
 
+const copModeMap = new Map<
+  SseData["data"]["CabinOverheatProtectionMode"],
+  string
+>([
+  ["CabinOverheatProtectionModeStateOff", "off"],
+  ["CabinOverheatProtectionModeStateOn", "on"],
+  ["CabinOverheatProtectionModeStateFanOnly", "fan_only"],
+]);
+
+const copTemperatureLimitMap = new Map<
+  SseData["data"]["CabinOverheatProtectionTemperatureLimit"],
+  string
+>([
+  ["ClimateOverheatProtectionTempLimitLow", "low"],
+  ["ClimateOverheatProtectionTempLimitMedium", "medium"],
+  ["ClimateOverheatProtectionTempLimitHigh", "high"],
+]);
+
 const centerDisplayMap = new Map<SseData["data"]["CenterDisplay"], boolean>([
   ["DisplayStateOff", false],
   ["DisplayStateDim", false],
@@ -187,6 +205,10 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.setCapabilityOptions("onoff.trunk", {
         ...this.driver.manifest.capabilitiesOptions["onoff.trunk"],
         setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
+      }).catch(this.error);
+      this.setCapabilityOptions("cop_temperature_limit", {
+        ...this.driver.manifest.capabilitiesOptions["cop_temperature_limit"],
+        setable: !!this.vehicle.metadata.config?.cop_user_set_temp_supported,
       }).catch(this.error);
     } catch (e) {
       if (!(this.homey.app.isReady?.() ?? true)) {
@@ -355,6 +377,12 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
     this.onSignal("RearDefrostEnabled", (value) =>
       this.update("alarm_generic.rear_defrost", value),
+    );
+    this.onSignal("CabinOverheatProtectionMode", (value) =>
+      this.update("cop_mode", copModeMap.get(value)),
+    );
+    this.onSignal("CabinOverheatProtectionTemperatureLimit", (value) =>
+      this.update("cop_temperature_limit", copTemperatureLimitMap.get(value)),
     );
 
     this.onSignal(
@@ -626,6 +654,14 @@ export default class VehicleDevice extends TeslemetryDevice {
     // Climate
     this.registerCapabilityListener("thermostat_mode", async (value) => {
       await this.setThermostatMode(value);
+    });
+
+    this.registerCapabilityListener("cop_mode", async (value) => {
+      await this.setCopMode(value);
+    });
+
+    this.registerCapabilityListener("cop_temperature_limit", async (value) => {
+      await this.setCopTemperatureLimit(value);
     });
 
     this.registerCapabilityListener("target_temperature", async (value) => {
@@ -1046,6 +1082,64 @@ export default class VehicleDevice extends TeslemetryDevice {
     }
   }
 
+  /**
+   * Shared by the cop_mode capability listener and the set_cop_mode flow
+   * action - both drive the same underlying setCabinOverheatProtection()
+   * command off the same target value.
+   */
+  private async setCopMode(value: string): Promise<void> {
+    switch (value) {
+      case "off":
+        return this.vehicleAction(
+          this.vehicle.api.setCabinOverheatProtection({
+            on: false,
+            fan_only: false,
+          }),
+        );
+      case "on":
+        return this.vehicleAction(
+          this.vehicle.api.setCabinOverheatProtection({
+            on: true,
+            fan_only: false,
+          }),
+        );
+      case "fan_only":
+        return this.vehicleAction(
+          this.vehicle.api.setCabinOverheatProtection({
+            on: true,
+            fan_only: true,
+          }),
+        );
+      default:
+        throw new Error("Invalid cabin overheat protection mode");
+    }
+  }
+
+  /**
+   * Shared by the cop_temperature_limit capability listener and the
+   * set_cop_temperature_limit flow action. Only meaningful on vehicles with
+   * config.cop_user_set_temp_supported - the capability is otherwise
+   * read-only (see resolveAndBindVehicle's setCapabilityOptions call).
+   */
+  private async setCopTemperatureLimit(value: string): Promise<void> {
+    if (!this.vehicle.metadata.config?.cop_user_set_temp_supported) {
+      throw new Error(
+        "Cabin overheat protection temperature limit is not supported",
+      );
+    }
+
+    switch (value) {
+      case "low":
+        return this.vehicleAction(this.vehicle.api.setCopTemp(0));
+      case "medium":
+        return this.vehicleAction(this.vehicle.api.setCopTemp(1));
+      case "high":
+        return this.vehicleAction(this.vehicle.api.setCopTemp(2));
+      default:
+        throw new Error("Invalid cabin overheat protection temperature limit");
+    }
+  }
+
   // Public action methods for Flow cards
   public async flowFlashLights(): Promise<void> {
     await this.vehicleAction(this.vehicle.api.flashLights());
@@ -1129,6 +1223,14 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   public async flowSetClimateMode(mode: string): Promise<void> {
     await this.setThermostatMode(mode);
+  }
+
+  public async flowSetCopMode(mode: string): Promise<void> {
+    await this.setCopMode(mode);
+  }
+
+  public async flowSetCopTemperatureLimit(limit: string): Promise<void> {
+    await this.setCopTemperatureLimit(limit);
   }
 
   public async flowSetSeatHeater(
