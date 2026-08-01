@@ -61,5 +61,8 @@
   },
   "1.0.8": {
     "en": "New: vehicle at-home/at-work presence with arrival and departure triggers, and daily energy Insights (solar, grid import/export, home usage, battery charge/discharge). Improved energy-site device handling across app updates, and fixed several stability issues including tariff rate updates and device recovery."
+  },
+  "1.0.9": {
+    "en": "Fixes Powerwall and Gateway devices not updating and flows not running (a packaging issue that prevented the tariff library from loading), plus a related crash."
   }
 }
