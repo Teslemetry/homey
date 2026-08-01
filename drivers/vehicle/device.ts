@@ -107,6 +107,7 @@ export default class VehicleDevice extends TeslemetryDevice {
   private lastTpmsSoftWarnings?: SseData["data"]["TpmsSoftWarnings"];
   private lastTpmsHardWarnings?: SseData["data"]["TpmsHardWarnings"];
   private previousLocatedAtHome?: boolean;
+  private previousVehicleState?: SseState["state"];
 
   /** Count of signal handlers that threw during registration/replay; see onSignal(). */
   private signalHandlerFailures = 0;
@@ -150,8 +151,24 @@ export default class VehicleDevice extends TeslemetryDevice {
     return off;
   };
 
+  /**
+   * The vehicle's asleep/online/offline transitions are fired as woke/slept
+   * triggers independent of the specific state exited/entered into (asleep
+   * -> either online or offline is "woke", either -> asleep is "slept"),
+   * mirroring the grid-outage-vs-test close-trigger pattern.
+   */
   private readonly handleVehicleState = (value: SseState) => {
-    if (value?.state) this.update("vehicle_state", value.state);
+    if (!value?.state) return;
+    const previous = this.previousVehicleState;
+    this.previousVehicleState = value.state;
+    this.update("vehicle_state", value.state);
+
+    if (previous === undefined || previous === value.state) return;
+    if (previous === "asleep") {
+      this.triggerFlow("vehicle_woke_up");
+    } else if (value.state === "asleep") {
+      this.triggerFlow("vehicle_went_to_sleep");
+    }
   };
 
   private readonly handleConnectivity = (value: SseConnectivity) => {
@@ -316,6 +333,16 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.onSignal("SentryMode", (value) => {
       this.update("onoff.sentry", value !== "SentryModeStateOff");
       this.update("alarm_motion", value === "SentryModeStatePanic");
+    });
+    this.onSignal("PinToDriveEnabled", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("alarm_generic.pin_to_drive", value);
+      }
+    });
+    this.onSignal("ValetModeEnabled", (value) => {
+      if (value !== undefined && value !== null) {
+        this.update("alarm_generic.valet_mode", value);
+      }
     });
 
     this.onSignal("ChargePortLatch", (value) =>

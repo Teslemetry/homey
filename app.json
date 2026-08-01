@@ -1240,6 +1240,44 @@
         "id": "vehicle_left_home"
       },
       {
+        "title": {
+          "en": "The vehicle has gone to sleep"
+        },
+        "titleFormatted": {
+          "en": "[[device]] has gone to sleep"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=vehicle_state",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "vehicle_went_to_sleep"
+      },
+      {
+        "title": {
+          "en": "The vehicle has woken up"
+        },
+        "titleFormatted": {
+          "en": "[[device]] has woken up"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=vehicle_state",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "vehicle_woke_up"
+      },
+      {
         "id": "onoff.charge_grid_true",
         "title": {
           "en": "Charge from grid has been enabled",
@@ -2504,6 +2542,58 @@
           "ru": "Автомобиль покинул работу",
           "ko": "차량이 직장을 떠났습니다",
           "ar": "غادرت المركبة العمل"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.pin_to_drive_true",
+        "title": {
+          "en": "PIN to Drive has been enabled"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.pin_to_drive_false",
+        "title": {
+          "en": "PIN to Drive has been disabled"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.valet_mode_true",
+        "title": {
+          "en": "Valet Mode has been enabled"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.valet_mode_false",
+        "title": {
+          "en": "Valet Mode has been disabled"
         },
         "args": [
           {
@@ -3873,6 +3963,32 @@
           "ru": "Автомобиль !{{на работе|не на работе}}",
           "ko": "차량이 !{{직장에 있음|직장에 없음}}",
           "ar": "المركبة !{{في العمل|ليست في العمل}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.pin_to_drive",
+        "title": {
+          "en": "PIN to Drive is !{{enabled|disabled}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.valet_mode",
+        "title": {
+          "en": "Valet Mode is !{{enabled|disabled}}"
         },
         "args": [
           {
@@ -6815,7 +6931,9 @@
         "cop_mode",
         "cop_temperature_limit",
         "software_update_status",
-        "software_update_progress"
+        "software_update_progress",
+        "alarm_generic.pin_to_drive",
+        "alarm_generic.valet_mode"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -7719,6 +7837,22 @@
             "ru": "Находится ли автомобиль в рабочем местоположении, сохраненном в профиле водителя, о чем сообщает сам автомобиль. Это приложение не считывает, не хранит и не отображает координаты местоположения.",
             "ko": "차량이 운전자 프로필에 저장된 직장 위치에 있는지 여부이며, 차량이 직접 보고하는 값입니다. 이 앱은 위치 좌표를 읽거나 저장하거나 표시하지 않습니다.",
             "ar": "ما إذا كانت المركبة في موقع العمل المحفوظ في ملف تعريف السائق، كما تُبلغ المركبة نفسها مباشرة. لا يقرأ هذا التطبيق أو يخزن أو يعرض أي إحداثيات موقع."
+          }
+        },
+        "alarm_generic.pin_to_drive": {
+          "title": {
+            "en": "PIN to Drive"
+          },
+          "desc": {
+            "en": "Whether PIN to Drive is currently enabled on the vehicle. Read-only - this app does not accept or store the PIN."
+          }
+        },
+        "alarm_generic.valet_mode": {
+          "title": {
+            "en": "Valet Mode"
+          },
+          "desc": {
+            "en": "Whether Valet Mode is currently enabled on the vehicle. Read-only - this app does not expose a control for it."
           }
         }
       },
