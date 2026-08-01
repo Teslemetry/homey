@@ -245,7 +245,7 @@ The `energy_totals` SSE event carries per-type daily totals (midnight to now, al
 
 Unlike the cumulative meters above, each `*_today` capability is a plain (non-`cumulative`) gauge with `insights: true` that should read 0 from local midnight until the day's first activity. `energy_totals` only pushes when a value actually changes, so once the underlying activity stops for a stretch the event goes silent and the last-received total just sits there - it does not get zeroed by a late-night/quiet-period event. Every device with a `*_today` capability compensates with its own timer, scheduled via `msUntilNextLocalMidnight()` (`lib/localMidnight.ts`) off the site's `installation_time_zone` (read from `site_info`/`siteInfoDocument`, the same source `PowerwallDevice` trusts for tariff resolution below - not `this.homey.clock.getTimezone()`, which is the Homey box's own location and may differ from the site's), that force-resets the capability(ies) at the actual local-midnight boundary and reschedules itself for the next one. `GatewayDevice`/`PowerwallDevice` each hand-roll their own copy of this timer (matching this codebase's existing per-device duplication convention rather than a shared base-class helper), resetting every `*_today` capability on that device in one callback. See `test/solar-generation-today.test.ts` for the time-controlled repro pattern (a stubbed `now()` plus a fake `homey.setTimeout`/`clearTimeout` capturing the scheduled callback, so the boundary crossing is asserted without waiting real time), `test/gateway-live-status.test.ts`/`test/battery-site-info.test.ts` for the same pattern applied to Gateway/Powerwall, and `test/local-midnight.test.ts` for the boundary-math unit tests.
 
-Every recurring `homey.setTimeout` reschedule body (this one and `PowerwallDevice`'s `tariffTimer` below) must wrap its own callback in `try`/`catch`, exactly like the guarded cached-SSE-replay handlers elsewhere in this file - a raw `setTimeout` callback has no caller to catch a synchronous throw, so an unguarded one crashes the whole app process on its next scheduled fire, not just this device. `recomputeTariffRates`'s timer already established this pattern; `scheduleMidnightReset`'s timer across all three drivers did not, until it was fixed and covered by an explicit "does not escape uncaught" test in each of the three test files above.
+Every recurring `homey.setTimeout` reschedule body (this one and `PowerwallDevice`'s `tariffTimer` below) must wrap its own callback in `try`/`catch`, exactly like the guarded cached-SSE-replay handlers elsewhere in this file - a raw `setTimeout` callback has no caller to catch a synchronous throw, so an unguarded one crashes the whole app process on its next scheduled fire, not just this device. The three midnight-reset test files above verify that callback failures do not escape uncaught.
 
 These gauges exist to mirror the Home Assistant teslemetry integration's default-enabled energy-history sensors (`ENERGY_HISTORY_FIELDS` in `home-assistant/core`'s `homeassistant/components/teslemetry/const.py`, filtered to `entity_registry_enabled_default` in `sensor.py`: every `total_*`-prefixed key plus `grid_energy_imported`) as Homey Insights, driven from the same server-side `energy_totals` SSE push already consumed for the cumulative meters above - not HA's separate REST-polled history coordinator. The exact `@teslemetry/api` `SseEnergyTotals.totals` field names (`node_modules/@teslemetry/api/dist/index.d.mts`, `ENERGY_HISTORY_TOTAL_FIELDS`) mirror HA's list field-for-field:
 
@@ -310,13 +310,9 @@ in `onUninit` via the same `pollingCleanup` array every other listener uses.
   never reaches the already-copied `.homeybuild` bundle, which is what
   actually ships. `scripts/build-tesla-fleet-api.mjs` also mirrors its
   freshly-built `dist/` into `.homeybuild/node_modules/tesla-fleet-api/dist`
-  when that copy already exists, closing the gap. Verify this end-to-end
-  with `rm -rf node_modules/tesla-fleet-api/dist .homeybuild && npx homey app
-  build && ls .homeybuild/node_modules/tesla-fleet-api/dist` - a `dist/`
-  entry confirms the published bundle actually has it; this exact command
-  (with the mirroring step reverted) is how the 1.0.8 Powerwall regression
-  (`ERR_MODULE_NOT_FOUND` on `drivers/battery/device.js`'s import - no live
-  Powerwall device, no values, no Flow execution) was reproduced.
+  when that copy already exists. Use `npm run smoke:packaged-build` to verify
+  the published bundle contains the dependency and every compiled entry point
+  resolves in isolation.
 - `tesla-fleet-api`'s public entry point does not re-export the `TariffContentV2`
   input type `getTariffPeriods` requires, so it's imported from the package's
   internal `tesla-fleet-api/dist/types/site_info.js` path instead; `@teslemetry/api`

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console -- CLI output is the test report. */
 // Verifies every compiled entry point (app.js, api.js, each driver's
 // driver.js/device.js) actually loads out of the packaged .homeybuild/
 // bundle - the thing Homey uploads and runs on-device, not this repo's own
