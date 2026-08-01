@@ -196,6 +196,39 @@ test("onoff.guest_mode capability listener calls setGuestMode", async () => {
   assert.deepEqual(apiCalls, [{ method: "setGuestMode", args: [false] }]);
 });
 
+test("auto climate signals update the three Homey switches", async () => {
+  const capabilities = {
+    "onoff.auto_seat_climate_left": false,
+    "onoff.auto_seat_climate_right": false,
+    "onoff.auto_steering_wheel_heat": false,
+  };
+  const { sse } = await createDeviceStub(capabilities);
+
+  sse.data.emit("AutoSeatClimateLeft", true);
+  sse.data.emit("AutoSeatClimateRight", true);
+  sse.data.emit("HvacSteeringWheelHeatAuto", true);
+
+  assert.deepEqual(capabilities, {
+    "onoff.auto_seat_climate_left": true,
+    "onoff.auto_seat_climate_right": true,
+    "onoff.auto_steering_wheel_heat": true,
+  });
+});
+
+test("auto climate switch listeners call the matching vehicle commands", async () => {
+  const { capabilityListeners, apiCalls } = await createDeviceStub();
+
+  await capabilityListeners["onoff.auto_seat_climate_left"](true);
+  await capabilityListeners["onoff.auto_seat_climate_right"](false);
+  await capabilityListeners["onoff.auto_steering_wheel_heat"](true);
+
+  assert.deepEqual(apiCalls, [
+    { method: "setAutoSeatClimate", args: ["front_left", true] },
+    { method: "setAutoSeatClimate", args: ["front_right", false] },
+    { method: "setAutoSteeringWheelHeat", args: [true] },
+  ]);
+});
+
 test("onoff.frunk capability listener actuates the front trunk only when turned on", async () => {
   const { capabilityListeners, apiCalls } = await createDeviceStub();
 

@@ -476,6 +476,15 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.onSignal("HvacSteeringWheelHeatLevel", (value) =>
       this.update("steering_wheel_heater", String(value)),
     );
+    this.onSignal("HvacSteeringWheelHeatAuto", (value) =>
+      this.update("onoff.auto_steering_wheel_heat", value),
+    );
+    this.onSignal("AutoSeatClimateLeft", (value) =>
+      this.update("onoff.auto_seat_climate_left", value),
+    );
+    this.onSignal("AutoSeatClimateRight", (value) =>
+      this.update("onoff.auto_seat_climate_right", value),
+    );
     this.onSignal("SeatHeaterLeft", (value) =>
       this.update("seat_heater.front_left", String(value)),
     );
@@ -844,6 +853,32 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.registerCapabilityListener("onoff.guest_mode", async (value) => {
       return this.vehicleAction(this.vehicle.api.setGuestMode(value));
     });
+
+    // Auto seat climate & auto steering wheel heat
+    this.registerCapabilityListener(
+      "onoff.auto_seat_climate_left",
+      async (value) => {
+        return this.vehicleAction(
+          this.vehicle.api.setAutoSeatClimate("front_left", value),
+        );
+      },
+    );
+    this.registerCapabilityListener(
+      "onoff.auto_seat_climate_right",
+      async (value) => {
+        return this.vehicleAction(
+          this.vehicle.api.setAutoSeatClimate("front_right", value),
+        );
+      },
+    );
+    this.registerCapabilityListener(
+      "onoff.auto_steering_wheel_heat",
+      async (value) => {
+        return this.vehicleAction(
+          this.vehicle.api.setAutoSteeringWheelHeat(value),
+        );
+      },
+    );
 
     // Doors/Frunk/Trunk
     this.registerCapabilityListener("onoff.frunk", async (value) => {
