@@ -57,10 +57,10 @@ export default class GatewayDevice extends TeslemetryDevice {
       this.homey.clearTimeout(this.midnightTimer);
     }
     const delay = msUntilNextLocalMidnight(this.now(), timeZone);
-    this.midnightTimer = this.homey.setTimeout(() => {
+    this.midnightTimer = this.homey.setTimeout(async () => {
       try {
         for (const capability of TODAY_TOTAL_CAPABILITIES) {
-          this.update(capability, 0);
+          await this.update(capability, 0);
         }
         this.scheduleMidnightReset(timeZone);
       } catch (e) {

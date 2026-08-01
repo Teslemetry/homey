@@ -322,7 +322,7 @@ test("PowerwallDevice's midnight reset zeroes battery_charged_today/battery_disc
   assert.equal(timers.length, timersBeforeReset, "next midnight reset rescheduled");
 });
 
-test("a throw inside the midnight reset timer callback does not escape uncaught", async () => {
+test("an async rejection inside the midnight reset timer callback does not escape uncaught", async () => {
   const { stub, timers } = createDeviceStub(
     { installation_time_zone: "America/New_York" },
     { now: new Date("2026-07-30T23:59:00-04:00") },
@@ -332,15 +332,10 @@ test("a throw inside the midnight reset timer callback does not escape uncaught"
   const midnightTimer = timers.find((timer) => timer.delay === 60_000);
   assert.ok(midnightTimer);
 
-  // Simulate any unexpected failure during the reset (e.g. a capability
-  // write that throws) - the recurring setTimeout body has no caller to
-  // catch a synchronous throw, so an unguarded callback would crash the
-  // whole app process, not just this device.
-  stub.update = () => {
-    throw new Error("simulated failure during midnight reset");
-  };
+  stub.update = () =>
+    Promise.reject(new Error("simulated failure during midnight reset"));
 
-  assert.doesNotThrow(() => midnightTimer!.callback());
+  await assert.doesNotReject(() => midnightTimer!.callback());
 });
 
 test("PowerwallDevice's allow_export command listener calls gridImportExport with the mode and inverted onoff.charge_grid", async () => {

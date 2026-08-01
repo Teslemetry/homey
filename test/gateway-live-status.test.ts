@@ -303,7 +303,7 @@ test("GatewayDevice's midnight reset zeroes grid_imported_today/grid_exported_to
   assert.equal(timers.length, 1, "next midnight reset rescheduled");
 });
 
-test("a throw inside the midnight reset timer callback does not escape uncaught", async () => {
+test("an async rejection inside the midnight reset timer callback does not escape uncaught", async () => {
   const { stub, timers } = createDeviceStub(
     {
       grid_imported_today: undefined,
@@ -318,15 +318,10 @@ test("a throw inside the midnight reset timer callback does not escape uncaught"
   await stub.onInit();
   assert.equal(timers.length, 1, "midnight timer scheduled during init");
 
-  // Simulate any unexpected failure during the reset (e.g. a capability
-  // write that throws) - the recurring setTimeout body has no caller to
-  // catch a synchronous throw, so an unguarded callback would crash the
-  // whole app process, not just this device.
-  stub.update = () => {
-    throw new Error("simulated failure during midnight reset");
-  };
+  stub.update = () =>
+    Promise.reject(new Error("simulated failure during midnight reset"));
 
-  assert.doesNotThrow(() => timers[0].callback());
+  await assert.doesNotReject(() => timers[0].callback());
 });
 
 test("GatewayDevice.onUninit removes the live_status, energy_totals and site_info listeners, and clears the midnight timer", async () => {

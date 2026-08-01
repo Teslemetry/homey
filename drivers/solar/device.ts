@@ -37,9 +37,9 @@ export default class SolarDevice extends TeslemetryDevice {
       this.homey.clearTimeout(this.midnightTimer);
     }
     const delay = msUntilNextLocalMidnight(this.now(), timeZone);
-    this.midnightTimer = this.homey.setTimeout(() => {
+    this.midnightTimer = this.homey.setTimeout(async () => {
       try {
-        this.update("solar_generation_today", 0);
+        await this.update("solar_generation_today", 0);
         this.scheduleMidnightReset(timeZone);
       } catch (e) {
         this.error("Failed to reset Solar midnight totals", e);
