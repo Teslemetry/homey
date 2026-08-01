@@ -1,0 +1,54 @@
+{
+  "title": {
+    "en": "Disable scheduled departure",
+    "nl": "Gepland vertrek uitschakelen",
+    "da": "Deaktiver planlagt afgang",
+    "de": "Geplante Abfahrt deaktivieren",
+    "es": "Deshabilitar salida programada",
+    "fr": "Désactiver le départ programmé",
+    "it": "Disattiva partenza programmata",
+    "no": "Deaktiver planlagt avreise",
+    "sv": "Inaktivera schemalagd avgång",
+    "pl": "Wyłącz zaplanowany wyjazd",
+    "ru": "Отключить запланированное отправление",
+    "ko": "예약 출발 비활성화",
+    "ar": "تعطيل المغادرة المجدولة"
+  },
+  "titleFormatted": {
+    "en": "Disable scheduled departure on [[device]]",
+    "nl": "Schakel gepland vertrek uit op [[device]]",
+    "da": "Deaktiver planlagt afgang på [[device]]",
+    "de": "Geplante Abfahrt auf [[device]] deaktivieren",
+    "es": "Deshabilita la salida programada en [[device]]",
+    "fr": "Désactive le départ programmé sur [[device]]",
+    "it": "Disattiva la partenza programmata su [[device]]",
+    "no": "Deaktiver planlagt avreise på [[device]]",
+    "sv": "Inaktivera schemalagd avgång på [[device]]",
+    "pl": "Wyłącz zaplanowany wyjazd na [[device]]",
+    "ru": "Отключить запланированное отправление на [[device]]",
+    "ko": "[[device]]에서 예약 출발 비활성화",
+    "ar": "تعطيل المغادرة المجدولة على [[device]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=scheduled_charging_mode",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    }
+  ]
+}

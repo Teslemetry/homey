@@ -1,0 +1,183 @@
+{
+  "title": {
+    "en": "Enable scheduled departure",
+    "nl": "Gepland vertrek inschakelen",
+    "da": "Aktiver planlagt afgang",
+    "de": "Geplante Abfahrt aktivieren",
+    "es": "Habilitar salida programada",
+    "fr": "Activer le départ programmé",
+    "it": "Attiva partenza programmata",
+    "no": "Aktiver planlagt avreise",
+    "sv": "Aktivera schemalagd avgång",
+    "pl": "Włącz zaplanowany wyjazd",
+    "ru": "Включить запланированное отправление",
+    "ko": "예약 출발 활성화",
+    "ar": "تفعيل المغادرة المجدولة"
+  },
+  "titleFormatted": {
+    "en": "Enable scheduled departure on [[device]] departing by [[departure_time]], preconditioning [[preconditioning_enabled]] (weekdays only [[preconditioning_weekdays_only]]), off-peak charging [[off_peak_charging_enabled]] (weekdays only [[off_peak_charging_weekdays_only]]) until [[end_off_peak_time]]",
+    "nl": "Schakel gepland vertrek in op [[device]], vertrekken om [[departure_time]], voorconditionering [[preconditioning_enabled]] (alleen werkdagen [[preconditioning_weekdays_only]]), daluren-laden [[off_peak_charging_enabled]] (alleen werkdagen [[off_peak_charging_weekdays_only]]) tot [[end_off_peak_time]]",
+    "da": "Aktiver planlagt afgang på [[device]], afgang senest kl. [[departure_time]], forkonditionering [[preconditioning_enabled]] (kun hverdage [[preconditioning_weekdays_only]]), opladning uden for spidsbelastning [[off_peak_charging_enabled]] (kun hverdage [[off_peak_charging_weekdays_only]]) indtil [[end_off_peak_time]]",
+    "de": "Geplante Abfahrt auf [[device]] aktivieren, Abfahrt bis [[departure_time]], Vorkonditionierung [[preconditioning_enabled]] (nur Wochentage [[preconditioning_weekdays_only]]), Laden außerhalb der Spitzenzeiten [[off_peak_charging_enabled]] (nur Wochentage [[off_peak_charging_weekdays_only]]) bis [[end_off_peak_time]]",
+    "es": "Habilita la salida programada en [[device]], salida antes de las [[departure_time]], preacondicionamiento [[preconditioning_enabled]] (solo días laborables [[preconditioning_weekdays_only]]), carga fuera de horas punta [[off_peak_charging_enabled]] (solo días laborables [[off_peak_charging_weekdays_only]]) hasta [[end_off_peak_time]]",
+    "fr": "Active le départ programmé sur [[device]], départ avant [[departure_time]], préconditionnement [[preconditioning_enabled]] (semaine uniquement [[preconditioning_weekdays_only]]), charge hors pointe [[off_peak_charging_enabled]] (semaine uniquement [[off_peak_charging_weekdays_only]]) jusqu'à [[end_off_peak_time]]",
+    "it": "Attiva la partenza programmata su [[device]], partenza entro le [[departure_time]], precondizionamento [[preconditioning_enabled]] (solo feriali [[preconditioning_weekdays_only]]), ricarica fuori picco [[off_peak_charging_enabled]] (solo feriali [[off_peak_charging_weekdays_only]]) fino alle [[end_off_peak_time]]",
+    "no": "Aktiver planlagt avreise på [[device]], avreise innen kl. [[departure_time]], forkondisjonering [[preconditioning_enabled]] (kun ukedager [[preconditioning_weekdays_only]]), lading utenfor rushtiden [[off_peak_charging_enabled]] (kun ukedager [[off_peak_charging_weekdays_only]]) frem til [[end_off_peak_time]]",
+    "sv": "Aktivera schemalagd avgång på [[device]], avgång senast kl. [[departure_time]], förkonditionering [[preconditioning_enabled]] (endast vardagar [[preconditioning_weekdays_only]]), lågtrafikladdning [[off_peak_charging_enabled]] (endast vardagar [[off_peak_charging_weekdays_only]]) till [[end_off_peak_time]]",
+    "pl": "Włącz zaplanowany wyjazd na [[device]], wyjazd do [[departure_time]], przygotowanie wstępne [[preconditioning_enabled]] (tylko dni robocze [[preconditioning_weekdays_only]]), ładowanie poza szczytem [[off_peak_charging_enabled]] (tylko dni robocze [[off_peak_charging_weekdays_only]]) do [[end_off_peak_time]]",
+    "ru": "Включить запланированное отправление на [[device]], отправление до [[departure_time]], предварительное кондиционирование [[preconditioning_enabled]] (только по будням [[preconditioning_weekdays_only]]), внепиковая зарядка [[off_peak_charging_enabled]] (только по будням [[off_peak_charging_weekdays_only]]) до [[end_off_peak_time]]",
+    "ko": "[[device]]에서 [[departure_time]]까지 출발하는 예약 출발 활성화, 사전 컨디셔닝 [[preconditioning_enabled]](평일만 [[preconditioning_weekdays_only]]), 비피크 충전 [[off_peak_charging_enabled]](평일만 [[off_peak_charging_weekdays_only]]) [[end_off_peak_time]]까지",
+    "ar": "تفعيل المغادرة المجدولة على [[device]] بحلول [[departure_time]]، التهيئة المسبقة [[preconditioning_enabled]] (أيام الأسبوع فقط [[preconditioning_weekdays_only]])، الشحن خارج ساعات الذروة [[off_peak_charging_enabled]] (أيام الأسبوع فقط [[off_peak_charging_weekdays_only]]) حتى [[end_off_peak_time]]"
+  },
+  "hint": {
+    "en": "Also configures preconditioning and off-peak charging, mirroring Tesla's scheduled departure settings.",
+    "nl": "Configureert ook voorconditionering en daluren-laden, in lijn met Tesla's instellingen voor gepland vertrek.",
+    "da": "Konfigurerer også forkonditionering og opladning uden for spidsbelastning, i tråd med Teslas indstillinger for planlagt afgang.",
+    "de": "Konfiguriert außerdem die Vorkonditionierung und das Laden außerhalb der Spitzenzeiten, entsprechend Teslas Einstellungen für die geplante Abfahrt.",
+    "es": "También configura el preacondicionamiento y la carga fuera de horas punta, reflejando la configuración de salida programada de Tesla.",
+    "fr": "Configure également le préconditionnement et la charge hors pointe, à l'image des réglages de départ programmé de Tesla.",
+    "it": "Configura anche il precondizionamento e la ricarica fuori picco, rispecchiando le impostazioni di partenza programmata di Tesla.",
+    "no": "Konfigurerer også forkondisjonering og lading utenfor rushtiden, i tråd med Teslas innstillinger for planlagt avreise.",
+    "sv": "Konfigurerar även förkonditionering och lågtrafikladdning, i linje med Teslas inställningar för schemalagd avgång.",
+    "pl": "Konfiguruje również przygotowanie wstępne i ładowanie poza szczytem, odzwierciedlając ustawienia zaplanowanego wyjazdu Tesli.",
+    "ru": "Также настраивает предварительное кондиционирование и внепиковую зарядку, отражая настройки запланированного отправления Tesla.",
+    "ko": "테슬라의 예약 출발 설정을 반영하여 사전 컨디셔닝 및 비피크 충전도 구성합니다.",
+    "ar": "يقوم أيضًا بتكوين التهيئة المسبقة والشحن خارج ساعات الذروة، مما يعكس إعدادات المغادرة المجدولة من تسلا."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=scheduled_charging_mode",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    },
+    {
+      "type": "time",
+      "name": "departure_time",
+      "title": {
+        "en": "Departure time",
+        "nl": "Vertrektijd",
+        "da": "Afgangstidspunkt",
+        "de": "Abfahrtszeit",
+        "es": "Hora de salida",
+        "fr": "Heure de départ",
+        "it": "Ora di partenza",
+        "no": "Avreisetid",
+        "sv": "Avgångstid",
+        "pl": "Czas wyjazdu",
+        "ru": "Время отправления",
+        "ko": "출발 시간",
+        "ar": "وقت المغادرة"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "preconditioning_enabled",
+      "title": {
+        "en": "Preconditioning enabled",
+        "nl": "Voorconditionering ingeschakeld",
+        "da": "Forkonditionering aktiveret",
+        "de": "Vorkonditionierung aktiviert",
+        "es": "Preacondicionamiento habilitado",
+        "fr": "Préconditionnement activé",
+        "it": "Precondizionamento attivato",
+        "no": "Forkondisjonering aktivert",
+        "sv": "Förkonditionering aktiverad",
+        "pl": "Przygotowanie wstępne włączone",
+        "ru": "Предварительное кондиционирование включено",
+        "ko": "사전 컨디셔닝 사용",
+        "ar": "تفعيل التهيئة المسبقة"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "preconditioning_weekdays_only",
+      "title": {
+        "en": "Preconditioning weekdays only",
+        "nl": "Voorconditionering alleen op werkdagen",
+        "da": "Forkonditionering kun på hverdage",
+        "de": "Vorkonditionierung nur an Wochentagen",
+        "es": "Preacondicionamiento solo días laborables",
+        "fr": "Préconditionnement uniquement en semaine",
+        "it": "Precondizionamento solo nei giorni feriali",
+        "no": "Forkondisjonering kun på ukedager",
+        "sv": "Förkonditionering endast vardagar",
+        "pl": "Przygotowanie wstępne tylko w dni robocze",
+        "ru": "Предварительное кондиционирование только по будням",
+        "ko": "평일에만 사전 컨디셔닝",
+        "ar": "التهيئة المسبقة أيام الأسبوع فقط"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "off_peak_charging_enabled",
+      "title": {
+        "en": "Off-peak charging enabled",
+        "nl": "Daluren-laden ingeschakeld",
+        "da": "Opladning uden for spidsbelastning aktiveret",
+        "de": "Laden außerhalb der Spitzenzeiten aktiviert",
+        "es": "Carga fuera de horas punta habilitada",
+        "fr": "Charge hors pointe activée",
+        "it": "Ricarica fuori picco attivata",
+        "no": "Lading utenfor rushtiden aktivert",
+        "sv": "Lågtrafikladdning aktiverad",
+        "pl": "Ładowanie poza szczytem włączone",
+        "ru": "Внепиковая зарядка включена",
+        "ko": "비피크 충전 사용",
+        "ar": "تفعيل الشحن خارج ساعات الذروة"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "off_peak_charging_weekdays_only",
+      "title": {
+        "en": "Off-peak charging weekdays only",
+        "nl": "Daluren-laden alleen op werkdagen",
+        "da": "Opladning uden for spidsbelastning kun på hverdage",
+        "de": "Laden außerhalb der Spitzenzeiten nur an Wochentagen",
+        "es": "Carga fuera de horas punta solo días laborables",
+        "fr": "Charge hors pointe uniquement en semaine",
+        "it": "Ricarica fuori picco solo nei giorni feriali",
+        "no": "Lading utenfor rushtiden kun på ukedager",
+        "sv": "Lågtrafikladdning endast vardagar",
+        "pl": "Ładowanie poza szczytem tylko w dni robocze",
+        "ru": "Внепиковая зарядка только по будням",
+        "ko": "평일에만 비피크 충전",
+        "ar": "الشحن خارج ساعات الذروة أيام الأسبوع فقط"
+      }
+    },
+    {
+      "type": "time",
+      "name": "end_off_peak_time",
+      "title": {
+        "en": "End of off-peak time",
+        "nl": "Einde daluren",
+        "da": "Slut på lavlasttid",
+        "de": "Ende der Schwachlastzeit",
+        "es": "Fin del horario fuera de punta",
+        "fr": "Fin de la période hors pointe",
+        "it": "Fine del periodo fuori picco",
+        "no": "Slutt på lavlasttid",
+        "sv": "Slut på lågtrafiktid",
+        "pl": "Koniec okresu poza szczytem",
+        "ru": "Окончание внепикового времени",
+        "ko": "비피크 종료 시간",
+        "ar": "نهاية وقت خارج الذروة"
+      }
+    }
+  ]
+}

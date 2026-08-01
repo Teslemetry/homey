@@ -269,6 +269,51 @@ export default class TeslemetryApp extends Homey.App {
         await this.requireFlowDevice(args.device).flowInstallSoftwareUpdate();
       });
 
+    this.homey.flow
+      .getActionCard('enable_scheduled_charging')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; time: string }) => {
+          await this.requireFlowDevice(args.device).flowEnableScheduledCharging(
+            args.time,
+          );
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('disable_scheduled_charging')
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowDisableScheduledCharging();
+      });
+
+    this.homey.flow
+      .getActionCard('enable_scheduled_departure')
+      .registerRunListener(
+        async (args: {
+          device?: VehicleDevice;
+          departure_time: string;
+          preconditioning_enabled: boolean;
+          preconditioning_weekdays_only: boolean;
+          off_peak_charging_enabled: boolean;
+          off_peak_charging_weekdays_only: boolean;
+          end_off_peak_time: string;
+        }) => {
+          await this.requireFlowDevice(args.device).flowEnableScheduledDeparture({
+            departureTime: args.departure_time,
+            preconditioningEnabled: args.preconditioning_enabled,
+            preconditioningWeekdaysOnly: args.preconditioning_weekdays_only,
+            offPeakChargingEnabled: args.off_peak_charging_enabled,
+            offPeakChargingWeekdaysOnly: args.off_peak_charging_weekdays_only,
+            endOffPeakTime: args.end_off_peak_time,
+          });
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('disable_scheduled_departure')
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowDisableScheduledDeparture();
+      });
+
     // Vehicle seat climate action cards (subcapabilities get no auto-generated
     // Flow cards; the device capability filter Homey applies to driver-scoped
     // cards already hides these for seats a device wasn't paired with).

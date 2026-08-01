@@ -1,0 +1,91 @@
+{
+  "title": {
+    "en": "Scheduled charging pending state has changed",
+    "nl": "Status geplande lading in wachtrij is gewijzigd",
+    "da": "Status for planlagt opladning afventer er ændret",
+    "de": "Status \"geplantes Laden ausstehend\" hat sich geändert",
+    "es": "El estado de carga programada pendiente ha cambiado",
+    "fr": "L'état d'attente de la charge programmée a changé",
+    "it": "Lo stato di ricarica programmata in sospeso è cambiato",
+    "no": "Status for planlagt lading venter er endret",
+    "sv": "Status för schemalagd laddning väntar har ändrats",
+    "pl": "Stan oczekiwania zaplanowanego ładowania uległ zmianie",
+    "ru": "Состояние ожидания запланированной зарядки изменилось",
+    "ko": "예약 충전 대기 상태가 변경되었습니다",
+    "ar": "تغيرت حالة انتظار الشحن المجدول"
+  },
+  "titleFormatted": {
+    "en": "Scheduled charging pending state has changed on [[device]]",
+    "nl": "Status geplande lading in wachtrij is gewijzigd op [[device]]",
+    "da": "Status for planlagt opladning afventer er ændret på [[device]]",
+    "de": "Status \"geplantes Laden ausstehend\" hat sich auf [[device]] geändert",
+    "es": "El estado de carga programada pendiente ha cambiado en [[device]]",
+    "fr": "L'état d'attente de la charge programmée a changé sur [[device]]",
+    "it": "Lo stato di ricarica programmata in sospeso è cambiato su [[device]]",
+    "no": "Status for planlagt lading venter er endret på [[device]]",
+    "sv": "Status för schemalagd laddning väntar har ändrats på [[device]]",
+    "pl": "Stan oczekiwania zaplanowanego ładowania uległ zmianie na [[device]]",
+    "ru": "Состояние ожидания запланированной зарядки изменилось на [[device]]",
+    "ko": "[[device]]의 예약 충전 대기 상태가 변경되었습니다",
+    "ar": "تغيرت حالة انتظار الشحن المجدول على [[device]]"
+  },
+  "hint": {
+    "en": "This card triggers when the vehicle reports that an enabled scheduled charge is waiting for its configured start time.",
+    "nl": "Deze kaart activeert wanneer het voertuig meldt dat een ingeschakelde geplande lading wacht op het geconfigureerde starttijdstip.",
+    "da": "Dette kort udløses, når køretøjet rapporterer, at en aktiveret planlagt opladning venter på det konfigurerede starttidspunkt.",
+    "de": "Diese Karte wird ausgelöst, wenn das Fahrzeug meldet, dass ein aktiviertes geplantes Laden auf die konfigurierte Startzeit wartet.",
+    "es": "Esta tarjeta se activa cuando el vehículo informa que una carga programada habilitada está esperando su hora de inicio configurada.",
+    "fr": "Cette carte se déclenche lorsque le véhicule signale qu'une charge programmée activée attend son heure de démarrage configurée.",
+    "it": "Questa scheda si attiva quando il veicolo segnala che una ricarica programmata abilitata è in attesa dell'orario di inizio configurato.",
+    "no": "Dette kortet utløses når kjøretøyet rapporterer at en aktivert planlagt lading venter på det konfigurerte starttidspunktet.",
+    "sv": "Detta kort utlöses när fordonet rapporterar att en aktiverad schemalagd laddning väntar på sin konfigurerade starttid.",
+    "pl": "Ta karta uruchamia się, gdy pojazd zgłasza, że włączone zaplanowane ładowanie oczekuje na skonfigurowany czas rozpoczęcia.",
+    "ru": "Эта карта срабатывает, когда автомобиль сообщает, что включенная запланированная зарядка ожидает настроенного времени начала.",
+    "ko": "차량이 활성화된 예약 충전이 설정된 시작 시간을 기다리고 있다고 보고하면 이 카드가 트리거됩니다.",
+    "ar": "تتفاعل هذه البطاقة عندما تُبلغ المركبة بأن شحنًا مجدولًا ممكّنًا ينتظر وقت البدء المحدد."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=scheduled_charging_pending",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "scheduled_charging_pending",
+      "type": "boolean",
+      "title": {
+        "en": "Pending",
+        "nl": "In wachtrij",
+        "da": "Afventer",
+        "de": "Ausstehend",
+        "es": "Pendiente",
+        "fr": "En attente",
+        "it": "In sospeso",
+        "no": "Venter",
+        "sv": "Väntar",
+        "pl": "Oczekuje",
+        "ru": "Ожидает",
+        "ko": "대기 중",
+        "ar": "قيد الانتظار"
+      },
+      "example": true
+    }
+  ]
+}

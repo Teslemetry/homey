@@ -125,6 +125,8 @@ export default class TeslemetryDevice extends Homey.Device {
     "cop_mode",
     "cop_temperature_limit",
     "software_update_status",
+    "scheduled_charging_mode",
+    "scheduled_charging_pending",
   ]);
 
   /**

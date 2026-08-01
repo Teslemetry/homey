@@ -972,6 +972,204 @@
       },
       {
         "title": {
+          "en": "Scheduled charging mode has changed",
+          "nl": "Geplande laadmodus is gewijzigd",
+          "da": "Planlagt opladningstilstand er ændret",
+          "de": "Geplanter Lademodus hat sich geändert",
+          "es": "El modo de carga programada ha cambiado",
+          "fr": "Le mode de charge programmée a changé",
+          "it": "La modalità di ricarica programmata è cambiata",
+          "no": "Planlagt ladetilstand er endret",
+          "sv": "Schemalagt laddningsläge har ändrats",
+          "pl": "Tryb zaplanowanego ładowania uległ zmianie",
+          "ru": "Режим запланированной зарядки изменился",
+          "ko": "예약 충전 모드가 변경되었습니다",
+          "ar": "تغير وضع الشحن المجدول"
+        },
+        "titleFormatted": {
+          "en": "Scheduled charging mode has changed on [[device]]",
+          "nl": "Geplande laadmodus is gewijzigd op [[device]]",
+          "da": "Planlagt opladningstilstand er ændret på [[device]]",
+          "de": "Geplanter Lademodus hat sich auf [[device]] geändert",
+          "es": "El modo de carga programada ha cambiado en [[device]]",
+          "fr": "Le mode de charge programmée a changé sur [[device]]",
+          "it": "La modalità di ricarica programmata è cambiata su [[device]]",
+          "no": "Planlagt ladetilstand er endret på [[device]]",
+          "sv": "Schemalagt laddningsläge har ändrats på [[device]]",
+          "pl": "Tryb zaplanowanego ładowania uległ zmianie na [[device]]",
+          "ru": "Режим запланированной зарядки изменился на [[device]]",
+          "ko": "[[device]]의 예약 충전 모드가 변경되었습니다",
+          "ar": "تغير وضع الشحن المجدول على [[device]]"
+        },
+        "hint": {
+          "en": "This card triggers when the vehicle's scheduled charging mode changes between off, start-at, and depart-by.",
+          "nl": "Deze kaart activeert wanneer de geplande laadmodus van het voertuig wisselt tussen uit, start-om en vertrek-om.",
+          "da": "Dette kort udløses, når køretøjets planlagte opladningstilstand skifter mellem fra, start-kl. og afgang-senest-kl.",
+          "de": "Diese Karte wird ausgelöst, wenn der geplante Lademodus des Fahrzeugs zwischen Aus, Start-um und Abfahrt-bis wechselt.",
+          "es": "Esta tarjeta se activa cuando el modo de carga programada del vehículo cambia entre apagado, iniciar a las y salida antes de las.",
+          "fr": "Cette carte se déclenche lorsque le mode de charge programmée du véhicule change entre éteint, démarrer à et départ avant.",
+          "it": "Questa scheda si attiva quando la modalità di ricarica programmata del veicolo cambia tra spento, inizia alle e partenza entro le.",
+          "no": "Dette kortet utløses når kjøretøyets planlagte ladetilstand bytter mellom av, start-kl. og avreise-innen-kl.",
+          "sv": "Detta kort utlöses när fordonets schemalagda laddningsläge växlar mellan av, starta-kl. och avgång-senast-kl.",
+          "pl": "Ta karta uruchamia się, gdy tryb zaplanowanego ładowania pojazdu zmienia się między wyłączony, start-o i wyjazd-do.",
+          "ru": "Эта карта срабатывает при изменении режима запланированной зарядки автомобиля между выкл., начало-в и отправление-до.",
+          "ko": "차량의 예약 충전 모드가 꺼짐, 시작 시간, 출발 시간 사이에서 변경되면 이 카드가 트리거됩니다.",
+          "ar": "تتفاعل هذه البطاقة عندما يتغير وضع الشحن المجدول للمركبة بين إيقاف والبدء في والمغادرة بحلول."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=scheduled_charging_mode",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "scheduled_charging_mode",
+            "type": "string",
+            "title": {
+              "en": "Mode",
+              "nl": "Modus",
+              "da": "Tilstand",
+              "de": "Modus",
+              "es": "Modo",
+              "fr": "Mode",
+              "it": "Modalità",
+              "no": "Modus",
+              "sv": "Läge",
+              "pl": "Tryb",
+              "ru": "Режим",
+              "ko": "모드",
+              "ar": "الوضع"
+            },
+            "example": {
+              "en": "depart_by",
+              "nl": "depart_by",
+              "da": "depart_by",
+              "de": "depart_by",
+              "es": "depart_by",
+              "fr": "depart_by",
+              "it": "depart_by",
+              "no": "depart_by",
+              "sv": "depart_by",
+              "pl": "depart_by",
+              "ru": "depart_by",
+              "ko": "depart_by",
+              "ar": "depart_by"
+            }
+          }
+        ],
+        "id": "scheduled_charging_mode_changed"
+      },
+      {
+        "title": {
+          "en": "Scheduled charging pending state has changed",
+          "nl": "Status geplande lading in wachtrij is gewijzigd",
+          "da": "Status for planlagt opladning afventer er ændret",
+          "de": "Status \"geplantes Laden ausstehend\" hat sich geändert",
+          "es": "El estado de carga programada pendiente ha cambiado",
+          "fr": "L'état d'attente de la charge programmée a changé",
+          "it": "Lo stato di ricarica programmata in sospeso è cambiato",
+          "no": "Status for planlagt lading venter er endret",
+          "sv": "Status för schemalagd laddning väntar har ändrats",
+          "pl": "Stan oczekiwania zaplanowanego ładowania uległ zmianie",
+          "ru": "Состояние ожидания запланированной зарядки изменилось",
+          "ko": "예약 충전 대기 상태가 변경되었습니다",
+          "ar": "تغيرت حالة انتظار الشحن المجدول"
+        },
+        "titleFormatted": {
+          "en": "Scheduled charging pending state has changed on [[device]]",
+          "nl": "Status geplande lading in wachtrij is gewijzigd op [[device]]",
+          "da": "Status for planlagt opladning afventer er ændret på [[device]]",
+          "de": "Status \"geplantes Laden ausstehend\" hat sich auf [[device]] geändert",
+          "es": "El estado de carga programada pendiente ha cambiado en [[device]]",
+          "fr": "L'état d'attente de la charge programmée a changé sur [[device]]",
+          "it": "Lo stato di ricarica programmata in sospeso è cambiato su [[device]]",
+          "no": "Status for planlagt lading venter er endret på [[device]]",
+          "sv": "Status för schemalagd laddning väntar har ändrats på [[device]]",
+          "pl": "Stan oczekiwania zaplanowanego ładowania uległ zmianie na [[device]]",
+          "ru": "Состояние ожидания запланированной зарядки изменилось на [[device]]",
+          "ko": "[[device]]의 예약 충전 대기 상태가 변경되었습니다",
+          "ar": "تغيرت حالة انتظار الشحن المجدول على [[device]]"
+        },
+        "hint": {
+          "en": "This card triggers when the vehicle reports that an enabled scheduled charge is waiting for its configured start time.",
+          "nl": "Deze kaart activeert wanneer het voertuig meldt dat een ingeschakelde geplande lading wacht op het geconfigureerde starttijdstip.",
+          "da": "Dette kort udløses, når køretøjet rapporterer, at en aktiveret planlagt opladning venter på det konfigurerede starttidspunkt.",
+          "de": "Diese Karte wird ausgelöst, wenn das Fahrzeug meldet, dass ein aktiviertes geplantes Laden auf die konfigurierte Startzeit wartet.",
+          "es": "Esta tarjeta se activa cuando el vehículo informa que una carga programada habilitada está esperando su hora de inicio configurada.",
+          "fr": "Cette carte se déclenche lorsque le véhicule signale qu'une charge programmée activée attend son heure de démarrage configurée.",
+          "it": "Questa scheda si attiva quando il veicolo segnala che una ricarica programmata abilitata è in attesa dell'orario di inizio configurato.",
+          "no": "Dette kortet utløses når kjøretøyet rapporterer at en aktivert planlagt lading venter på det konfigurerte starttidspunktet.",
+          "sv": "Detta kort utlöses när fordonet rapporterar att en aktiverad schemalagd laddning väntar på sin konfigurerade starttid.",
+          "pl": "Ta karta uruchamia się, gdy pojazd zgłasza, że włączone zaplanowane ładowanie oczekuje na skonfigurowany czas rozpoczęcia.",
+          "ru": "Эта карта срабатывает, когда автомобиль сообщает, что включенная запланированная зарядка ожидает настроенного времени начала.",
+          "ko": "차량이 활성화된 예약 충전이 설정된 시작 시간을 기다리고 있다고 보고하면 이 카드가 트리거됩니다.",
+          "ar": "تتفاعل هذه البطاقة عندما تُبلغ المركبة بأن شحنًا مجدولًا ممكّنًا ينتظر وقت البدء المحدد."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=scheduled_charging_pending",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "scheduled_charging_pending",
+            "type": "boolean",
+            "title": {
+              "en": "Pending",
+              "nl": "In wachtrij",
+              "da": "Afventer",
+              "de": "Ausstehend",
+              "es": "Pendiente",
+              "fr": "En attente",
+              "it": "In sospeso",
+              "no": "Venter",
+              "sv": "Väntar",
+              "pl": "Oczekuje",
+              "ru": "Ожидает",
+              "ko": "대기 중",
+              "ar": "قيد الانتظار"
+            },
+            "example": true
+          }
+        ],
+        "id": "scheduled_charging_pending_changed"
+      },
+      {
+        "title": {
           "en": "Software update status has changed",
           "nl": "Softwareupdatestatus is gewijzigd",
           "da": "Softwareopdateringsstatus er ændret",
@@ -4083,6 +4281,374 @@
     "actions": [
       {
         "title": {
+          "en": "Disable scheduled charging",
+          "nl": "Geplande lading uitschakelen",
+          "da": "Deaktiver planlagt opladning",
+          "de": "Geplantes Laden deaktivieren",
+          "es": "Deshabilitar carga programada",
+          "fr": "Désactiver la charge programmée",
+          "it": "Disattiva ricarica programmata",
+          "no": "Deaktiver planlagt lading",
+          "sv": "Inaktivera schemalagd laddning",
+          "pl": "Wyłącz zaplanowane ładowanie",
+          "ru": "Отключить запланированную зарядку",
+          "ko": "예약 충전 비활성화",
+          "ar": "تعطيل الشحن المجدول"
+        },
+        "titleFormatted": {
+          "en": "Disable scheduled charging on [[device]]",
+          "nl": "Schakel geplande lading uit op [[device]]",
+          "da": "Deaktiver planlagt opladning på [[device]]",
+          "de": "Geplantes Laden auf [[device]] deaktivieren",
+          "es": "Deshabilita la carga programada en [[device]]",
+          "fr": "Désactive la charge programmée sur [[device]]",
+          "it": "Disattiva la ricarica programmata su [[device]]",
+          "no": "Deaktiver planlagt lading på [[device]]",
+          "sv": "Inaktivera schemalagd laddning på [[device]]",
+          "pl": "Wyłącz zaplanowane ładowanie na [[device]]",
+          "ru": "Отключить запланированную зарядку на [[device]]",
+          "ko": "[[device]]에서 예약 충전 비활성화",
+          "ar": "تعطيل الشحن المجدول على [[device]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=scheduled_charging_mode",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          }
+        ],
+        "id": "disable_scheduled_charging"
+      },
+      {
+        "title": {
+          "en": "Disable scheduled departure",
+          "nl": "Gepland vertrek uitschakelen",
+          "da": "Deaktiver planlagt afgang",
+          "de": "Geplante Abfahrt deaktivieren",
+          "es": "Deshabilitar salida programada",
+          "fr": "Désactiver le départ programmé",
+          "it": "Disattiva partenza programmata",
+          "no": "Deaktiver planlagt avreise",
+          "sv": "Inaktivera schemalagd avgång",
+          "pl": "Wyłącz zaplanowany wyjazd",
+          "ru": "Отключить запланированное отправление",
+          "ko": "예약 출발 비활성화",
+          "ar": "تعطيل المغادرة المجدولة"
+        },
+        "titleFormatted": {
+          "en": "Disable scheduled departure on [[device]]",
+          "nl": "Schakel gepland vertrek uit op [[device]]",
+          "da": "Deaktiver planlagt afgang på [[device]]",
+          "de": "Geplante Abfahrt auf [[device]] deaktivieren",
+          "es": "Deshabilita la salida programada en [[device]]",
+          "fr": "Désactive le départ programmé sur [[device]]",
+          "it": "Disattiva la partenza programmata su [[device]]",
+          "no": "Deaktiver planlagt avreise på [[device]]",
+          "sv": "Inaktivera schemalagd avgång på [[device]]",
+          "pl": "Wyłącz zaplanowany wyjazd na [[device]]",
+          "ru": "Отключить запланированное отправление на [[device]]",
+          "ko": "[[device]]에서 예약 출발 비활성화",
+          "ar": "تعطيل المغادرة المجدولة على [[device]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=scheduled_charging_mode",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          }
+        ],
+        "id": "disable_scheduled_departure"
+      },
+      {
+        "title": {
+          "en": "Enable scheduled charging",
+          "nl": "Geplande lading inschakelen",
+          "da": "Aktiver planlagt opladning",
+          "de": "Geplantes Laden aktivieren",
+          "es": "Habilitar carga programada",
+          "fr": "Activer la charge programmée",
+          "it": "Attiva ricarica programmata",
+          "no": "Aktiver planlagt lading",
+          "sv": "Aktivera schemalagd laddning",
+          "pl": "Włącz zaplanowane ładowanie",
+          "ru": "Включить запланированную зарядку",
+          "ko": "예약 충전 활성화",
+          "ar": "تفعيل الشحن المجدول"
+        },
+        "titleFormatted": {
+          "en": "Enable scheduled charging on [[device]] at [[time]]",
+          "nl": "Schakel geplande lading in op [[device]] om [[time]]",
+          "da": "Aktiver planlagt opladning på [[device]] kl. [[time]]",
+          "de": "Geplantes Laden auf [[device]] um [[time]] aktivieren",
+          "es": "Habilita la carga programada en [[device]] a las [[time]]",
+          "fr": "Active la charge programmée sur [[device]] à [[time]]",
+          "it": "Attiva la ricarica programmata su [[device]] alle [[time]]",
+          "no": "Aktiver planlagt lading på [[device]] kl. [[time]]",
+          "sv": "Aktivera schemalagd laddning på [[device]] kl. [[time]]",
+          "pl": "Włącz zaplanowane ładowanie na [[device]] o [[time]]",
+          "ru": "Включить запланированную зарядку на [[device]] в [[time]]",
+          "ko": "[[device]]에서 [[time]]에 예약 충전 활성화",
+          "ar": "تفعيل الشحن المجدول على [[device]] في [[time]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=scheduled_charging_mode",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          },
+          {
+            "type": "time",
+            "name": "time",
+            "title": {
+              "en": "Start time",
+              "nl": "Starttijd",
+              "da": "Starttidspunkt",
+              "de": "Startzeit",
+              "es": "Hora de inicio",
+              "fr": "Heure de début",
+              "it": "Ora di inizio",
+              "no": "Starttid",
+              "sv": "Starttid",
+              "pl": "Czas rozpoczęcia",
+              "ru": "Время начала",
+              "ko": "시작 시간",
+              "ar": "وقت البدء"
+            }
+          }
+        ],
+        "id": "enable_scheduled_charging"
+      },
+      {
+        "title": {
+          "en": "Enable scheduled departure",
+          "nl": "Gepland vertrek inschakelen",
+          "da": "Aktiver planlagt afgang",
+          "de": "Geplante Abfahrt aktivieren",
+          "es": "Habilitar salida programada",
+          "fr": "Activer le départ programmé",
+          "it": "Attiva partenza programmata",
+          "no": "Aktiver planlagt avreise",
+          "sv": "Aktivera schemalagd avgång",
+          "pl": "Włącz zaplanowany wyjazd",
+          "ru": "Включить запланированное отправление",
+          "ko": "예약 출발 활성화",
+          "ar": "تفعيل المغادرة المجدولة"
+        },
+        "titleFormatted": {
+          "en": "Enable scheduled departure on [[device]] departing by [[departure_time]], preconditioning [[preconditioning_enabled]] (weekdays only [[preconditioning_weekdays_only]]), off-peak charging [[off_peak_charging_enabled]] (weekdays only [[off_peak_charging_weekdays_only]]) until [[end_off_peak_time]]",
+          "nl": "Schakel gepland vertrek in op [[device]], vertrekken om [[departure_time]], voorconditionering [[preconditioning_enabled]] (alleen werkdagen [[preconditioning_weekdays_only]]), daluren-laden [[off_peak_charging_enabled]] (alleen werkdagen [[off_peak_charging_weekdays_only]]) tot [[end_off_peak_time]]",
+          "da": "Aktiver planlagt afgang på [[device]], afgang senest kl. [[departure_time]], forkonditionering [[preconditioning_enabled]] (kun hverdage [[preconditioning_weekdays_only]]), opladning uden for spidsbelastning [[off_peak_charging_enabled]] (kun hverdage [[off_peak_charging_weekdays_only]]) indtil [[end_off_peak_time]]",
+          "de": "Geplante Abfahrt auf [[device]] aktivieren, Abfahrt bis [[departure_time]], Vorkonditionierung [[preconditioning_enabled]] (nur Wochentage [[preconditioning_weekdays_only]]), Laden außerhalb der Spitzenzeiten [[off_peak_charging_enabled]] (nur Wochentage [[off_peak_charging_weekdays_only]]) bis [[end_off_peak_time]]",
+          "es": "Habilita la salida programada en [[device]], salida antes de las [[departure_time]], preacondicionamiento [[preconditioning_enabled]] (solo días laborables [[preconditioning_weekdays_only]]), carga fuera de horas punta [[off_peak_charging_enabled]] (solo días laborables [[off_peak_charging_weekdays_only]]) hasta [[end_off_peak_time]]",
+          "fr": "Active le départ programmé sur [[device]], départ avant [[departure_time]], préconditionnement [[preconditioning_enabled]] (semaine uniquement [[preconditioning_weekdays_only]]), charge hors pointe [[off_peak_charging_enabled]] (semaine uniquement [[off_peak_charging_weekdays_only]]) jusqu'à [[end_off_peak_time]]",
+          "it": "Attiva la partenza programmata su [[device]], partenza entro le [[departure_time]], precondizionamento [[preconditioning_enabled]] (solo feriali [[preconditioning_weekdays_only]]), ricarica fuori picco [[off_peak_charging_enabled]] (solo feriali [[off_peak_charging_weekdays_only]]) fino alle [[end_off_peak_time]]",
+          "no": "Aktiver planlagt avreise på [[device]], avreise innen kl. [[departure_time]], forkondisjonering [[preconditioning_enabled]] (kun ukedager [[preconditioning_weekdays_only]]), lading utenfor rushtiden [[off_peak_charging_enabled]] (kun ukedager [[off_peak_charging_weekdays_only]]) frem til [[end_off_peak_time]]",
+          "sv": "Aktivera schemalagd avgång på [[device]], avgång senast kl. [[departure_time]], förkonditionering [[preconditioning_enabled]] (endast vardagar [[preconditioning_weekdays_only]]), lågtrafikladdning [[off_peak_charging_enabled]] (endast vardagar [[off_peak_charging_weekdays_only]]) till [[end_off_peak_time]]",
+          "pl": "Włącz zaplanowany wyjazd na [[device]], wyjazd do [[departure_time]], przygotowanie wstępne [[preconditioning_enabled]] (tylko dni robocze [[preconditioning_weekdays_only]]), ładowanie poza szczytem [[off_peak_charging_enabled]] (tylko dni robocze [[off_peak_charging_weekdays_only]]) do [[end_off_peak_time]]",
+          "ru": "Включить запланированное отправление на [[device]], отправление до [[departure_time]], предварительное кондиционирование [[preconditioning_enabled]] (только по будням [[preconditioning_weekdays_only]]), внепиковая зарядка [[off_peak_charging_enabled]] (только по будням [[off_peak_charging_weekdays_only]]) до [[end_off_peak_time]]",
+          "ko": "[[device]]에서 [[departure_time]]까지 출발하는 예약 출발 활성화, 사전 컨디셔닝 [[preconditioning_enabled]](평일만 [[preconditioning_weekdays_only]]), 비피크 충전 [[off_peak_charging_enabled]](평일만 [[off_peak_charging_weekdays_only]]) [[end_off_peak_time]]까지",
+          "ar": "تفعيل المغادرة المجدولة على [[device]] بحلول [[departure_time]]، التهيئة المسبقة [[preconditioning_enabled]] (أيام الأسبوع فقط [[preconditioning_weekdays_only]])، الشحن خارج ساعات الذروة [[off_peak_charging_enabled]] (أيام الأسبوع فقط [[off_peak_charging_weekdays_only]]) حتى [[end_off_peak_time]]"
+        },
+        "hint": {
+          "en": "Also configures preconditioning and off-peak charging, mirroring Tesla's scheduled departure settings.",
+          "nl": "Configureert ook voorconditionering en daluren-laden, in lijn met Tesla's instellingen voor gepland vertrek.",
+          "da": "Konfigurerer også forkonditionering og opladning uden for spidsbelastning, i tråd med Teslas indstillinger for planlagt afgang.",
+          "de": "Konfiguriert außerdem die Vorkonditionierung und das Laden außerhalb der Spitzenzeiten, entsprechend Teslas Einstellungen für die geplante Abfahrt.",
+          "es": "También configura el preacondicionamiento y la carga fuera de horas punta, reflejando la configuración de salida programada de Tesla.",
+          "fr": "Configure également le préconditionnement et la charge hors pointe, à l'image des réglages de départ programmé de Tesla.",
+          "it": "Configura anche il precondizionamento e la ricarica fuori picco, rispecchiando le impostazioni di partenza programmata di Tesla.",
+          "no": "Konfigurerer også forkondisjonering og lading utenfor rushtiden, i tråd med Teslas innstillinger for planlagt avreise.",
+          "sv": "Konfigurerar även förkonditionering och lågtrafikladdning, i linje med Teslas inställningar för schemalagd avgång.",
+          "pl": "Konfiguruje również przygotowanie wstępne i ładowanie poza szczytem, odzwierciedlając ustawienia zaplanowanego wyjazdu Tesli.",
+          "ru": "Также настраивает предварительное кондиционирование и внепиковую зарядку, отражая настройки запланированного отправления Tesla.",
+          "ko": "테슬라의 예약 출발 설정을 반영하여 사전 컨디셔닝 및 비피크 충전도 구성합니다.",
+          "ar": "يقوم أيضًا بتكوين التهيئة المسبقة والشحن خارج ساعات الذروة، مما يعكس إعدادات المغادرة المجدولة من تسلا."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=scheduled_charging_mode",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          },
+          {
+            "type": "time",
+            "name": "departure_time",
+            "title": {
+              "en": "Departure time",
+              "nl": "Vertrektijd",
+              "da": "Afgangstidspunkt",
+              "de": "Abfahrtszeit",
+              "es": "Hora de salida",
+              "fr": "Heure de départ",
+              "it": "Ora di partenza",
+              "no": "Avreisetid",
+              "sv": "Avgångstid",
+              "pl": "Czas wyjazdu",
+              "ru": "Время отправления",
+              "ko": "출발 시간",
+              "ar": "وقت المغادرة"
+            }
+          },
+          {
+            "type": "checkbox",
+            "name": "preconditioning_enabled",
+            "title": {
+              "en": "Preconditioning enabled",
+              "nl": "Voorconditionering ingeschakeld",
+              "da": "Forkonditionering aktiveret",
+              "de": "Vorkonditionierung aktiviert",
+              "es": "Preacondicionamiento habilitado",
+              "fr": "Préconditionnement activé",
+              "it": "Precondizionamento attivato",
+              "no": "Forkondisjonering aktivert",
+              "sv": "Förkonditionering aktiverad",
+              "pl": "Przygotowanie wstępne włączone",
+              "ru": "Предварительное кондиционирование включено",
+              "ko": "사전 컨디셔닝 사용",
+              "ar": "تفعيل التهيئة المسبقة"
+            }
+          },
+          {
+            "type": "checkbox",
+            "name": "preconditioning_weekdays_only",
+            "title": {
+              "en": "Preconditioning weekdays only",
+              "nl": "Voorconditionering alleen op werkdagen",
+              "da": "Forkonditionering kun på hverdage",
+              "de": "Vorkonditionierung nur an Wochentagen",
+              "es": "Preacondicionamiento solo días laborables",
+              "fr": "Préconditionnement uniquement en semaine",
+              "it": "Precondizionamento solo nei giorni feriali",
+              "no": "Forkondisjonering kun på ukedager",
+              "sv": "Förkonditionering endast vardagar",
+              "pl": "Przygotowanie wstępne tylko w dni robocze",
+              "ru": "Предварительное кондиционирование только по будням",
+              "ko": "평일에만 사전 컨디셔닝",
+              "ar": "التهيئة المسبقة أيام الأسبوع فقط"
+            }
+          },
+          {
+            "type": "checkbox",
+            "name": "off_peak_charging_enabled",
+            "title": {
+              "en": "Off-peak charging enabled",
+              "nl": "Daluren-laden ingeschakeld",
+              "da": "Opladning uden for spidsbelastning aktiveret",
+              "de": "Laden außerhalb der Spitzenzeiten aktiviert",
+              "es": "Carga fuera de horas punta habilitada",
+              "fr": "Charge hors pointe activée",
+              "it": "Ricarica fuori picco attivata",
+              "no": "Lading utenfor rushtiden aktivert",
+              "sv": "Lågtrafikladdning aktiverad",
+              "pl": "Ładowanie poza szczytem włączone",
+              "ru": "Внепиковая зарядка включена",
+              "ko": "비피크 충전 사용",
+              "ar": "تفعيل الشحن خارج ساعات الذروة"
+            }
+          },
+          {
+            "type": "checkbox",
+            "name": "off_peak_charging_weekdays_only",
+            "title": {
+              "en": "Off-peak charging weekdays only",
+              "nl": "Daluren-laden alleen op werkdagen",
+              "da": "Opladning uden for spidsbelastning kun på hverdage",
+              "de": "Laden außerhalb der Spitzenzeiten nur an Wochentagen",
+              "es": "Carga fuera de horas punta solo días laborables",
+              "fr": "Charge hors pointe uniquement en semaine",
+              "it": "Ricarica fuori picco solo nei giorni feriali",
+              "no": "Lading utenfor rushtiden kun på ukedager",
+              "sv": "Lågtrafikladdning endast vardagar",
+              "pl": "Ładowanie poza szczytem tylko w dni robocze",
+              "ru": "Внепиковая зарядка только по будням",
+              "ko": "평일에만 비피크 충전",
+              "ar": "الشحن خارج ساعات الذروة أيام الأسبوع فقط"
+            }
+          },
+          {
+            "type": "time",
+            "name": "end_off_peak_time",
+            "title": {
+              "en": "End of off-peak time",
+              "nl": "Einde daluren",
+              "da": "Slut på lavlasttid",
+              "de": "Ende der Schwachlastzeit",
+              "es": "Fin del horario fuera de punta",
+              "fr": "Fin de la période hors pointe",
+              "it": "Fine del periodo fuori picco",
+              "no": "Slutt på lavlasttid",
+              "sv": "Slut på lågtrafiktid",
+              "pl": "Koniec okresu poza szczytem",
+              "ru": "Окончание внепикового времени",
+              "ko": "비피크 종료 시간",
+              "ar": "نهاية وقت خارج الذروة"
+            }
+          }
+        ],
+        "id": "enable_scheduled_departure"
+      },
+      {
+        "title": {
           "en": "Flash lights",
           "nl": "Lichten knipperen",
           "da": "Blink lys",
@@ -6933,7 +7499,9 @@
         "software_update_status",
         "software_update_progress",
         "alarm_generic.pin_to_drive",
-        "alarm_generic.valet_mode"
+        "alarm_generic.valet_mode",
+        "scheduled_charging_mode",
+        "scheduled_charging_pending"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -8824,6 +9392,106 @@
           }
         }
       ]
+    },
+    "scheduled_charging_mode": {
+      "icon": "/assets/capabilities/time_to_full_charge.svg",
+      "type": "enum",
+      "title": {
+        "en": "Scheduled Charging Mode",
+        "nl": "Geplande Laadmodus",
+        "da": "Planlagt Opladningstilstand",
+        "de": "Geplanter Lademodus",
+        "es": "Modo de Carga Programada",
+        "fr": "Mode de Charge Programmée",
+        "it": "Modalità di Ricarica Programmata",
+        "no": "Planlagt Ladetilstand",
+        "sv": "Schemalagt Laddningsläge",
+        "pl": "Tryb Zaplanowanego Ładowania",
+        "ru": "Режим Запланированной Зарядки",
+        "ko": "예약 충전 모드",
+        "ar": "وضع الشحن المجدول"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "values": [
+        {
+          "id": "off",
+          "title": {
+            "en": "Off",
+            "nl": "Uit",
+            "da": "Fra",
+            "de": "Aus",
+            "es": "Apagado",
+            "fr": "Éteint",
+            "it": "Spento",
+            "no": "Av",
+            "sv": "Av",
+            "pl": "Wyłączony",
+            "ru": "Выкл.",
+            "ko": "꺼짐",
+            "ar": "إيقاف"
+          }
+        },
+        {
+          "id": "start_at",
+          "title": {
+            "en": "Start at",
+            "nl": "Start om",
+            "da": "Start kl.",
+            "de": "Start um",
+            "es": "Iniciar a las",
+            "fr": "Démarrer à",
+            "it": "Inizia alle",
+            "no": "Start kl.",
+            "sv": "Starta kl.",
+            "pl": "Start o",
+            "ru": "Начало в",
+            "ko": "시작 시간",
+            "ar": "البدء في"
+          }
+        },
+        {
+          "id": "depart_by",
+          "title": {
+            "en": "Depart by",
+            "nl": "Vertrekken om",
+            "da": "Afgang senest kl.",
+            "de": "Abfahrt bis",
+            "es": "Salida antes de las",
+            "fr": "Départ avant",
+            "it": "Partenza entro le",
+            "no": "Avreise innen kl.",
+            "sv": "Avgång senast kl.",
+            "pl": "Wyjazd do",
+            "ru": "Отправление до",
+            "ko": "출발 시간",
+            "ar": "المغادرة بحلول"
+          }
+        }
+      ]
+    },
+    "scheduled_charging_pending": {
+      "icon": "/assets/capabilities/time_to_full_charge.svg",
+      "type": "boolean",
+      "title": {
+        "en": "Scheduled Charging Pending",
+        "nl": "Geplande Lading in Wachtrij",
+        "da": "Planlagt Opladning Afventer",
+        "de": "Geplantes Laden Ausstehend",
+        "es": "Carga Programada Pendiente",
+        "fr": "Charge Programmée en Attente",
+        "it": "Ricarica Programmata in Sospeso",
+        "no": "Planlagt Lading Venter",
+        "sv": "Schemalagd Laddning Väntar",
+        "pl": "Zaplanowane Ładowanie Oczekuje",
+        "ru": "Запланированная Зарядка Ожидает",
+        "ko": "예약 충전 대기 중",
+        "ar": "الشحن المجدول قيد الانتظار"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
     },
     "seat_cooler": {
       "icon": "/assets/capabilities/seat_cooler.svg",
