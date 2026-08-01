@@ -19,3 +19,4 @@ jobs:
       - uses: athombv/github-action-homey-app-validate@master
         with:
           level: verified
+      - run: npm run smoke:packaged-build

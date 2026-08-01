@@ -13,6 +13,7 @@
     "app:install": "homey app install",
     "select": "homey select",
     "app:validate": "homey app validate --level verified",
+    "smoke:packaged-build": "node scripts/smoke-test-packaged-build.mjs",
     "app:publish": "homey app publish",
     "app:translate": "homey app translate",
     "homey": "homey",

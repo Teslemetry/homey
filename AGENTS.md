@@ -10,6 +10,7 @@ npm test                # Build, then run test/*.test.ts with Node's built-in te
 npm run lint            # oxlint check (see .oxlintrc.json)
 npm run dev             # Run app on local Homey
 npm run app:validate    # Validate app (required before commit)
+npm run smoke:packaged-build  # Verify every driver actually loads out of a real .homeybuild bundle
 ```
 
 Always run `npm run app:validate` before committing changes.
@@ -33,6 +34,18 @@ class would issue live network calls. Each test calls the stub's
 `configureTeslemetryStub(factory)` before triggering a build to control
 `createProducts()` timing/outcome and drive the returned `sse` EventEmitter
 directly - see `test/app-connection-lifecycle.test.ts`.
+
+`npm test`'s module resolution (Node's own `node_modules` upward search) always
+falls back to this repo's own root `node_modules`, which always has every
+dependency built - so it can't catch a dependency missing specifically from
+the *packaged* `.homeybuild/` bundle Homey actually uploads and runs on-device.
+`npm run smoke:packaged-build` (`scripts/smoke-test-packaged-build.mjs`) closes
+that gap: it runs the real `homey app build`, copies the result to an isolated
+directory with no such ancestor `node_modules` to fall back to, and imports
+every compiled `app.js`/`api.js`/`driver.js`/`device.js` from there (same
+`homey`/`@teslemetry/api` stubs as the unit tests) to confirm each one still
+resolves every import with nothing else available. See "tesla-fleet-api is
+pinned to a commit SHA" below for the exact bug class this exists to catch.
 
 ## Architecture
 
@@ -288,6 +301,22 @@ in `onUninit` via the same `pollingCleanup` array every other listener uses.
   (invoked from the `build` npm script, ahead of `tsc`) compiles it explicitly
   as an ordinary build step, which runs regardless of `--ignore-scripts`; it's a
   no-op once `dist/` already exists (e.g. under a normal `npm install`).
+  This alone is not sufficient, though: Homey CLI's own `preprocess()`
+  (`node_modules/homey/lib/App.js`, the shared pipeline behind `build`/
+  `validate`/`run`/`publish`) copies production `node_modules` into
+  `.homeybuild/node_modules` *before* it runs the project's `build` npm
+  script - so that copy of `tesla-fleet-api` is taken with no `dist/` yet,
+  and building `dist/` afterward into the *root* `node_modules/tesla-fleet-api`
+  never reaches the already-copied `.homeybuild` bundle, which is what
+  actually ships. `scripts/build-tesla-fleet-api.mjs` also mirrors its
+  freshly-built `dist/` into `.homeybuild/node_modules/tesla-fleet-api/dist`
+  when that copy already exists, closing the gap. Verify this end-to-end
+  with `rm -rf node_modules/tesla-fleet-api/dist .homeybuild && npx homey app
+  build && ls .homeybuild/node_modules/tesla-fleet-api/dist` - a `dist/`
+  entry confirms the published bundle actually has it; this exact command
+  (with the mirroring step reverted) is how the 1.0.8 Powerwall regression
+  (`ERR_MODULE_NOT_FOUND` on `drivers/battery/device.js`'s import - no live
+  Powerwall device, no values, no Flow execution) was reproduced.
 - `tesla-fleet-api`'s public entry point does not re-export the `TariffContentV2`
   input type `getTariffPeriods` requires, so it's imported from the package's
   internal `tesla-fleet-api/dist/types/site_info.js` path instead; `@teslemetry/api`
