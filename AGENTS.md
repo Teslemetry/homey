@@ -27,10 +27,10 @@ Homey runtime) so device/driver/app classes can be exercised directly via
 their prototypes without a live Homey instance; `test/support/homey-stub.js`
 holds the stand-in `Device`/`Driver`/`App` base classes. The same loader
 also redirects `@teslemetry/api` to `test/support/teslemetry-api-stub.js` -
-`app.js` is the only compiled file with a *runtime* (not type-only) import
-from that package (`Teslemetry`; the SDK's other exports used elsewhere are
-TS interfaces/type aliases, erased at build time), and constructing the real
-class would issue live network calls. Each test calls the stub's
+the compiled runtime imports are `Teslemetry` in `app.js` and the pure
+`getTariffPeriods` helper in the Powerwall device. Constructing the real
+`Teslemetry` class would issue live network calls, while the stub safely
+re-exports the real tariff helper for its tests. Each test calls the stub's
 `configureTeslemetryStub(factory)` before triggering a build to control
 `createProducts()` timing/outcome and drive the returned `sse` EventEmitter
 directly - see `test/app-connection-lifecycle.test.ts`.
@@ -42,11 +42,12 @@ the *packaged* `.homeybuild/` bundle Homey actually uploads and runs on-device.
 `npm run smoke:packaged-build` (`scripts/smoke-test-packaged-build.mjs`) closes
 that gap: it runs the real `homey app build`, copies the result to an isolated
 directory with no such ancestor `node_modules` to fall back to, and imports
-every compiled `app.js`/`api.js`/`driver.js`/`device.js` from there (same
-`homey`/`@teslemetry/api` stubs as the unit tests) to confirm each one still
-resolves every import with nothing else available - a general safety net for
-any dependency that resolves fine from this repo's own `node_modules` but is
-missing or incomplete in the packaged bundle.
+every compiled `app.js`/`api.js`/`driver.js`/`device.js` from there (stubbing
+only the Homey runtime, so packaged dependencies such as `@teslemetry/api`
+must resolve for real) to confirm each one still resolves every import with
+nothing else available - a general safety net for any dependency that resolves
+fine from this repo's own `node_modules` but is missing or incomplete in the
+packaged bundle.
 
 ## Architecture
 
