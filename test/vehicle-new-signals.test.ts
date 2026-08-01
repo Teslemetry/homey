@@ -22,13 +22,15 @@ const DEFAULT_VIN = "test-vin";
 function createDeviceStub(
   capabilities: Record<string, unknown>,
   vin: string = DEFAULT_VIN,
+  config: Record<string, unknown> = {},
 ) {
   const sse = new FakeVehicleStream();
   const vehicle = {
     sse,
     api: {},
-    metadata: { config: { rhd: false, can_actuate_trunks: false } },
+    metadata: { config: { rhd: false, can_actuate_trunks: false, ...config } },
   };
+  const capabilityOptionCalls: Array<{ capability: string; options: unknown }> = [];
   const stub = Object.assign(new VehicleDevice(), {
     homey: {
       app: { products: { vehicles: { [vin]: vehicle } } },
@@ -49,7 +51,9 @@ function createDeviceStub(
     setCapabilityValue: async (capability: string, value: unknown) => {
       capabilities[capability] = value;
     },
-    setCapabilityOptions: async () => {},
+    setCapabilityOptions: async (capability: string, options: unknown) => {
+      capabilityOptionCalls.push({ capability, options });
+    },
     getStoreValue: () => null,
     registerCapabilityListener: () => {},
     log: () => {},
@@ -57,7 +61,7 @@ function createDeviceStub(
     setUnavailable: async () => {},
   });
   stub.driver.getDevices = () => [stub];
-  return { stub, sse, capabilities };
+  return { stub, sse, capabilities, capabilityOptionCalls };
 }
 
 test("MilesSinceReset converts miles to km on measure_distance.since_reset", async () => {
@@ -239,6 +243,88 @@ test("tpms_warning returns to off once every warning clears", async () => {
     rear_right: false,
   });
   assert.equal(capabilities["tpms_warning"], "off");
+});
+
+test("CabinOverheatProtectionMode maps Off/On/FanOnly to cop_mode", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    cop_mode: undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("CabinOverheatProtectionMode", "CabinOverheatProtectionModeStateOn");
+  assert.equal(capabilities["cop_mode"], "on");
+
+  sse.data.emit("CabinOverheatProtectionMode", "CabinOverheatProtectionModeStateFanOnly");
+  assert.equal(capabilities["cop_mode"], "fan_only");
+
+  sse.data.emit("CabinOverheatProtectionMode", "CabinOverheatProtectionModeStateOff");
+  assert.equal(capabilities["cop_mode"], "off");
+});
+
+test("CabinOverheatProtectionMode Unknown state is skipped (no mapped value)", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    cop_mode: "on",
+  });
+  await stub.onInit();
+
+  sse.data.emit(
+    "CabinOverheatProtectionMode",
+    "CabinOverheatProtectionModeStateUnknown",
+  );
+
+  assert.equal(capabilities["cop_mode"], "on");
+});
+
+test("CabinOverheatProtectionTemperatureLimit maps Low/Medium/High to cop_temperature_limit", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    cop_temperature_limit: undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit(
+    "CabinOverheatProtectionTemperatureLimit",
+    "ClimateOverheatProtectionTempLimitLow",
+  );
+  assert.equal(capabilities["cop_temperature_limit"], "low");
+
+  sse.data.emit(
+    "CabinOverheatProtectionTemperatureLimit",
+    "ClimateOverheatProtectionTempLimitMedium",
+  );
+  assert.equal(capabilities["cop_temperature_limit"], "medium");
+
+  sse.data.emit(
+    "CabinOverheatProtectionTemperatureLimit",
+    "ClimateOverheatProtectionTempLimitHigh",
+  );
+  assert.equal(capabilities["cop_temperature_limit"], "high");
+});
+
+test("cop_temperature_limit is only setable when cop_user_set_temp_supported is true", async () => {
+  const { stub, capabilityOptionCalls } = createDeviceStub(
+    { cop_temperature_limit: undefined },
+    DEFAULT_VIN,
+    { cop_user_set_temp_supported: true },
+  );
+  await stub.onInit();
+
+  const call = capabilityOptionCalls.find(
+    (c) => c.capability === "cop_temperature_limit",
+  );
+  assert.equal((call?.options as { setable?: boolean })?.setable, true);
+});
+
+test("cop_temperature_limit is not setable when cop_user_set_temp_supported is false/absent", async () => {
+  const { stub, capabilityOptionCalls } = createDeviceStub(
+    { cop_temperature_limit: undefined },
+    DEFAULT_VIN,
+  );
+  await stub.onInit();
+
+  const call = capabilityOptionCalls.find(
+    (c) => c.capability === "cop_temperature_limit",
+  );
+  assert.equal((call?.options as { setable?: boolean })?.setable, false);
 });
 
 test("a null TpmsSoftWarnings/TpmsHardWarnings reading is treated as no warning on those tires", async () => {

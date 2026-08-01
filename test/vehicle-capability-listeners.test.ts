@@ -107,6 +107,52 @@ test("steering_wheel_heater capability listener throws on an invalid level", asy
   );
 });
 
+test("cop_mode capability listener maps off/on/fan_only to setCabinOverheatProtection", async () => {
+  const { capabilityListeners, apiCalls } = await createDeviceStub();
+
+  await capabilityListeners.cop_mode("off");
+  await capabilityListeners.cop_mode("on");
+  await capabilityListeners.cop_mode("fan_only");
+
+  assert.deepEqual(apiCalls, [
+    { method: "setCabinOverheatProtection", args: [{ on: false, fan_only: false }] },
+    { method: "setCabinOverheatProtection", args: [{ on: true, fan_only: false }] },
+    { method: "setCabinOverheatProtection", args: [{ on: true, fan_only: true }] },
+  ]);
+});
+
+test("cop_mode capability listener throws on an invalid mode", async () => {
+  const { capabilityListeners } = await createDeviceStub();
+
+  await assert.rejects(
+    () => capabilityListeners.cop_mode("invalid"),
+    /Invalid cabin overheat protection mode/,
+  );
+});
+
+test("cop_temperature_limit capability listener maps low/medium/high to setCopTemp", async () => {
+  const { capabilityListeners, apiCalls } = await createDeviceStub();
+
+  await capabilityListeners.cop_temperature_limit("low");
+  await capabilityListeners.cop_temperature_limit("medium");
+  await capabilityListeners.cop_temperature_limit("high");
+
+  assert.deepEqual(apiCalls, [
+    { method: "setCopTemp", args: [0] },
+    { method: "setCopTemp", args: [1] },
+    { method: "setCopTemp", args: [2] },
+  ]);
+});
+
+test("cop_temperature_limit capability listener throws on an invalid limit", async () => {
+  const { capabilityListeners } = await createDeviceStub();
+
+  await assert.rejects(
+    () => capabilityListeners.cop_temperature_limit("invalid"),
+    /Invalid cabin overheat protection temperature limit/,
+  );
+});
+
 test("onoff.sentry capability listener calls setSentryMode", async () => {
   const { capabilityListeners, apiCalls } = await createDeviceStub();
 

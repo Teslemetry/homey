@@ -1,0 +1,129 @@
+{
+  "title": {
+    "en": "Cabin overheat protection temperature limit is",
+    "nl": "Temperatuurlimiet cabinebeveiliging tegen oververhitting is",
+    "da": "Temperaturgrænse for kabine overophedningsbeskyttelse er",
+    "de": "Temperaturgrenze für Kabinen-Überhitzungsschutz ist",
+    "es": "El límite de temperatura de protección contra sobrecalentamiento es",
+    "fr": "La limite de température de protection contre la surchauffe est",
+    "it": "Il limite di temperatura per la protezione dal surriscaldamento è",
+    "no": "Temperaturgrense for kabinbeskyttelse mot overoppheting er",
+    "sv": "Temperaturgräns för kupéskydd mot överhettning är",
+    "pl": "Limit temperatury ochrony kabiny przed przegrzaniem to",
+    "ru": "Температурный предел защиты салона от перегрева: ",
+    "ko": "캐빈 과열 보호 온도 제한",
+    "ar": "حد درجة حرارة حماية المقصورة من ارتفاع الحرارة هو"
+  },
+  "titleFormatted": {
+    "en": "Cabin overheat protection temperature limit of [[device]] is [[limit]]",
+    "nl": "Temperatuurlimiet cabinebeveiliging tegen oververhitting van [[device]] is [[limit]]",
+    "da": "Temperaturgrænse for kabine overophedningsbeskyttelse for [[device]] er [[limit]]",
+    "de": "Temperaturgrenze für Kabinen-Überhitzungsschutz von [[device]] ist [[limit]]",
+    "es": "El límite de temperatura de protección de [[device]] es [[limit]]",
+    "fr": "La limite de température de protection de [[device]] est [[limit]]",
+    "it": "Il limite di temperatura per la protezione di [[device]] è [[limit]]",
+    "no": "Temperaturgrense for kabinbeskyttelse for [[device]] er [[limit]]",
+    "sv": "Temperaturgräns för kupéskydd för [[device]] är [[limit]]",
+    "pl": "Limit temperatury ochrony kabiny urządzenia [[device]] to [[limit]]",
+    "ru": "Температурный предел защиты салона [[device]]: [[limit]]",
+    "ko": "[[device]]의 캐빈 과열 보호 온도 제한은 [[limit]]입니다",
+    "ar": "حد درجة حرارة حماية المقصورة لـ[[device]] هو [[limit]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=cop_temperature_limit",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    },
+    {
+      "type": "dropdown",
+      "name": "limit",
+      "title": {
+        "en": "Temperature Limit",
+        "nl": "Temperatuurlimiet",
+        "da": "Temperaturgrænse",
+        "de": "Temperaturgrenze",
+        "es": "Límite de Temperatura",
+        "fr": "Limite de Température",
+        "it": "Limite di Temperatura",
+        "no": "Temperaturgrense",
+        "sv": "Temperaturgräns",
+        "pl": "Limit Temperatury",
+        "ru": "Температурный Предел",
+        "ko": "온도 제한",
+        "ar": "حد درجة الحرارة"
+      },
+      "values": [
+        {
+          "id": "low",
+          "label": {
+            "en": "Low",
+            "nl": "Laag",
+            "da": "Lav",
+            "de": "Niedrig",
+            "es": "Bajo",
+            "fr": "Bas",
+            "it": "Basso",
+            "no": "Lav",
+            "sv": "Låg",
+            "pl": "Niski",
+            "ru": "Низкий",
+            "ko": "낮음",
+            "ar": "منخفض"
+          }
+        },
+        {
+          "id": "medium",
+          "label": {
+            "en": "Medium",
+            "nl": "Gemiddeld",
+            "da": "Middel",
+            "de": "Mittel",
+            "es": "Medio",
+            "fr": "Moyen",
+            "it": "Medio",
+            "no": "Middels",
+            "sv": "Medel",
+            "pl": "Średni",
+            "ru": "Средний",
+            "ko": "중간",
+            "ar": "متوسط"
+          }
+        },
+        {
+          "id": "high",
+          "label": {
+            "en": "High",
+            "nl": "Hoog",
+            "da": "Høj",
+            "de": "Hoch",
+            "es": "Alto",
+            "fr": "Élevé",
+            "it": "Alto",
+            "no": "Høy",
+            "sv": "Hög",
+            "pl": "Wysoki",
+            "ru": "Высокий",
+            "ko": "높음",
+            "ar": "مرتفع"
+          }
+        }
+      ]
+    }
+  ]
+}

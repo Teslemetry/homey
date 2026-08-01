@@ -95,7 +95,9 @@
     "windowcoverings_set.tonneau",
     "tpms_warning",
     "alarm_presence",
-    "alarm_generic.at_work"
+    "alarm_generic.at_work",
+    "cop_mode",
+    "cop_temperature_limit"
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {

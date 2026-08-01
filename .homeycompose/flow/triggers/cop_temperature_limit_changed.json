@@ -1,0 +1,105 @@
+{
+  "title": {
+    "en": "Cabin overheat protection temperature limit has changed",
+    "nl": "Temperatuurlimiet cabinebeveiliging tegen oververhitting is gewijzigd",
+    "da": "Temperaturgrænse for kabine overophedningsbeskyttelse er ændret",
+    "de": "Temperaturgrenze für Kabinen-Überhitzungsschutz hat sich geändert",
+    "es": "El límite de temperatura de protección contra sobrecalentamiento ha cambiado",
+    "fr": "La limite de température de protection contre la surchauffe a changé",
+    "it": "Il limite di temperatura per la protezione dal surriscaldamento è cambiato",
+    "no": "Temperaturgrense for kabinbeskyttelse mot overoppheting er endret",
+    "sv": "Temperaturgräns för kupéskydd mot överhettning har ändrats",
+    "pl": "Limit temperatury ochrony kabiny przed przegrzaniem uległ zmianie",
+    "ru": "Температурный предел защиты салона от перегрева изменился",
+    "ko": "캐빈 과열 보호 온도 제한이 변경되었습니다",
+    "ar": "تغير حد درجة حرارة حماية المقصورة من ارتفاع الحرارة"
+  },
+  "titleFormatted": {
+    "en": "Cabin overheat protection temperature limit has changed on [[device]]",
+    "nl": "Temperatuurlimiet cabinebeveiliging tegen oververhitting is gewijzigd op [[device]]",
+    "da": "Temperaturgrænse for kabine overophedningsbeskyttelse er ændret på [[device]]",
+    "de": "Temperaturgrenze für Kabinen-Überhitzungsschutz hat sich auf [[device]] geändert",
+    "es": "El límite de temperatura de protección contra sobrecalentamiento ha cambiado en [[device]]",
+    "fr": "La limite de température de protection contre la surchauffe a changé sur [[device]]",
+    "it": "Il limite di temperatura per la protezione dal surriscaldamento è cambiato su [[device]]",
+    "no": "Temperaturgrense for kabinbeskyttelse mot overoppheting er endret på [[device]]",
+    "sv": "Temperaturgräns för kupéskydd mot överhettning har ändrats på [[device]]",
+    "pl": "Limit temperatury ochrony kabiny przed przegrzaniem uległ zmianie na [[device]]",
+    "ru": "Температурный предел защиты салона от перегрева изменился на [[device]]",
+    "ko": "[[device]]의 캐빈 과열 보호 온도 제한이 변경되었습니다",
+    "ar": "تغير حد درجة حرارة حماية المقصورة من ارتفاع الحرارة على [[device]]"
+  },
+  "hint": {
+    "en": "This card triggers when the cabin overheat protection temperature limit changes. Only fires on vehicles that support a user-set limit.",
+    "nl": "Deze kaart activeert wanneer de temperatuurlimiet van de cabinebeveiliging tegen oververhitting verandert. Alleen op voertuigen die een door de gebruiker instelbare limiet ondersteunen.",
+    "da": "Dette kort udløses, når temperaturgrænsen for kabine overophedningsbeskyttelse ændres. Udløses kun på køretøjer, der understøtter en brugerdefineret grænse.",
+    "de": "Diese Karte wird ausgelöst, wenn sich die Temperaturgrenze des Kabinen-Überhitzungsschutzes ändert. Löst nur bei Fahrzeugen aus, die eine benutzerdefinierte Grenze unterstützen.",
+    "es": "Esta tarjeta se activa cuando cambia el límite de temperatura de protección contra sobrecalentamiento. Solo se activa en vehículos que admiten un límite definido por el usuario.",
+    "fr": "Cette carte se déclenche lorsque la limite de température de protection contre la surchauffe change. Ne se déclenche que sur les véhicules prenant en charge une limite définie par l'utilisateur.",
+    "it": "Questa scheda si attiva quando cambia il limite di temperatura per la protezione dal surriscaldamento. Si attiva solo sui veicoli che supportano un limite impostabile dall'utente.",
+    "no": "Dette kortet utløses når temperaturgrensen for kabinbeskyttelse mot overoppheting endres. Utløses kun på kjøretøy som støtter en brukerinnstilt grense.",
+    "sv": "Detta kort utlöses när temperaturgränsen för kupéskydd mot överhettning ändras. Utlöses endast på fordon som stödjer en användarinställd gräns.",
+    "pl": "Ta karta uruchamia się, gdy zmienia się limit temperatury ochrony kabiny przed przegrzaniem. Działa tylko w pojazdach obsługujących limit ustawiany przez użytkownika.",
+    "ru": "Эта карта срабатывает при изменении температурного предела защиты салона от перегрева. Срабатывает только на автомобилях с поддержкой пользовательского предела.",
+    "ko": "캐빈 과열 보호 온도 제한이 변경되면 이 카드가 트리거됩니다. 사용자 설정 제한을 지원하는 차량에서만 작동합니다.",
+    "ar": "تتفاعل هذه البطاقة عندما يتغير حد درجة حرارة حماية المقصورة من ارتفاع الحرارة. تعمل فقط على المركبات التي تدعم حدًا يحدده المستخدم."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=cop_temperature_limit",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "cop_temperature_limit",
+      "type": "string",
+      "title": {
+        "en": "Temperature Limit",
+        "nl": "Temperatuurlimiet",
+        "da": "Temperaturgrænse",
+        "de": "Temperaturgrenze",
+        "es": "Límite de Temperatura",
+        "fr": "Limite de Température",
+        "it": "Limite di Temperatura",
+        "no": "Temperaturgrense",
+        "sv": "Temperaturgräns",
+        "pl": "Limit Temperatury",
+        "ru": "Температурный Предел",
+        "ko": "온도 제한",
+        "ar": "حد درجة الحرارة"
+      },
+      "example": {
+        "en": "Medium",
+        "nl": "Gemiddeld",
+        "da": "Middel",
+        "de": "Mittel",
+        "es": "Medio",
+        "fr": "Moyen",
+        "it": "Medio",
+        "no": "Middels",
+        "sv": "Medel",
+        "pl": "Średni",
+        "ru": "Средний",
+        "ko": "중간",
+        "ar": "متوسط"
+      }
+    }
+  ]
+}

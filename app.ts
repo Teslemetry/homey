@@ -243,6 +243,26 @@ export default class TeslemetryApp extends Homey.App {
         },
       );
 
+    this.homey.flow
+      .getActionCard('set_cop_mode')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; mode: string }) => {
+          await this.requireFlowDevice(args.device).flowSetCopMode(
+            args.mode,
+          );
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('set_cop_temperature_limit')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; limit: string }) => {
+          await this.requireFlowDevice(args.device).flowSetCopTemperatureLimit(
+            args.limit,
+          );
+        },
+      );
+
     // Vehicle seat climate action cards (subcapabilities get no auto-generated
     // Flow cards; the device capability filter Homey applies to driver-scoped
     // cards already hides these for seats a device wasn't paired with).
@@ -358,6 +378,27 @@ export default class TeslemetryApp extends Homey.App {
         async (args: { device?: VehicleDevice; level: string }) => {
           if (!args.device) return false;
           return args.device.getCapabilityValue('tpms_warning') === args.level;
+        },
+      );
+
+    this.homey.flow
+      .getConditionCard('cop_mode_is')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; mode: string }) => {
+          if (!args.device) return false;
+          return args.device.getCapabilityValue('cop_mode') === args.mode;
+        },
+      );
+
+    this.homey.flow
+      .getConditionCard('cop_temperature_limit_is')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; limit: string }) => {
+          if (!args.device) return false;
+          return (
+            args.device.getCapabilityValue('cop_temperature_limit') ===
+            args.limit
+          );
         },
       );
 
