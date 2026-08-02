@@ -83,7 +83,8 @@ export default class TeslemetryDriver extends Homey.Driver {
    * Structured stage logging so a red pairing-error support report can be
    * mapped to the exact stage that failed - session start, credential/token
    * acquisition, products/candidate fetch, filtering (see
-   * listEnergySiteCandidates), or render handoff back to the pairing UI.
+   * listEnergySiteCandidates), or render handoff back to the pairing UI. An
+   * unclassified list-devices failure also gets a list_devices catch-all tag.
    */
   private async runPairListDevices() {
     this.log(`pairing[stage=products_fetch]: list_devices requested`);
