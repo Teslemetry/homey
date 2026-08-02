@@ -128,6 +128,9 @@ export default class TeslemetryDevice extends Homey.Device {
     "software_update_status",
     "scheduled_charging_mode",
     "scheduled_charging_pending",
+    "powershare_status",
+    "powershare_type",
+    "powershare_stop_reason",
   ]);
 
   /**

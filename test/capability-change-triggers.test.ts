@@ -139,6 +139,18 @@ test("update() fires operation_mode_changed with the new value", async () => {
   ]);
 });
 
+test("update() fires powershare_status_changed with the new value", async () => {
+  const { stub, triggerCalls } = createDeviceStub({
+    powershare_status: "inactive",
+  });
+
+  await stub.update("powershare_status", "enabled");
+
+  assert.deepEqual(triggerCalls, [
+    { cardId: "powershare_status_changed", tokens: { powershare_status: "enabled" } },
+  ]);
+});
+
 test("update() does not fire allow_export_changed or operation_mode_changed when unchanged", async () => {
   const { stub, triggerCalls } = createDeviceStub({
     allow_export: "battery_ok",

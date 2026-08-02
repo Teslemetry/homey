@@ -452,6 +452,18 @@ export default class TeslemetryApp extends Homey.App {
       );
 
     this.homey.flow
+      .getConditionCard('powershare_status_is')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; status: string }) => {
+          if (!args.device) return false;
+          return (
+            args.device.getCapabilityValue('powershare_status') ===
+            args.status
+          );
+        },
+      );
+
+    this.homey.flow
       .getConditionCard('cop_temperature_limit_is')
       .registerRunListener(
         async (args: { device?: VehicleDevice; limit: string }) => {

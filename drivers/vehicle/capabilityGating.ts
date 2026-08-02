@@ -7,6 +7,11 @@ type VehicleConfig = VehicleDetails["metadata"]["config"];
 const CYBERTRUCK_ONLY_CAPABILITIES = new Set([
   "windowcoverings_closed.tonneau",
   "windowcoverings_set.tonneau",
+  "powershare_status",
+  "powershare_type",
+  "powershare_stop_reason",
+  "powershare_hours_left",
+  "measure_power.powershare",
 ]);
 
 /**

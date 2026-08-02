@@ -1176,6 +1176,324 @@
       },
       {
         "title": {
+          "en": "Powershare status has changed",
+          "nl": "Powershare-status is gewijzigd",
+          "da": "Powershare-status er ændret",
+          "de": "Powershare-Status hat sich geändert",
+          "es": "El estado de Powershare ha cambiado",
+          "fr": "L'état de Powershare a changé",
+          "it": "Lo stato di Powershare è cambiato",
+          "no": "Powershare-status er endret",
+          "sv": "Powershare-status har ändrats",
+          "pl": "Status Powershare uległ zmianie",
+          "ru": "Статус Powershare изменился",
+          "ko": "Powershare 상태가 변경되었습니다",
+          "ar": "تغيرت حالة Powershare"
+        },
+        "titleFormatted": {
+          "en": "Powershare status has changed on [[device]]",
+          "nl": "Powershare-status is gewijzigd op [[device]]",
+          "da": "Powershare-status er ændret på [[device]]",
+          "de": "Powershare-Status hat sich auf [[device]] geändert",
+          "es": "El estado de Powershare ha cambiado en [[device]]",
+          "fr": "L'état de Powershare a changé sur [[device]]",
+          "it": "Lo stato di Powershare è cambiato su [[device]]",
+          "no": "Powershare-status er endret på [[device]]",
+          "sv": "Powershare-status har ändrats på [[device]]",
+          "pl": "Status Powershare uległ zmianie na [[device]]",
+          "ru": "Статус Powershare изменился на [[device]]",
+          "ko": "[[device]]의 Powershare 상태가 변경되었습니다",
+          "ar": "تغيرت حالة Powershare على [[device]]"
+        },
+        "hint": {
+          "en": "This card triggers when the vehicle's Powershare (vehicle-to-home) session state changes, for example when it becomes enabled or stops.",
+          "nl": "Deze kaart activeert wanneer de Powershare-sessiestatus (voertuig-naar-huis) van het voertuig verandert, bijvoorbeeld wanneer deze wordt ingeschakeld of stopt.",
+          "da": "Dette kort udløses, når køretøjets Powershare-sessionstilstand (køretøj-til-hjem) ændres, for eksempel når den aktiveres eller stopper.",
+          "de": "Diese Karte wird ausgelöst, wenn sich der Powershare-Sitzungsstatus (Fahrzeug-zu-Haus) des Fahrzeugs ändert, zum Beispiel wenn er aktiviert wird oder stoppt.",
+          "es": "Esta tarjeta se activa cuando cambia el estado de la sesión de Powershare (vehículo a hogar), por ejemplo, cuando se habilita o se detiene.",
+          "fr": "Cette carte se déclenche lorsque l'état de session Powershare (véhicule vers domicile) du véhicule change, par exemple lorsqu'il devient activé ou s'arrête.",
+          "it": "Questa scheda si attiva quando lo stato della sessione Powershare (dal veicolo alla casa) del veicolo cambia, ad esempio quando si abilita o si interrompe.",
+          "no": "Dette kortet utløses når kjøretøyets Powershare-øktstatus (kjøretøy-til-hjem) endres, for eksempel når den blir aktivert eller stopper.",
+          "sv": "Detta kort utlöses när fordonets Powershare-sessionsstatus (fordon-till-hem) ändras, till exempel när den aktiveras eller stoppas.",
+          "pl": "Ta karta uruchamia się, gdy zmienia się status sesji Powershare (z pojazdu do domu), na przykład gdy zostaje włączona lub zatrzymana.",
+          "ru": "Эта карта срабатывает при изменении состояния сеанса Powershare (от автомобиля к дому), например, когда он включается или останавливается.",
+          "ko": "차량의 Powershare(차량-주택) 세션 상태가 변경될 때, 예를 들어 활성화되거나 정지될 때 이 카드가 트리거됩니다.",
+          "ar": "تتفاعل هذه البطاقة عندما تتغير حالة جلسة Powershare (من المركبة إلى المنزل)، على سبيل المثال عند تفعيلها أو توقفها."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=powershare_status",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "powershare_status",
+            "type": "string",
+            "title": {
+              "en": "Status",
+              "nl": "Status",
+              "da": "Status",
+              "de": "Status",
+              "es": "Estado",
+              "fr": "État",
+              "it": "Stato",
+              "no": "Status",
+              "sv": "Status",
+              "pl": "Status",
+              "ru": "Статус",
+              "ko": "상태",
+              "ar": "الحالة"
+            },
+            "example": {
+              "en": "enabled",
+              "nl": "enabled",
+              "da": "enabled",
+              "de": "enabled",
+              "es": "enabled",
+              "fr": "enabled",
+              "it": "enabled",
+              "no": "enabled",
+              "sv": "enabled",
+              "pl": "enabled",
+              "ru": "enabled",
+              "ko": "enabled",
+              "ar": "enabled"
+            }
+          }
+        ],
+        "id": "powershare_status_changed"
+      },
+      {
+        "title": {
+          "en": "Powershare stop reason has changed",
+          "nl": "Reden voor Powershare-stop is gewijzigd",
+          "da": "Årsag til Powershare-stop er ændret",
+          "de": "Powershare-Stoppgrund hat sich geändert",
+          "es": "El motivo de detención de Powershare ha cambiado",
+          "fr": "La raison de l'arrêt de Powershare a changé",
+          "it": "Il motivo dell'arresto di Powershare è cambiato",
+          "no": "Årsak til Powershare-stopp er endret",
+          "sv": "Anledning till Powershare-stopp har ändrats",
+          "pl": "Powód zatrzymania Powershare uległ zmianie",
+          "ru": "Причина остановки Powershare изменилась",
+          "ko": "Powershare 중지 이유가 변경되었습니다",
+          "ar": "تغير سبب توقف Powershare"
+        },
+        "titleFormatted": {
+          "en": "Powershare stop reason has changed on [[device]]",
+          "nl": "Reden voor Powershare-stop is gewijzigd op [[device]]",
+          "da": "Årsag til Powershare-stop er ændret på [[device]]",
+          "de": "Powershare-Stoppgrund hat sich auf [[device]] geändert",
+          "es": "El motivo de detención de Powershare ha cambiado en [[device]]",
+          "fr": "La raison de l'arrêt de Powershare a changé sur [[device]]",
+          "it": "Il motivo dell'arresto di Powershare è cambiato su [[device]]",
+          "no": "Årsak til Powershare-stopp er endret på [[device]]",
+          "sv": "Anledning till Powershare-stopp har ändrats på [[device]]",
+          "pl": "Powód zatrzymania Powershare uległ zmianie na [[device]]",
+          "ru": "Причина остановки Powershare изменилась на [[device]]",
+          "ko": "[[device]]의 Powershare 중지 이유가 변경되었습니다",
+          "ar": "تغير سبب توقف Powershare على [[device]]"
+        },
+        "hint": {
+          "en": "This card triggers when Tesla reports a new reason the vehicle's Powershare session stopped or paused, such as low battery or a fault.",
+          "nl": "Deze kaart activeert wanneer Tesla een nieuwe reden meldt waarom de Powershare-sessie van het voertuig is gestopt of gepauzeerd, zoals een lage batterij of een storing.",
+          "da": "Dette kort udløses, når Tesla rapporterer en ny årsag til, at køretøjets Powershare-session stoppede eller blev sat på pause, f.eks. lavt batteri eller en fejl.",
+          "de": "Diese Karte wird ausgelöst, wenn Tesla einen neuen Grund meldet, warum die Powershare-Sitzung des Fahrzeugs gestoppt oder pausiert wurde, z. B. niedriger Akkustand oder ein Fehler.",
+          "es": "Esta tarjeta se activa cuando Tesla informa un nuevo motivo por el que la sesión de Powershare del vehículo se detuvo o pausó, como batería baja o un fallo.",
+          "fr": "Cette carte se déclenche lorsque Tesla signale une nouvelle raison pour laquelle la session Powershare du véhicule s'est arrêtée ou a été mise en pause, comme une batterie faible ou un défaut.",
+          "it": "Questa scheda si attiva quando Tesla segnala un nuovo motivo per cui la sessione Powershare del veicolo si è interrotta o è stata messa in pausa, come batteria scarica o un guasto.",
+          "no": "Dette kortet utløses når Tesla rapporterer en ny årsak til at kjøretøyets Powershare-økt stoppet eller ble satt på pause, for eksempel lavt batteri eller en feil.",
+          "sv": "Detta kort utlöses när Tesla rapporterar en ny anledning till att fordonets Powershare-session stoppades eller pausades, till exempel lågt batteri eller ett fel.",
+          "pl": "Ta karta uruchamia się, gdy Tesla zgłasza nowy powód zatrzymania lub wstrzymania sesji Powershare pojazdu, taki jak niski poziom baterii lub usterka.",
+          "ru": "Эта карта срабатывает, когда Tesla сообщает новую причину остановки или приостановки сеанса Powershare автомобиля, например низкий заряд батареи или неисправность.",
+          "ko": "배터리 부족이나 결함 등 차량의 Powershare 세션이 중지되거나 일시 중지된 새로운 이유를 Tesla가 보고할 때 이 카드가 트리거됩니다.",
+          "ar": "تتفاعل هذه البطاقة عندما تُبلغ Tesla عن سبب جديد لتوقف أو إيقاف جلسة Powershare للمركبة مؤقتًا، مثل انخفاض البطارية أو وجود خلل."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=powershare_stop_reason",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "powershare_stop_reason",
+            "type": "string",
+            "title": {
+              "en": "Reason",
+              "nl": "Reden",
+              "da": "Årsag",
+              "de": "Grund",
+              "es": "Motivo",
+              "fr": "Raison",
+              "it": "Motivo",
+              "no": "Årsak",
+              "sv": "Anledning",
+              "pl": "Powód",
+              "ru": "Причина",
+              "ko": "이유",
+              "ar": "السبب"
+            },
+            "example": {
+              "en": "soc_too_low",
+              "nl": "soc_too_low",
+              "da": "soc_too_low",
+              "de": "soc_too_low",
+              "es": "soc_too_low",
+              "fr": "soc_too_low",
+              "it": "soc_too_low",
+              "no": "soc_too_low",
+              "sv": "soc_too_low",
+              "pl": "soc_too_low",
+              "ru": "soc_too_low",
+              "ko": "soc_too_low",
+              "ar": "soc_too_low"
+            }
+          }
+        ],
+        "id": "powershare_stop_reason_changed"
+      },
+      {
+        "title": {
+          "en": "Powershare type has changed",
+          "nl": "Powershare-type is gewijzigd",
+          "da": "Powershare-type er ændret",
+          "de": "Powershare-Typ hat sich geändert",
+          "es": "El tipo de Powershare ha cambiado",
+          "fr": "Le type de Powershare a changé",
+          "it": "Il tipo di Powershare è cambiato",
+          "no": "Powershare-type er endret",
+          "sv": "Powershare-typ har ändrats",
+          "pl": "Typ Powershare uległ zmianie",
+          "ru": "Тип Powershare изменился",
+          "ko": "Powershare 유형이 변경되었습니다",
+          "ar": "تغير نوع Powershare"
+        },
+        "titleFormatted": {
+          "en": "Powershare type has changed on [[device]]",
+          "nl": "Powershare-type is gewijzigd op [[device]]",
+          "da": "Powershare-type er ændret på [[device]]",
+          "de": "Powershare-Typ hat sich auf [[device]] geändert",
+          "es": "El tipo de Powershare ha cambiado en [[device]]",
+          "fr": "Le type de Powershare a changé sur [[device]]",
+          "it": "Il tipo di Powershare è cambiato su [[device]]",
+          "no": "Powershare-type er endret på [[device]]",
+          "sv": "Powershare-typ har ändrats på [[device]]",
+          "pl": "Typ Powershare uległ zmianie na [[device]]",
+          "ru": "Тип Powershare изменился на [[device]]",
+          "ko": "[[device]]의 Powershare 유형이 변경되었습니다",
+          "ar": "تغير نوع Powershare على [[device]]"
+        },
+        "hint": {
+          "en": "This card triggers when the active Powershare session switches between powering a load and powering the home.",
+          "nl": "Deze kaart activeert wanneer de actieve Powershare-sessie wisselt tussen het voeden van een belasting en het voeden van het huis.",
+          "da": "Dette kort udløses, når den aktive Powershare-session skifter mellem at forsyne en last og at forsyne hjemmet.",
+          "de": "Diese Karte wird ausgelöst, wenn die aktive Powershare-Sitzung zwischen der Versorgung einer Last und der Versorgung des Hauses wechselt.",
+          "es": "Esta tarjeta se activa cuando la sesión activa de Powershare cambia entre alimentar una carga y alimentar el hogar.",
+          "fr": "Cette carte se déclenche lorsque la session Powershare active bascule entre l'alimentation d'une charge et l'alimentation du domicile.",
+          "it": "Questa scheda si attiva quando la sessione Powershare attiva passa dall'alimentare un carico all'alimentare la casa.",
+          "no": "Dette kortet utløses når den aktive Powershare-økten bytter mellom å drive en last og å drive hjemmet.",
+          "sv": "Detta kort utlöses när den aktiva Powershare-sessionen växlar mellan att driva en last och att driva hemmet.",
+          "pl": "Ta karta uruchamia się, gdy aktywna sesja Powershare przełącza się między zasilaniem obciążenia a zasilaniem domu.",
+          "ru": "Эта карта срабатывает, когда активный сеанс Powershare переключается между питанием нагрузки и питанием дома.",
+          "ko": "활성 Powershare 세션이 부하 전원 공급과 주택 전원 공급 사이에서 전환될 때 이 카드가 트리거됩니다.",
+          "ar": "تتفاعل هذه البطاقة عندما تتبدل جلسة Powershare النشطة بين تزويد حمل بالطاقة وتزويد المنزل بالطاقة."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=powershare_type",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "powershare_type",
+            "type": "string",
+            "title": {
+              "en": "Type",
+              "nl": "Type",
+              "da": "Type",
+              "de": "Typ",
+              "es": "Tipo",
+              "fr": "Type",
+              "it": "Tipo",
+              "no": "Type",
+              "sv": "Typ",
+              "pl": "Typ",
+              "ru": "Тип",
+              "ko": "유형",
+              "ar": "النوع"
+            },
+            "example": {
+              "en": "home",
+              "nl": "home",
+              "da": "home",
+              "de": "home",
+              "es": "home",
+              "fr": "home",
+              "it": "home",
+              "no": "home",
+              "sv": "home",
+              "pl": "home",
+              "ru": "home",
+              "ko": "home",
+              "ar": "home"
+            }
+          }
+        ],
+        "id": "powershare_type_changed"
+      },
+      {
+        "title": {
           "en": "Route traffic delay rises above"
         },
         "titleFormatted": {
@@ -4067,6 +4385,190 @@
           }
         ],
         "id": "operation_mode_is"
+      },
+      {
+        "title": {
+          "en": "Powershare status is",
+          "nl": "Powershare-status is",
+          "da": "Powershare-status er",
+          "de": "Powershare-Status ist",
+          "es": "El estado de Powershare es",
+          "fr": "L'état de Powershare est",
+          "it": "Lo stato di Powershare è",
+          "no": "Powershare-status er",
+          "sv": "Powershare-status är",
+          "pl": "Status Powershare to",
+          "ru": "Статус Powershare: ",
+          "ko": "Powershare 상태",
+          "ar": "حالة Powershare هي"
+        },
+        "titleFormatted": {
+          "en": "Powershare status of [[device]] is [[status]]",
+          "nl": "Powershare-status van [[device]] is [[status]]",
+          "da": "Powershare-status for [[device]] er [[status]]",
+          "de": "Powershare-Status von [[device]] ist [[status]]",
+          "es": "El estado de Powershare de [[device]] es [[status]]",
+          "fr": "L'état de Powershare de [[device]] est [[status]]",
+          "it": "Lo stato di Powershare di [[device]] è [[status]]",
+          "no": "Powershare-status for [[device]] er [[status]]",
+          "sv": "Powershare-status för [[device]] är [[status]]",
+          "pl": "Status Powershare urządzenia [[device]] to [[status]]",
+          "ru": "Статус Powershare [[device]]: [[status]]",
+          "ko": "[[device]]의 Powershare 상태는 [[status]]입니다",
+          "ar": "حالة Powershare لـ[[device]] هي [[status]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=powershare_status",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          },
+          {
+            "type": "dropdown",
+            "name": "status",
+            "title": {
+              "en": "Status",
+              "nl": "Status",
+              "da": "Status",
+              "de": "Status",
+              "es": "Estado",
+              "fr": "État",
+              "it": "Stato",
+              "no": "Status",
+              "sv": "Status",
+              "pl": "Status",
+              "ru": "Статус",
+              "ko": "상태",
+              "ar": "الحالة"
+            },
+            "values": [
+              {
+                "id": "inactive",
+                "label": {
+                  "en": "Inactive",
+                  "nl": "Inactief",
+                  "da": "Inaktiv",
+                  "de": "Inaktiv",
+                  "es": "Inactivo",
+                  "fr": "Inactif",
+                  "it": "Inattivo",
+                  "no": "Inaktiv",
+                  "sv": "Inaktiv",
+                  "pl": "Nieaktywny",
+                  "ru": "Неактивно",
+                  "ko": "비활성",
+                  "ar": "غير نشط"
+                }
+              },
+              {
+                "id": "handshaking",
+                "label": {
+                  "en": "Handshaking",
+                  "nl": "Handshaking",
+                  "da": "Handshaking",
+                  "de": "Handshake",
+                  "es": "Negociando",
+                  "fr": "Négociation",
+                  "it": "Handshake",
+                  "no": "Håndtrykk",
+                  "sv": "Handskakning",
+                  "pl": "Negocjowanie",
+                  "ru": "Согласование",
+                  "ko": "핸드셰이킹",
+                  "ar": "المصافحة"
+                }
+              },
+              {
+                "id": "init",
+                "label": {
+                  "en": "Initializing",
+                  "nl": "Initialiseren",
+                  "da": "Initialiserer",
+                  "de": "Initialisierung",
+                  "es": "Inicializando",
+                  "fr": "Initialisation",
+                  "it": "Inizializzazione",
+                  "no": "Initialiserer",
+                  "sv": "Initierar",
+                  "pl": "Inicjowanie",
+                  "ru": "Инициализация",
+                  "ko": "초기화 중",
+                  "ar": "جارٍ التهيئة"
+                }
+              },
+              {
+                "id": "enabled",
+                "label": {
+                  "en": "Enabled",
+                  "nl": "Ingeschakeld",
+                  "da": "Aktiveret",
+                  "de": "Aktiviert",
+                  "es": "Habilitado",
+                  "fr": "Activé",
+                  "it": "Abilitato",
+                  "no": "Aktivert",
+                  "sv": "Aktiverad",
+                  "pl": "Włączony",
+                  "ru": "Включено",
+                  "ko": "활성화됨",
+                  "ar": "مفعّل"
+                }
+              },
+              {
+                "id": "reconnecting",
+                "label": {
+                  "en": "Reconnecting Soon",
+                  "nl": "Binnenkort Opnieuw Verbinden",
+                  "da": "Genopretter Snart Forbindelse",
+                  "de": "Wird Bald Neu Verbunden",
+                  "es": "Reconectando Pronto",
+                  "fr": "Reconnexion Prochaine",
+                  "it": "Riconnessione a Breve",
+                  "no": "Kobler Til Igjen Snart",
+                  "sv": "Återansluter Snart",
+                  "pl": "Wkrótce Ponowne Łączenie",
+                  "ru": "Скоро Переподключение",
+                  "ko": "곧 재연결",
+                  "ar": "إعادة الاتصال قريبًا"
+                }
+              },
+              {
+                "id": "stopped",
+                "label": {
+                  "en": "Stopped",
+                  "nl": "Gestopt",
+                  "da": "Stoppet",
+                  "de": "Gestoppt",
+                  "es": "Detenido",
+                  "fr": "Arrêté",
+                  "it": "Fermato",
+                  "no": "Stoppet",
+                  "sv": "Stoppad",
+                  "pl": "Zatrzymany",
+                  "ru": "Остановлено",
+                  "ko": "정지됨",
+                  "ar": "متوقف"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "powershare_status_is"
       },
       {
         "title": {
@@ -8732,7 +9234,12 @@
         "alarm_generic.pin_to_drive",
         "alarm_generic.valet_mode",
         "scheduled_charging_mode",
-        "scheduled_charging_pending"
+        "scheduled_charging_pending",
+        "powershare_status",
+        "powershare_type",
+        "powershare_stop_reason",
+        "powershare_hours_left",
+        "measure_power.powershare"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -9759,6 +10266,14 @@
           "desc": {
             "en": "Whether Valet Mode is currently enabled on the vehicle. Read-only - this app does not expose a control for it."
           }
+        },
+        "measure_power.powershare": {
+          "title": {
+            "en": "Powershare Power"
+          },
+          "desc": {
+            "en": "Instantaneous power flowing through the vehicle's active Powershare (vehicle-to-home) session."
+          }
         }
       },
       "id": "vehicle"
@@ -10767,6 +11282,389 @@
             "ru": "Автономный",
             "ko": "자율적인",
             "ar": "مستقل"
+          }
+        }
+      ]
+    },
+    "powershare_hours_left": {
+      "type": "number",
+      "title": {
+        "en": "Powershare Hours Left",
+        "nl": "Powershare-uren Resterend",
+        "da": "Powershare-timer Tilbage",
+        "de": "Powershare-Stunden Übrig",
+        "es": "Horas de Powershare Restantes",
+        "fr": "Heures de Powershare Restantes",
+        "it": "Ore di Powershare Rimanenti",
+        "no": "Powershare-timer Igjen",
+        "sv": "Powershare-timmar Kvar",
+        "pl": "Pozostałe Godziny Powershare",
+        "ru": "Осталось Часов Powershare",
+        "ko": "Powershare 남은 시간",
+        "ar": "ساعات Powershare المتبقية"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "h"
+      },
+      "decimals": 1,
+      "insights": true
+    },
+    "powershare_status": {
+      "type": "enum",
+      "title": {
+        "en": "Powershare Status",
+        "nl": "Powershare-status",
+        "da": "Powershare-status",
+        "de": "Powershare-Status",
+        "es": "Estado de Powershare",
+        "fr": "État de Powershare",
+        "it": "Stato Powershare",
+        "no": "Powershare-status",
+        "sv": "Powershare-status",
+        "pl": "Status Powershare",
+        "ru": "Статус Powershare",
+        "ko": "Powershare 상태",
+        "ar": "حالة Powershare"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "values": [
+        {
+          "id": "inactive",
+          "title": {
+            "en": "Inactive",
+            "nl": "Inactief",
+            "da": "Inaktiv",
+            "de": "Inaktiv",
+            "es": "Inactivo",
+            "fr": "Inactif",
+            "it": "Inattivo",
+            "no": "Inaktiv",
+            "sv": "Inaktiv",
+            "pl": "Nieaktywny",
+            "ru": "Неактивно",
+            "ko": "비활성",
+            "ar": "غير نشط"
+          }
+        },
+        {
+          "id": "handshaking",
+          "title": {
+            "en": "Handshaking",
+            "nl": "Handshaking",
+            "da": "Handshaking",
+            "de": "Handshake",
+            "es": "Negociando",
+            "fr": "Négociation",
+            "it": "Handshake",
+            "no": "Håndtrykk",
+            "sv": "Handskakning",
+            "pl": "Negocjowanie",
+            "ru": "Согласование",
+            "ko": "핸드셰이킹",
+            "ar": "المصافحة"
+          }
+        },
+        {
+          "id": "init",
+          "title": {
+            "en": "Initializing",
+            "nl": "Initialiseren",
+            "da": "Initialiserer",
+            "de": "Initialisierung",
+            "es": "Inicializando",
+            "fr": "Initialisation",
+            "it": "Inizializzazione",
+            "no": "Initialiserer",
+            "sv": "Initierar",
+            "pl": "Inicjowanie",
+            "ru": "Инициализация",
+            "ko": "초기화 중",
+            "ar": "جارٍ التهيئة"
+          }
+        },
+        {
+          "id": "enabled",
+          "title": {
+            "en": "Enabled",
+            "nl": "Ingeschakeld",
+            "da": "Aktiveret",
+            "de": "Aktiviert",
+            "es": "Habilitado",
+            "fr": "Activé",
+            "it": "Abilitato",
+            "no": "Aktivert",
+            "sv": "Aktiverad",
+            "pl": "Włączony",
+            "ru": "Включено",
+            "ko": "활성화됨",
+            "ar": "مفعّل"
+          }
+        },
+        {
+          "id": "reconnecting",
+          "title": {
+            "en": "Reconnecting Soon",
+            "nl": "Binnenkort Opnieuw Verbinden",
+            "da": "Genopretter Snart Forbindelse",
+            "de": "Wird Bald Neu Verbunden",
+            "es": "Reconectando Pronto",
+            "fr": "Reconnexion Prochaine",
+            "it": "Riconnessione a Breve",
+            "no": "Kobler Til Igjen Snart",
+            "sv": "Återansluter Snart",
+            "pl": "Wkrótce Ponowne Łączenie",
+            "ru": "Скоро Переподключение",
+            "ko": "곧 재연결",
+            "ar": "إعادة الاتصال قريبًا"
+          }
+        },
+        {
+          "id": "stopped",
+          "title": {
+            "en": "Stopped",
+            "nl": "Gestopt",
+            "da": "Stoppet",
+            "de": "Gestoppt",
+            "es": "Detenido",
+            "fr": "Arrêté",
+            "it": "Fermato",
+            "no": "Stoppet",
+            "sv": "Stoppad",
+            "pl": "Zatrzymany",
+            "ru": "Остановлено",
+            "ko": "정지됨",
+            "ar": "متوقف"
+          }
+        }
+      ]
+    },
+    "powershare_stop_reason": {
+      "type": "enum",
+      "title": {
+        "en": "Powershare Stop Reason",
+        "nl": "Reden Powershare-stop",
+        "da": "Årsag til Powershare-stop",
+        "de": "Powershare-Stoppgrund",
+        "es": "Motivo de Detención de Powershare",
+        "fr": "Raison de l'Arrêt de Powershare",
+        "it": "Motivo dell'Arresto di Powershare",
+        "no": "Årsak til Powershare-stopp",
+        "sv": "Anledning till Powershare-stopp",
+        "pl": "Powód Zatrzymania Powershare",
+        "ru": "Причина Остановки Powershare",
+        "ko": "Powershare 중지 이유",
+        "ar": "سبب توقف Powershare"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "values": [
+        {
+          "id": "none",
+          "title": {
+            "en": "None",
+            "nl": "Geen",
+            "da": "Ingen",
+            "de": "Keiner",
+            "es": "Ninguno",
+            "fr": "Aucun",
+            "it": "Nessuno",
+            "no": "Ingen",
+            "sv": "Ingen",
+            "pl": "Brak",
+            "ru": "Нет",
+            "ko": "없음",
+            "ar": "لا شيء"
+          }
+        },
+        {
+          "id": "soc_too_low",
+          "title": {
+            "en": "Battery Too Low",
+            "nl": "Batterij Te Laag",
+            "da": "Batteri For Lavt",
+            "de": "Akku Zu Niedrig",
+            "es": "Batería Demasiado Baja",
+            "fr": "Batterie Trop Faible",
+            "it": "Batteria Troppo Bassa",
+            "no": "Batteri For Lavt",
+            "sv": "Batteri För Lågt",
+            "pl": "Zbyt Niski Poziom Baterii",
+            "ru": "Слишком Низкий Заряд",
+            "ko": "배터리 부족",
+            "ar": "البطارية منخفضة جدًا"
+          }
+        },
+        {
+          "id": "retry",
+          "title": {
+            "en": "Retrying",
+            "nl": "Opnieuw Proberen",
+            "da": "Forsøger Igen",
+            "de": "Erneuter Versuch",
+            "es": "Reintentando",
+            "fr": "Nouvelle Tentative",
+            "it": "Nuovo Tentativo",
+            "no": "Prøver Igjen",
+            "sv": "Försöker Igen",
+            "pl": "Ponawianie",
+            "ru": "Повтор",
+            "ko": "재시도 중",
+            "ar": "إعادة المحاولة"
+          }
+        },
+        {
+          "id": "fault",
+          "title": {
+            "en": "Fault",
+            "nl": "Fout",
+            "da": "Fejl",
+            "de": "Fehler",
+            "es": "Fallo",
+            "fr": "Défaut",
+            "it": "Guasto",
+            "no": "Feil",
+            "sv": "Fel",
+            "pl": "Usterka",
+            "ru": "Неисправность",
+            "ko": "결함",
+            "ar": "خلل"
+          }
+        },
+        {
+          "id": "user",
+          "title": {
+            "en": "Stopped by User",
+            "nl": "Gestopt door Gebruiker",
+            "da": "Stoppet af Bruger",
+            "de": "Vom Benutzer Gestoppt",
+            "es": "Detenido por el Usuario",
+            "fr": "Arrêté par l'Utilisateur",
+            "it": "Fermato dall'Utente",
+            "no": "Stoppet av Bruker",
+            "sv": "Stoppad av Användare",
+            "pl": "Zatrzymane przez Użytkownika",
+            "ru": "Остановлено Пользователем",
+            "ko": "사용자에 의해 중지됨",
+            "ar": "أوقفه المستخدم"
+          }
+        },
+        {
+          "id": "reconnecting",
+          "title": {
+            "en": "Reconnecting",
+            "nl": "Opnieuw Verbinden",
+            "da": "Genopretter Forbindelse",
+            "de": "Wird Neu Verbunden",
+            "es": "Reconectando",
+            "fr": "Reconnexion",
+            "it": "Riconnessione",
+            "no": "Kobler Til Igjen",
+            "sv": "Återansluter",
+            "pl": "Ponowne Łączenie",
+            "ru": "Переподключение",
+            "ko": "재연결 중",
+            "ar": "إعادة الاتصال"
+          }
+        },
+        {
+          "id": "authentication",
+          "title": {
+            "en": "Authentication Failed",
+            "nl": "Authenticatie Mislukt",
+            "da": "Godkendelse Mislykkedes",
+            "de": "Authentifizierung Fehlgeschlagen",
+            "es": "Autenticación Fallida",
+            "fr": "Échec de l'Authentification",
+            "it": "Autenticazione Fallita",
+            "no": "Autentisering Mislyktes",
+            "sv": "Autentisering Misslyckades",
+            "pl": "Niepowodzenie Uwierzytelniania",
+            "ru": "Ошибка Аутентификации",
+            "ko": "인증 실패",
+            "ar": "فشل المصادقة"
+          }
+        }
+      ]
+    },
+    "powershare_type": {
+      "type": "enum",
+      "title": {
+        "en": "Powershare Type",
+        "nl": "Powershare-type",
+        "da": "Powershare-type",
+        "de": "Powershare-Typ",
+        "es": "Tipo de Powershare",
+        "fr": "Type de Powershare",
+        "it": "Tipo di Powershare",
+        "no": "Powershare-type",
+        "sv": "Powershare-typ",
+        "pl": "Typ Powershare",
+        "ru": "Тип Powershare",
+        "ko": "Powershare 유형",
+        "ar": "نوع Powershare"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "values": [
+        {
+          "id": "none",
+          "title": {
+            "en": "None",
+            "nl": "Geen",
+            "da": "Ingen",
+            "de": "Keiner",
+            "es": "Ninguno",
+            "fr": "Aucun",
+            "it": "Nessuno",
+            "no": "Ingen",
+            "sv": "Ingen",
+            "pl": "Brak",
+            "ru": "Нет",
+            "ko": "없음",
+            "ar": "لا شيء"
+          }
+        },
+        {
+          "id": "load",
+          "title": {
+            "en": "Load",
+            "nl": "Belasting",
+            "da": "Last",
+            "de": "Last",
+            "es": "Carga",
+            "fr": "Charge",
+            "it": "Carico",
+            "no": "Last",
+            "sv": "Last",
+            "pl": "Obciążenie",
+            "ru": "Нагрузка",
+            "ko": "부하",
+            "ar": "الحمل"
+          }
+        },
+        {
+          "id": "home",
+          "title": {
+            "en": "Home",
+            "nl": "Huis",
+            "da": "Hjem",
+            "de": "Zuhause",
+            "es": "Hogar",
+            "fr": "Domicile",
+            "it": "Casa",
+            "no": "Hjem",
+            "sv": "Hem",
+            "pl": "Dom",
+            "ru": "Дом",
+            "ko": "가정",
+            "ar": "المنزل"
           }
         }
       ]

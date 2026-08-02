@@ -1,0 +1,131 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Powershare Status",
+    "nl": "Powershare-status",
+    "da": "Powershare-status",
+    "de": "Powershare-Status",
+    "es": "Estado de Powershare",
+    "fr": "État de Powershare",
+    "it": "Stato Powershare",
+    "no": "Powershare-status",
+    "sv": "Powershare-status",
+    "pl": "Status Powershare",
+    "ru": "Статус Powershare",
+    "ko": "Powershare 상태",
+    "ar": "حالة Powershare"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "values": [
+    {
+      "id": "inactive",
+      "title": {
+        "en": "Inactive",
+        "nl": "Inactief",
+        "da": "Inaktiv",
+        "de": "Inaktiv",
+        "es": "Inactivo",
+        "fr": "Inactif",
+        "it": "Inattivo",
+        "no": "Inaktiv",
+        "sv": "Inaktiv",
+        "pl": "Nieaktywny",
+        "ru": "Неактивно",
+        "ko": "비활성",
+        "ar": "غير نشط"
+      }
+    },
+    {
+      "id": "handshaking",
+      "title": {
+        "en": "Handshaking",
+        "nl": "Handshaking",
+        "da": "Handshaking",
+        "de": "Handshake",
+        "es": "Negociando",
+        "fr": "Négociation",
+        "it": "Handshake",
+        "no": "Håndtrykk",
+        "sv": "Handskakning",
+        "pl": "Negocjowanie",
+        "ru": "Согласование",
+        "ko": "핸드셰이킹",
+        "ar": "المصافحة"
+      }
+    },
+    {
+      "id": "init",
+      "title": {
+        "en": "Initializing",
+        "nl": "Initialiseren",
+        "da": "Initialiserer",
+        "de": "Initialisierung",
+        "es": "Inicializando",
+        "fr": "Initialisation",
+        "it": "Inizializzazione",
+        "no": "Initialiserer",
+        "sv": "Initierar",
+        "pl": "Inicjowanie",
+        "ru": "Инициализация",
+        "ko": "초기화 중",
+        "ar": "جارٍ التهيئة"
+      }
+    },
+    {
+      "id": "enabled",
+      "title": {
+        "en": "Enabled",
+        "nl": "Ingeschakeld",
+        "da": "Aktiveret",
+        "de": "Aktiviert",
+        "es": "Habilitado",
+        "fr": "Activé",
+        "it": "Abilitato",
+        "no": "Aktivert",
+        "sv": "Aktiverad",
+        "pl": "Włączony",
+        "ru": "Включено",
+        "ko": "활성화됨",
+        "ar": "مفعّل"
+      }
+    },
+    {
+      "id": "reconnecting",
+      "title": {
+        "en": "Reconnecting Soon",
+        "nl": "Binnenkort Opnieuw Verbinden",
+        "da": "Genopretter Snart Forbindelse",
+        "de": "Wird Bald Neu Verbunden",
+        "es": "Reconectando Pronto",
+        "fr": "Reconnexion Prochaine",
+        "it": "Riconnessione a Breve",
+        "no": "Kobler Til Igjen Snart",
+        "sv": "Återansluter Snart",
+        "pl": "Wkrótce Ponowne Łączenie",
+        "ru": "Скоро Переподключение",
+        "ko": "곧 재연결",
+        "ar": "إعادة الاتصال قريبًا"
+      }
+    },
+    {
+      "id": "stopped",
+      "title": {
+        "en": "Stopped",
+        "nl": "Gestopt",
+        "da": "Stoppet",
+        "de": "Gestoppt",
+        "es": "Detenido",
+        "fr": "Arrêté",
+        "it": "Fermato",
+        "no": "Stoppet",
+        "sv": "Stoppad",
+        "pl": "Zatrzymany",
+        "ru": "Остановлено",
+        "ko": "정지됨",
+        "ar": "متوقف"
+      }
+    }
+  ]
+}
