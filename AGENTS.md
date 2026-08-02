@@ -498,6 +498,16 @@ documented timezone defect - it reports as though the reading time were
 Pacific Time regardless of the vehicle's real timezone) are not currently
 surfaced by this capability or any other.
 
+### HV Battery Pack Diagnostics
+
+`BrickVoltageMax/Min` and `ModuleTempMax/Min` map directly onto
+`measure_voltage.brick_max/brick_min` and
+`measure_temperature.module_max/module_min` - plain diagnostic tiles with no
+Flow cards, mirroring the HA teslemetry integration's own disabled-by-default
+diagnostic sensors for the same fields. `NumBrickVoltageMax/Min` and
+`NumModuleTempMax/Min` (which brick/module produced the extreme reading) have
+no HA equivalent and are intentionally not surfaced.
+
 ### At-Home/At-Work Presence (`alarm_presence`, `alarm_generic.at_work`)
 
 Presence is sourced from the vehicle's own native `LocatedAtHome`/

@@ -633,6 +633,20 @@ export default class VehicleDevice extends TeslemetryDevice {
       ),
     );
 
+    // HV battery pack diagnostics
+    this.onSignal("BrickVoltageMax", (value) =>
+      this.update("measure_voltage.brick_max", value),
+    );
+    this.onSignal("BrickVoltageMin", (value) =>
+      this.update("measure_voltage.brick_min", value),
+    );
+    this.onSignal("ModuleTempMax", (value) =>
+      this.update("measure_temperature.module_max", value),
+    );
+    this.onSignal("ModuleTempMin", (value) =>
+      this.update("measure_temperature.module_min", value),
+    );
+
     this.onSignal("TpmsSoftWarnings", (value) => {
       this.lastTpmsSoftWarnings = value ?? undefined;
       this.updateTpmsWarningLevel();
