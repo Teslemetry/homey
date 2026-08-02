@@ -54,6 +54,10 @@ export default class TeslemetryDriver extends Homey.Driver {
     mapSite: (site: EnergyDetails) => Promise<T[]>,
   ): Promise<T[]> {
     const accessible = sites.filter((site) => site.metadata.access);
+    this.log(
+      `pairing[stage=filtering]: ${accessible.length}/${sites.length} energy site(s) accessible`,
+    );
+
     const results = await Promise.allSettled(accessible.map(mapSite));
 
     const candidates: T[] = [];
@@ -68,19 +72,44 @@ export default class TeslemetryDriver extends Homey.Driver {
 
     if (failures.length > 0) {
       this.error(
-        `onPairListDevices: skipped ${failures.length}/${accessible.length} energy site(s) that failed: ${failures.join(", ")}`,
+        `pairing[stage=products_fetch]: skipped ${failures.length}/${accessible.length} energy site(s) that failed: ${failures.join(", ")}`,
       );
     }
 
     return candidates;
   }
 
+  /**
+   * Structured stage logging so a red pairing-error support report can be
+   * mapped to the exact stage that failed - session start, credential/token
+   * acquisition, products/candidate fetch, filtering (see
+   * listEnergySiteCandidates), or render handoff back to the pairing UI. An
+   * unclassified list-devices failure also gets a list_devices catch-all tag.
+   */
+  private async runPairListDevices() {
+    this.log(`pairing[stage=products_fetch]: list_devices requested`);
+    try {
+      const devices = await (this as any).onPairListDevices();
+      this.log(
+        `pairing[stage=render_handoff]: returning ${devices.length} candidate(s)`,
+      );
+      return devices;
+    } catch (err) {
+      this.error(`pairing[stage=list_devices]: onPairListDevices failed: ${err}`);
+      throw err;
+    }
+  }
+
   async onPair(session: any) {
+    this.log(`pairing[stage=session_start]: pairing session opened`);
+
     session.setHandler("showView", async (viewId: string) => {
       if (viewId === "login_oauth2") {
         // Check if we already have a valid OAuth token
         if (this.homey.app.oauth.hasValidToken()) {
-          this.log("Valid OAuth token already exists, skipping OAuth flow");
+          this.log(
+            "pairing[stage=credential_acquisition]: valid OAuth token already exists, skipping OAuth flow",
+          );
           session.emit("authorized");
           return;
         }
@@ -89,11 +118,13 @@ export default class TeslemetryDriver extends Homey.Driver {
     });
 
     session.setHandler("list_devices", async () => {
-      return this.onPairListDevices();
+      return this.runPairListDevices();
     });
   }
 
   async onRepair(session: any, device: Homey.Device) {
+    this.log(`pairing[stage=session_start]: repair session opened`);
+
     if (device instanceof TeslemetryDevice) {
       this.log(`Repair: Syncing capabilities for device ${device.getName()}`);
       await device.ensureCapabilities();
@@ -102,7 +133,9 @@ export default class TeslemetryDriver extends Homey.Driver {
     session.setHandler("showView", async (viewId: string) => {
       if (viewId === "login_oauth2") {
         if (this.homey.app.oauth.hasValidToken()) {
-          this.log("Valid OAuth token already exists, skipping OAuth flow");
+          this.log(
+            "pairing[stage=credential_acquisition]: valid OAuth token already exists, skipping OAuth flow",
+          );
           session.emit("authorized");
           return;
         }
@@ -112,11 +145,14 @@ export default class TeslemetryDriver extends Homey.Driver {
     });
 
     session.setHandler("list_devices", async () => {
-      return (this as any).onPairListDevices();
+      return this.runPairListDevices();
     });
   }
 
   private async handleOAuth2Login(session: any, onSuccess?: () => void) {
+    this.log(
+      "pairing[stage=credential_acquisition]: starting OAuth2 login flow",
+    );
     const pkce = this.homey.app.oauth.generatePKCE();
     const { codeVerifier } = pkce;
     const state = Math.random().toString(36).substring(7);
@@ -133,16 +169,24 @@ export default class TeslemetryDriver extends Homey.Driver {
       })
       .on("code", async (code: string | Error) => {
         if (code instanceof Error) {
+          this.error(
+            `pairing[stage=credential_acquisition]: OAuth2 callback failed: ${code.message}`,
+          );
           session.emit("error", code.message || "Unknown error");
           return;
         }
 
         try {
           await this.homey.app.oauth.exchangeCodeForToken(code, codeVerifier);
+          this.log(
+            "pairing[stage=credential_acquisition]: token exchange succeeded",
+          );
           session.emit("authorized");
           if (onSuccess) onSuccess();
         } catch (err: any) {
-          this.error(err);
+          this.error(
+            `pairing[stage=credential_acquisition]: token exchange failed: ${err}`,
+          );
           session.emit("error", err.message || err.toString());
         }
       });

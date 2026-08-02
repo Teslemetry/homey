@@ -26,26 +26,33 @@ function createSite(
 function createDriverStub<T>(
   Driver: new () => T,
   sites: ReturnType<typeof createSite>[],
+  getProducts: () => Promise<unknown> = async () => ({
+    energySites: Object.fromEntries(sites.map((site) => [site.id, site])),
+  }),
 ) {
   const energySites: Record<string, unknown> = {};
   for (const site of sites) energySites[site.id] = site;
 
   const errors: unknown[] = [];
+  const logs: unknown[] = [];
   return {
     driver: Object.assign(new Driver(), {
       homey: {
         app: {
           products: { energySites },
-          getProducts: async () => ({ energySites }),
+          getProducts,
         },
       },
       getDevices: () => [] as unknown[],
-      log: () => {},
+      log: (message: unknown) => {
+        logs.push(message);
+      },
       error: (message: unknown) => {
         errors.push(message);
       },
     }),
     errors,
+    logs,
   };
 }
 
@@ -239,4 +246,75 @@ test("all four energy drivers return every healthy candidate when every site fai
     assert.deepEqual(result, []);
     assert.equal(errors.length, 1, `${Driver.name} should log exactly one partial-failure diagnostic`);
   }
+});
+
+test("every energy driver tags a missing-products pairing failure with the products_fetch stage", async () => {
+  for (const Driver of [PowerwallDriver, SolarDriver, GatewayDriver, WallConnectorDriver]) {
+    const { driver, errors } = createDriverStub(Driver, [], async () => undefined);
+
+    await assert.rejects(() => driver.onPairListDevices());
+    assert.equal(errors.length, 1, `${Driver.name} should log exactly one products_fetch diagnostic`);
+    assert.match(String(errors[0]), /pairing\[stage=products_fetch\]/);
+  }
+});
+
+test("listEnergySiteCandidates logs a filtering-stage line with the accessible/total site counts", async () => {
+  const { driver, logs } = createDriverStub(PowerwallDriver, [
+    createSite("site-1", "Home Battery", true, async () => ({
+      response: { components: { battery: true } },
+    })),
+    createSite("site-2", "No Access", false, async () => ({
+      response: { components: { battery: true } },
+    })),
+  ]);
+
+  await driver.onPairListDevices();
+
+  assert.ok(
+    logs.some((line) => /pairing\[stage=filtering\]: 1\/2 energy site\(s\) accessible/.test(String(line))),
+  );
+});
+
+test("TeslemetryDriver.onPair's list_devices handler logs session/products_fetch/render_handoff stages end to end", async () => {
+  const { driver, logs, errors } = createDriverStub(PowerwallDriver, [
+    createSite("site-1", "Home Battery", true, async () => ({
+      response: { components: { battery: true } },
+    })),
+  ]);
+
+  const handlers: Record<string, (...args: unknown[]) => unknown> = {};
+  const session = {
+    setHandler: (name: string, handler: (...args: unknown[]) => unknown) => {
+      handlers[name] = handler;
+    },
+  };
+
+  await driver.onPair(session);
+  const result = await handlers["list_devices"]();
+
+  assert.deepEqual(result, [
+    { name: "Home Battery Powerwall", data: { id: "site-1" }, class: "battery" },
+  ]);
+  assert.ok(logs.some((line) => /pairing\[stage=session_start\]/.test(String(line))));
+  assert.ok(logs.some((line) => /pairing\[stage=products_fetch\]: list_devices requested/.test(String(line))));
+  assert.ok(logs.some((line) => /pairing\[stage=render_handoff\]: returning 1 candidate\(s\)/.test(String(line))));
+  assert.equal(errors.length, 0);
+});
+
+test("TeslemetryDriver.onPair's list_devices handler logs a list_devices-stage failure when onPairListDevices rejects", async () => {
+  const { driver, errors } = createDriverStub(PowerwallDriver, [], async () => undefined);
+
+  const handlers: Record<string, (...args: unknown[]) => unknown> = {};
+  const session = {
+    setHandler: (name: string, handler: (...args: unknown[]) => unknown) => {
+      handlers[name] = handler;
+    },
+  };
+
+  await driver.onPair(session);
+  await assert.rejects(() => handlers["list_devices"]());
+
+  assert.ok(
+    errors.some((line) => /pairing\[stage=list_devices\]: onPairListDevices failed/.test(String(line))),
+  );
 });

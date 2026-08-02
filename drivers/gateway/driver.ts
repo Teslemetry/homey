@@ -4,6 +4,9 @@ export default class GatewayDriver extends TeslemetryDriver {
   async onPairListDevices() {
     const products = await this.homey.app.getProducts();
     if (!products) {
+      this.error(
+        "pairing[stage=products_fetch]: getProducts() returned no products",
+      );
       throw new Error(
         "Failed to load products. Please restart the pairing process",
       );
