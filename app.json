@@ -9239,7 +9239,11 @@
         "powershare_type",
         "powershare_stop_reason",
         "powershare_hours_left",
-        "measure_power.powershare"
+        "measure_power.powershare",
+        "measure_voltage.brick_max",
+        "measure_voltage.brick_min",
+        "measure_temperature.module_max",
+        "measure_temperature.module_min"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -10273,6 +10277,38 @@
           },
           "desc": {
             "en": "Instantaneous power flowing through the vehicle's active Powershare (vehicle-to-home) session."
+          }
+        },
+        "measure_voltage.brick_max": {
+          "title": {
+            "en": "Highest Cell Brick Voltage"
+          },
+          "desc": {
+            "en": "Highest voltage reported across the HV battery's cell bricks. Diagnostic only."
+          }
+        },
+        "measure_voltage.brick_min": {
+          "title": {
+            "en": "Lowest Cell Brick Voltage"
+          },
+          "desc": {
+            "en": "Lowest voltage reported across the HV battery's cell bricks. Diagnostic only."
+          }
+        },
+        "measure_temperature.module_max": {
+          "title": {
+            "en": "Highest Battery Module Temperature"
+          },
+          "desc": {
+            "en": "Highest temperature reported across the HV battery's modules. Diagnostic only."
+          }
+        },
+        "measure_temperature.module_min": {
+          "title": {
+            "en": "Lowest Battery Module Temperature"
+          },
+          "desc": {
+            "en": "Lowest temperature reported across the HV battery's modules. Diagnostic only."
           }
         }
       },
