@@ -1106,12 +1106,12 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   /**
    * Filters the manifest capability list down to this vehicle's actual
-   * hardware (Cybertruck tonneau, rear seat heaters, third-row heater, seat
-   * coolers) via the same predicate pairing uses. `this.vehicle` isn't bound
-   * yet when this runs (called from super.onInit(), before
+   * hardware (Cybertruck tonneau and Powershare, rear seat heaters, third-row
+   * heater, seat coolers) via the same predicate pairing uses. `this.vehicle`
+   * isn't bound yet when this runs (called from super.onInit(), before
    * resolveAndBindVehicle()), so metadata is read directly from
    * homey.app.products instead. If that product isn't resolvable yet, VIN-
-   * gated capabilities (Cybertruck tonneau - VIN is always known) still
+   * gated capabilities (Cybertruck hardware - VIN is always known) still
    * filter normally, but metadata-gated seat capabilities keep whatever the
    * device already has rather than widening back to the manifest default.
    */
