@@ -24,6 +24,14 @@ const SEAT_FEATURE_CAPABILITIES = [
 
 const SUNROOF_CAPABILITIES = ["windowcoverings_closed.sunroof"];
 
+const POWERSHARE_CAPABILITIES = [
+  "powershare_status",
+  "powershare_type",
+  "powershare_stop_reason",
+  "powershare_hours_left",
+  "measure_power.powershare",
+];
+
 function createDeviceStub(
   vin: string,
   existingCapabilities: string[],
@@ -52,6 +60,7 @@ function createDeviceStub(
           ...TONNEAU_CAPABILITIES,
           ...SEAT_FEATURE_CAPABILITIES,
           ...SUNROOF_CAPABILITIES,
+          ...POWERSHARE_CAPABILITIES,
         ],
         capabilitiesOptions: {},
       },
@@ -76,6 +85,7 @@ function createDeviceStub(
 test("ensureCapabilities adds the tonneau capabilities for a Cybertruck VIN", async () => {
   const { stub, added, removed } = createDeviceStub(CYBERTRUCK_VIN, [
     "measure_battery",
+    ...POWERSHARE_CAPABILITIES,
   ]);
 
   await stub.ensureCapabilities();
@@ -110,12 +120,49 @@ test("ensureCapabilities leaves tonneau capabilities alone on a Cybertruck devic
   const { stub, added, removed } = createDeviceStub(CYBERTRUCK_VIN, [
     "measure_battery",
     ...TONNEAU_CAPABILITIES,
+    ...POWERSHARE_CAPABILITIES,
   ]);
 
   await stub.ensureCapabilities();
 
   assert.deepEqual(added, []);
   assert.deepEqual(removed, []);
+});
+
+test("ensureCapabilities adds the Powershare capabilities for a Cybertruck VIN", async () => {
+  const { stub, added, removed } = createDeviceStub(CYBERTRUCK_VIN, [
+    "measure_battery",
+  ]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    new Set(added.filter((cap) => POWERSHARE_CAPABILITIES.includes(cap))),
+    new Set(POWERSHARE_CAPABILITIES),
+  );
+  assert.deepEqual(removed, []);
+});
+
+test("ensureCapabilities does not add the Powershare capabilities for a non-Cybertruck VIN", async () => {
+  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    added.filter((cap) => POWERSHARE_CAPABILITIES.includes(cap)),
+    [],
+  );
+});
+
+test("ensureCapabilities removes Powershare capabilities already present on a non-Cybertruck device", async () => {
+  const { stub, removed } = createDeviceStub(MODEL_Y_VIN, [
+    "measure_battery",
+    ...POWERSHARE_CAPABILITIES,
+  ]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(new Set(removed), new Set(POWERSHARE_CAPABILITIES));
 });
 
 test("isCybertruck reads VIN position 4 (index 3)", () => {

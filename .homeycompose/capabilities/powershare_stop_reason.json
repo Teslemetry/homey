@@ -1,0 +1,149 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Powershare Stop Reason",
+    "nl": "Reden Powershare-stop",
+    "da": "Årsag til Powershare-stop",
+    "de": "Powershare-Stoppgrund",
+    "es": "Motivo de Detención de Powershare",
+    "fr": "Raison de l'Arrêt de Powershare",
+    "it": "Motivo dell'Arresto di Powershare",
+    "no": "Årsak til Powershare-stopp",
+    "sv": "Anledning till Powershare-stopp",
+    "pl": "Powód Zatrzymania Powershare",
+    "ru": "Причина Остановки Powershare",
+    "ko": "Powershare 중지 이유",
+    "ar": "سبب توقف Powershare"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "values": [
+    {
+      "id": "none",
+      "title": {
+        "en": "None",
+        "nl": "Geen",
+        "da": "Ingen",
+        "de": "Keiner",
+        "es": "Ninguno",
+        "fr": "Aucun",
+        "it": "Nessuno",
+        "no": "Ingen",
+        "sv": "Ingen",
+        "pl": "Brak",
+        "ru": "Нет",
+        "ko": "없음",
+        "ar": "لا شيء"
+      }
+    },
+    {
+      "id": "soc_too_low",
+      "title": {
+        "en": "Battery Too Low",
+        "nl": "Batterij Te Laag",
+        "da": "Batteri For Lavt",
+        "de": "Akku Zu Niedrig",
+        "es": "Batería Demasiado Baja",
+        "fr": "Batterie Trop Faible",
+        "it": "Batteria Troppo Bassa",
+        "no": "Batteri For Lavt",
+        "sv": "Batteri För Lågt",
+        "pl": "Zbyt Niski Poziom Baterii",
+        "ru": "Слишком Низкий Заряд",
+        "ko": "배터리 부족",
+        "ar": "البطارية منخفضة جدًا"
+      }
+    },
+    {
+      "id": "retry",
+      "title": {
+        "en": "Retrying",
+        "nl": "Opnieuw Proberen",
+        "da": "Forsøger Igen",
+        "de": "Erneuter Versuch",
+        "es": "Reintentando",
+        "fr": "Nouvelle Tentative",
+        "it": "Nuovo Tentativo",
+        "no": "Prøver Igjen",
+        "sv": "Försöker Igen",
+        "pl": "Ponawianie",
+        "ru": "Повтор",
+        "ko": "재시도 중",
+        "ar": "إعادة المحاولة"
+      }
+    },
+    {
+      "id": "fault",
+      "title": {
+        "en": "Fault",
+        "nl": "Fout",
+        "da": "Fejl",
+        "de": "Fehler",
+        "es": "Fallo",
+        "fr": "Défaut",
+        "it": "Guasto",
+        "no": "Feil",
+        "sv": "Fel",
+        "pl": "Usterka",
+        "ru": "Неисправность",
+        "ko": "결함",
+        "ar": "خلل"
+      }
+    },
+    {
+      "id": "user",
+      "title": {
+        "en": "Stopped by User",
+        "nl": "Gestopt door Gebruiker",
+        "da": "Stoppet af Bruger",
+        "de": "Vom Benutzer Gestoppt",
+        "es": "Detenido por el Usuario",
+        "fr": "Arrêté par l'Utilisateur",
+        "it": "Fermato dall'Utente",
+        "no": "Stoppet av Bruker",
+        "sv": "Stoppad av Användare",
+        "pl": "Zatrzymane przez Użytkownika",
+        "ru": "Остановлено Пользователем",
+        "ko": "사용자에 의해 중지됨",
+        "ar": "أوقفه المستخدم"
+      }
+    },
+    {
+      "id": "reconnecting",
+      "title": {
+        "en": "Reconnecting",
+        "nl": "Opnieuw Verbinden",
+        "da": "Genopretter Forbindelse",
+        "de": "Wird Neu Verbunden",
+        "es": "Reconectando",
+        "fr": "Reconnexion",
+        "it": "Riconnessione",
+        "no": "Kobler Til Igjen",
+        "sv": "Återansluter",
+        "pl": "Ponowne Łączenie",
+        "ru": "Переподключение",
+        "ko": "재연결 중",
+        "ar": "إعادة الاتصال"
+      }
+    },
+    {
+      "id": "authentication",
+      "title": {
+        "en": "Authentication Failed",
+        "nl": "Authenticatie Mislukt",
+        "da": "Godkendelse Mislykkedes",
+        "de": "Authentifizierung Fehlgeschlagen",
+        "es": "Autenticación Fallida",
+        "fr": "Échec de l'Authentification",
+        "it": "Autenticazione Fallita",
+        "no": "Autentisering Mislyktes",
+        "sv": "Autentisering Misslyckades",
+        "pl": "Niepowodzenie Uwierzytelniania",
+        "ru": "Ошибка Аутентификации",
+        "ko": "인증 실패",
+        "ar": "فشل المصادقة"
+      }
+    }
+  ]
+}

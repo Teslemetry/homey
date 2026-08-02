@@ -1,0 +1,105 @@
+{
+  "title": {
+    "en": "Powershare type has changed",
+    "nl": "Powershare-type is gewijzigd",
+    "da": "Powershare-type er ændret",
+    "de": "Powershare-Typ hat sich geändert",
+    "es": "El tipo de Powershare ha cambiado",
+    "fr": "Le type de Powershare a changé",
+    "it": "Il tipo di Powershare è cambiato",
+    "no": "Powershare-type er endret",
+    "sv": "Powershare-typ har ändrats",
+    "pl": "Typ Powershare uległ zmianie",
+    "ru": "Тип Powershare изменился",
+    "ko": "Powershare 유형이 변경되었습니다",
+    "ar": "تغير نوع Powershare"
+  },
+  "titleFormatted": {
+    "en": "Powershare type has changed on [[device]]",
+    "nl": "Powershare-type is gewijzigd op [[device]]",
+    "da": "Powershare-type er ændret på [[device]]",
+    "de": "Powershare-Typ hat sich auf [[device]] geändert",
+    "es": "El tipo de Powershare ha cambiado en [[device]]",
+    "fr": "Le type de Powershare a changé sur [[device]]",
+    "it": "Il tipo di Powershare è cambiato su [[device]]",
+    "no": "Powershare-type er endret på [[device]]",
+    "sv": "Powershare-typ har ändrats på [[device]]",
+    "pl": "Typ Powershare uległ zmianie na [[device]]",
+    "ru": "Тип Powershare изменился на [[device]]",
+    "ko": "[[device]]의 Powershare 유형이 변경되었습니다",
+    "ar": "تغير نوع Powershare على [[device]]"
+  },
+  "hint": {
+    "en": "This card triggers when the active Powershare session switches between powering a load and powering the home.",
+    "nl": "Deze kaart activeert wanneer de actieve Powershare-sessie wisselt tussen het voeden van een belasting en het voeden van het huis.",
+    "da": "Dette kort udløses, når den aktive Powershare-session skifter mellem at forsyne en last og at forsyne hjemmet.",
+    "de": "Diese Karte wird ausgelöst, wenn die aktive Powershare-Sitzung zwischen der Versorgung einer Last und der Versorgung des Hauses wechselt.",
+    "es": "Esta tarjeta se activa cuando la sesión activa de Powershare cambia entre alimentar una carga y alimentar el hogar.",
+    "fr": "Cette carte se déclenche lorsque la session Powershare active bascule entre l'alimentation d'une charge et l'alimentation du domicile.",
+    "it": "Questa scheda si attiva quando la sessione Powershare attiva passa dall'alimentare un carico all'alimentare la casa.",
+    "no": "Dette kortet utløses når den aktive Powershare-økten bytter mellom å drive en last og å drive hjemmet.",
+    "sv": "Detta kort utlöses när den aktiva Powershare-sessionen växlar mellan att driva en last och att driva hemmet.",
+    "pl": "Ta karta uruchamia się, gdy aktywna sesja Powershare przełącza się między zasilaniem obciążenia a zasilaniem domu.",
+    "ru": "Эта карта срабатывает, когда активный сеанс Powershare переключается между питанием нагрузки и питанием дома.",
+    "ko": "활성 Powershare 세션이 부하 전원 공급과 주택 전원 공급 사이에서 전환될 때 이 카드가 트리거됩니다.",
+    "ar": "تتفاعل هذه البطاقة عندما تتبدل جلسة Powershare النشطة بين تزويد حمل بالطاقة وتزويد المنزل بالطاقة."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=powershare_type",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "powershare_type",
+      "type": "string",
+      "title": {
+        "en": "Type",
+        "nl": "Type",
+        "da": "Type",
+        "de": "Typ",
+        "es": "Tipo",
+        "fr": "Type",
+        "it": "Tipo",
+        "no": "Type",
+        "sv": "Typ",
+        "pl": "Typ",
+        "ru": "Тип",
+        "ko": "유형",
+        "ar": "النوع"
+      },
+      "example": {
+        "en": "home",
+        "nl": "home",
+        "da": "home",
+        "de": "home",
+        "es": "home",
+        "fr": "home",
+        "it": "home",
+        "no": "home",
+        "sv": "home",
+        "pl": "home",
+        "ru": "home",
+        "ko": "home",
+        "ar": "home"
+      }
+    }
+  ]
+}

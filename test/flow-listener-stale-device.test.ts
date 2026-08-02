@@ -122,6 +122,29 @@ test("a condition card evaluates normally when the device is live", async () => 
   assert.equal(result, true);
 });
 
+test("powershare_status_is matches the Cybertruck's current Powershare status", async () => {
+  const { conditionListeners } = createAppStub();
+  const device = {
+    getCapabilityValue: (cap: string) =>
+      cap === "powershare_status" ? "enabled" : undefined,
+  };
+
+  assert.equal(
+    await conditionListeners["powershare_status_is"]({
+      device,
+      status: "enabled",
+    }),
+    true,
+  );
+  assert.equal(
+    await conditionListeners["powershare_status_is"]({
+      device,
+      status: "stopped",
+    }),
+    false,
+  );
+});
+
 // --- device trigger predicates: a stale device must fail closed (false) ---
 
 test("battery_below's trigger predicate returns false instead of throwing when the device is a stale/missing runtime reference", async () => {

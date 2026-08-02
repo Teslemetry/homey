@@ -169,6 +169,80 @@ test("TonneauOpenPercent converts 0-100 percent to a 0-1 fraction on windowcover
   assert.equal(capabilities["windowcoverings_set.tonneau"], 0.75);
 });
 
+test("PowershareStatus maps its known states onto powershare_status", async () => {
+  const { stub, sse, capabilities } = createDeviceStub(
+    { powershare_status: undefined },
+    CYBERTRUCK_VIN,
+  );
+  await stub.onInit();
+
+  sse.data.emit("PowershareStatus", "PowershareStateEnabled");
+  assert.equal(capabilities["powershare_status"], "enabled");
+
+  sse.data.emit("PowershareStatus", "PowershareStateStopped");
+  assert.equal(capabilities["powershare_status"], "stopped");
+});
+
+test("PowershareStatus Unknown is skipped (no mapped value)", async () => {
+  const { stub, sse, capabilities } = createDeviceStub(
+    { powershare_status: "enabled" },
+    CYBERTRUCK_VIN,
+  );
+  await stub.onInit();
+
+  sse.data.emit("PowershareStatus", "PowershareStateUnknown");
+
+  assert.equal(capabilities["powershare_status"], "enabled");
+});
+
+test("PowershareStopReason maps its known reasons onto powershare_stop_reason", async () => {
+  const { stub, sse, capabilities } = createDeviceStub(
+    { powershare_stop_reason: undefined },
+    CYBERTRUCK_VIN,
+  );
+  await stub.onInit();
+
+  sse.data.emit("PowershareStopReason", "PowershareStopReasonStatusSOCTooLow");
+
+  assert.equal(capabilities["powershare_stop_reason"], "soc_too_low");
+});
+
+test("PowershareType maps its known types onto powershare_type", async () => {
+  const { stub, sse, capabilities } = createDeviceStub(
+    { powershare_type: undefined },
+    CYBERTRUCK_VIN,
+  );
+  await stub.onInit();
+
+  sse.data.emit("PowershareType", "PowershareTypeStatusHome");
+
+  assert.equal(capabilities["powershare_type"], "home");
+});
+
+test("PowershareHoursLeft passes the native hours value straight through to powershare_hours_left", async () => {
+  const { stub, sse, capabilities } = createDeviceStub(
+    { powershare_hours_left: undefined },
+    CYBERTRUCK_VIN,
+  );
+  await stub.onInit();
+
+  sse.data.emit("PowershareHoursLeft", 4.5);
+
+  assert.equal(capabilities["powershare_hours_left"], 4.5);
+});
+
+test("PowershareInstantaneousPowerKW converts kW to W on measure_power.powershare", async () => {
+  const { stub, sse, capabilities } = createDeviceStub(
+    { "measure_power.powershare": undefined },
+    CYBERTRUCK_VIN,
+  );
+  await stub.onInit();
+
+  sse.data.emit("PowershareInstantaneousPowerKW", 3.2);
+
+  assert.equal(capabilities["measure_power.powershare"], 3200);
+});
+
 test("TpmsSoftWarnings/TpmsHardWarnings aggregate into a single off/soft/hard tpms_warning", async () => {
   const { stub, sse, capabilities } = createDeviceStub({
     tpms_warning: undefined,

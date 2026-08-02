@@ -1,0 +1,24 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Powershare Hours Left",
+    "nl": "Powershare-uren Resterend",
+    "da": "Powershare-timer Tilbage",
+    "de": "Powershare-Stunden Übrig",
+    "es": "Horas de Powershare Restantes",
+    "fr": "Heures de Powershare Restantes",
+    "it": "Ore di Powershare Rimanenti",
+    "no": "Powershare-timer Igjen",
+    "sv": "Powershare-timmar Kvar",
+    "pl": "Pozostałe Godziny Powershare",
+    "ru": "Осталось Часов Powershare",
+    "ko": "Powershare 남은 시간",
+    "ar": "ساعات Powershare المتبقية"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "units": { "en": "h" },
+  "decimals": 1,
+  "insights": true
+}

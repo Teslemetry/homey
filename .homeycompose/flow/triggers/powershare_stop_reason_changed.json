@@ -1,0 +1,105 @@
+{
+  "title": {
+    "en": "Powershare stop reason has changed",
+    "nl": "Reden voor Powershare-stop is gewijzigd",
+    "da": "Årsag til Powershare-stop er ændret",
+    "de": "Powershare-Stoppgrund hat sich geändert",
+    "es": "El motivo de detención de Powershare ha cambiado",
+    "fr": "La raison de l'arrêt de Powershare a changé",
+    "it": "Il motivo dell'arresto di Powershare è cambiato",
+    "no": "Årsak til Powershare-stopp er endret",
+    "sv": "Anledning till Powershare-stopp har ändrats",
+    "pl": "Powód zatrzymania Powershare uległ zmianie",
+    "ru": "Причина остановки Powershare изменилась",
+    "ko": "Powershare 중지 이유가 변경되었습니다",
+    "ar": "تغير سبب توقف Powershare"
+  },
+  "titleFormatted": {
+    "en": "Powershare stop reason has changed on [[device]]",
+    "nl": "Reden voor Powershare-stop is gewijzigd op [[device]]",
+    "da": "Årsag til Powershare-stop er ændret på [[device]]",
+    "de": "Powershare-Stoppgrund hat sich auf [[device]] geändert",
+    "es": "El motivo de detención de Powershare ha cambiado en [[device]]",
+    "fr": "La raison de l'arrêt de Powershare a changé sur [[device]]",
+    "it": "Il motivo dell'arresto di Powershare è cambiato su [[device]]",
+    "no": "Årsak til Powershare-stopp er endret på [[device]]",
+    "sv": "Anledning till Powershare-stopp har ändrats på [[device]]",
+    "pl": "Powód zatrzymania Powershare uległ zmianie na [[device]]",
+    "ru": "Причина остановки Powershare изменилась на [[device]]",
+    "ko": "[[device]]의 Powershare 중지 이유가 변경되었습니다",
+    "ar": "تغير سبب توقف Powershare على [[device]]"
+  },
+  "hint": {
+    "en": "This card triggers when Tesla reports a new reason the vehicle's Powershare session stopped or paused, such as low battery or a fault.",
+    "nl": "Deze kaart activeert wanneer Tesla een nieuwe reden meldt waarom de Powershare-sessie van het voertuig is gestopt of gepauzeerd, zoals een lage batterij of een storing.",
+    "da": "Dette kort udløses, når Tesla rapporterer en ny årsag til, at køretøjets Powershare-session stoppede eller blev sat på pause, f.eks. lavt batteri eller en fejl.",
+    "de": "Diese Karte wird ausgelöst, wenn Tesla einen neuen Grund meldet, warum die Powershare-Sitzung des Fahrzeugs gestoppt oder pausiert wurde, z. B. niedriger Akkustand oder ein Fehler.",
+    "es": "Esta tarjeta se activa cuando Tesla informa un nuevo motivo por el que la sesión de Powershare del vehículo se detuvo o pausó, como batería baja o un fallo.",
+    "fr": "Cette carte se déclenche lorsque Tesla signale une nouvelle raison pour laquelle la session Powershare du véhicule s'est arrêtée ou a été mise en pause, comme une batterie faible ou un défaut.",
+    "it": "Questa scheda si attiva quando Tesla segnala un nuovo motivo per cui la sessione Powershare del veicolo si è interrotta o è stata messa in pausa, come batteria scarica o un guasto.",
+    "no": "Dette kortet utløses når Tesla rapporterer en ny årsak til at kjøretøyets Powershare-økt stoppet eller ble satt på pause, for eksempel lavt batteri eller en feil.",
+    "sv": "Detta kort utlöses när Tesla rapporterar en ny anledning till att fordonets Powershare-session stoppades eller pausades, till exempel lågt batteri eller ett fel.",
+    "pl": "Ta karta uruchamia się, gdy Tesla zgłasza nowy powód zatrzymania lub wstrzymania sesji Powershare pojazdu, taki jak niski poziom baterii lub usterka.",
+    "ru": "Эта карта срабатывает, когда Tesla сообщает новую причину остановки или приостановки сеанса Powershare автомобиля, например низкий заряд батареи или неисправность.",
+    "ko": "배터리 부족이나 결함 등 차량의 Powershare 세션이 중지되거나 일시 중지된 새로운 이유를 Tesla가 보고할 때 이 카드가 트리거됩니다.",
+    "ar": "تتفاعل هذه البطاقة عندما تُبلغ Tesla عن سبب جديد لتوقف أو إيقاف جلسة Powershare للمركبة مؤقتًا، مثل انخفاض البطارية أو وجود خلل."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=powershare_stop_reason",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "powershare_stop_reason",
+      "type": "string",
+      "title": {
+        "en": "Reason",
+        "nl": "Reden",
+        "da": "Årsag",
+        "de": "Grund",
+        "es": "Motivo",
+        "fr": "Raison",
+        "it": "Motivo",
+        "no": "Årsak",
+        "sv": "Anledning",
+        "pl": "Powód",
+        "ru": "Причина",
+        "ko": "이유",
+        "ar": "السبب"
+      },
+      "example": {
+        "en": "soc_too_low",
+        "nl": "soc_too_low",
+        "da": "soc_too_low",
+        "de": "soc_too_low",
+        "es": "soc_too_low",
+        "fr": "soc_too_low",
+        "it": "soc_too_low",
+        "no": "soc_too_low",
+        "sv": "soc_too_low",
+        "pl": "soc_too_low",
+        "ru": "soc_too_low",
+        "ko": "soc_too_low",
+        "ar": "soc_too_low"
+      }
+    }
+  ]
+}

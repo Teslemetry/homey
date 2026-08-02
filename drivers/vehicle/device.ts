@@ -69,6 +69,38 @@ const scheduledChargingModeMap = new Map<
   ["ScheduledChargingModeDepartBy", "depart_by"],
 ]);
 
+// "...StateUnknown"/"...StatusUnknown" is intentionally left unmapped -
+// mirrors the Teslemetry Home Assistant integration's own POWER_SHARE_*
+// lookups, which likewise have no entry for the unknown variant and leave
+// the entity at its prior value rather than inventing an "unknown" state.
+const powershareStatusMap = new Map<SseData["data"]["PowershareStatus"], string>([
+  ["PowershareStateInactive", "inactive"],
+  ["PowershareStateHandshaking", "handshaking"],
+  ["PowershareStateInit", "init"],
+  ["PowershareStateEnabled", "enabled"],
+  ["PowershareStateEnabledReconnectingSoon", "reconnecting"],
+  ["PowershareStateStopped", "stopped"],
+]);
+
+const powershareStopReasonMap = new Map<
+  SseData["data"]["PowershareStopReason"],
+  string
+>([
+  ["PowershareStopReasonStatusNone", "none"],
+  ["PowershareStopReasonStatusSOCTooLow", "soc_too_low"],
+  ["PowershareStopReasonStatusRetry", "retry"],
+  ["PowershareStopReasonStatusFault", "fault"],
+  ["PowershareStopReasonStatusUser", "user"],
+  ["PowershareStopReasonStatusReconnecting", "reconnecting"],
+  ["PowershareStopReasonStatusAuthentication", "authentication"],
+]);
+
+const powershareTypeMap = new Map<SseData["data"]["PowershareType"], string>([
+  ["PowershareTypeStatusNone", "none"],
+  ["PowershareTypeStatusLoad", "load"],
+  ["PowershareTypeStatusHome", "home"],
+]);
+
 const centerDisplayMap = new Map<SseData["data"]["CenterDisplay"], boolean>([
   ["DisplayStateOff", false],
   ["DisplayStateDim", false],
@@ -557,6 +589,23 @@ export default class VehicleDevice extends TeslemetryDevice {
         this.update("windowcoverings_set.tonneau", value / 100);
       }
     });
+
+    // Cybertruck Powershare (vehicle-to-home)
+    this.onSignal("PowershareStatus", (value) =>
+      this.update("powershare_status", powershareStatusMap.get(value)),
+    );
+    this.onSignal("PowershareStopReason", (value) =>
+      this.update("powershare_stop_reason", powershareStopReasonMap.get(value)),
+    );
+    this.onSignal("PowershareType", (value) =>
+      this.update("powershare_type", powershareTypeMap.get(value)),
+    );
+    this.onSignal("PowershareHoursLeft", (value) =>
+      this.update("powershare_hours_left", value),
+    );
+    this.onSignal("PowershareInstantaneousPowerKW", (value) =>
+      this.update("measure_power.powershare", value ? value * 1000 : value),
+    );
 
     // Tire Pressure (TPMS)
     this.onSignal("TpmsPressureFl", (value) =>
@@ -1057,12 +1106,12 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   /**
    * Filters the manifest capability list down to this vehicle's actual
-   * hardware (Cybertruck tonneau, rear seat heaters, third-row heater, seat
-   * coolers) via the same predicate pairing uses. `this.vehicle` isn't bound
-   * yet when this runs (called from super.onInit(), before
+   * hardware (Cybertruck tonneau and Powershare, rear seat heaters, third-row
+   * heater, seat coolers) via the same predicate pairing uses. `this.vehicle`
+   * isn't bound yet when this runs (called from super.onInit(), before
    * resolveAndBindVehicle()), so metadata is read directly from
    * homey.app.products instead. If that product isn't resolvable yet, VIN-
-   * gated capabilities (Cybertruck tonneau - VIN is always known) still
+   * gated capabilities (Cybertruck hardware - VIN is always known) still
    * filter normally, but metadata-gated seat capabilities keep whatever the
    * device already has rather than widening back to the manifest default.
    */

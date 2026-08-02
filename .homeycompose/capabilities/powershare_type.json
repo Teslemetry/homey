@@ -1,0 +1,77 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Powershare Type",
+    "nl": "Powershare-type",
+    "da": "Powershare-type",
+    "de": "Powershare-Typ",
+    "es": "Tipo de Powershare",
+    "fr": "Type de Powershare",
+    "it": "Tipo di Powershare",
+    "no": "Powershare-type",
+    "sv": "Powershare-typ",
+    "pl": "Typ Powershare",
+    "ru": "Тип Powershare",
+    "ko": "Powershare 유형",
+    "ar": "نوع Powershare"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "values": [
+    {
+      "id": "none",
+      "title": {
+        "en": "None",
+        "nl": "Geen",
+        "da": "Ingen",
+        "de": "Keiner",
+        "es": "Ninguno",
+        "fr": "Aucun",
+        "it": "Nessuno",
+        "no": "Ingen",
+        "sv": "Ingen",
+        "pl": "Brak",
+        "ru": "Нет",
+        "ko": "없음",
+        "ar": "لا شيء"
+      }
+    },
+    {
+      "id": "load",
+      "title": {
+        "en": "Load",
+        "nl": "Belasting",
+        "da": "Last",
+        "de": "Last",
+        "es": "Carga",
+        "fr": "Charge",
+        "it": "Carico",
+        "no": "Last",
+        "sv": "Last",
+        "pl": "Obciążenie",
+        "ru": "Нагрузка",
+        "ko": "부하",
+        "ar": "الحمل"
+      }
+    },
+    {
+      "id": "home",
+      "title": {
+        "en": "Home",
+        "nl": "Huis",
+        "da": "Hjem",
+        "de": "Zuhause",
+        "es": "Hogar",
+        "fr": "Domicile",
+        "it": "Casa",
+        "no": "Hjem",
+        "sv": "Hem",
+        "pl": "Dom",
+        "ru": "Дом",
+        "ko": "가정",
+        "ar": "المنزل"
+      }
+    }
+  ]
+}

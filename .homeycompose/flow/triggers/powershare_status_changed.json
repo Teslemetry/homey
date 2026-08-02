@@ -1,0 +1,105 @@
+{
+  "title": {
+    "en": "Powershare status has changed",
+    "nl": "Powershare-status is gewijzigd",
+    "da": "Powershare-status er ændret",
+    "de": "Powershare-Status hat sich geändert",
+    "es": "El estado de Powershare ha cambiado",
+    "fr": "L'état de Powershare a changé",
+    "it": "Lo stato di Powershare è cambiato",
+    "no": "Powershare-status er endret",
+    "sv": "Powershare-status har ändrats",
+    "pl": "Status Powershare uległ zmianie",
+    "ru": "Статус Powershare изменился",
+    "ko": "Powershare 상태가 변경되었습니다",
+    "ar": "تغيرت حالة Powershare"
+  },
+  "titleFormatted": {
+    "en": "Powershare status has changed on [[device]]",
+    "nl": "Powershare-status is gewijzigd op [[device]]",
+    "da": "Powershare-status er ændret på [[device]]",
+    "de": "Powershare-Status hat sich auf [[device]] geändert",
+    "es": "El estado de Powershare ha cambiado en [[device]]",
+    "fr": "L'état de Powershare a changé sur [[device]]",
+    "it": "Lo stato di Powershare è cambiato su [[device]]",
+    "no": "Powershare-status er endret på [[device]]",
+    "sv": "Powershare-status har ändrats på [[device]]",
+    "pl": "Status Powershare uległ zmianie na [[device]]",
+    "ru": "Статус Powershare изменился на [[device]]",
+    "ko": "[[device]]의 Powershare 상태가 변경되었습니다",
+    "ar": "تغيرت حالة Powershare على [[device]]"
+  },
+  "hint": {
+    "en": "This card triggers when the vehicle's Powershare (vehicle-to-home) session state changes, for example when it becomes enabled or stops.",
+    "nl": "Deze kaart activeert wanneer de Powershare-sessiestatus (voertuig-naar-huis) van het voertuig verandert, bijvoorbeeld wanneer deze wordt ingeschakeld of stopt.",
+    "da": "Dette kort udløses, når køretøjets Powershare-sessionstilstand (køretøj-til-hjem) ændres, for eksempel når den aktiveres eller stopper.",
+    "de": "Diese Karte wird ausgelöst, wenn sich der Powershare-Sitzungsstatus (Fahrzeug-zu-Haus) des Fahrzeugs ändert, zum Beispiel wenn er aktiviert wird oder stoppt.",
+    "es": "Esta tarjeta se activa cuando cambia el estado de la sesión de Powershare (vehículo a hogar), por ejemplo, cuando se habilita o se detiene.",
+    "fr": "Cette carte se déclenche lorsque l'état de session Powershare (véhicule vers domicile) du véhicule change, par exemple lorsqu'il devient activé ou s'arrête.",
+    "it": "Questa scheda si attiva quando lo stato della sessione Powershare (dal veicolo alla casa) del veicolo cambia, ad esempio quando si abilita o si interrompe.",
+    "no": "Dette kortet utløses når kjøretøyets Powershare-øktstatus (kjøretøy-til-hjem) endres, for eksempel når den blir aktivert eller stopper.",
+    "sv": "Detta kort utlöses när fordonets Powershare-sessionsstatus (fordon-till-hem) ändras, till exempel när den aktiveras eller stoppas.",
+    "pl": "Ta karta uruchamia się, gdy zmienia się status sesji Powershare (z pojazdu do domu), na przykład gdy zostaje włączona lub zatrzymana.",
+    "ru": "Эта карта срабатывает при изменении состояния сеанса Powershare (от автомобиля к дому), например, когда он включается или останавливается.",
+    "ko": "차량의 Powershare(차량-주택) 세션 상태가 변경될 때, 예를 들어 활성화되거나 정지될 때 이 카드가 트리거됩니다.",
+    "ar": "تتفاعل هذه البطاقة عندما تتغير حالة جلسة Powershare (من المركبة إلى المنزل)، على سبيل المثال عند تفعيلها أو توقفها."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=powershare_status",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "جهاز"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "powershare_status",
+      "type": "string",
+      "title": {
+        "en": "Status",
+        "nl": "Status",
+        "da": "Status",
+        "de": "Status",
+        "es": "Estado",
+        "fr": "État",
+        "it": "Stato",
+        "no": "Status",
+        "sv": "Status",
+        "pl": "Status",
+        "ru": "Статус",
+        "ko": "상태",
+        "ar": "الحالة"
+      },
+      "example": {
+        "en": "enabled",
+        "nl": "enabled",
+        "da": "enabled",
+        "de": "enabled",
+        "es": "enabled",
+        "fr": "enabled",
+        "it": "enabled",
+        "no": "enabled",
+        "sv": "enabled",
+        "pl": "enabled",
+        "ru": "enabled",
+        "ko": "enabled",
+        "ar": "enabled"
+      }
+    }
+  ]
+}
