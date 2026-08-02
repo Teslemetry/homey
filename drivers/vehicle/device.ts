@@ -299,6 +299,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     // loses eligibility doesn't stay bound with a frozen last-known state.
     const eligibility = checkVehicleEligibility(vehicle.metadata);
     if (!eligibility.eligible) {
+      this.vehicle = undefined!;
       this.log(
         `Vehicle ${this.getVin()} is present but not eligible (${eligibility.reason})`,
       );

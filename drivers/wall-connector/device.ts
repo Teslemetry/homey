@@ -71,6 +71,7 @@ export default class WallConnecter extends TeslemetryDevice {
     // predicate pairing uses, so an already-paired site that loses access
     // doesn't stay bound with a frozen last-known state.
     if (!isEnergySiteEligible(site.metadata)) {
+      this.site = undefined!;
       this.error(
         `Failed to initialize Wall Connector device: energy site ${siteId} is not eligible (access revoked)`,
       );

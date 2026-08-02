@@ -40,10 +40,15 @@ function createVehicleStream() {
   };
 }
 
-function createVehicleFixture(metadata: Record<string, unknown>) {
+function createVehicleFixture(metadata: Record<string, unknown>, apiCalls: string[] = []) {
   return {
     sse: createVehicleStream(),
-    api: new Proxy({}, { get: () => () => Promise.resolve({ response: { result: true } }) }),
+    api: new Proxy({}, {
+      get: (_target, property) => () => {
+        apiCalls.push(String(property));
+        return Promise.resolve({ response: { result: true } });
+      },
+    }),
     metadata,
   };
 }
@@ -52,6 +57,7 @@ function createVehicleDeviceStub(vin: string, vehicles: Record<string, unknown>)
   const unavailableCalls: unknown[] = [];
   let availableCalls = 0;
   const registerCapabilityListenerCalls: string[] = [];
+  const capabilityListeners = new Map<string, (value: unknown) => unknown>();
   const stub = Object.assign(new VehicleDevice(), {
     homey: {
       app: { products: { vehicles } },
@@ -64,8 +70,9 @@ function createVehicleDeviceStub(vin: string, vehicles: Record<string, unknown>)
     getData: () => ({ vin }),
     getCapabilities: () => [],
     setCapabilityOptions: async () => {},
-    registerCapabilityListener: (capability: string) => {
+    registerCapabilityListener: (capability: string, listener: (value: unknown) => unknown) => {
       registerCapabilityListenerCalls.push(capability);
+      capabilityListeners.set(capability, listener);
     },
     getStoreValue: () => null,
     log: () => {},
@@ -81,6 +88,7 @@ function createVehicleDeviceStub(vin: string, vehicles: Record<string, unknown>)
     stub,
     unavailableCalls,
     registerCapabilityListenerCalls,
+    capabilityListeners,
     availableCallCount: () => availableCalls,
   };
 }
@@ -147,6 +155,23 @@ test("VehicleDevice.rebindProduct recovers once a later Products generation repo
 
   assert.equal(availableCallCount(), 1);
   assert.deepEqual((vehicles[vin] as any).sse.onCalls.sort(), ["connectivity", "state"]);
+});
+
+test("VehicleDevice.rebindProduct clears an eligible vehicle that becomes ineligible", async () => {
+  const vin = "VINLOSESACCESS";
+  const oldApiCalls: string[] = [];
+  const vehicles: Record<string, unknown> = {
+    [vin]: createVehicleFixture(ELIGIBLE_VEHICLE_METADATA, oldApiCalls),
+  };
+  const { stub, capabilityListeners } = createVehicleDeviceStub(vin, vehicles);
+
+  await stub.onInit();
+  vehicles[vin] = createVehicleFixture({ ...ELIGIBLE_VEHICLE_METADATA, access: false });
+  stub.rebindProduct();
+
+  assert.equal(stub.getProductKey(), undefined);
+  await assert.rejects(() => capabilityListeners.get("locked")!(true));
+  assert.deepEqual(oldApiCalls, []);
 });
 
 function createEnergySite(metadata: Record<string, unknown>) {
@@ -236,6 +261,19 @@ for (const [name, DeviceClass] of [
 
     assert.equal(availableCallCount(), 1);
   });
+
+  test(`${name}.rebindProduct clears an eligible site that becomes ineligible`, async () => {
+    const energySites: Record<string, unknown> = {
+      "site-1": createEnergySite({ access: true }),
+    };
+    const { stub } = createEnergyDeviceStub(DeviceClass, "site-1", energySites);
+
+    await stub.onInit();
+    energySites["site-1"] = createEnergySite({ access: false });
+    stub.rebindProduct();
+
+    assert.equal(stub.getProductKey(), undefined);
+  });
 }
 
 test("WallConnecter.onInit marks a present-but-access-revoked site unavailable and registers no listeners", async () => {
@@ -274,4 +312,22 @@ test("WallConnecter.rebindProduct recovers once a later Products generation repo
   stub.rebindProduct();
 
   assert.equal(availableCallCount(), 1);
+});
+
+test("WallConnecter.rebindProduct clears an eligible site that becomes ineligible", async () => {
+  const energySites: Record<string, unknown> = {
+    "site-1": createEnergySite({ access: true }),
+  };
+  const { stub } = createEnergyDeviceStub(
+    WallConnecter,
+    "site-1",
+    energySites,
+    { din: "din-1" },
+  );
+
+  await stub.onInit();
+  energySites["site-1"] = createEnergySite({ access: false });
+  stub.rebindProduct();
+
+  assert.equal(stub.getProductKey(), undefined);
 });
