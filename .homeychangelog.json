@@ -67,5 +67,8 @@
   },
   "1.0.10": {
     "en": "Improved reliability: internal dependency cleanup so the app always packages correctly (follow-up to the 1.0.9 Powerwall fix)."
+  },
+  "1.1.0": {
+    "en": "Major capability expansion: Cybertruck Powershare and tonneau, HV battery diagnostics, sunroof, routes and ETA, charging and departure schedules, vehicle security, software updates, Grid outage and Storm Watch, Cabin Overheat Protection, seat climate, off-grid charging reserve, presence, media volume and more - plus improved pairing diagnostics."
   }
 }
