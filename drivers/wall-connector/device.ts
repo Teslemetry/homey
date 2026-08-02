@@ -46,7 +46,9 @@ export default class WallConnecter extends TeslemetryDevice {
    * like onInit(). See TeslemetryDevice.rebindProduct().
    */
   public rebindProduct(): void {
-    this.pollingCleanup?.forEach((stop) => stop());
+    const pollingCleanup = this.pollingCleanup ?? [];
+    this.pollingCleanup = [];
+    pollingCleanup.forEach((stop) => stop());
     this.resolveAndBindSite();
   }
 
@@ -179,9 +181,9 @@ export default class WallConnecter extends TeslemetryDevice {
     this.site.api.on("chargeHistory", onChargeHistory);
 
     this.pollingCleanup = [
-      this.site.api.requestPolling("chargeHistory"),
-      () => this.site.sse.off("live_status", onLiveStatus),
-      () => this.site.api.off("chargeHistory", onChargeHistory),
+      site.api.requestPolling("chargeHistory"),
+      () => site.sse.off("live_status", onLiveStatus),
+      () => site.api.off("chargeHistory", onChargeHistory),
     ];
   }
 
@@ -237,6 +239,8 @@ export default class WallConnecter extends TeslemetryDevice {
 
   async onUninit(): Promise<void> {
     await super.onUninit();
-    this.pollingCleanup?.forEach((stop) => stop());
+    const pollingCleanup = this.pollingCleanup ?? [];
+    this.pollingCleanup = [];
+    pollingCleanup.forEach((stop) => stop());
   }
 }

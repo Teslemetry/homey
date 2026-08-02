@@ -262,7 +262,7 @@ for (const [name, DeviceClass] of [
     assert.equal(availableCallCount(), 1);
   });
 
-  test(`${name}.rebindProduct clears an eligible site that becomes ineligible`, async () => {
+  test(`${name}.rebindProduct recovers after an eligible site becomes ineligible`, async () => {
     const energySites: Record<string, unknown> = {
       "site-1": createEnergySite({ access: true }),
     };
@@ -273,6 +273,12 @@ for (const [name, DeviceClass] of [
     stub.rebindProduct();
 
     assert.equal(stub.getProductKey(), undefined);
+    await stub.onUninit();
+
+    energySites["site-1"] = createEnergySite({ access: true });
+    stub.rebindProduct();
+
+    assert.equal(stub.getProductKey(), "site:site-1");
   });
 }
 
@@ -314,7 +320,7 @@ test("WallConnecter.rebindProduct recovers once a later Products generation repo
   assert.equal(availableCallCount(), 1);
 });
 
-test("WallConnecter.rebindProduct clears an eligible site that becomes ineligible", async () => {
+test("WallConnecter.rebindProduct recovers after an eligible site becomes ineligible", async () => {
   const energySites: Record<string, unknown> = {
     "site-1": createEnergySite({ access: true }),
   };
@@ -330,4 +336,10 @@ test("WallConnecter.rebindProduct clears an eligible site that becomes ineligibl
   stub.rebindProduct();
 
   assert.equal(stub.getProductKey(), undefined);
+  await stub.onUninit();
+
+  energySites["site-1"] = createEnergySite({ access: true });
+  stub.rebindProduct();
+
+  assert.equal(stub.getProductKey(), "site:site-1");
 });

@@ -61,7 +61,9 @@ export default class SolarDevice extends TeslemetryDevice {
    * like onInit(). See TeslemetryDevice.rebindProduct().
    */
   public rebindProduct(): void {
-    this.pollingCleanup?.forEach((stop) => stop());
+    const pollingCleanup = this.pollingCleanup ?? [];
+    this.pollingCleanup = [];
+    pollingCleanup.forEach((stop) => stop());
     // pollingCleanup just cleared the midnight timer; reset so the cached
     // site_info replay below doesn't treat an unchanged timezone as
     // "already scheduled" and skip rescheduling it.
@@ -154,8 +156,8 @@ export default class SolarDevice extends TeslemetryDevice {
     this.site.sse.on("energy_totals", onEnergyTotals);
 
     this.pollingCleanup = [
-      () => this.site.sse.off("live_status", onLiveStatus),
-      () => this.site.sse.off("energy_totals", onEnergyTotals),
+      () => site.sse.off("live_status", onLiveStatus),
+      () => site.sse.off("energy_totals", onEnergyTotals),
       () => {
         if (this.midnightTimer !== undefined) {
           this.homey.clearTimeout(this.midnightTimer);
@@ -182,13 +184,13 @@ export default class SolarDevice extends TeslemetryDevice {
       }
     };
     this.site.sse.on("site_info", applySiteInfo);
-    this.pollingCleanup.push(() =>
-      this.site.sse.off("site_info", applySiteInfo),
-    );
+    this.pollingCleanup.push(() => site.sse.off("site_info", applySiteInfo));
   }
 
   async onUninit() {
     await super.onUninit();
-    this.pollingCleanup?.forEach((stop) => stop());
+    const pollingCleanup = this.pollingCleanup ?? [];
+    this.pollingCleanup = [];
+    pollingCleanup.forEach((stop) => stop());
   }
 }

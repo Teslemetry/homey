@@ -91,7 +91,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
    * exactly like onInit(). See TeslemetryDevice.rebindProduct().
    */
   public rebindProduct(): void {
-    this.pollingCleanup?.forEach((stop) => stop());
+    const pollingCleanup = this.pollingCleanup ?? [];
+    this.pollingCleanup = [];
+    pollingCleanup.forEach((stop) => stop());
     // pollingCleanup just cleared the tariff timer; reset the retained
     // tariff/timezone so the new site's cached site_info replay is what
     // drives the next recompute, not this now-unbound site's data.
@@ -308,7 +310,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     });
 
     this.pollingCleanup = [
-      () => this.site.sse.off("live_status", onLiveStatus),
+      () => site.sse.off("live_status", onLiveStatus),
       () => {
         if (this.tariffTimer !== undefined) {
           this.homey.clearTimeout(this.tariffTimer);
@@ -332,9 +334,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
     this.site.sse.on("energy_totals", onEnergyTotals);
 
     this.pollingCleanup.push(
-      () => this.site.sse.off("site_info", applySiteInfo),
-      () => this.site.sse.off("tariff_content_v2", applySiteInfo),
-      () => this.site.sse.off("energy_totals", onEnergyTotals),
+      () => site.sse.off("site_info", applySiteInfo),
+      () => site.sse.off("tariff_content_v2", applySiteInfo),
+      () => site.sse.off("energy_totals", onEnergyTotals),
     );
 
     this.log("Powerwall device initialized: live and command listeners registered");
@@ -342,7 +344,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
 
   async onUninit(): Promise<void> {
     await super.onUninit();
-    this.pollingCleanup?.forEach((stop) => stop());
+    const pollingCleanup = this.pollingCleanup ?? [];
+    this.pollingCleanup = [];
+    pollingCleanup.forEach((stop) => stop());
   }
 
   /**
