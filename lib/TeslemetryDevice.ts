@@ -10,6 +10,11 @@ import { TeslemetryApiError } from "../@types/error.js";
  *   generation yet; clears once this device successfully binds.
  * - "binding": this device's specific product/site/vehicle isn't present in
  *   a ready Products generation; clears once this device successfully binds.
+ * - "eligibility": the product is present in a ready Products generation but
+ *   its own metadata reports it ineligible (vehicle access/telemetry/polling,
+ *   energy site access) - revalidated by the same predicate pairing uses, so
+ *   the two can't drift; clears once a later bind finds the same product
+ *   eligible again.
  * - "stream": the shared SSE connection has been disconnected/erroring past
  *   the freshness grace period; clears only when this device's own product
  *   receives a genuine (non-cache) data event.
@@ -22,6 +27,7 @@ import { TeslemetryApiError } from "../@types/error.js";
 export type AvailabilityReason =
   | "startup"
   | "binding"
+  | "eligibility"
   | "stream"
   | "auth"
   | "connector";

@@ -1,7 +1,41 @@
 import Homey from "homey";
-import type { EnergyDetails } from "@teslemetry/api";
+import type { EnergyDetails, VehicleDetails } from "@teslemetry/api";
 import type TeslemetryApp from "../app.js";
 import TeslemetryDevice from "./TeslemetryDevice.js";
+
+/**
+ * The single vehicle eligibility predicate, shared by pairing
+ * (drivers/vehicle/driver.ts) and existing-device bind
+ * (drivers/vehicle/device.ts) so the two can't drift apart. A record failing
+ * more than one condition reports only the first, in this priority order.
+ */
+export type VehicleEligibility =
+  | { eligible: true }
+  | { eligible: false; reason: "access" | "telemetry" | "polling" };
+
+export function checkVehicleEligibility(
+  metadata: VehicleDetails["metadata"],
+): VehicleEligibility {
+  if (!metadata.access) return { eligible: false, reason: "access" };
+  if (!metadata.fleet_telemetry) return { eligible: false, reason: "telemetry" };
+  if (metadata.polling) return { eligible: false, reason: "polling" };
+  return { eligible: true };
+}
+
+export function isVehicleEligible(metadata: VehicleDetails["metadata"]): boolean {
+  return checkVehicleEligibility(metadata).eligible;
+}
+
+/**
+ * The single energy-site eligibility predicate, shared by pairing
+ * (listEnergySiteCandidates below) and existing-device bind (every
+ * <driver>/device.ts resolveAndBindSite()). Energy metadata only exposes
+ * `access` - no telemetry/polling equivalent - so this can't distinguish
+ * further reasons the way the vehicle predicate can.
+ */
+export function isEnergySiteEligible(metadata: EnergyDetails["metadata"]): boolean {
+  return !!metadata.access;
+}
 
 export default class TeslemetryDriver extends Homey.Driver {
   declare homey: Homey.Device["homey"] & {
@@ -53,7 +87,7 @@ export default class TeslemetryDriver extends Homey.Driver {
     sites: EnergyDetails[],
     mapSite: (site: EnergyDetails) => Promise<T[]>,
   ): Promise<T[]> {
-    const accessible = sites.filter((site) => site.metadata.access);
+    const accessible = sites.filter((site) => isEnergySiteEligible(site.metadata));
     this.log(
       `pairing[stage=filtering]: ${accessible.length}/${sites.length} energy site(s) accessible`,
     );

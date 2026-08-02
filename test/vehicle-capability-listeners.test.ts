@@ -38,6 +38,9 @@ async function createDeviceStub(
     sse,
     api,
     metadata: {
+      access: true,
+      fleet_telemetry: "fleet_telemetry_config_id",
+      polling: false,
       config: {
         rhd: false,
         can_actuate_trunks: false,

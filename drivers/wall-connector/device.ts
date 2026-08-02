@@ -1,5 +1,6 @@
 import { EnergyDetails, SseLiveStatus } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+import { isEnergySiteEligible } from "../../lib/TeslemetryDriver.js";
 
 /** The fields this device reads off the opaque `live_status` SSE payload. */
 interface LiveStatusResponse {
@@ -45,7 +46,9 @@ export default class WallConnecter extends TeslemetryDevice {
    * like onInit(). See TeslemetryDevice.rebindProduct().
    */
   public rebindProduct(): void {
-    this.pollingCleanup?.forEach((stop) => stop());
+    const pollingCleanup = this.pollingCleanup ?? [];
+    this.pollingCleanup = [];
+    pollingCleanup.forEach((stop) => stop());
     this.resolveAndBindSite();
   }
 
@@ -64,6 +67,20 @@ export default class WallConnecter extends TeslemetryDevice {
         `Failed to initialize Wall Connector device: energy site not found for id ${siteId}`,
       );
       this.markUnavailable("binding", this.homey.__("error.energy_site_not_found"));
+      return;
+    }
+    // Present but ineligible (access revoked): revalidated with the exact
+    // predicate pairing uses, so an already-paired site that loses access
+    // doesn't stay bound with a frozen last-known state.
+    if (!isEnergySiteEligible(site.metadata)) {
+      this.site = undefined!;
+      this.error(
+        `Failed to initialize Wall Connector device: energy site ${siteId} is not eligible (access revoked)`,
+      );
+      this.markUnavailable(
+        "eligibility",
+        this.homey.__("error.energy_site_access_required"),
+      );
       return;
     }
     this.bindSite(site);
@@ -88,6 +105,7 @@ export default class WallConnecter extends TeslemetryDevice {
     this.dinMissStreak = 0;
     this.clearAvailabilityReason("startup");
     this.clearAvailabilityReason("binding");
+    this.clearAvailabilityReason("eligibility");
 
     const onLiveStatus = (event: SseLiveStatus) => {
       const response = event.live_status as LiveStatusResponse;
@@ -163,9 +181,9 @@ export default class WallConnecter extends TeslemetryDevice {
     this.site.api.on("chargeHistory", onChargeHistory);
 
     this.pollingCleanup = [
-      this.site.api.requestPolling("chargeHistory"),
-      () => this.site.sse.off("live_status", onLiveStatus),
-      () => this.site.api.off("chargeHistory", onChargeHistory),
+      site.api.requestPolling("chargeHistory"),
+      () => site.sse.off("live_status", onLiveStatus),
+      () => site.api.off("chargeHistory", onChargeHistory),
     ];
   }
 
@@ -221,6 +239,8 @@ export default class WallConnecter extends TeslemetryDevice {
 
   async onUninit(): Promise<void> {
     await super.onUninit();
-    this.pollingCleanup?.forEach((stop) => stop());
+    const pollingCleanup = this.pollingCleanup ?? [];
+    this.pollingCleanup = [];
+    pollingCleanup.forEach((stop) => stop());
   }
 }

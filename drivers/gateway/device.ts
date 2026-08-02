@@ -1,5 +1,6 @@
 import { EnergyDetails, SseEnergyTotals, SseLiveStatus } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+import { isEnergySiteEligible } from "../../lib/TeslemetryDriver.js";
 import msUntilNextLocalMidnight from "../../lib/localMidnight.js";
 
 const gridStatusMap = new Map<any, boolean>([
@@ -104,7 +105,9 @@ export default class GatewayDevice extends TeslemetryDevice {
    * like onInit(). See TeslemetryDevice.rebindProduct().
    */
   public rebindProduct(): void {
-    this.pollingCleanup?.forEach((stop) => stop());
+    const pollingCleanup = this.pollingCleanup ?? [];
+    this.pollingCleanup = [];
+    pollingCleanup.forEach((stop) => stop());
     // pollingCleanup just cleared the midnight timer; reset so the cached
     // site_info replay below doesn't treat an unchanged timezone as
     // "already scheduled" and skip rescheduling it.
@@ -131,6 +134,20 @@ export default class GatewayDevice extends TeslemetryDevice {
       this.markUnavailable("binding", this.homey.__("error.energy_site_not_found"));
       return;
     }
+    // Present but ineligible (access revoked): revalidated with the exact
+    // predicate pairing uses, so an already-paired site that loses access
+    // doesn't stay bound with a frozen last-known state.
+    if (!isEnergySiteEligible(site.metadata)) {
+      this.site = undefined!;
+      this.error(
+        `Failed to initialize Gateway device: energy site ${siteId} is not eligible (access revoked)`,
+      );
+      this.markUnavailable(
+        "eligibility",
+        this.homey.__("error.energy_site_access_required"),
+      );
+      return;
+    }
     this.bindSite(site);
   }
 
@@ -146,6 +163,7 @@ export default class GatewayDevice extends TeslemetryDevice {
     this.site = site;
     this.clearAvailabilityReason("startup");
     this.clearAvailabilityReason("binding");
+    this.clearAvailabilityReason("eligibility");
 
     const onLiveStatus = (event: SseLiveStatus) => {
       const data = event.live_status as LiveStatusResponse;
@@ -232,8 +250,8 @@ export default class GatewayDevice extends TeslemetryDevice {
     this.site.sse.on("energy_totals", onEnergyTotals);
 
     this.pollingCleanup = [
-      () => this.site.sse.off("live_status", onLiveStatus),
-      () => this.site.sse.off("energy_totals", onEnergyTotals),
+      () => site.sse.off("live_status", onLiveStatus),
+      () => site.sse.off("energy_totals", onEnergyTotals),
       () => {
         if (this.midnightTimer !== undefined) {
           this.homey.clearTimeout(this.midnightTimer);
@@ -276,9 +294,7 @@ export default class GatewayDevice extends TeslemetryDevice {
       }
     };
     this.site.sse.on("site_info", applySiteInfo);
-    this.pollingCleanup.push(() =>
-      this.site.sse.off("site_info", applySiteInfo),
-    );
+    this.pollingCleanup.push(() => site.sse.off("site_info", applySiteInfo));
   }
 
   /**
@@ -317,6 +333,8 @@ export default class GatewayDevice extends TeslemetryDevice {
 
   async onUninit(): Promise<void> {
     await super.onUninit();
-    this.pollingCleanup?.forEach((stop) => stop());
+    const pollingCleanup = this.pollingCleanup ?? [];
+    this.pollingCleanup = [];
+    pollingCleanup.forEach((stop) => stop());
   }
 }

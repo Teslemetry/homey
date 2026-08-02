@@ -422,6 +422,36 @@ existing convention) - not one or the other alone, since a test double or
 any other path that skips the constructor still needs the optional chaining
 to be safe.
 
+### Present-But-Ineligible Products (bind-time eligibility revalidation)
+
+A product can stay listed in `Products` after losing access/subscription/
+telemetry eligibility - the metadata entry isn't removed, only its
+eligibility fields change. `checkVehicleEligibility()` /
+`isVehicleEligible()` / `isEnergySiteEligible()` (`lib/TeslemetryDriver.ts`)
+are the single source of truth for "is this product pairable/bindable right
+now", shared by pairing (`drivers/vehicle/driver.ts`,
+`listEnergySiteCandidates()`) and every driver's `resolveAndBindVehicle()`/
+`resolveAndBindSite()` so the two can't drift apart. The vehicle predicate
+mirrors pairing exactly (`access && fleet_telemetry && !polling`); the
+energy predicate is `access` only - energy metadata exposes no telemetry/
+polling equivalent, so don't invent a more specific reason than the record
+proves.
+
+A product that resolves but fails this predicate is treated like the
+missing-product case above, not like a normal bind: nothing is assigned,
+zero listeners are registered, and the device is marked unavailable with the
+new `"eligibility"` `AvailabilityReason` and a message naming the specific
+failed condition (`error.vehicle_access_required` /
+`error.vehicle_telemetry_unavailable` / `error.vehicle_polling_mode` /
+`error.energy_site_access_required`). Recovery is symmetric with binding: the
+next bind/rebind that finds the product eligible again clears
+`"eligibility"` the same way it clears `"binding"`. This does not detect an
+eligibility change during an uninterrupted, indefinitely cached `Products`
+generation - only revalidates at bind/rebind - see
+`test/device-oninit-ineligible-product.test.ts` for the coverage (all three
+false vehicle predicate cases, access-false energy cases, zero listener
+registration, and rebind recovery).
+
 ### Firing Flow Trigger Cards
 
 Homey does not reliably auto-fire trigger cards for this app's capabilities,

@@ -20,6 +20,7 @@ function createDeviceStub(
       },
       off: () => {},
     },
+    metadata: { access: true },
   };
 
   const stub = Object.assign(Object.create(DeviceClass.prototype), {
