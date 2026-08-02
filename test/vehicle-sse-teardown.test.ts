@@ -19,7 +19,7 @@ function createDeviceStub(vin: string) {
   const vehicle = {
     sse,
     api: {},
-    metadata: { config: { rhd: false, can_actuate_trunks: false } },
+    metadata: { access: true, fleet_telemetry: "fleet_telemetry_config_id", polling: false, config: { rhd: false, can_actuate_trunks: false } },
   };
   const stub = Object.assign(new VehicleDevice(), {
     homey: {

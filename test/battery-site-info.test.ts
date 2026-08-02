@@ -68,7 +68,7 @@ function createDeviceStub(
 
   const stub = Object.assign(Object.create(PowerwallDevice.prototype), {
     homey: {
-      app: { products: { energySites: { "site-1": { api, sse } } } },
+      app: { products: { energySites: { "site-1": { api, sse, metadata: { access: true } } } } },
       __: (key: string) => key,
       flow: {
         getDeviceTriggerCard: () => ({ trigger: async () => {} }),

@@ -41,7 +41,7 @@ function createDeviceStub(
   sse.siteInfoDocument = opts.siteInfoDocument;
   if (opts.siteInfoDocument) sse.cacheAndEmit("site_info", opts.siteInfoDocument);
 
-  const site = { sse };
+  const site = { sse, metadata: { access: true } };
 
   let currentNow = opts.now ?? new Date("2026-07-30T12:00:00Z");
   const timers: Array<{ id: number; callback: () => void | Promise<void>; delay: number }> = [];

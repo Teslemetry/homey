@@ -18,6 +18,7 @@ function createDeviceStub(capabilities: Record<string, unknown>) {
       off: () => {},
       requestPolling: () => () => {},
     },
+    metadata: { access: true },
   };
 
   const stub = Object.assign(Object.create(WallConnecter.prototype), {

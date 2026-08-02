@@ -6,11 +6,19 @@ import {
   VehicleDetails,
 } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+import { checkVehicleEligibility } from "../../lib/TeslemetryDriver.js";
 import {
   isCapabilitySupported,
   filterVehicleCapabilities,
   isMetadataGatedCapability,
 } from "./capabilityGating.js";
+
+/** Locale key for each way checkVehicleEligibility() can report a vehicle ineligible. */
+const VEHICLE_INELIGIBILITY_MESSAGE_KEY = {
+  access: "error.vehicle_access_required",
+  telemetry: "error.vehicle_telemetry_unavailable",
+  polling: "error.vehicle_polling_mode",
+} as const;
 
 const isBool = (x: any) => typeof x === "boolean";
 
@@ -267,25 +275,11 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   private resolveAndBindVehicle(): void {
+    let vehicle: VehicleDetails;
     try {
-      const vehicle = this.homey.app.products?.vehicles?.[this.getVin()];
-      if (!vehicle) throw new Error("No vehicle found");
-      this.vehicle = vehicle;
-      this.clearAvailabilityReason("startup");
-      this.clearAvailabilityReason("binding");
-
-      this.setCapabilityOptions("onoff.frunk", {
-        ...this.driver.manifest.capabilitiesOptions["onoff.frunk"],
-        setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
-      }).catch(this.error);
-      this.setCapabilityOptions("onoff.trunk", {
-        ...this.driver.manifest.capabilitiesOptions["onoff.trunk"],
-        setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
-      }).catch(this.error);
-      this.setCapabilityOptions("cop_temperature_limit", {
-        ...this.driver.manifest.capabilitiesOptions["cop_temperature_limit"],
-        setable: !!this.vehicle.metadata.config?.cop_user_set_temp_supported,
-      }).catch(this.error);
+      const found = this.homey.app.products?.vehicles?.[this.getVin()];
+      if (!found) throw new Error("No vehicle found");
+      vehicle = found;
     } catch (e) {
       if (!(this.homey.app.isReady?.() ?? true)) {
         this.markUnavailable(
@@ -299,6 +293,39 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.markUnavailable("binding", this.homey.__("error.vehicle_not_found"));
       return;
     }
+
+    // Present but ineligible (access/telemetry/polling): revalidated with
+    // the exact predicate pairing uses, so an already-paired vehicle that
+    // loses eligibility doesn't stay bound with a frozen last-known state.
+    const eligibility = checkVehicleEligibility(vehicle.metadata);
+    if (!eligibility.eligible) {
+      this.log(
+        `Vehicle ${this.getVin()} is present but not eligible (${eligibility.reason})`,
+      );
+      this.markUnavailable(
+        "eligibility",
+        this.homey.__(VEHICLE_INELIGIBILITY_MESSAGE_KEY[eligibility.reason]),
+      );
+      return;
+    }
+
+    this.vehicle = vehicle;
+    this.clearAvailabilityReason("startup");
+    this.clearAvailabilityReason("binding");
+    this.clearAvailabilityReason("eligibility");
+
+    this.setCapabilityOptions("onoff.frunk", {
+      ...this.driver.manifest.capabilitiesOptions["onoff.frunk"],
+      setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
+    }).catch(this.error);
+    this.setCapabilityOptions("onoff.trunk", {
+      ...this.driver.manifest.capabilitiesOptions["onoff.trunk"],
+      setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
+    }).catch(this.error);
+    this.setCapabilityOptions("cop_temperature_limit", {
+      ...this.driver.manifest.capabilitiesOptions["cop_temperature_limit"],
+      setable: !!this.vehicle.metadata.config?.cop_user_set_temp_supported,
+    }).catch(this.error);
 
     // Essential behavior: state/connectivity SSE listeners and all command
     // capability listeners. Registered before the signal replay below so a

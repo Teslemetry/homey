@@ -175,7 +175,7 @@ test("without the vehicle_location scope, LocatedAtHome/LocatedAtWork never arri
   const vehicle = {
     sse,
     api: {},
-    metadata: { config: { rhd: false, can_actuate_trunks: false } },
+    metadata: { access: true, fleet_telemetry: "fleet_telemetry_config_id", polling: false, config: { rhd: false, can_actuate_trunks: false } },
   };
   const capabilities: Record<string, unknown> = {
     alarm_presence: null,
@@ -227,7 +227,7 @@ test("with the vehicle_location scope, a live LocatedAtHome/LocatedAtWork event 
   const vehicle = {
     sse,
     api: {},
-    metadata: { config: { rhd: false, can_actuate_trunks: false } },
+    metadata: { access: true, fleet_telemetry: "fleet_telemetry_config_id", polling: false, config: { rhd: false, can_actuate_trunks: false } },
   };
   const capabilities: Record<string, unknown> = {
     alarm_presence: null,

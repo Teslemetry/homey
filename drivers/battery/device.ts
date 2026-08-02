@@ -6,6 +6,7 @@ import {
   type TariffContentV2,
 } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
+import { isEnergySiteEligible } from "../../lib/TeslemetryDriver.js";
 import msUntilNextLocalMidnight from "../../lib/localMidnight.js";
 
 const TODAY_TOTAL_CAPABILITIES = [
@@ -120,6 +121,19 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.markUnavailable("binding", this.homey.__("error.energy_site_not_found"));
       return;
     }
+    // Present but ineligible (access revoked): revalidated with the exact
+    // predicate pairing uses, so an already-paired site that loses access
+    // doesn't stay bound with a frozen last-known state.
+    if (!isEnergySiteEligible(site.metadata)) {
+      this.error(
+        `Failed to initialize Powerwall device: energy site ${siteId} is not eligible (access revoked)`,
+      );
+      this.markUnavailable(
+        "eligibility",
+        this.homey.__("error.energy_site_access_required"),
+      );
+      return;
+    }
     this.bindSite(site);
   }
 
@@ -135,6 +149,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     this.site = site;
     this.clearAvailabilityReason("startup");
     this.clearAvailabilityReason("binding");
+    this.clearAvailabilityReason("eligibility");
 
     const onLiveStatus = (event: SseLiveStatus) => {
       const data = event.live_status as LiveStatusResponse;

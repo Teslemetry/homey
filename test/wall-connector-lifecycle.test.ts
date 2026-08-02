@@ -29,6 +29,7 @@ function createDeviceStub(
       },
       cache: {},
     },
+    metadata: { access: true },
   };
 
   const stub = Object.assign(Object.create(WallConnecter.prototype), {

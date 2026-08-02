@@ -28,7 +28,7 @@ function createDeviceStub(
   const vehicle = {
     sse,
     api: {},
-    metadata: { config: { rhd: false, can_actuate_trunks: false, ...config } },
+    metadata: { access: true, fleet_telemetry: "fleet_telemetry_config_id", polling: false, config: { rhd: false, can_actuate_trunks: false, ...config } },
   };
   const capabilityOptionCalls: Array<{ capability: string; options: unknown }> = [];
   const stub = Object.assign(new VehicleDevice(), {

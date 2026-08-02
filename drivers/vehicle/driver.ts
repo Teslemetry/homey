@@ -1,4 +1,4 @@
-import TeslemetryDriver from "../../lib/TeslemetryDriver.js";
+import TeslemetryDriver, { isVehicleEligible } from "../../lib/TeslemetryDriver.js";
 import { filterVehicleCapabilities } from "./capabilityGating.js";
 
 const icon: Record<string, { icon: string }> = {
@@ -21,10 +21,7 @@ export default class VehicleDriver extends TeslemetryDriver {
     try {
       // Only includes vehicles with a subscription, that support fleet telemetry, and are configured correctly
       return Object.values(products.vehicles)
-        .filter(
-          ({ metadata }) =>
-            metadata.access && !!metadata.fleet_telemetry && !metadata.polling,
-        )
+        .filter(({ metadata }) => isVehicleEligible(metadata))
         .map((data) => {
           // Build capabilities list, excluding unsupported features
           const capabilities = filterVehicleCapabilities(

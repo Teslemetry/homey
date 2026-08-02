@@ -20,12 +20,12 @@ import VehicleDevice from "../.homeybuild/drivers/vehicle/device.js";
  * stream now dead), not just a single fresh reinit.
  */
 
-function createEnergySite(): { api: unknown; sse: EventEmitter } {
+function createEnergySite(): { api: unknown; sse: EventEmitter; metadata: { access: boolean } } {
   const api = new Proxy(
     {},
     { get: () => () => Promise.resolve() },
   );
-  return { api, sse: new EventEmitter() };
+  return { api, sse: new EventEmitter(), metadata: { access: true } };
 }
 
 test("PowerwallDevice.rebindProduct recovers a device stuck on an orphaned site stream", async () => {
@@ -166,9 +166,9 @@ test("GatewayDevice.rebindProduct recovers a device stuck on an orphaned site st
 });
 
 test("WallConnecter.rebindProduct recovers a device stuck on an orphaned site stream", async () => {
-  function createWcSite(): { api: EventEmitter & { requestPolling: () => () => void }; sse: EventEmitter } {
+  function createWcSite(): { api: EventEmitter & { requestPolling: () => () => void }; sse: EventEmitter; metadata: { access: boolean } } {
     const api = Object.assign(new EventEmitter(), { requestPolling: () => () => {} });
-    return { api, sse: new EventEmitter() };
+    return { api, sse: new EventEmitter(), metadata: { access: true } };
   }
   const siteA = createWcSite();
   const siteB = createWcSite();
@@ -244,7 +244,7 @@ test("VehicleDevice.rebindProduct recovers a device stuck on an orphaned vehicle
         },
       },
       apiCalls,
-      metadata: { config: { can_actuate_trunks: false } },
+      metadata: { access: true, fleet_telemetry: "fleet_telemetry_config_id", polling: false, config: { can_actuate_trunks: false } },
     };
   }
 
