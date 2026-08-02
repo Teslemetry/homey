@@ -111,6 +111,28 @@ test("LifetimeEnergyGainedRegen passes the native kWh value straight through to 
   assert.equal(capabilities["meter_power.regen"], 1234.5);
 });
 
+test("HV battery diagnostic signals update their voltage and temperature capabilities", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "measure_voltage.brick_max": undefined,
+    "measure_voltage.brick_min": undefined,
+    "measure_temperature.module_max": undefined,
+    "measure_temperature.module_min": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("BrickVoltageMax", 4.18);
+  sse.data.emit("BrickVoltageMin", 3.91);
+  sse.data.emit("ModuleTempMax", 42.5);
+  sse.data.emit("ModuleTempMin", 28.25);
+
+  assert.deepEqual(capabilities, {
+    "measure_voltage.brick_max": 4.18,
+    "measure_voltage.brick_min": 3.91,
+    "measure_temperature.module_max": 42.5,
+    "measure_temperature.module_min": 28.25,
+  });
+});
+
 test("RearDefrostEnabled updates alarm_generic.rear_defrost", async () => {
   const { stub, sse, capabilities } = createDeviceStub({
     "alarm_generic.rear_defrost": undefined,
