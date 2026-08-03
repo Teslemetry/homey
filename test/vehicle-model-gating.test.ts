@@ -13,6 +13,7 @@ const TONNEAU_CAPABILITIES = [
 // lookup and Tesla's own VIN vehicle-line encoding.
 const CYBERTRUCK_VIN = "XYZCTRK0000000001";
 const MODEL_Y_VIN = "XYZYTRK0000000001";
+const CYBERCAB_VIN = "XYZACAB0000000001";
 
 const SEAT_FEATURE_CAPABILITIES = [
   "seat_heater.rear_left",
@@ -169,6 +170,8 @@ test("isCybertruck reads VIN position 4 (index 3)", () => {
   assert.equal(isCybertruck(CYBERTRUCK_VIN), true);
   assert.equal(isCybertruck(MODEL_Y_VIN), false);
   assert.equal(isCybertruck(undefined), false);
+  // Cybercab ("A") is a distinct model, not a Cybertruck.
+  assert.equal(isCybertruck(CYBERCAB_VIN), false);
 });
 
 test("ensureCapabilities does not add rear-heater/seat-cooler capabilities for a no-feature vehicle", async () => {
