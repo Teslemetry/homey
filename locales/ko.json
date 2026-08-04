@@ -2,8 +2,19 @@
   "error": {
     "invalid_token": "유효하지 않은 토큰입니다. 다시 시도해 주세요.",
     "invalid_refresh_token": "유효하지 않은 갱신 토큰입니다. 다시 인증해 주세요.",
+    "energy_site_not_found": "에너지 사이트를 찾을 수 없습니다.",
+    "vehicle_not_found": "차량을 찾을 수 없습니다.",
+    "wall_connector_not_found": "Wall Connector를 찾을 수 없습니다.",
     "subscription_required": "구독이 필요합니다. Teslemetry 구독을 확인해 주세요.",
+    "vehicle_access_required": "이 차량은 더 이상 Teslemetry 액세스 권한이 없습니다. Teslemetry 구독을 확인해 주세요.",
+    "vehicle_telemetry_unavailable": "이 차량에는 Fleet Telemetry가 설정되어 있지 않습니다.",
+    "vehicle_polling_mode": "이 차량은 레거시 폴링 모드로 작동 중이며, 실시간 텔레메트리를 사용할 수 없습니다.",
+    "energy_site_access_required": "이 에너지 사이트는 더 이상 Teslemetry 액세스 권한이 없습니다. Teslemetry 구독을 확인해 주세요.",
     "could_not_wake_vehicle": "차량을 깨우지 못했습니다. 다시 시도해 주세요.",
-    "insufficient_credits": "명령 크레딧이 부족합니다. 명령 실행을 위해 추가 크레딧을 구매해 주세요."
+    "insufficient_credits": "명령 크레딧이 부족합니다. 명령 실행을 위해 추가 크레딧을 구매해 주세요.",
+    "device_removed": "선택한 기기가 더 이상 존재하지 않습니다. 이 Flow를 수정해 주세요.",
+    "teslemetry_connecting": "Teslemetry에 연결하는 중...",
+    "stream_disconnected": "Teslemetry 연결이 끊어졌습니다. 다시 연결하는 중...",
+    "account_disconnected": "Teslemetry 계정 연결이 끊어졌습니다. 이 기기를 다시 연결하려면 재인증해 주세요."
   }
 }

@@ -11,7 +11,7 @@
     "vehicle_polling_mode": "This vehicle is in legacy polling mode; live telemetry isn't available.",
     "energy_site_access_required": "This energy site no longer has Teslemetry access. Please check your Teslemetry subscription.",
     "could_not_wake_vehicle": "Vehicle didn't wake up. Please try again.",
-    "insufficient_credits": "Insufficent command credits. Please purchase additional credits to run commands.",
+    "insufficient_credits": "Insufficient command credits. Please purchase additional credits to run commands.",
     "device_removed": "The selected device no longer exists. Please edit this Flow.",
     "teslemetry_connecting": "Connecting to Teslemetry...",
     "stream_disconnected": "Connection to Teslemetry lost. Reconnecting...",

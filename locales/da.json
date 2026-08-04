@@ -2,8 +2,19 @@
   "error": {
     "invalid_token": "Ugyldigt token. Prøv venligst igen.",
     "invalid_refresh_token": "Ugyldigt fornyelsestoken. Venligst godkend igen.",
+    "energy_site_not_found": "Energianlæg ikke fundet.",
+    "vehicle_not_found": "Køretøj ikke fundet.",
+    "wall_connector_not_found": "Wall Connector ikke fundet.",
     "subscription_required": "Abonnement kræves. Venligst tjek dit Teslemetry abonnement.",
+    "vehicle_access_required": "Dette køretøj har ikke længere adgang til Teslemetry. Venligst tjek dit Teslemetry abonnement.",
+    "vehicle_telemetry_unavailable": "Fleet Telemetry er ikke konfigureret for dette køretøj.",
+    "vehicle_polling_mode": "Dette køretøj er i den gamle polling-tilstand; live telemetri er ikke tilgængelig.",
+    "energy_site_access_required": "Dette energianlæg har ikke længere adgang til Teslemetry. Venligst tjek dit Teslemetry abonnement.",
     "could_not_wake_vehicle": "Køretøjet vågnede ikke op. Prøv venligst igen.",
-    "insufficient_credits": "Utilstrækkelige kommandokreditter. Køb venligst flere kreditter for at køre kommandoer."
+    "insufficient_credits": "Utilstrækkelige kommandokreditter. Køb venligst flere kreditter for at køre kommandoer.",
+    "device_removed": "Den valgte enhed findes ikke længere. Rediger venligst dette Flow.",
+    "teslemetry_connecting": "Opretter forbindelse til Teslemetry...",
+    "stream_disconnected": "Forbindelsen til Teslemetry blev afbrudt. Genopretter forbindelse...",
+    "account_disconnected": "Teslemetry-kontoen er afbrudt. Godkend venligst igen for at genforbinde denne enhed."
   }
 }
