@@ -2,8 +2,19 @@
   "error": {
     "invalid_token": "Token inválido. Por favor, inténtalo de nuevo.",
     "invalid_refresh_token": "Token de actualización inválido. Por favor, vuelve a autenticarte.",
+    "energy_site_not_found": "Sitio de energía no encontrado.",
+    "vehicle_not_found": "Vehículo no encontrado.",
+    "wall_connector_not_found": "Wall Connector no encontrado.",
     "subscription_required": "Suscripción requerida. Por favor, verifica tu suscripción de Teslemetry.",
+    "vehicle_access_required": "Este vehículo ya no tiene acceso a Teslemetry. Por favor, verifica tu suscripción de Teslemetry.",
+    "vehicle_telemetry_unavailable": "Fleet Telemetry no está configurado para este vehículo.",
+    "vehicle_polling_mode": "Este vehículo está en modo de sondeo antiguo; la telemetría en vivo no está disponible.",
+    "energy_site_access_required": "Este sitio de energía ya no tiene acceso a Teslemetry. Por favor, verifica tu suscripción de Teslemetry.",
     "could_not_wake_vehicle": "El vehículo no se despertó. Por favor, inténtalo de nuevo.",
-    "insufficient_credits": "Créditos de comando insuficientes. Por favor, compra créditos adicionales para ejecutar comandos."
+    "insufficient_credits": "Créditos de comando insuficientes. Por favor, compra créditos adicionales para ejecutar comandos.",
+    "device_removed": "El dispositivo seleccionado ya no existe. Por favor, edita este Flow.",
+    "teslemetry_connecting": "Conectando con Teslemetry...",
+    "stream_disconnected": "Se perdió la conexión con Teslemetry. Reconectando...",
+    "account_disconnected": "Cuenta de Teslemetry desconectada. Por favor, vuelve a autenticarte para reconectar este dispositivo."
   }
 }

@@ -2,8 +2,19 @@
   "error": {
     "invalid_token": "Ogiltig token. Försök igen.",
     "invalid_refresh_token": "Ogiltig uppdateringstoken. Vänligen autentisera om.",
+    "energy_site_not_found": "Energianläggning hittades inte.",
+    "vehicle_not_found": "Fordon hittades inte.",
+    "wall_connector_not_found": "Wall Connector hittades inte.",
     "subscription_required": "Prenumeration krävs. Vänligen kontrollera din Teslemetry-prenumeration.",
+    "vehicle_access_required": "Detta fordon har inte längre åtkomst till Teslemetry. Vänligen kontrollera din Teslemetry-prenumeration.",
+    "vehicle_telemetry_unavailable": "Fleet Telemetry är inte konfigurerat för detta fordon.",
+    "vehicle_polling_mode": "Detta fordon är i det äldre pollingläget; realtidstelemetri är inte tillgänglig.",
+    "energy_site_access_required": "Denna energianläggning har inte längre åtkomst till Teslemetry. Vänligen kontrollera din Teslemetry-prenumeration.",
     "could_not_wake_vehicle": "Fordonet vaknade inte. Försök igen.",
-    "insufficient_credits": "Otillräckliga kommandokrediter. Vänligen köp fler krediter för att köra kommandon."
+    "insufficient_credits": "Otillräckliga kommandokrediter. Vänligen köp fler krediter för att köra kommandon.",
+    "device_removed": "Den valda enheten finns inte längre. Vänligen redigera detta Flow.",
+    "teslemetry_connecting": "Ansluter till Teslemetry...",
+    "stream_disconnected": "Anslutningen till Teslemetry förlorades. Återansluter...",
+    "account_disconnected": "Teslemetry-kontot har kopplats bort. Vänligen autentisera om för att återansluta denna enhet."
   }
 }

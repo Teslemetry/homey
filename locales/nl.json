@@ -2,8 +2,19 @@
   "error": {
     "invalid_token": "Ongeldige token. Probeer het opnieuw.",
     "invalid_refresh_token": "Ongeldige vernieuw token. Gelieve opnieuw in te loggen.",
+    "energy_site_not_found": "Energielocatie niet gevonden.",
+    "vehicle_not_found": "Voertuig niet gevonden.",
+    "wall_connector_not_found": "Wall Connector niet gevonden.",
     "subscription_required": "Abonnement vereist. Controleer uw Teslemetry-abonnement.",
+    "vehicle_access_required": "Dit voertuig heeft geen toegang meer tot Teslemetry. Controleer uw Teslemetry-abonnement.",
+    "vehicle_telemetry_unavailable": "Fleet Telemetry is niet geconfigureerd voor dit voertuig.",
+    "vehicle_polling_mode": "Dit voertuig staat in de verouderde polling-modus; live telemetrie is niet beschikbaar.",
+    "energy_site_access_required": "Deze energielocatie heeft geen toegang meer tot Teslemetry. Controleer uw Teslemetry-abonnement.",
     "could_not_wake_vehicle": "Voertuig werd niet wakker. Probeer het opnieuw.",
-    "insufficient_credits": "Onvoldoende commando credits. Koop extra credits om commando's uit te voeren."
+    "insufficient_credits": "Onvoldoende commando credits. Koop extra credits om commando's uit te voeren.",
+    "device_removed": "Het geselecteerde apparaat bestaat niet meer. Bewerk deze Flow.",
+    "teslemetry_connecting": "Verbinden met Teslemetry...",
+    "stream_disconnected": "Verbinding met Teslemetry verbroken. Opnieuw verbinden...",
+    "account_disconnected": "Teslemetry-account losgekoppeld. Log opnieuw in om dit apparaat opnieuw te verbinden."
   }
 }

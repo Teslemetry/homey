@@ -2,8 +2,19 @@
   "error": {
     "invalid_token": "الرمز غير صالح. يرجى المحاولة مرة أخرى.",
     "invalid_refresh_token": "رمز التحديث غير صالح. يرجى إعادة المصادقة.",
+    "energy_site_not_found": "لم يتم العثور على موقع الطاقة.",
+    "vehicle_not_found": "لم يتم العثور على السيارة.",
+    "wall_connector_not_found": "لم يتم العثور على Wall Connector.",
     "subscription_required": "مطلوب اشتراك. يرجى التحقق من اشتراك Teslemetry الخاص بك.",
+    "vehicle_access_required": "لم يعد لهذه السيارة وصول إلى Teslemetry. يرجى التحقق من اشتراك Teslemetry الخاص بك.",
+    "vehicle_telemetry_unavailable": "لم يتم تكوين Fleet Telemetry لهذه السيارة.",
+    "vehicle_polling_mode": "هذه السيارة في وضع الاستطلاع القديم؛ القياس عن بُعد المباشر غير متاح.",
+    "energy_site_access_required": "لم يعد لهذا الموقع وصول إلى Teslemetry. يرجى التحقق من اشتراك Teslemetry الخاص بك.",
     "could_not_wake_vehicle": "لم يتمكن من إيقاظ السيارة. يرجى المحاولة مرة أخرى.",
-    "insufficient_credits": "لا توجد نقاط كافية للأوامر. يرجى شراء نقاط إضافية لتنفيذ الأوامر."
+    "insufficient_credits": "لا توجد نقاط كافية للأوامر. يرجى شراء نقاط إضافية لتنفيذ الأوامر.",
+    "device_removed": "الجهاز المحدد لم يعد موجودًا. يرجى تعديل هذا التدفق (Flow).",
+    "teslemetry_connecting": "جارٍ الاتصال بـ Teslemetry...",
+    "stream_disconnected": "انقطع الاتصال بـ Teslemetry. جارٍ إعادة الاتصال...",
+    "account_disconnected": "تم قطع اتصال حساب Teslemetry. يرجى إعادة المصادقة لإعادة توصيل هذا الجهاز."
   }
 }
