@@ -91,6 +91,98 @@ test("the off-grid vehicle charging reserve action forwards its percentage to th
   assert.deepEqual(percentages, [40]);
 });
 
+test("the add_charge_schedule action maps its snake_case args to flowAddChargeSchedule's object arg", async () => {
+  const { actionListeners } = createAppStub();
+  const calls: unknown[] = [];
+  const device = {
+    flowAddChargeSchedule: async (args: unknown) => {
+      calls.push(args);
+    },
+  };
+
+  await actionListeners["add_charge_schedule"]({
+    device,
+    name: "Overnight",
+    days_of_week: "Monday",
+    enabled: true,
+    start_enabled: true,
+    start_time: "01:00",
+    end_enabled: false,
+    end_time: "02:00",
+    lat: 1,
+    lon: 2,
+    one_time: false,
+  });
+
+  assert.deepEqual(calls, [
+    {
+      name: "Overnight",
+      daysOfWeek: "Monday",
+      enabled: true,
+      startEnabled: true,
+      startTime: "01:00",
+      endEnabled: false,
+      endTime: "02:00",
+      lat: 1,
+      lon: 2,
+      oneTime: false,
+    },
+  ]);
+});
+
+test("the add_precondition_schedule action maps its snake_case args to flowAddPreconditionSchedule's object arg", async () => {
+  const { actionListeners } = createAppStub();
+  const calls: unknown[] = [];
+  const device = {
+    flowAddPreconditionSchedule: async (args: unknown) => {
+      calls.push(args);
+    },
+  };
+
+  await actionListeners["add_precondition_schedule"]({
+    device,
+    name: "Warm up",
+    days_of_week: "Tuesday",
+    enabled: true,
+    precondition_time: "08:30",
+    lat: 3,
+    lon: 4,
+    one_time: true,
+  });
+
+  assert.deepEqual(calls, [
+    {
+      name: "Warm up",
+      daysOfWeek: "Tuesday",
+      enabled: true,
+      preconditionTime: "08:30",
+      lat: 3,
+      lon: 4,
+      oneTime: true,
+    },
+  ]);
+});
+
+test("the remove_charge_schedule and remove_precondition_schedule actions forward the schedule id", async () => {
+  const { actionListeners } = createAppStub();
+  const chargeIds: number[] = [];
+  const preconditionIds: number[] = [];
+  const device = {
+    flowRemoveChargeSchedule: async (id: number) => {
+      chargeIds.push(id);
+    },
+    flowRemovePreconditionSchedule: async (id: number) => {
+      preconditionIds.push(id);
+    },
+  };
+
+  await actionListeners["remove_charge_schedule"]({ device, id: 5 });
+  await actionListeners["remove_precondition_schedule"]({ device, id: 6 });
+
+  assert.deepEqual(chargeIds, [5]);
+  assert.deepEqual(preconditionIds, [6]);
+});
+
 // --- conditions: a stale device must fail closed (false), never true ---
 
 test("a condition card returns false instead of throwing when the device is a stale/missing runtime reference", async () => {

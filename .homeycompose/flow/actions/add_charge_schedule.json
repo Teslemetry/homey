@@ -1,0 +1,91 @@
+{
+  "title": {
+    "en": "Add a charge schedule"
+  },
+  "titleFormatted": {
+    "en": "Add charge schedule [[name]] on [[device]] for [[days_of_week]], enabled [[enabled]], one-time [[one_time]], at [[lat]],[[lon]] (start [[start_enabled]] at [[start_time]], end [[end_enabled]] at [[end_time]])"
+  },
+  "hint": {
+    "en": "Mirrors Tesla's own charge scheduling feature. Days of week accepts a comma-separated list (e.g. \"Monday,Wednesday\") or the special values \"All\" or \"Weekdays\". Start/end time only take effect when their matching enabled option is checked."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=scheduled_charging_mode",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "text",
+      "name": "name",
+      "title": {
+        "en": "Schedule name"
+      }
+    },
+    {
+      "type": "text",
+      "name": "days_of_week",
+      "title": {
+        "en": "Days of week"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "enabled",
+      "title": {
+        "en": "Enabled"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "start_enabled",
+      "title": {
+        "en": "Start time enabled"
+      }
+    },
+    {
+      "type": "time",
+      "name": "start_time",
+      "title": {
+        "en": "Start time"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "end_enabled",
+      "title": {
+        "en": "End time enabled"
+      }
+    },
+    {
+      "type": "time",
+      "name": "end_time",
+      "title": {
+        "en": "End time"
+      }
+    },
+    {
+      "type": "number",
+      "name": "lat",
+      "title": {
+        "en": "Latitude"
+      }
+    },
+    {
+      "type": "number",
+      "name": "lon",
+      "title": {
+        "en": "Longitude"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "one_time",
+      "title": {
+        "en": "One-time schedule"
+      }
+    }
+  ]
+}

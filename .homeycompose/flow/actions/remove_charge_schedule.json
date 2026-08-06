@@ -1,0 +1,25 @@
+{
+  "title": {
+    "en": "Remove a charge schedule"
+  },
+  "titleFormatted": {
+    "en": "Remove charge schedule [[id]] from [[device]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=scheduled_charging_mode",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "id",
+      "title": {
+        "en": "Schedule ID"
+      }
+    }
+  ]
+}

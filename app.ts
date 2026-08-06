@@ -330,6 +330,52 @@ export default class TeslemetryApp extends Homey.App {
         await this.requireFlowDevice(args.device).flowDisableScheduledDeparture();
       });
 
+    this.homey.flow
+      .getActionCard('add_charge_schedule')
+      .registerRunListener(
+        async (args: {
+          device?: VehicleDevice; name: string; days_of_week: string;
+          enabled: boolean; start_enabled: boolean; start_time: string;
+          end_enabled: boolean; end_time: string; lat: number; lon: number;
+          one_time: boolean;
+        }) => {
+          await this.requireFlowDevice(args.device).flowAddChargeSchedule({
+            name: args.name, daysOfWeek: args.days_of_week, enabled: args.enabled,
+            startEnabled: args.start_enabled, startTime: args.start_time,
+            endEnabled: args.end_enabled, endTime: args.end_time,
+            lat: args.lat, lon: args.lon, oneTime: args.one_time,
+          });
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('remove_charge_schedule')
+      .registerRunListener(async (args: { device?: VehicleDevice; id: number }) => {
+        await this.requireFlowDevice(args.device).flowRemoveChargeSchedule(args.id);
+      });
+
+    this.homey.flow
+      .getActionCard('add_precondition_schedule')
+      .registerRunListener(
+        async (args: {
+          device?: VehicleDevice; name: string; days_of_week: string;
+          enabled: boolean; precondition_time: string; lat: number; lon: number;
+          one_time: boolean;
+        }) => {
+          await this.requireFlowDevice(args.device).flowAddPreconditionSchedule({
+            name: args.name, daysOfWeek: args.days_of_week, enabled: args.enabled,
+            preconditionTime: args.precondition_time, lat: args.lat, lon: args.lon,
+            oneTime: args.one_time,
+          });
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('remove_precondition_schedule')
+      .registerRunListener(async (args: { device?: VehicleDevice; id: number }) => {
+        await this.requireFlowDevice(args.device).flowRemovePreconditionSchedule(args.id);
+      });
+
     // Valet mode / speed limit: args.pin is passed straight to the device
     // method and must never be logged - see VehicleDevice's flow* methods.
     this.homey.flow
