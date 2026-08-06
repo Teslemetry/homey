@@ -5561,6 +5561,58 @@
     "actions": [
       {
         "title": {
+          "en": "Activate speed limit"
+        },
+        "titleFormatted": {
+          "en": "Activate speed limit on [[device]] with PIN [[pin]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_speed",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "text",
+            "name": "pin",
+            "title": {
+              "en": "PIN"
+            }
+          }
+        ],
+        "id": "activate_speed_limit"
+      },
+      {
+        "title": {
+          "en": "Deactivate speed limit"
+        },
+        "titleFormatted": {
+          "en": "Deactivate speed limit on [[device]] with PIN [[pin]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_speed",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "text",
+            "name": "pin",
+            "title": {
+              "en": "PIN"
+            }
+          }
+        ],
+        "id": "deactivate_speed_limit"
+      },
+      {
+        "title": {
           "en": "Disable scheduled charging",
           "nl": "Geplande lading uitschakelen",
           "da": "Deaktiver planlagt opladning",
@@ -5668,6 +5720,32 @@
           }
         ],
         "id": "disable_scheduled_departure"
+      },
+      {
+        "title": {
+          "en": "Disable valet mode"
+        },
+        "titleFormatted": {
+          "en": "Disable valet mode on [[device]] with PIN [[pin]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=alarm_generic.valet_mode",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "text",
+            "name": "pin",
+            "title": {
+              "en": "PIN"
+            }
+          }
+        ],
+        "id": "disable_valet_mode"
       },
       {
         "title": {
@@ -5926,6 +6004,32 @@
           }
         ],
         "id": "enable_scheduled_departure"
+      },
+      {
+        "title": {
+          "en": "Enable valet mode"
+        },
+        "titleFormatted": {
+          "en": "Enable valet mode on [[device]] with PIN [[pin]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=alarm_generic.valet_mode",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "text",
+            "name": "pin",
+            "title": {
+              "en": "PIN"
+            }
+          }
+        ],
+        "id": "enable_valet_mode"
       },
       {
         "title": {
@@ -10268,7 +10372,7 @@
             "en": "Valet Mode"
           },
           "desc": {
-            "en": "Whether Valet Mode is currently enabled on the vehicle. Read-only - this app does not expose a control for it."
+            "en": "Whether Valet Mode is currently enabled on the vehicle. This status is read-only; use the PIN-protected Flow actions to enable or disable valet mode."
           }
         },
         "measure_power.powershare": {
