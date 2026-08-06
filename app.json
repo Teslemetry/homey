@@ -5587,6 +5587,76 @@
       },
       {
         "title": {
+          "en": "Cancel software update",
+          "nl": "Softwareupdate annuleren",
+          "da": "Annuller softwareopdatering",
+          "de": "Software-Update abbrechen",
+          "es": "Cancelar actualización de software",
+          "fr": "Annuler la mise à jour du logiciel",
+          "it": "Annulla aggiornamento software",
+          "no": "Avbryt programvareoppdatering",
+          "sv": "Avbryt programvaruuppdatering",
+          "pl": "Anuluj aktualizację oprogramowania",
+          "ru": "Отменить обновление ПО",
+          "ko": "소프트웨어 업데이트 취소",
+          "ar": "إلغاء تحديث البرنامج"
+        },
+        "titleFormatted": {
+          "en": "Cancel the pending software update on [[device]]",
+          "nl": "Annuleer de lopende softwareupdate op [[device]]",
+          "da": "Annuller den ventende softwareopdatering på [[device]]",
+          "de": "Ausstehendes Software-Update auf [[device]] abbrechen",
+          "es": "Cancelar la actualización de software pendiente en [[device]]",
+          "fr": "Annuler la mise à jour logicielle en attente sur [[device]]",
+          "it": "Annulla l'aggiornamento software in sospeso su [[device]]",
+          "no": "Avbryt den ventende programvareoppdateringen på [[device]]",
+          "sv": "Avbryt den väntande programvaruuppdateringen på [[device]]",
+          "pl": "Anuluj oczekującą aktualizację oprogramowania na urządzeniu [[device]]",
+          "ru": "Отменить ожидающее обновление ПО на [[device]]",
+          "ko": "[[device]]에서 대기 중인 소프트웨어 업데이트 취소",
+          "ar": "إلغاء تحديث البرنامج المعلق على [[device]]"
+        },
+        "hint": {
+          "en": "Only takes effect while the update status is \"Downloading\" or \"Scheduled\" - Tesla rejects the command otherwise.",
+          "nl": "Werkt alleen als de updatestatus \"Downloaden\" of \"Gepland\" is - anders wijst Tesla de opdracht af.",
+          "da": "Virker kun, når opdateringsstatus er \"Downloader\" eller \"Planlagt\" - ellers afviser Tesla kommandoen.",
+          "de": "Wirkt sich nur aus, wenn der Update-Status \"Wird heruntergeladen\" oder \"Geplant\" ist - andernfalls lehnt Tesla den Befehl ab.",
+          "es": "Solo surte efecto mientras el estado de la actualización sea \"Descargando\" o \"Programada\" - de lo contrario, Tesla rechaza el comando.",
+          "fr": "Ne prend effet que lorsque l'état de la mise à jour est \"Téléchargement\" ou \"Programmée\" - sinon Tesla rejette la commande.",
+          "it": "Ha effetto solo quando lo stato dell'aggiornamento è \"Download in corso\" o \"Pianificato\" - altrimenti Tesla rifiuta il comando.",
+          "no": "Har bare effekt mens oppdateringsstatusen er \"Laster ned\" eller \"Planlagt\" - ellers avviser Tesla kommandoen.",
+          "sv": "Får bara effekt medan uppdateringsstatusen är \"Laddar ner\" eller \"Schemalagd\" - annars avvisar Tesla kommandot.",
+          "pl": "Działa tylko wtedy, gdy status aktualizacji to \"Pobieranie\" lub \"Zaplanowana\" - w przeciwnym razie Tesla odrzuci polecenie.",
+          "ru": "Действует, только если статус обновления \"Загрузка\" или \"Запланировано\" - иначе Tesla отклонит команду.",
+          "ko": "업데이트 상태가 \"다운로드 중\" 또는 \"예약됨\"일 때만 적용됩니다. 그렇지 않으면 Tesla가 명령을 거부합니다.",
+          "ar": "يسري فقط عندما تكون حالة التحديث \"جارٍ التنزيل\" أو \"مجدول\" - وإلا يرفض Tesla الأمر."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=software_update_status",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
+            }
+          }
+        ],
+        "id": "cancel_software_update"
+      },
+      {
+        "title": {
           "en": "Deactivate speed limit"
         },
         "titleFormatted": {

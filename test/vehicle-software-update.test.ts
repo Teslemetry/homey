@@ -123,14 +123,14 @@ test("an in-range download percentage marks the update downloading with fraction
   assert.equal(capabilities["software_update_progress"], 0.42);
 });
 
-test("an in-range install percentage marks the update installing and wins over a stale download percentage", async () => {
+test("an in-range install percentage wins over a simultaneous in-range download percentage", async () => {
   const { stub, sse, capabilities } = createDeviceStub({
     software_update_status: undefined,
     software_update_progress: undefined,
   });
   await stub.onInit();
 
-  sse.cache.data.SoftwareUpdateDownloadPercentComplete = 100;
+  sse.cache.data.SoftwareUpdateDownloadPercentComplete = 42;
   sse.cache.data.SoftwareUpdateInstallationPercentComplete = 55;
   sse.data.emit("SoftwareUpdateInstallationPercentComplete", 55);
 
@@ -205,4 +205,37 @@ test("flowInstallSoftwareUpdate rejects while idle/downloading/installing and su
   capabilities.software_update_status = "downloading";
   await assert.rejects(() => stub.flowInstallSoftwareUpdate());
   assert.equal(scheduleCalls, 2);
+});
+
+test("flowCancelSoftwareUpdate rejects while idle/available/installing and succeeds while downloading/scheduled", async () => {
+  const { stub, capabilities } = createDeviceStub({
+    software_update_status: "idle",
+    software_update_progress: undefined,
+  });
+  await stub.onInit();
+
+  let cancelCalls = 0;
+  (stub as any).vehicle.api.cancelSoftwareUpdate = async () => {
+    cancelCalls++;
+    return { response: { result: true } };
+  };
+
+  await assert.rejects(() => stub.flowCancelSoftwareUpdate());
+  assert.equal(cancelCalls, 0);
+
+  capabilities.software_update_status = "available";
+  await assert.rejects(() => stub.flowCancelSoftwareUpdate());
+  assert.equal(cancelCalls, 0);
+
+  capabilities.software_update_status = "downloading";
+  await stub.flowCancelSoftwareUpdate();
+  assert.equal(cancelCalls, 1);
+
+  capabilities.software_update_status = "scheduled";
+  await stub.flowCancelSoftwareUpdate();
+  assert.equal(cancelCalls, 2);
+
+  capabilities.software_update_status = "installing";
+  await assert.rejects(() => stub.flowCancelSoftwareUpdate());
+  assert.equal(cancelCalls, 2);
 });

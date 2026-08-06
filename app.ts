@@ -270,6 +270,12 @@ export default class TeslemetryApp extends Homey.App {
       });
 
     this.homey.flow
+      .getActionCard('cancel_software_update')
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowCancelSoftwareUpdate();
+      });
+
+    this.homey.flow
       .getActionCard('enable_scheduled_charging')
       .registerRunListener(
         async (args: { device?: VehicleDevice; time: string }) => {

@@ -1445,14 +1445,14 @@ export default class VehicleDevice extends TeslemetryDevice {
         ? data.SoftwareUpdateVersion
         : installedVersion;
 
-    if (download !== undefined && download !== null && download > 0 && download < 100) {
-      this.update("software_update_status", "downloading");
-      this.update("software_update_progress", download / 100);
-      return;
-    }
     if (install !== undefined && install !== null && install > 10 && install < 100) {
       this.update("software_update_status", "installing");
       this.update("software_update_progress", install / 100);
+      return;
+    }
+    if (download !== undefined && download !== null && download > 0 && download < 100) {
+      this.update("software_update_status", "downloading");
+      this.update("software_update_progress", download / 100);
       return;
     }
     if (scheduledStartTime !== undefined && scheduledStartTime !== null) {
@@ -1650,5 +1650,20 @@ export default class VehicleDevice extends TeslemetryDevice {
       );
     }
     return this.vehicleAction(this.vehicle.api.scheduleSoftwareUpdate(0));
+  }
+
+  /**
+   * Gated on the current software_update_status: Tesla only accepts a
+   * cancel while a download is in progress or an install is scheduled but
+   * not yet running, mirroring flowInstallSoftwareUpdate's gate above.
+   */
+  public async flowCancelSoftwareUpdate(): Promise<void> {
+    const status = this.getCapabilityValue("software_update_status");
+    if (status !== "downloading" && status !== "scheduled") {
+      throw new Error(
+        "No software update is downloading or scheduled to cancel",
+      );
+    }
+    return this.vehicleAction(this.vehicle.api.cancelSoftwareUpdate());
   }
 }
