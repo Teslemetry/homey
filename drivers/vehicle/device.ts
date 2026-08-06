@@ -1651,4 +1651,19 @@ export default class VehicleDevice extends TeslemetryDevice {
     }
     return this.vehicleAction(this.vehicle.api.scheduleSoftwareUpdate(0));
   }
+
+  /**
+   * Gated on the current software_update_status: Tesla only accepts a
+   * cancel while a download is in progress or an install is scheduled but
+   * not yet running, mirroring flowInstallSoftwareUpdate's gate above.
+   */
+  public async flowCancelSoftwareUpdate(): Promise<void> {
+    const status = this.getCapabilityValue("software_update_status");
+    if (status !== "downloading" && status !== "scheduled") {
+      throw new Error(
+        "No software update is downloading or scheduled to cancel",
+      );
+    }
+    return this.vehicleAction(this.vehicle.api.cancelSoftwareUpdate());
+  }
 }

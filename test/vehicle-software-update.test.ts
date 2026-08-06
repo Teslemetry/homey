@@ -206,3 +206,36 @@ test("flowInstallSoftwareUpdate rejects while idle/downloading/installing and su
   await assert.rejects(() => stub.flowInstallSoftwareUpdate());
   assert.equal(scheduleCalls, 2);
 });
+
+test("flowCancelSoftwareUpdate rejects while idle/available/installing and succeeds while downloading/scheduled", async () => {
+  const { stub, capabilities } = createDeviceStub({
+    software_update_status: "idle",
+    software_update_progress: undefined,
+  });
+  await stub.onInit();
+
+  let cancelCalls = 0;
+  (stub as any).vehicle.api.cancelSoftwareUpdate = async () => {
+    cancelCalls++;
+    return { response: { result: true } };
+  };
+
+  await assert.rejects(() => stub.flowCancelSoftwareUpdate());
+  assert.equal(cancelCalls, 0);
+
+  capabilities.software_update_status = "available";
+  await assert.rejects(() => stub.flowCancelSoftwareUpdate());
+  assert.equal(cancelCalls, 0);
+
+  capabilities.software_update_status = "downloading";
+  await stub.flowCancelSoftwareUpdate();
+  assert.equal(cancelCalls, 1);
+
+  capabilities.software_update_status = "scheduled";
+  await stub.flowCancelSoftwareUpdate();
+  assert.equal(cancelCalls, 2);
+
+  capabilities.software_update_status = "installing";
+  await assert.rejects(() => stub.flowCancelSoftwareUpdate());
+  assert.equal(cancelCalls, 2);
+});
