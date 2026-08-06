@@ -5587,32 +5587,6 @@
       },
       {
         "title": {
-          "en": "Deactivate speed limit"
-        },
-        "titleFormatted": {
-          "en": "Deactivate speed limit on [[device]] with PIN [[pin]]"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "capabilities=measure_speed",
-            "title": {
-              "en": "Device"
-            }
-          },
-          {
-            "type": "text",
-            "name": "pin",
-            "title": {
-              "en": "PIN"
-            }
-          }
-        ],
-        "id": "deactivate_speed_limit"
-      },
-      {
-        "title": {
           "en": "Cancel software update",
           "nl": "Softwareupdate annuleren",
           "da": "Annuller softwareopdatering",
@@ -5680,6 +5654,32 @@
           }
         ],
         "id": "cancel_software_update"
+      },
+      {
+        "title": {
+          "en": "Deactivate speed limit"
+        },
+        "titleFormatted": {
+          "en": "Deactivate speed limit on [[device]] with PIN [[pin]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_speed",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "text",
+            "name": "pin",
+            "title": {
+              "en": "PIN"
+            }
+          }
+        ],
+        "id": "deactivate_speed_limit"
       },
       {
         "title": {
