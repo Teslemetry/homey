@@ -70,5 +70,8 @@
   },
   "1.1.0": {
     "en": "Major capability expansion: Cybertruck Powershare and tonneau, HV battery diagnostics, sunroof, routes and ETA, charging and departure schedules, vehicle security, software updates, Grid outage and Storm Watch, Cabin Overheat Protection, seat climate, off-grid charging reserve, presence, media volume and more - plus improved pairing diagnostics."
+  },
+  "1.2.0": {
+    "en": "Adds PIN-protected valet mode and speed limit actions, cancel software update, charge/precondition scheduling, and bioweapon defense mode (Model S/X) Flow actions."
   }
 }
