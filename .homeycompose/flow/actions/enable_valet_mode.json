@@ -1,0 +1,25 @@
+{
+  "title": {
+    "en": "Enable valet mode"
+  },
+  "titleFormatted": {
+    "en": "Enable valet mode on [[device]] with PIN [[pin]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=alarm_generic.valet_mode",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "text",
+      "name": "pin",
+      "title": {
+        "en": "PIN"
+      }
+    }
+  ]
+}

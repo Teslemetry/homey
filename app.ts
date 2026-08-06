@@ -314,6 +314,48 @@ export default class TeslemetryApp extends Homey.App {
         await this.requireFlowDevice(args.device).flowDisableScheduledDeparture();
       });
 
+    // Valet mode / speed limit: args.pin is passed straight to the device
+    // method and must never be logged - see VehicleDevice's flow* methods.
+    this.homey.flow
+      .getActionCard('enable_valet_mode')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; pin: string }) => {
+          await this.requireFlowDevice(args.device).flowEnableValetMode(
+            args.pin,
+          );
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('disable_valet_mode')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; pin: string }) => {
+          await this.requireFlowDevice(args.device).flowDisableValetMode(
+            args.pin,
+          );
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('activate_speed_limit')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; pin: string }) => {
+          await this.requireFlowDevice(args.device).flowActivateSpeedLimit(
+            args.pin,
+          );
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('deactivate_speed_limit')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; pin: string }) => {
+          await this.requireFlowDevice(args.device).flowDeactivateSpeedLimit(
+            args.pin,
+          );
+        },
+      );
+
     // Vehicle seat climate action cards (subcapabilities get no auto-generated
     // Flow cards; the device capability filter Homey applies to driver-scoped
     // cards already hides these for seats a device wasn't paired with).

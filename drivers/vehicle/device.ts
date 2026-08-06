@@ -1578,6 +1578,25 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
   }
 
+  // PIN arguments are handed straight to the Teslemetry SDK call and never
+  // otherwise touched - never pass `pin` to this.log/this.error or any other
+  // string built from these methods.
+  public async flowEnableValetMode(pin: string): Promise<void> {
+    await this.vehicleAction(this.vehicle.api.setValetMode(true, pin));
+  }
+
+  public async flowDisableValetMode(pin: string): Promise<void> {
+    await this.vehicleAction(this.vehicle.api.setValetMode(false, pin));
+  }
+
+  public async flowActivateSpeedLimit(pin: string): Promise<void> {
+    await this.vehicleAction(this.vehicle.api.speedLimitActivate(pin));
+  }
+
+  public async flowDeactivateSpeedLimit(pin: string): Promise<void> {
+    await this.vehicleAction(this.vehicle.api.speedLimitDeactivate(pin));
+  }
+
   public async flowNavigateToAddress(address: string): Promise<void> {
     await this.vehicleAction(
       this.vehicle.api.navigationRequest({ value: address }),

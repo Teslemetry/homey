@@ -1,0 +1,25 @@
+{
+  "title": {
+    "en": "Activate speed limit"
+  },
+  "titleFormatted": {
+    "en": "Activate speed limit on [[device]] with PIN [[pin]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_speed",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "text",
+      "name": "pin",
+      "title": {
+        "en": "PIN"
+      }
+    }
+  ]
+}
