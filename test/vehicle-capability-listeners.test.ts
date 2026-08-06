@@ -183,6 +183,38 @@ test("cop_temperature_limit flow action rejects when support is absent", async (
   assert.deepEqual(apiCalls, []);
 });
 
+test("button.bioweapon capability listener calls setBioweaponDefenseMode(true, true)", async () => {
+  const { capabilityListeners, apiCalls } = await createDeviceStub();
+
+  await capabilityListeners["button.bioweapon"](undefined);
+
+  assert.deepEqual(apiCalls, [
+    { method: "setBioweaponDefenseMode", args: [true, true] },
+  ]);
+});
+
+test("flowSetBioweaponDefenseMode maps on/off to setBioweaponDefenseMode", async () => {
+  const { stub, apiCalls } = await createDeviceStub();
+
+  await stub.flowSetBioweaponDefenseMode("on");
+  await stub.flowSetBioweaponDefenseMode("off");
+
+  assert.deepEqual(apiCalls, [
+    { method: "setBioweaponDefenseMode", args: [true, true] },
+    { method: "setBioweaponDefenseMode", args: [false, true] },
+  ]);
+});
+
+test("flowSetBioweaponDefenseMode throws on an invalid state", async () => {
+  const { stub, apiCalls } = await createDeviceStub();
+
+  await assert.rejects(
+    () => stub.flowSetBioweaponDefenseMode("invalid"),
+    /Invalid bioweapon defense mode state/,
+  );
+  assert.deepEqual(apiCalls, []);
+});
+
 test("onoff.sentry capability listener calls setSentryMode", async () => {
   const { capabilityListeners, apiCalls } = await createDeviceStub();
 

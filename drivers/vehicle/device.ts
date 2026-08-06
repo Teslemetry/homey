@@ -1079,6 +1079,12 @@ export default class VehicleDevice extends TeslemetryDevice {
       return this.action(this.vehicle.api.wakeUp());
     });
 
+    this.registerCapabilityListener("button.bioweapon", async () => {
+      return this.vehicleAction(
+        this.vehicle.api.setBioweaponDefenseMode(true, true),
+      );
+    });
+
     // Media Play/Pause Toggle
     this.registerCapabilityListener("speaker_playing", async () => {
       return this.vehicleAction(this.vehicle.api.mediaTogglePlayback());
@@ -1600,6 +1606,23 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   public async flowSetCopTemperatureLimit(limit: string): Promise<void> {
     await this.setCopTemperatureLimit(limit);
+  }
+
+  public async flowSetBioweaponDefenseMode(state: string): Promise<void> {
+    switch (state) {
+      case "on":
+        await this.vehicleAction(
+          this.vehicle.api.setBioweaponDefenseMode(true, true),
+        );
+        return;
+      case "off":
+        await this.vehicleAction(
+          this.vehicle.api.setBioweaponDefenseMode(false, true),
+        );
+        return;
+      default:
+        throw new Error("Invalid bioweapon defense mode state");
+    }
   }
 
   public async flowSetSeatHeater(

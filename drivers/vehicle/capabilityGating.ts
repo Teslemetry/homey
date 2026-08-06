@@ -1,5 +1,5 @@
 import type { VehicleDetails } from "@teslemetry/api";
-import isCybertruck from "./model.js";
+import isCybertruck, { isModelSorX } from "./model.js";
 
 type VehicleConfig = VehicleDetails["metadata"]["config"];
 
@@ -13,6 +13,9 @@ const CYBERTRUCK_ONLY_CAPABILITIES = new Set([
   "powershare_hours_left",
   "measure_power.powershare",
 ]);
+
+/** Capabilities only Model S/X expose; excluded from every other model. */
+const MODEL_S_X_ONLY_CAPABILITIES = new Set(["button.bioweapon"]);
 
 /**
  * Capabilities gated on vehicle config metadata (seat cooling / rear seat
@@ -60,6 +63,9 @@ export function isCapabilitySupported(
   }
   if (CYBERTRUCK_ONLY_CAPABILITIES.has(capability)) {
     return isCybertruck(vin);
+  }
+  if (MODEL_S_X_ONLY_CAPABILITIES.has(capability)) {
+    return isModelSorX(vin);
   }
   return true;
 }

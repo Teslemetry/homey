@@ -1,0 +1,126 @@
+{
+  "title": {
+    "en": "Set bioweapon defense mode",
+    "nl": "Zet biologische wapens verdedigingsmodus",
+    "da": "Indstil biologisk våben-forsvarstilstand",
+    "de": "Biowaffen-Verteidigungsmodus einstellen",
+    "es": "Configurar modo de defensa contra armas biológicas",
+    "fr": "Régler le mode de défense contre les armes biologiques",
+    "it": "Imposta modalità difesa da armi biologiche",
+    "no": "Sett biologisk våpen-forsvarsmodus",
+    "sv": "Ställ in biologiskt vapen-försvarsläge",
+    "pl": "Ustaw tryb obrony przed bronią biologiczną",
+    "ru": "Установить режим защиты от биологического оружия",
+    "ko": "생물무기 방어 모드 설정",
+    "ar": "تعيين وضع الدفاع ضد الأسلحة البيولوجية"
+  },
+  "titleFormatted": {
+    "en": "Set [[device]] bioweapon defense mode to [[state]]",
+    "nl": "Zet biologische wapens verdedigingsmodus van [[device]] op [[state]]",
+    "da": "Indstil biologisk våben-forsvarstilstand for [[device]] til [[state]]",
+    "de": "Biowaffen-Verteidigungsmodus von [[device]] auf [[state]] einstellen",
+    "es": "Configura el modo de defensa contra armas biológicas de [[device]] a [[state]]",
+    "fr": "Régler le mode de défense contre les armes biologiques de [[device]] sur [[state]]",
+    "it": "Imposta la modalità difesa da armi biologiche di [[device]] su [[state]]",
+    "no": "Sett biologisk våpen-forsvarsmodus for [[device]] til [[state]]",
+    "sv": "Ställ in biologiskt vapen-försvarsläge för [[device]] till [[state]]",
+    "pl": "Ustaw tryb obrony przed bronią biologiczną urządzenia [[device]] na [[state]]",
+    "ru": "Установить режим защиты от биологического оружия [[device]] на [[state]]",
+    "ko": "[[device]]의 생물무기 방어 모드를 [[state]]로 설정",
+    "ar": "تعيين وضع الدفاع ضد الأسلحة البيولوجية لـ[[device]] إلى [[state]]"
+  },
+  "hint": {
+    "en": "Only available on vehicles with Bioweapon Defense Mode's HEPA filtration (Model S and Model X).",
+    "nl": "Alleen beschikbaar op voertuigen met de HEPA-filtratie van de biologische wapens verdedigingsmodus (Model S en Model X).",
+    "da": "Kun tilgængelig på køretøjer med HEPA-filtrering til biologisk våben-forsvarstilstand (Model S og Model X).",
+    "de": "Nur bei Fahrzeugen mit HEPA-Filterung für den Biowaffen-Verteidigungsmodus verfügbar (Model S und Model X).",
+    "es": "Solo disponible en vehículos con filtración HEPA del modo de defensa contra armas biológicas (Model S y Model X).",
+    "fr": "Disponible uniquement sur les véhicules dotés de la filtration HEPA du mode de défense contre les armes biologiques (Model S et Model X).",
+    "it": "Disponibile solo sui veicoli con filtrazione HEPA della modalità difesa da armi biologiche (Model S e Model X).",
+    "no": "Kun tilgjengelig på kjøretøy med HEPA-filtrering for biologisk våpen-forsvarsmodus (Model S og Model X).",
+    "sv": "Endast tillgängligt på fordon med HEPA-filtrering för biologiskt vapen-försvarsläge (Model S och Model X).",
+    "pl": "Dostępne tylko w pojazdach z filtracją HEPA trybu obrony przed bronią biologiczną (Model S i Model X).",
+    "ru": "Доступно только на автомобилях с HEPA-фильтрацией режима защиты от биологического оружия (Model S и Model X).",
+    "ko": "생물무기 방어 모드의 HEPA 필터링이 있는 차량(Model S 및 Model X)에서만 사용할 수 있습니다.",
+    "ar": "متوفر فقط في المركبات المزودة بفلترة HEPA لوضع الدفاع ضد الأسلحة البيولوجية (Model S وModel X)."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=button.bioweapon",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
+      }
+    },
+    {
+      "type": "dropdown",
+      "name": "state",
+      "title": {
+        "en": "State",
+        "nl": "Status",
+        "da": "Tilstand",
+        "de": "Zustand",
+        "es": "Estado",
+        "fr": "État",
+        "it": "Stato",
+        "no": "Tilstand",
+        "sv": "Tillstånd",
+        "pl": "Stan",
+        "ru": "Состояние",
+        "ko": "상태",
+        "ar": "الحالة"
+      },
+      "values": [
+        {
+          "id": "off",
+          "label": {
+            "en": "Off",
+            "nl": "Uit",
+            "da": "Fra",
+            "de": "Aus",
+            "es": "Apagado",
+            "fr": "Éteint",
+            "it": "Spento",
+            "no": "Av",
+            "sv": "Av",
+            "pl": "Wyłączony",
+            "ru": "Выкл.",
+            "ko": "꺼짐",
+            "ar": "إيقاف"
+          }
+        },
+        {
+          "id": "on",
+          "label": {
+            "en": "On",
+            "nl": "Aan",
+            "da": "Til",
+            "de": "An",
+            "es": "Encendido",
+            "fr": "Allumé",
+            "it": "Acceso",
+            "no": "På",
+            "sv": "På",
+            "pl": "Włączony",
+            "ru": "Вкл.",
+            "ko": "켜짐",
+            "ar": "تشغيل"
+          }
+        }
+      ]
+    }
+  ]
+}
