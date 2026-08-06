@@ -1,0 +1,70 @@
+{
+  "title": {
+    "en": "Add a precondition schedule"
+  },
+  "titleFormatted": {
+    "en": "Add precondition schedule [[name]] on [[device]] for [[days_of_week]], enabled [[enabled]], one-time [[one_time]], completing by [[precondition_time]] at [[lat]],[[lon]]"
+  },
+  "hint": {
+    "en": "Mirrors Tesla's own scheduled preconditioning feature. Days of week accepts a comma-separated list (e.g. \"Monday,Wednesday\") or the special values \"All\" or \"Weekdays\"."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=scheduled_charging_mode",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "text",
+      "name": "name",
+      "title": {
+        "en": "Schedule name"
+      }
+    },
+    {
+      "type": "text",
+      "name": "days_of_week",
+      "title": {
+        "en": "Days of week"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "enabled",
+      "title": {
+        "en": "Enabled"
+      }
+    },
+    {
+      "type": "time",
+      "name": "precondition_time",
+      "title": {
+        "en": "Complete by"
+      }
+    },
+    {
+      "type": "number",
+      "name": "lat",
+      "title": {
+        "en": "Latitude"
+      }
+    },
+    {
+      "type": "number",
+      "name": "lon",
+      "title": {
+        "en": "Longitude"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "one_time",
+      "title": {
+        "en": "One-time schedule"
+      }
+    }
+  ]
+}

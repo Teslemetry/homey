@@ -138,6 +138,50 @@ function timeArgToMinutesOfDay(time: string): number {
   return Number(match[1]) * 60 + Number(match[2]);
 }
 
+const VALID_DAYS_OF_WEEK_TOKENS = new Set([
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+  "all",
+  "weekdays",
+]);
+
+/**
+ * addChargeSchedule()/addPreconditionSchedule() take a comma-separated day
+ * list in Tesla's own capitalization (e.g. "Thursday,Saturday"), or the
+ * special values "All"/"Weekdays" (see PostApi1VehiclesByVinCommand
+ * AddChargeScheduleData's doc comment) - not the free-text Homey Flow
+ * argument's casing/spacing. Normalize to that exact form and reject an
+ * unrecognized token so a typo fails the Flow instead of silently scheduling
+ * for the wrong days.
+ */
+function daysArgToDaysOfWeek(days: string): string {
+  const tokens = days
+    .split(",")
+    .map((token) => token.trim())
+    .filter((token) => token.length > 0);
+  if (tokens.length === 0) {
+    throw new Error(
+      `Invalid days of week "${days}" - expected a comma-separated day list, "All", or "Weekdays"`,
+    );
+  }
+  return tokens
+    .map((token) => {
+      const lower = token.toLowerCase();
+      if (!VALID_DAYS_OF_WEEK_TOKENS.has(lower)) {
+        throw new Error(
+          `Invalid days of week "${days}" - unrecognized day "${token}"`,
+        );
+      }
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join(",");
+}
+
 const MILES_TO_KILOMETERS = 1.609344;
 const MPH_TO_METERS_PER_SECOND = 0.44704;
 const ATM_TO_BAR = 1.01325;
@@ -1582,6 +1626,48 @@ export default class VehicleDevice extends TeslemetryDevice {
         departure_time: 0,
       }),
     );
+  }
+
+  public async flowAddChargeSchedule(args: {
+    name: string; daysOfWeek: string; enabled: boolean; startEnabled: boolean;
+    startTime: string; endEnabled: boolean; endTime: string; lat: number;
+    lon: number; oneTime: boolean;
+  }): Promise<void> {
+    await this.vehicleAction(this.vehicle.api.addChargeSchedule({
+      name: args.name,
+      days_of_week: daysArgToDaysOfWeek(args.daysOfWeek),
+      enabled: args.enabled,
+      start_enabled: args.startEnabled,
+      ...(args.startEnabled ? { start_time: timeArgToMinutesOfDay(args.startTime) } : {}),
+      end_enabled: args.endEnabled,
+      ...(args.endEnabled ? { end_time: timeArgToMinutesOfDay(args.endTime) } : {}),
+      lat: args.lat,
+      lon: args.lon,
+      one_time: args.oneTime,
+    }));
+  }
+
+  public async flowRemoveChargeSchedule(id: number): Promise<void> {
+    await this.vehicleAction(this.vehicle.api.removeChargeSchedule(id));
+  }
+
+  public async flowAddPreconditionSchedule(args: {
+    name: string; daysOfWeek: string; enabled: boolean; preconditionTime: string;
+    lat: number; lon: number; oneTime: boolean;
+  }): Promise<void> {
+    await this.vehicleAction(this.vehicle.api.addPreconditionSchedule({
+      name: args.name,
+      days_of_week: daysArgToDaysOfWeek(args.daysOfWeek),
+      enabled: args.enabled,
+      precondition_time: timeArgToMinutesOfDay(args.preconditionTime),
+      lat: args.lat,
+      lon: args.lon,
+      one_time: args.oneTime,
+    }));
+  }
+
+  public async flowRemovePreconditionSchedule(id: number): Promise<void> {
+    await this.vehicleAction(this.vehicle.api.removePreconditionSchedule(id));
   }
 
   // PIN arguments are handed straight to the Teslemetry SDK call and never

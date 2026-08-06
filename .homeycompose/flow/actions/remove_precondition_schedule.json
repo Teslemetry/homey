@@ -1,0 +1,25 @@
+{
+  "title": {
+    "en": "Remove a precondition schedule"
+  },
+  "titleFormatted": {
+    "en": "Remove precondition schedule [[id]] from [[device]]"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=scheduled_charging_mode",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "id",
+      "title": {
+        "en": "Schedule ID"
+      }
+    }
+  ]
+}
