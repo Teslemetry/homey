@@ -10372,7 +10372,7 @@
             "en": "Valet Mode"
           },
           "desc": {
-            "en": "Whether Valet Mode is currently enabled on the vehicle. Read-only - this app does not expose a control for it."
+            "en": "Whether Valet Mode is currently enabled on the vehicle. This status is read-only; use the PIN-protected Flow actions to enable or disable valet mode."
           }
         },
         "measure_power.powershare": {
