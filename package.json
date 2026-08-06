@@ -7,6 +7,7 @@
   "scripts": {
     "build": "tsc",
     "test": "npm run build && node --experimental-loader ./test/support/loader.mjs --test 'test/*.test.ts'",
+    "prelint": "[ -d node_modules ] || npm install",
     "lint": "oxlint .",
     "dev": "homey app run",
     "app:run": "homey app run",
