@@ -1445,14 +1445,14 @@ export default class VehicleDevice extends TeslemetryDevice {
         ? data.SoftwareUpdateVersion
         : installedVersion;
 
-    if (download !== undefined && download !== null && download > 0 && download < 100) {
-      this.update("software_update_status", "downloading");
-      this.update("software_update_progress", download / 100);
-      return;
-    }
     if (install !== undefined && install !== null && install > 10 && install < 100) {
       this.update("software_update_status", "installing");
       this.update("software_update_progress", install / 100);
+      return;
+    }
+    if (download !== undefined && download !== null && download > 0 && download < 100) {
+      this.update("software_update_status", "downloading");
+      this.update("software_update_progress", download / 100);
       return;
     }
     if (scheduledStartTime !== undefined && scheduledStartTime !== null) {
