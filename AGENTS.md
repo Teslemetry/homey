@@ -761,6 +761,29 @@ gap, not something fixable from this repo; re-run `npm audit` after any
 `homey`/`homey-api` release to see whether it's been closed before adding
 another override.
 
+### Release Workflow (`homey-app-release.yml`)
+
+Cutting a release is one manual `workflow_dispatch` on `homey-app-release.yml`
+(version bump type + changelog) with three chained jobs: `version` (runs
+Athom's `github-action-homey-app-version`, commits, tags, creates the GitHub
+Release), `validate` (calls `homey-app-validate.yml` as a reusable workflow
+via `workflow_call`, checked out at the exact commit `version` produced -
+not whatever `main` has moved to since), then `publish` (Athom's
+`github-action-homey-app-publish`). Only `publish` runs under the `production`
+GitHub Environment, whose required reviewer is the run's single approval
+gate - by the time someone approves, the candidate is already versioned and
+validated. The old standalone `homey-app-version.yml`/`homey-app-publish.yml`
+manual-dispatch workflows are gone; this is now the only way to cut a
+release. Athom's publish still lands the build as a draft in Athom's
+dashboard - promoting it there remains a separate, manual step.
+
+The `version` job's commit/tag/release step is written idempotently (checks
+before creating the tag and before creating the GitHub Release) and the job
+skips re-running Athom's bump action on a same-run retry (detected via
+`GITHUB_RUN_ATTEMPT` plus the prior commit message) - re-running a failed
+`version` job resumes rather than double-bumping the version or failing on
+an already-pushed tag/release.
+
 ## Maintaining this file
 
 Keep this file for knowledge useful to almost every future agent session in this project.

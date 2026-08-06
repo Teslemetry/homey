@@ -1,0 +1,113 @@
+name: Homey App Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: choice
+        description: Version
+        required: true
+        default: patch
+        options:
+          - major
+          - minor
+          - patch
+      changelog:
+        type: string
+        description: Changelog
+        required: true
+
+# Needed in order to push the version commit/tag and create the GitHub release
+permissions:
+  contents: write
+
+jobs:
+  version:
+    name: Update Homey App Version
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+      tag: ${{ steps.commit.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # A prior attempt of this same run may have already committed the bump
+      # and pushed the tag/release before failing - detect that so re-running
+      # the job resumes instead of bumping the version a second time. Gated
+      # on run_attempt so a brand new run (attempt 1) never mistakes the
+      # previous release's bump commit, already sitting at HEAD, for its own.
+      - name: Check for an already-committed bump
+        id: check
+        run: |
+          if [ "$GITHUB_RUN_ATTEMPT" != "1" ] && git log -1 --pretty=%B | grep -qE '^Update Homey App Version to v'; then
+            echo "already_bumped=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already_bumped=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update Homey App Version
+        if: steps.check.outputs.already_bumped == 'false'
+        uses: athombv/github-action-homey-app-version@master
+        id: update_app_version
+        with:
+          version: ${{ inputs.version }}
+          changelog: ${{ inputs.changelog }}
+
+      - name: Commit, tag & release
+        id: commit
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          VERSION=$(grep -m1 '"version"' .homeycompose/app.json | sed -E 's/.*"version": *"([^"]+)".*/\1/')
+          TAG="v${VERSION}"
+
+          if ! git diff --quiet || ! git diff --cached --quiet; then
+            git add -A
+            git commit -m "Update Homey App Version to ${TAG}"
+          fi
+
+          if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+            git tag "$TAG"
+          fi
+
+          git push origin HEAD --tags
+
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" -t "$TAG" --notes "" --generate-notes
+          fi
+
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+
+  validate:
+    name: Validate exact candidate commit
+    needs: version
+    uses: ./.github/workflows/homey-app-validate.yml
+    with:
+      ref: ${{ needs.version.outputs.sha }}
+
+  publish:
+    name: Publish Homey App
+    needs: [version, validate]
+    runs-on: ubuntu-latest
+    # Required reviewers on this environment are the single approval gate for
+    # the whole release run - the candidate is already versioned and
+    # validated by the time a reviewer sees the pending deployment.
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.version.outputs.sha }}
+
+      - name: Publish Homey App
+        uses: athombv/github-action-homey-app-publish@master
+        id: publish
+        with:
+          personal_access_token: ${{ secrets.HOMEY_PAT }}
+
+      - name: URL
+        run: |
+          echo "Manage your app at ${{ steps.publish.outputs.url }}." >> $GITHUB_STEP_SUMMARY

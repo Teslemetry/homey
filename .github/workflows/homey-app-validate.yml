@@ -3,6 +3,12 @@ on:
   workflow_dispatch:
   push:
   pull_request:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        description: Exact commit to validate (defaults to the triggering SHA)
+        required: false
 
 jobs:
   main:
@@ -10,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
