@@ -167,6 +167,12 @@ const REPRESENTATIVE_CAPABILITY_COMMANDS: Array<{
     method: "setSteeringWheelHeater",
     value: "0",
   },
+  {
+    family: "climate",
+    capability: "button.bioweapon",
+    method: "setBioweaponDefenseMode",
+    value: undefined,
+  },
 ];
 
 for (const { family, capability, method, value } of REPRESENTATIVE_CAPABILITY_COMMANDS) {
@@ -264,6 +270,17 @@ test("flowSetSeatHeater surfaces an explicit Tesla result:false as a rejection",
 
   await assert.rejects(
     () => stub.flowSetSeatHeater("front_left", "2"),
+    /vehicle asleep/,
+  );
+});
+
+test("flowSetBioweaponDefenseMode surfaces an explicit Tesla result:false as a rejection", async () => {
+  const { stub } = createFlowDeviceStub({
+    setBioweaponDefenseMode: RESULT_FALSE,
+  });
+
+  await assert.rejects(
+    () => stub.flowSetBioweaponDefenseMode("on"),
     /vehicle asleep/,
   );
 });

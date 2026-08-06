@@ -2,18 +2,24 @@ import test from "node:test";
 import assert from "node:assert/strict";
 // Imports the built output; see device-oninit-no-product.test.ts for why.
 import VehicleDevice from "../.homeybuild/drivers/vehicle/device.js";
-import isCybertruck from "../.homeybuild/drivers/vehicle/model.js";
+import isCybertruck, {
+  isModelSorX,
+} from "../.homeybuild/drivers/vehicle/model.js";
 
 const TONNEAU_CAPABILITIES = [
   "windowcoverings_closed.tonneau",
   "windowcoverings_set.tonneau",
 ];
 
+const BIOWEAPON_CAPABILITIES = ["button.bioweapon"];
+
 // VIN position 4 (index 3) is "C" for Cybertruck, matching driver.ts's icon
 // lookup and Tesla's own VIN vehicle-line encoding.
 const CYBERTRUCK_VIN = "XYZCTRK0000000001";
 const MODEL_Y_VIN = "XYZYTRK0000000001";
 const CYBERCAB_VIN = "XYZACAB0000000001";
+const MODEL_S_VIN = "XYZSTRK0000000001";
+const MODEL_X_VIN = "XYZXTRK0000000001";
 
 const SEAT_FEATURE_CAPABILITIES = [
   "seat_heater.rear_left",
@@ -62,6 +68,7 @@ function createDeviceStub(
           ...SEAT_FEATURE_CAPABILITIES,
           ...SUNROOF_CAPABILITIES,
           ...POWERSHARE_CAPABILITIES,
+          ...BIOWEAPON_CAPABILITIES,
         ],
         capabilitiesOptions: {},
       },
@@ -172,6 +179,84 @@ test("isCybertruck reads VIN position 4 (index 3)", () => {
   assert.equal(isCybertruck(undefined), false);
   // Cybercab ("A") is a distinct model, not a Cybertruck.
   assert.equal(isCybertruck(CYBERCAB_VIN), false);
+});
+
+test("isModelSorX reads VIN position 4 (index 3)", () => {
+  assert.equal(isModelSorX(MODEL_S_VIN), true);
+  assert.equal(isModelSorX(MODEL_X_VIN), true);
+  assert.equal(isModelSorX(MODEL_Y_VIN), false);
+  assert.equal(isModelSorX(CYBERTRUCK_VIN), false);
+  assert.equal(isModelSorX(undefined), false);
+});
+
+test("ensureCapabilities adds the bioweapon capability for a Model S VIN", async () => {
+  const { stub, added, removed } = createDeviceStub(MODEL_S_VIN, [
+    "measure_battery",
+  ]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(new Set(added), new Set(BIOWEAPON_CAPABILITIES));
+  assert.deepEqual(removed, []);
+});
+
+test("ensureCapabilities adds the bioweapon capability for a Model X VIN", async () => {
+  const { stub, added } = createDeviceStub(MODEL_X_VIN, ["measure_battery"]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(new Set(added), new Set(BIOWEAPON_CAPABILITIES));
+});
+
+test("ensureCapabilities does not add the bioweapon capability for a non-S/X VIN", async () => {
+  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    added.filter((cap) => BIOWEAPON_CAPABILITIES.includes(cap)),
+    [],
+  );
+});
+
+test("ensureCapabilities removes the bioweapon capability already present on a non-S/X device", async () => {
+  const { stub, removed } = createDeviceStub(MODEL_Y_VIN, [
+    "measure_battery",
+    ...BIOWEAPON_CAPABILITIES,
+  ]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(new Set(removed), new Set(BIOWEAPON_CAPABILITIES));
+});
+
+test("ensureCapabilities leaves the bioweapon capability alone on a Model S device that already has it", async () => {
+  const { stub, added, removed } = createDeviceStub(MODEL_S_VIN, [
+    "measure_battery",
+    ...BIOWEAPON_CAPABILITIES,
+  ]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    added.filter((cap) => BIOWEAPON_CAPABILITIES.includes(cap)),
+    [],
+  );
+  assert.deepEqual(
+    removed.filter((cap) => BIOWEAPON_CAPABILITIES.includes(cap)),
+    [],
+  );
+});
+
+test("ensureCapabilities still filters the bioweapon capability by VIN when metadata is absent", async () => {
+  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    added.filter((cap) => BIOWEAPON_CAPABILITIES.includes(cap)),
+    [],
+  );
 });
 
 test("ensureCapabilities does not add rear-heater/seat-cooler capabilities for a no-feature vehicle", async () => {

@@ -264,6 +264,16 @@ export default class TeslemetryApp extends Homey.App {
       );
 
     this.homey.flow
+      .getActionCard('set_bioweapon_defense_mode')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; state: string }) => {
+          await this.requireFlowDevice(
+            args.device,
+          ).flowSetBioweaponDefenseMode(args.state);
+        },
+      );
+
+    this.homey.flow
       .getActionCard('install_software_update')
       .registerRunListener(async (args: { device?: VehicleDevice }) => {
         await this.requireFlowDevice(args.device).flowInstallSoftwareUpdate();

@@ -57,6 +57,7 @@
     "button.keyless",
     "button.homelink",
     "button.wakeup",
+    "button.bioweapon",
     "speaker_playing",
     "speaker_next",
     "speaker_prev",
@@ -523,6 +524,23 @@
         "ru": "Проснуться",
         "ko": "깨우기",
         "ar": "استيقظ"
+      }
+    },
+    "button.bioweapon": {
+      "title": {
+        "en": "Activate Bioweapon Defense Mode",
+        "nl": "Activeer Biologische Wapens Verdedigingsmodus",
+        "da": "Aktiver Biologisk Våben-forsvarstilstand",
+        "de": "Biowaffen-Verteidigungsmodus Aktivieren",
+        "es": "Activar Modo de Defensa Contra Armas Biológicas",
+        "fr": "Activer le Mode de Défense Contre les Armes Biologiques",
+        "it": "Attiva Modalità Difesa da Armi Biologiche",
+        "no": "Aktiver Biologisk Våpen-forsvarsmodus",
+        "sv": "Aktivera Biologiskt Vapen-försvarsläge",
+        "pl": "Aktywuj Tryb Obrony Przed Bronią Biologiczną",
+        "ru": "Активировать Режим Защиты от Биологического Оружия",
+        "ko": "생물무기 방어 모드 활성화",
+        "ar": "تفعيل وضع الدفاع ضد الأسلحة البيولوجية"
       }
     },
     "windowcoverings_closed": {
