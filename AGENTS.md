@@ -150,6 +150,16 @@ with args beyond `device`, even at driver scope. Capability IDs unique to one
 driver (`grid_buy_rate`, `backup_reserve`) can safely stay app-level with a
 capability filter, matching the existing convention in `.homeycompose/flow/`.
 
+A driver-scoped card that also needs a capability filter (e.g. an action only
+some vehicles in that driver support) still must not declare its own `device`
+arg - add `"$filter": "capabilities=<capability>"` to the card instead;
+`HomeyCompose.js` appends it to the auto-injected `device` arg's filter as
+`driver_id=<id>&capabilities=<capability>`. See the seat heater/cooler action
+cards in `drivers/vehicle/driver.flow.compose.json` for the pattern, gated on
+the same `capabilityGating.ts` predicate the device capabilities use - one
+predicate, so pairing and Flow-card visibility can't disagree about which
+vehicles have a given seat feature.
+
 ## Key Patterns
 
 ### Checking HA Parity

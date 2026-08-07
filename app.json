@@ -8605,7 +8605,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=vehicle"
+            "filter": "driver_id=vehicle&capabilities=seat_heater.front_left"
           },
           {
             "type": "dropdown",
@@ -8654,7 +8654,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=vehicle"
+            "filter": "driver_id=vehicle&capabilities=seat_heater.front_right"
           },
           {
             "type": "dropdown",
@@ -8703,7 +8703,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=vehicle"
+            "filter": "driver_id=vehicle&capabilities=seat_heater.rear_left"
           },
           {
             "type": "dropdown",
@@ -8752,7 +8752,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=vehicle"
+            "filter": "driver_id=vehicle&capabilities=seat_heater.rear_right"
           },
           {
             "type": "dropdown",
@@ -8801,7 +8801,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=vehicle"
+            "filter": "driver_id=vehicle&capabilities=seat_heater.rear_center"
           },
           {
             "type": "dropdown",
@@ -8850,7 +8850,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=vehicle"
+            "filter": "driver_id=vehicle&capabilities=seat_cooler.front_left"
           },
           {
             "type": "dropdown",
@@ -8899,7 +8899,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=vehicle"
+            "filter": "driver_id=vehicle&capabilities=seat_cooler.front_right"
           },
           {
             "type": "dropdown",
