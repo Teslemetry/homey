@@ -21,7 +21,7 @@
     "size": "du -sh .homeybuild"
   },
   "dependencies": {
-    "@teslemetry/api": "^0.11.0",
+    "@teslemetry/api": "^0.11.3",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
