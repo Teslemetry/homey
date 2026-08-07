@@ -76,5 +76,8 @@
   },
   "1.2.1": {
     "en": "Seat heating and cooling flow cards are now only shown for vehicles that have those seats."
+  },
+  "1.2.2": {
+    "en": "Improves security by preventing access tokens from appearing in SDK debug logs."
   }
 }
