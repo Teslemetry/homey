@@ -1451,6 +1451,7 @@
       "title": {
         "en": "Set driver seat heater"
       },
+      "$filter": "capabilities=seat_heater.front_left",
       "args": [
         {
           "type": "dropdown",
@@ -1495,6 +1496,7 @@
       "title": {
         "en": "Set passenger seat heater"
       },
+      "$filter": "capabilities=seat_heater.front_right",
       "args": [
         {
           "type": "dropdown",
@@ -1539,6 +1541,7 @@
       "title": {
         "en": "Set rear left seat heater"
       },
+      "$filter": "capabilities=seat_heater.rear_left",
       "args": [
         {
           "type": "dropdown",
@@ -1583,6 +1586,7 @@
       "title": {
         "en": "Set rear right seat heater"
       },
+      "$filter": "capabilities=seat_heater.rear_right",
       "args": [
         {
           "type": "dropdown",
@@ -1627,6 +1631,7 @@
       "title": {
         "en": "Set rear center seat heater"
       },
+      "$filter": "capabilities=seat_heater.rear_center",
       "args": [
         {
           "type": "dropdown",
@@ -1671,6 +1676,7 @@
       "title": {
         "en": "Set driver seat cooler"
       },
+      "$filter": "capabilities=seat_cooler.front_left",
       "args": [
         {
           "type": "dropdown",
@@ -1715,6 +1721,7 @@
       "title": {
         "en": "Set passenger seat cooler"
       },
+      "$filter": "capabilities=seat_cooler.front_right",
       "args": [
         {
           "type": "dropdown",

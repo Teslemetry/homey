@@ -238,6 +238,18 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   /**
+   * Seat heater/cooler signals fire regardless of whether this vehicle's
+   * metadata exposes that seat's capability (see capabilityGating.ts). A
+   * vehicle without a given seat feature would otherwise log update()'s
+   * "not supported" line on every signal replay/update, indefinitely.
+   */
+  private updateSeatCapability(capability: string, value: unknown): void {
+    if (this.getCapabilities().includes(capability)) {
+      this.update(capability, value);
+    }
+  }
+
+  /**
    * The SDK's onSignal() replays any cached value synchronously through
    * `callback` before returning, and only registers the live listener
    * afterwards. A throw from `callback` - during that replay or from a
@@ -592,25 +604,25 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("onoff.auto_seat_climate_right", value),
     );
     this.onSignal("SeatHeaterLeft", (value) =>
-      this.update("seat_heater.front_left", String(value)),
+      this.updateSeatCapability("seat_heater.front_left", String(value)),
     );
     this.onSignal("SeatHeaterRight", (value) =>
-      this.update("seat_heater.front_right", String(value)),
+      this.updateSeatCapability("seat_heater.front_right", String(value)),
     );
     this.onSignal("SeatHeaterRearLeft", (value) =>
-      this.update("seat_heater.rear_left", String(value)),
+      this.updateSeatCapability("seat_heater.rear_left", String(value)),
     );
     this.onSignal("SeatHeaterRearRight", (value) =>
-      this.update("seat_heater.rear_right", String(value)),
+      this.updateSeatCapability("seat_heater.rear_right", String(value)),
     );
     this.onSignal("SeatHeaterRearCenter", (value) =>
-      this.update("seat_heater.rear_center", String(value)),
+      this.updateSeatCapability("seat_heater.rear_center", String(value)),
     );
     this.onSignal("ClimateSeatCoolingFrontLeft", (value) =>
-      this.update("seat_cooler.front_left", String(value)),
+      this.updateSeatCapability("seat_cooler.front_left", String(value)),
     );
     this.onSignal("ClimateSeatCoolingFrontRight", (value) =>
-      this.update("seat_cooler.front_right", String(value)),
+      this.updateSeatCapability("seat_cooler.front_right", String(value)),
     );
 
     // Doors & Windows (Assuming Signal names)
