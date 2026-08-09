@@ -55,6 +55,7 @@ export default class TeslemetryApp extends Homey.App {
   // calls, a token refresh landing mid-build) can never observe or publish a
   // half-built generation - see initializeTeslemetry().
   private initChain: Promise<void> = Promise.resolve();
+  private shuttingDown = false;
 
   // Bumped when a completed build is published and on every teardown. Captured by
   // each generation's own stream event handlers so a straggler event from an
@@ -116,6 +117,7 @@ export default class TeslemetryApp extends Homey.App {
   }
 
   async onUninit(): Promise<void> {
+    this.shuttingDown = true;
     this.oauth.onTokenSaved = undefined;
     if (this.startupRetryTimer !== undefined) {
       this.homey.clearTimeout(this.startupRetryTimer);
@@ -722,6 +724,7 @@ export default class TeslemetryApp extends Homey.App {
    */
   private initializeTeslemetry(forceRebuild = false): Promise<void> {
     const run = async () => {
+      if (this.shuttingDown) return;
       if (!forceRebuild && this.ready) return;
       await this.doInitialize();
     };
@@ -766,7 +769,7 @@ export default class TeslemetryApp extends Homey.App {
       throw error;
     }
 
-    if (this.generation !== baseGeneration || !this.oauth.hasValidToken()) {
+    if (this.shuttingDown || this.generation !== baseGeneration || !this.oauth.hasValidToken()) {
       sdk.sse.close();
       return;
     }

@@ -574,7 +574,7 @@ test("a saved token forces a Products rebuild through the real OAuth2 client (to
   );
 });
 
-test("app teardown removes the token-saved recovery callback", async () => {
+test("app teardown prevents queued token-saved rebuilds from publishing", async () => {
   const initialToken = {
     access_token: "initial-access",
     refresh_token: "initial-refresh",
@@ -585,18 +585,39 @@ test("app teardown removes the token-saved recovery callback", async () => {
   const { app } = createOnInitAppStub(initialToken);
 
   let buildCount = 0;
+  let resolveProducts!: (products: { vehicles: {}; energySites: {} }) => void;
+  const pendingProducts = new Promise<{ vehicles: {}; energySites: {} }>((resolve) => {
+    resolveProducts = resolve;
+  });
+  let pendingStream: FakeStream | undefined;
   configureTeslemetryStub(() => {
     buildCount++;
-    return { sse: new FakeStream(), createProducts: async () => ({ vehicles: {}, energySites: {} }) };
+    const sse = new FakeStream();
+    if (buildCount === 2) {
+      pendingStream = sse;
+      return { sse, createProducts: () => pendingProducts };
+    }
+    return { sse, createProducts: async () => ({ vehicles: {}, energySites: {} }) };
   });
 
   await app.onInit();
   assert.equal(buildCount, 1);
   assert.equal(typeof app.oauth.onTokenSaved, "function");
 
+  app.oauth.onTokenSaved!({} as never);
+  await flushMicrotasks();
+  assert.equal(buildCount, 2);
+  app.oauth.onTokenSaved!({} as never);
+
   await app.onUninit();
   assert.equal(app.oauth.onTokenSaved, undefined);
 
-  await flushMicrotasks();
-  assert.equal(buildCount, 1, "a token save after teardown cannot enqueue another generation");
+  resolveProducts({ vehicles: {}, energySites: {} });
+  await app.initializeTeslemetry();
+
+  assert.equal(buildCount, 2, "the queued rebuild did not start after teardown");
+  assert.equal(pendingStream!.closed, true, "the in-flight rebuild was discarded after teardown");
+  assert.equal(app.teslemetry, undefined);
+  assert.equal(app.products, undefined);
+  assert.equal(app.isReady(), false);
 });
