@@ -88,7 +88,9 @@ export default class TeslemetryOAuth2Client {
       redirect_uri: TeslemetryOAuth2Client.REDIRECT_URL,
     };
 
-    return this.requestToken(body);
+    // The initial grant has no prior refresh token to fall back on, so a
+    // missing one here is a genuine server-side error, not an omission.
+    return this.requestToken(body, { requireRefreshToken: true });
   }
 
   /**
@@ -103,20 +105,28 @@ export default class TeslemetryOAuth2Client {
       client_id: TeslemetryOAuth2Client.CLIENT_ID,
       refresh_token: this.token.refresh_token,
     };
-    return this.requestToken(body);
+    return this.requestToken(body, {
+      previousRefreshToken: this.token.refresh_token,
+    });
   }
 
   /**
    * Return the existing token request or create a new one
    */
-  private async requestToken(body: any): Promise<OAuth2Token> {
-    this.requestPromise ??= this._requestToken(body);
+  private async requestToken(
+    body: any,
+    opts: { requireRefreshToken?: boolean; previousRefreshToken?: string } = {},
+  ): Promise<OAuth2Token> {
+    this.requestPromise ??= this._requestToken(body, opts);
     return this.requestPromise.finally(() => {
       this.requestPromise = null;
     });
   }
 
-  private async _requestToken(body: any): Promise<OAuth2Token> {
+  private async _requestToken(
+    body: any,
+    opts: { requireRefreshToken?: boolean; previousRefreshToken?: string },
+  ): Promise<OAuth2Token> {
     const response = await fetch(TeslemetryOAuth2Client.TOKEN_URL, {
       method: "POST",
       headers: {
@@ -146,12 +156,20 @@ export default class TeslemetryOAuth2Client {
       throw new Error("Invalid token response from server");
     }
 
+    // An omitted refresh_token means "unchanged", not "revoked" - only the
+    // initial grant has no prior token to fall back on, so that case fails loud.
+    const refreshToken = data.refresh_token ?? opts.previousRefreshToken;
+    if (opts.requireRefreshToken && !refreshToken) {
+      throw new Error("No refresh token returned from server");
+    }
+
+    const expiresIn = data.expires_in || 3600;
     const token: OAuth2Token = {
       access_token: data.access_token,
-      refresh_token: data.refresh_token,
-      expires_in: data.expires_in || 3600,
+      refresh_token: refreshToken,
+      expires_in: expiresIn,
       token_type: data.token_type || "Bearer",
-      expires_at: Date.now() + data.expires_in * 1000,
+      expires_at: Date.now() + expiresIn * 1000,
     };
 
     this.saveToken(token);

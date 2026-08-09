@@ -32,6 +32,120 @@ function createApp(initialToken: unknown) {
   return { app, settingsStore, handledErrors, loggedErrors };
 }
 
+function stubFetch(responseBody: unknown) {
+  const originalFetch = global.fetch;
+  global.fetch = (async () =>
+    ({
+      ok: true,
+      json: async () => responseBody,
+    }) as unknown as Response) as typeof fetch;
+  return () => {
+    global.fetch = originalFetch;
+  };
+}
+
+test("refreshToken() rotates the stored refresh token when the server returns a new one", async () => {
+  const { app, settingsStore } = createApp({
+    access_token: "old-access",
+    refresh_token: "old-refresh",
+    expires_in: 3600,
+    token_type: "Bearer",
+  });
+  const restoreFetch = stubFetch({
+    access_token: "new-access",
+    refresh_token: "new-refresh",
+    expires_in: 3600,
+    token_type: "Bearer",
+  });
+
+  try {
+    const client = new TeslemetryOAuth2Client(app as any);
+    const token = await client.refreshToken();
+
+    assert.equal(token.refresh_token, "new-refresh");
+    assert.equal(
+      (settingsStore.teslemetry_oauth2_token as any).refresh_token,
+      "new-refresh",
+    );
+  } finally {
+    restoreFetch();
+  }
+});
+
+test("refreshToken() preserves the existing refresh token when the response omits it", async () => {
+  const { app, settingsStore } = createApp({
+    access_token: "old-access",
+    refresh_token: "old-refresh",
+    expires_in: 3600,
+    token_type: "Bearer",
+  });
+  const restoreFetch = stubFetch({
+    access_token: "new-access",
+    expires_in: 3600,
+    token_type: "Bearer",
+  });
+
+  try {
+    const client = new TeslemetryOAuth2Client(app as any);
+    const token = await client.refreshToken();
+
+    assert.equal(token.access_token, "new-access");
+    assert.equal(token.refresh_token, "old-refresh");
+    assert.equal(
+      (settingsStore.teslemetry_oauth2_token as any).refresh_token,
+      "old-refresh",
+    );
+  } finally {
+    restoreFetch();
+  }
+});
+
+test("exchangeCodeForToken() rejects a response with no refresh token", async () => {
+  const { app } = createApp(null);
+  const restoreFetch = stubFetch({
+    access_token: "first-access",
+    expires_in: 3600,
+    token_type: "Bearer",
+  });
+
+  try {
+    const client = new TeslemetryOAuth2Client(app as any);
+    await assert.rejects(
+      () => client.exchangeCodeForToken("code", "verifier"),
+      /refresh token/i,
+    );
+    assert.equal(client.hasValidToken(), false);
+  } finally {
+    restoreFetch();
+  }
+});
+
+test("refreshToken() normalizes expires_at when the response omits expires_in", async () => {
+  const { app } = createApp({
+    access_token: "old-access",
+    refresh_token: "old-refresh",
+    expires_in: 3600,
+    token_type: "Bearer",
+  });
+  const restoreFetch = stubFetch({
+    access_token: "new-access",
+    refresh_token: "new-refresh",
+    token_type: "Bearer",
+  });
+
+  try {
+    const client = new TeslemetryOAuth2Client(app as any);
+    const before = Date.now();
+    const token = await client.refreshToken();
+
+    assert.equal(token.expires_in, 3600);
+    assert.ok(typeof token.expires_at === "number" && !Number.isNaN(token.expires_at));
+    assert.ok(token.expires_at! >= before + 3600 * 1000);
+  } finally {
+    restoreFetch();
+  }
+});
+
 test("refreshToken() clears the stored token on the server's lowercase invalid_refresh_token error", async () => {
   const { app, settingsStore } = createApp({
     access_token: "old-access",
