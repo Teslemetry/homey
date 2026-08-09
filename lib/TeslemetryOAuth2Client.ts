@@ -105,9 +105,7 @@ export default class TeslemetryOAuth2Client {
       client_id: TeslemetryOAuth2Client.CLIENT_ID,
       refresh_token: this.token.refresh_token,
     };
-    return this.requestToken(body, {
-      previousRefreshToken: this.token.refresh_token,
-    });
+    return this.requestToken(body);
   }
 
   /**
@@ -115,7 +113,7 @@ export default class TeslemetryOAuth2Client {
    */
   private async requestToken(
     body: any,
-    opts: { requireRefreshToken?: boolean; previousRefreshToken?: string } = {},
+    opts: { requireRefreshToken?: boolean } = {},
   ): Promise<OAuth2Token> {
     const grantType = body.grant_type;
     const requestPromise =
@@ -130,7 +128,7 @@ export default class TeslemetryOAuth2Client {
 
   private async _requestToken(
     body: any,
-    opts: { requireRefreshToken?: boolean; previousRefreshToken?: string },
+    opts: { requireRefreshToken?: boolean },
   ): Promise<OAuth2Token> {
     const response = await fetch(TeslemetryOAuth2Client.TOKEN_URL, {
       method: "POST",
@@ -163,7 +161,9 @@ export default class TeslemetryOAuth2Client {
 
     // An omitted refresh_token means "unchanged", not "revoked" - only the
     // initial grant has no prior token to fall back on, so that case fails loud.
-    const refreshToken = data.refresh_token ?? opts.previousRefreshToken;
+    const refreshToken =
+      data.refresh_token ??
+      (opts.requireRefreshToken ? undefined : this.token?.refresh_token);
     if (opts.requireRefreshToken && !refreshToken) {
       throw new Error("No refresh token returned from server");
     }

@@ -155,6 +155,59 @@ test("concurrent refresh and code exchange do not share token requests", async (
   }
 });
 
+test("slow access-only refresh preserves a concurrently rotated token", async () => {
+  const { app, settingsStore } = createApp({
+    access_token: "old-access",
+    refresh_token: "old-refresh",
+    expires_in: 3600,
+    token_type: "Bearer",
+  });
+  const originalFetch = global.fetch;
+  let releaseRefresh!: () => void;
+  const refreshResponseReady = new Promise<void>((resolve) => {
+    releaseRefresh = resolve;
+  });
+  global.fetch = (async (_url, init) => {
+    const body = JSON.parse(String(init?.body));
+    return {
+      ok: true,
+      json: async () => {
+        if (body.grant_type === "refresh_token") {
+          await refreshResponseReady;
+          return {
+            access_token: "refreshed-access",
+            expires_in: 3600,
+            token_type: "Bearer",
+          };
+        }
+        return {
+          access_token: "exchanged-access",
+          refresh_token: "rotated-refresh",
+          expires_in: 3600,
+          token_type: "Bearer",
+        };
+      },
+    } as Response;
+  }) as typeof fetch;
+
+  try {
+    const client = new TeslemetryOAuth2Client(app as any);
+    const refresh = client.refreshToken();
+
+    await client.exchangeCodeForToken("code", "verifier");
+    releaseRefresh();
+    const refreshedToken = await refresh;
+
+    assert.equal(refreshedToken.refresh_token, "rotated-refresh");
+    assert.equal(
+      (settingsStore.teslemetry_oauth2_token as any).refresh_token,
+      "rotated-refresh",
+    );
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
 test("refreshToken() normalizes expires_at when the response omits expires_in", async () => {
   const { app } = createApp({
     access_token: "old-access",
