@@ -155,7 +155,7 @@ test("concurrent refresh and code exchange do not share token requests", async (
   }
 });
 
-test("slow access-only refresh preserves a concurrently rotated token", async () => {
+test("token requests commit in enqueue order", async () => {
   const { app, settingsStore } = createApp({
     access_token: "old-access",
     refresh_token: "old-refresh",
@@ -163,12 +163,14 @@ test("slow access-only refresh preserves a concurrently rotated token", async ()
     token_type: "Bearer",
   });
   const originalFetch = global.fetch;
+  const grantTypes: string[] = [];
   let releaseRefresh!: () => void;
   const refreshResponseReady = new Promise<void>((resolve) => {
     releaseRefresh = resolve;
   });
   global.fetch = (async (_url, init) => {
     const body = JSON.parse(String(init?.body));
+    grantTypes.push(body.grant_type);
     return {
       ok: true,
       json: async () => {
@@ -193,12 +195,21 @@ test("slow access-only refresh preserves a concurrently rotated token", async ()
   try {
     const client = new TeslemetryOAuth2Client(app as any);
     const refresh = client.refreshToken();
+    const exchange = client.exchangeCodeForToken("code", "verifier");
 
-    await client.exchangeCodeForToken("code", "verifier");
+    await Promise.resolve();
+    assert.deepEqual(grantTypes, ["refresh_token"]);
     releaseRefresh();
     const refreshedToken = await refresh;
+    const exchangedToken = await exchange;
 
-    assert.equal(refreshedToken.refresh_token, "rotated-refresh");
+    assert.equal(refreshedToken.refresh_token, "old-refresh");
+    assert.equal(exchangedToken.refresh_token, "rotated-refresh");
+    assert.deepEqual(grantTypes, ["refresh_token", "authorization_code"]);
+    assert.equal(
+      (settingsStore.teslemetry_oauth2_token as any).access_token,
+      "exchanged-access",
+    );
     assert.equal(
       (settingsStore.teslemetry_oauth2_token as any).refresh_token,
       "rotated-refresh",
