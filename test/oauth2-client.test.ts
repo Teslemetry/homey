@@ -19,7 +19,6 @@ function createApp(initialToken: unknown) {
           delete settingsStore[key];
         },
       },
-      emit: () => {},
     },
     handleApiError: (apiError: unknown) => {
       handledErrors.push(apiError);
@@ -61,6 +60,44 @@ test("refreshToken() clears the stored token on the server's lowercase invalid_r
     // silently leave the dead token in place.
     assert.equal(client.hasValidToken(), false);
     assert.equal(settingsStore.teslemetry_oauth2_token, undefined);
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
+test("saveToken() invokes onTokenSaved with the persisted token instead of emitting a custom event", async () => {
+  const { app } = createApp({
+    access_token: "old-access",
+    refresh_token: "old-refresh",
+    expires_in: 3600,
+    token_type: "Bearer",
+  });
+
+  const originalFetch = global.fetch;
+  global.fetch = (async () =>
+    ({
+      ok: true,
+      json: async () => ({
+        access_token: "new-access",
+        refresh_token: "new-refresh",
+        expires_in: 3600,
+        token_type: "Bearer",
+      }),
+    }) as unknown as Response) as typeof fetch;
+
+  try {
+    const client = new TeslemetryOAuth2Client(app as any);
+    const saved: unknown[] = [];
+    client.onTokenSaved = (token) => saved.push(token);
+
+    await client.refreshToken();
+
+    // app.ts's onInit() relies on this callback firing synchronously off
+    // saveToken() to force a Products rebuild - app.homey has no `emit`
+    // method here on purpose, so a regression back to
+    // `this.app.homey.emit(...)` would throw instead of silently no-oping.
+    assert.equal(saved.length, 1);
+    assert.equal((saved[0] as { access_token: string }).access_token, "new-access");
   } finally {
     global.fetch = originalFetch;
   }

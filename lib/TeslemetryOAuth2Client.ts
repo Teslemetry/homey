@@ -20,6 +20,13 @@ export default class TeslemetryOAuth2Client {
   private token: OAuth2Token | null = null;
   private requestPromise: Promise<OAuth2Token> | null = null;
 
+  // Set by TeslemetryApp.onInit() to trigger a fresh Products generation
+  // whenever a token is persisted. A plain callback, not a custom event on
+  // this.app.homey - App and Homey are distinct EventEmitter instances with
+  // no bridging for custom events, so a custom-event hop between them never
+  // actually fires (see AGENTS.md's connection-lifecycle notes).
+  onTokenSaved?: (token: OAuth2Token) => void;
+
   constructor(app: TeslemetryApp) {
     this.app = app;
     this.loadToken();
@@ -41,7 +48,7 @@ export default class TeslemetryOAuth2Client {
     }
     this.token = token;
     this.app.homey.settings.set(TeslemetryOAuth2Client.SETTINGS_KEY, token);
-    this.app.homey.emit("oauth2:token_saved", token);
+    this.onTokenSaved?.(token);
   }
 
   /**

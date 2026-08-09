@@ -79,6 +79,53 @@ function createAppStub() {
   return { app, timers: fakeTimers.timers, drivers, logs, errors };
 }
 
+/** Every Flow card registration in registerFlowCards() just needs a card
+ *  object that accepts a run listener without recording it. */
+function createFlowStub() {
+  const card = { registerRunListener: () => card };
+  return {
+    getActionCard: () => card,
+    getConditionCard: () => card,
+    getDeviceTriggerCard: () => card,
+  };
+}
+
+/** Unlike createAppStub(), leaves `oauth` unset so the real onInit() builds
+ *  a real TeslemetryOAuth2Client and wires its onTokenSaved callback itself -
+ *  needed to exercise that wiring rather than a hand-rolled stand-in for it. */
+function createOnInitAppStub(initialToken: unknown) {
+  const fakeTimers = createFakeTimers();
+  const drivers: Record<string, { getDevices: () => unknown[] }> = {};
+  const settingsStore: Record<string, unknown> = {
+    teslemetry_oauth2_token: initialToken,
+  };
+  const logs: unknown[][] = [];
+  const errors: unknown[][] = [];
+
+  const app = Object.assign(new TeslemetryApp(), {
+    homey: {
+      __: (key: string) => key,
+      setTimeout: fakeTimers.setTimeout,
+      clearTimeout: fakeTimers.clearTimeout,
+      drivers: { getDrivers: () => drivers },
+      flow: createFlowStub(),
+      settings: {
+        get: (key: string) => settingsStore[key],
+        set: (key: string, value: unknown) => {
+          settingsStore[key] = value;
+        },
+        unset: (key: string) => {
+          delete settingsStore[key];
+        },
+      },
+    },
+    log: (...args: unknown[]) => logs.push(args),
+    error: (...args: unknown[]) => errors.push(args),
+  });
+
+  return { app, timers: fakeTimers.timers, drivers, settingsStore, logs, errors };
+}
+
 /** A real TeslemetryDevice instance (so markUnavailable/clearAvailabilityReason's
  *  own reason-gating logic runs for real) with just enough stubbed to observe
  *  availability transitions without touching a real Homey runtime. */
@@ -443,8 +490,9 @@ test("device auth-unavailability clears only on this device's own genuine post-r
   assert.deepEqual(otherDevice.unavailableCalls, ["error.invalid_refresh_token"]);
 
   // Reauth completes (a real exchangeCodeForToken() would set a fresh valid
-  // token) and fires oauth2:token_saved, which app.ts handles by forcing a
-  // rebuild.
+  // token); force the same rebuild the real onTokenSaved wiring triggers -
+  // see "a saved token forces a Products rebuild ..." below for a test that
+  // exercises that wiring itself through the real OAuth2 client.
   (app.oauth as unknown as ReturnType<typeof createFakeOAuth>).setValid(true);
   let sdk2: { sse: FakeStream } | undefined;
   configureTeslemetryStub(() => {
@@ -461,4 +509,67 @@ test("device auth-unavailability clears only on this device's own genuine post-r
   // This device's own genuine event is the only thing that clears it.
   sdk2!.sse.emit("state", { vin: "vin-1" });
   assert.equal(authDevice.availableCalls.length, 1, "cleared only once its own product proved reauth worked");
+});
+
+test("a saved token forces a Products rebuild through the real OAuth2 client (token-saved wiring)", async () => {
+  const initialToken = {
+    access_token: "initial-access",
+    refresh_token: "initial-refresh",
+    expires_in: 3600,
+    token_type: "Bearer",
+    expires_at: Date.now() + 3600_000,
+  };
+  const { app, drivers, settingsStore } = createOnInitAppStub(initialToken);
+  const device = createDeviceStub("vehicle:vin-1");
+  drivers.vehicle = { getDevices: () => [device.device] };
+
+  let buildCount = 0;
+  configureTeslemetryStub(() => {
+    buildCount++;
+    return { sse: new FakeStream(), createProducts: async () => ({ vehicles: {}, energySites: {} }) };
+  });
+
+  // Exercises onInit() for real (not the hand-assembled stub other tests in
+  // this file use) so this test fails if the production onTokenSaved wiring
+  // it sets up is ever broken, instead of only failing if a hand-rolled
+  // stand-in for that wiring breaks.
+  await app.onInit();
+  assert.equal(app.isReady(), true);
+  assert.equal(buildCount, 1);
+  assert.equal(device.getReboundCount(), 1);
+
+  const originalFetch = global.fetch;
+  global.fetch = (async () =>
+    ({
+      ok: true,
+      json: async () => ({
+        access_token: "refreshed-access",
+        refresh_token: "refreshed-refresh",
+        expires_in: 3600,
+        token_type: "Bearer",
+      }),
+    }) as unknown as Response) as typeof fetch;
+
+  try {
+    // Simulates a repair/re-auth landing while the app is already running.
+    // TeslemetryOAuth2Client.saveToken() must reach app.ts's
+    // initializeTeslemetry(true) through the real onTokenSaved callback -
+    // the emitter-mismatch regression this replaces left buildCount/
+    // getReboundCount() stuck at 1 forever, with no error raised anywhere.
+    await app.oauth.refreshToken();
+    // saveToken() kicks off the rebuild synchronously but doesn't await it;
+    // a plain (non-forced) call chains onto the same single-flight promise
+    // and resolves once that in-flight rebuild actually finishes.
+    await app.initializeTeslemetry();
+  } finally {
+    global.fetch = originalFetch;
+  }
+
+  assert.equal(buildCount, 2, "the saved token triggered a second Products generation");
+  assert.equal(device.getReboundCount(), 2, "the already-paired device rebound to the new generation");
+  assert.equal(
+    (settingsStore.teslemetry_oauth2_token as { access_token: string }).access_token,
+    "refreshed-access",
+    "the refreshed token was persisted",
+  );
 });

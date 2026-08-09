@@ -58,9 +58,10 @@ export default class TeslemetryApp extends Homey.App {
 
   // Bumped when a completed build is published and on every teardown. Captured by
   // each generation's own stream event handlers so a straggler event from an
-  // already-superseded/closed SDK instance (close() doesn't abort its
-  // in-flight request - a known @teslemetry/api gap) can't mutate current
-  // state.
+  // already-superseded/closed SDK instance can't mutate current state. SDK
+  // 0.11.x's close() is itself async and aborts the active fetch/reconnect
+  // loop, so this check is defense-in-depth rather than a workaround for an
+  // unabortable request.
   private generation = 0;
 
   // True once a Products generation has been fully built and published.
@@ -92,18 +93,18 @@ export default class TeslemetryApp extends Homey.App {
 
     this.oauth = new TeslemetryOAuth2Client(this);
 
-    // Register Flow card handlers
-    this.registerFlowCards();
-
     // A saved token can be refreshed/replaced at any time; force a fresh
     // Products generation rather than trusting the current one still
     // matches the new token.
-    this.on('oauth2:token_saved', () => {
+    this.oauth.onTokenSaved = () => {
       this.log('Token saved, re-initializing Teslemetry...');
       this.initializeTeslemetry(true).catch((error) => {
         this.error('Failed to reinitialize after token save:', error);
       });
-    });
+    };
+
+    // Register Flow card handlers
+    this.registerFlowCards();
 
     // A transient failure here (network blip, momentary metadata error)
     // must not strand every device for the lifetime of the process - retry

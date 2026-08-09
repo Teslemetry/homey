@@ -594,9 +594,10 @@ published under concurrent calls. The pieces:
   This does not imply that the optimistic `connect()` call has delivered data.
   `this.generation` is bumped when a completed build is published and inside
   `cleanup()`; every stream handler captures its own generation and no-ops
-  once superseded, so a straggler event from an old/closed SDK (`close()`
-  doesn't abort its in-flight request - a known `@teslemetry/api` gap, not
-  fixed here) can't mutate current state.
+  once superseded, so a straggler event from an old/closed SDK can't mutate
+  current state. SDK 0.11.x's `close()` is itself async and abortable - it
+  aborts the active fetch/reconnect loop and awaits its exit - so this check
+  is defense-in-depth, not a workaround for an unabortable request.
 - **`scheduleStartupRetry()`** covers a transient `createProducts()` failure
   at boot: bounded exponential backoff (`STARTUP_RETRY_BASE_MS` doubling up
   to `STARTUP_RETRY_MAX_MS`) via `this.homey.setTimeout`, cleared as soon as
@@ -623,14 +624,17 @@ published under concurrent calls. The pieces:
   unconditionally on every successful build, including the very first one at
   boot (a harmless no-op there, since no devices are paired yet).
 
-Separately, and **not fixed by this work**: `TeslemetryOAuth2Client.saveToken()`
-emits `oauth2:token_saved` on `this.app.homey` (the SDK's `Homey` instance),
-but `app.ts`'s own `onInit()` listens via `this.on(...)` on the `App`
-instance itself - a different `EventEmitter` with no bridging for custom
-events (SDK's `_initApp` only forwards `__log`/`__error`/`__debug`). That
-listener - and therefore `initializeTeslemetry(true)`'s force-rebuild path -
-is dead code today; a normal token refresh never reaches it in production.
-Flagged for a future pass.
+**Token-save recovery wiring.** `TeslemetryOAuth2Client.saveToken()` invokes a
+plain `onTokenSaved` callback rather than emitting a custom event on
+`this.app.homey`: `App` and `Homey` are distinct `EventEmitter` instances
+with no bridging for custom events (SDK's `_initApp` only forwards
+`__log`/`__error`/`__debug`), so a custom-event hop between them never
+actually fires. `app.ts`'s `onInit()` assigns `this.oauth.onTokenSaved` right
+after constructing the client, forcing the same `initializeTeslemetry(true)`
+generation rebuild every other recovery path uses. See
+`test/oauth2-client.test.ts` for the callback contract and
+`test/app-connection-lifecycle.test.ts` for the repair-to-recovery path
+exercised through the real client.
 
 ### Credential Teardown & Availability Reasons (`app.ts`, `lib/TeslemetryDevice.ts`)
 
