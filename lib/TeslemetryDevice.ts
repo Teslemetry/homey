@@ -239,24 +239,24 @@ export default class TeslemetryDevice extends Homey.Device {
    * @param capability The capability to update.
    * @param value The value from the API
    */
-  public async update(capability: string, value: any): Promise<void> {
+  public async update(capability: string, value: any): Promise<boolean> {
     // Every caller of update()/updateWithThresholdTriggers() fires it
     // without awaiting/catching from SSE signal handlers, so this boundary
     // must never reject - an uncaught rejection here becomes a process-level
     // unhandledRejection, not just a failed update for this one device.
     try {
       // Skip if the device has been removed
-      if (this.destroyed) return;
+      if (this.destroyed) return false;
       // Check if capability is supported
       if (!this.getCapabilities().includes(capability)) {
         this.log(`Capability ${capability} is not supported`);
-        return;
+        return false;
       }
       // Evaluate value if required
       if (typeof value === "function") value = value();
       // Check if value is undefined
       if (value === undefined) {
-        return;
+        return false;
       }
       const hasChangeTrigger =
         TeslemetryDevice.CHANGE_TRIGGER_CAPABILITIES.has(capability);
@@ -285,8 +285,10 @@ export default class TeslemetryDevice extends Homey.Device {
           .trigger(this, { [capability]: value })
           .catch(this.error);
       }
+      return true;
     } catch (error) {
       this.error(error);
+      return false;
     }
   }
 
@@ -310,7 +312,8 @@ export default class TeslemetryDevice extends Homey.Device {
     try {
       if (value === undefined || value === null) return;
       const previous = this.getCapabilityValue(capability) as number | null;
-      await this.update(capability, value);
+      const updated = await this.update(capability, value);
+      if (!updated) return;
       if (previous === null || previous === undefined || previous === value) {
         return;
       }

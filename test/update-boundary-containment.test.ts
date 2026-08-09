@@ -36,19 +36,24 @@ function createDeviceStub(
 
 async function assertNoUnhandledRejection(fn: () => Promise<unknown>) {
   let caught: unknown;
-  process.on("unhandledRejection", (reason) => {
+  const onUnhandledRejection = (reason: unknown) => {
     caught = reason;
-  });
-  // A rejected update()/updateWithThresholdTriggers() Promise would surface
-  // as an unhandledRejection on the next tick if this call site (matching
-  // every real SSE signal handler) doesn't await/catch it.
-  fn();
-  await new Promise((resolve) => setImmediate(resolve));
-  assert.equal(
-    caught,
-    undefined,
-    `expected no unhandledRejection, got: ${String(caught)}`,
-  );
+  };
+  process.on("unhandledRejection", onUnhandledRejection);
+  try {
+    // A rejected update()/updateWithThresholdTriggers() Promise would surface
+    // as an unhandledRejection on the next tick if this call site (matching
+    // every real SSE signal handler) doesn't await/catch it.
+    fn();
+    await new Promise((resolve) => setImmediate(resolve));
+    assert.equal(
+      caught,
+      undefined,
+      `expected no unhandledRejection, got: ${String(caught)}`,
+    );
+  } finally {
+    process.removeListener("unhandledRejection", onUnhandledRejection);
+  }
 }
 
 test("update() does not reject and logs when getCapabilities() throws", async () => {
@@ -182,6 +187,45 @@ test("updateWithThresholdTriggers() does not reject and logs when getDeviceTrigg
     ),
   );
   assert.ok(logged instanceof Error);
+});
+
+test("updateWithThresholdTriggers() does not fire when the capability update fails", async () => {
+  let triggerCount = 0;
+  const stub = createDeviceStub(
+    { measure_power: 100 },
+    {
+      getCapabilities: () => {
+        throw new Error("SDK lookup failure");
+      },
+      homey: {
+        flow: {
+          getDeviceTriggerCard: () => ({
+            trigger: async () => {
+              triggerCount += 1;
+            },
+          }),
+        },
+      },
+    },
+  ) as unknown as {
+    updateWithThresholdTriggers(
+      capability: string,
+      value: number,
+      aboveCardId: string,
+      belowCardId: string,
+      tokenName: string,
+    ): Promise<void>;
+  };
+
+  await stub.updateWithThresholdTriggers(
+    "measure_power",
+    150,
+    "power_above",
+    "power_below",
+    "watts",
+  );
+
+  assert.equal(triggerCount, 0);
 });
 
 test("updateWithThresholdTriggers()'s rejection cannot become a process-level unhandledRejection when discarded", async () => {
