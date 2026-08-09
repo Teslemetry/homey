@@ -386,13 +386,13 @@ see `signalHandlerFailures` for the resulting degraded-health log line.
 This only protects against a handler that throws *synchronously*. A handler
 that is itself `async` never throws synchronously - JS converts any error
 inside it into a rejected Promise before the call returns, so wrapping the
-call site in `try`/`catch` silently does nothing and the rejection surfaces
-later as an unhandled rejection instead. `updateWithThresholdTriggers()`
-(`lib/TeslemetryDevice.ts`) is `async` for exactly this reason: Solar's and
-Gateway's `onLiveStatus` handlers call it directly and were audited for this
-bug, but since the call can't throw synchronously, it can't block their
-`energy_totals` listener from registering either - not vulnerable, and nothing
-to guard.
+call site in `try`/`catch` silently does nothing; unless the async boundary
+contains the error itself, the rejection surfaces later as an unhandled
+rejection. `updateWithThresholdTriggers()` (`lib/TeslemetryDevice.ts`) is
+`async`, so Solar's and Gateway's `onLiveStatus` calls cannot synchronously
+block their `energy_totals` listener from registering. Its own top-level
+containment boundary, documented above, prevents those discarded calls from
+becoming unhandled rejections later.
 
 ### Missing-Product Honest Unavailability (all five drivers)
 
