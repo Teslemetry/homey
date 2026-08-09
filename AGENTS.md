@@ -582,9 +582,9 @@ published under concurrent calls. The pieces:
   (boot `onInit()`, `getTeslemetry()`/`getProducts()`, the startup retry
   timer, a token-refresh rebuild) chains onto one `initChain` promise, so
   builds never run concurrently and no caller can observe a half-built
-  generation. `forceRebuild` (used by the `oauth2:token_saved` listener - see
-  the dead-listener caveat below) always builds a fresh generation even if
-  the current one is `ready`; a plain call is a no-op once already ready.
+  generation. `forceRebuild` (used by the `onTokenSaved` callback described
+  below) always builds a fresh generation even if the current one is `ready`;
+  a plain call is a no-op once already ready.
 - **`doInitialize()`** builds into local `const sdk`/`const products`,
   attaches that generation's stream handlers to the *local* `sdk`, and only
   publishes to `this.teslemetry`/`this.products` after `createProducts()`
