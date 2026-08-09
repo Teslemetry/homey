@@ -348,6 +348,19 @@ Use the `update()` method which safely handles unsupported capabilities:
 this.update("measure_battery", value);  // No-op if capability not present
 ```
 
+Callers throughout the SSE signal handlers routinely discard the returned
+Promise (no `await`, no `.catch`), so `update()` and
+`updateWithThresholdTriggers()` must never reject - each wraps its entire
+body in one top-level `try`/`catch` that logs via `this.error` rather than
+propagating. This is a single containment boundary, not per-call-site
+`.catch()` scatter; a detached `trigger()` call inside either method still
+keeps its own explicit `.catch(this.error)` since that Promise is never
+returned to the caller at all. See
+`test/update-boundary-containment.test.ts` for the injected-failure
+coverage (thrown `getCapabilities`/`getCapabilityValue`/`isLive`/
+`getDeviceTriggerCard`, proof of no `unhandledRejection`, and proof one
+device's failing update doesn't block another device's).
+
 ### Device `onInit` Ordering ("registered but dead")
 
 Every device stream (`site.sse`/`vehicle.sse` `.on`/`onSignal`) replays the

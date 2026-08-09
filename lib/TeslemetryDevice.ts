@@ -240,52 +240,53 @@ export default class TeslemetryDevice extends Homey.Device {
    * @param value The value from the API
    */
   public async update(capability: string, value: any): Promise<void> {
-    // Skip if the device has been removed
-    if (this.destroyed) return;
-    // Check if capability is supported
-    if (!this.getCapabilities().includes(capability)) {
-      this.log(`Capability ${capability} is not supported`);
-      return;
-    }
-    // Evaluate value if required
-    if (typeof value === "function") value = value();
-    // Check if value is undefined
-    if (value === undefined) {
-      return;
-    }
-    const hasChangeTrigger = TeslemetryDevice.CHANGE_TRIGGER_CAPABILITIES.has(
-      capability,
-    );
-    // getCapabilityValue reads Homey's own persisted value, which survives
-    // an app restart - a null/undefined previousValue means no genuine prior
-    // value exists yet (for example, on a fresh device), so that first write
-    // must only set a baseline, never fire the change trigger.
-    const previousValue = hasChangeTrigger
-      ? this.getCapabilityValue(capability)
-      : undefined;
-    // Set the capability value
-    // this.log(`Setting capability ${capability} to ${value}`);
+    // Every caller of update()/updateWithThresholdTriggers() fires it
+    // without awaiting/catching from SSE signal handlers, so this boundary
+    // must never reject - an uncaught rejection here becomes a process-level
+    // unhandledRejection, not just a failed update for this one device.
     try {
+      // Skip if the device has been removed
+      if (this.destroyed) return;
+      // Check if capability is supported
+      if (!this.getCapabilities().includes(capability)) {
+        this.log(`Capability ${capability} is not supported`);
+        return;
+      }
+      // Evaluate value if required
+      if (typeof value === "function") value = value();
+      // Check if value is undefined
+      if (value === undefined) {
+        return;
+      }
+      const hasChangeTrigger =
+        TeslemetryDevice.CHANGE_TRIGGER_CAPABILITIES.has(capability);
+      // getCapabilityValue reads Homey's own persisted value, which survives
+      // an app restart - a null/undefined previousValue means no genuine prior
+      // value exists yet (for example, on a fresh device), so that first write
+      // must only set a baseline, never fire the change trigger.
+      const previousValue = hasChangeTrigger
+        ? this.getCapabilityValue(capability)
+        : undefined;
+      // Set the capability value
       await this.setCapabilityValue(capability, value);
+      const isInvalidNumericToken =
+        TeslemetryDevice.NUMERIC_CHANGE_TRIGGER_CAPABILITIES.has(capability) &&
+        (typeof value !== "number" || !Number.isFinite(value));
+      if (
+        hasChangeTrigger &&
+        previousValue !== null &&
+        previousValue !== undefined &&
+        previousValue !== value &&
+        !isInvalidNumericToken &&
+        this.isLive()
+      ) {
+        this.homey.flow
+          .getDeviceTriggerCard(`${capability}_changed`)
+          .trigger(this, { [capability]: value })
+          .catch(this.error);
+      }
     } catch (error) {
       this.error(error);
-      return;
-    }
-    const isInvalidNumericToken =
-      TeslemetryDevice.NUMERIC_CHANGE_TRIGGER_CAPABILITIES.has(capability) &&
-      (typeof value !== "number" || !Number.isFinite(value));
-    if (
-      hasChangeTrigger &&
-      previousValue !== null &&
-      previousValue !== undefined &&
-      previousValue !== value &&
-      !isInvalidNumericToken &&
-      this.isLive()
-    ) {
-      this.homey.flow
-        .getDeviceTriggerCard(`${capability}_changed`)
-        .trigger(this, { [capability]: value })
-        .catch(this.error);
     }
   }
 
@@ -304,23 +305,29 @@ export default class TeslemetryDevice extends Homey.Device {
     belowCardId: string,
     tokenName: string,
   ): Promise<void> {
-    if (value === undefined || value === null) return;
-    const previous = this.getCapabilityValue(capability) as number | null;
-    await this.update(capability, value);
-    if (previous === null || previous === undefined || previous === value) {
-      return;
+    // Same non-rejecting boundary contract as update() above - callers
+    // discard this Promise from SSE signal handlers too.
+    try {
+      if (value === undefined || value === null) return;
+      const previous = this.getCapabilityValue(capability) as number | null;
+      await this.update(capability, value);
+      if (previous === null || previous === undefined || previous === value) {
+        return;
+      }
+      if (!this.isLive()) return;
+      const tokens = { [tokenName]: value };
+      const state = { previous, current: value };
+      this.homey.flow
+        .getDeviceTriggerCard(aboveCardId)
+        .trigger(this, tokens, state)
+        .catch(this.error);
+      this.homey.flow
+        .getDeviceTriggerCard(belowCardId)
+        .trigger(this, tokens, state)
+        .catch(this.error);
+    } catch (error) {
+      this.error(error);
     }
-    if (!this.isLive()) return;
-    const tokens = { [tokenName]: value };
-    const state = { previous, current: value };
-    this.homey.flow
-      .getDeviceTriggerCard(aboveCardId)
-      .trigger(this, tokens, state)
-      .catch(this.error);
-    this.homey.flow
-      .getDeviceTriggerCard(belowCardId)
-      .trigger(this, tokens, state)
-      .catch(this.error);
   }
 
   protected handleApiResponse = ({ response }: { response: any }): void => {
