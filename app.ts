@@ -116,6 +116,7 @@ export default class TeslemetryApp extends Homey.App {
   }
 
   async onUninit(): Promise<void> {
+    this.oauth.onTokenSaved = undefined;
     if (this.startupRetryTimer !== undefined) {
       this.homey.clearTimeout(this.startupRetryTimer);
       this.startupRetryTimer = undefined;

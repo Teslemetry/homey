@@ -573,3 +573,30 @@ test("a saved token forces a Products rebuild through the real OAuth2 client (to
     "the refreshed token was persisted",
   );
 });
+
+test("app teardown removes the token-saved recovery callback", async () => {
+  const initialToken = {
+    access_token: "initial-access",
+    refresh_token: "initial-refresh",
+    expires_in: 3600,
+    token_type: "Bearer",
+    expires_at: Date.now() + 3600_000,
+  };
+  const { app } = createOnInitAppStub(initialToken);
+
+  let buildCount = 0;
+  configureTeslemetryStub(() => {
+    buildCount++;
+    return { sse: new FakeStream(), createProducts: async () => ({ vehicles: {}, energySites: {} }) };
+  });
+
+  await app.onInit();
+  assert.equal(buildCount, 1);
+  assert.equal(typeof app.oauth.onTokenSaved, "function");
+
+  await app.onUninit();
+  assert.equal(app.oauth.onTokenSaved, undefined);
+
+  await flushMicrotasks();
+  assert.equal(buildCount, 1, "a token save after teardown cannot enqueue another generation");
+});
