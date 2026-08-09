@@ -120,6 +120,41 @@ test("exchangeCodeForToken() rejects a response with no refresh token", async ()
   }
 });
 
+test("concurrent refresh and code exchange do not share token requests", async () => {
+  const { app } = createApp({
+    access_token: "old-access",
+    refresh_token: "old-refresh",
+    expires_in: 3600,
+    token_type: "Bearer",
+  });
+  const originalFetch = global.fetch;
+  const grantTypes: string[] = [];
+  global.fetch = (async (_url, init) => {
+    const body = JSON.parse(String(init?.body));
+    grantTypes.push(body.grant_type);
+    return {
+      ok: true,
+      json: async () => ({
+        access_token: `${body.grant_type}-access`,
+        expires_in: 3600,
+        token_type: "Bearer",
+      }),
+    } as Response;
+  }) as typeof fetch;
+
+  try {
+    const client = new TeslemetryOAuth2Client(app as any);
+    const refresh = client.refreshToken();
+    const exchange = client.exchangeCodeForToken("code", "verifier");
+
+    assert.equal((await refresh).refresh_token, "old-refresh");
+    await assert.rejects(exchange, /refresh token/i);
+    assert.deepEqual(grantTypes, ["refresh_token", "authorization_code"]);
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
 test("refreshToken() normalizes expires_at when the response omits expires_in", async () => {
   const { app } = createApp({
     access_token: "old-access",

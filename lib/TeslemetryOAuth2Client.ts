@@ -18,7 +18,7 @@ export default class TeslemetryOAuth2Client {
 
   private app: TeslemetryApp;
   private token: OAuth2Token | null = null;
-  private requestPromise: Promise<OAuth2Token> | null = null;
+  private requestPromises = new Map<string, Promise<OAuth2Token>>();
 
   constructor(app: TeslemetryApp) {
     this.app = app;
@@ -117,9 +117,14 @@ export default class TeslemetryOAuth2Client {
     body: any,
     opts: { requireRefreshToken?: boolean; previousRefreshToken?: string } = {},
   ): Promise<OAuth2Token> {
-    this.requestPromise ??= this._requestToken(body, opts);
-    return this.requestPromise.finally(() => {
-      this.requestPromise = null;
+    const grantType = body.grant_type;
+    const requestPromise =
+      this.requestPromises.get(grantType) ?? this._requestToken(body, opts);
+    this.requestPromises.set(grantType, requestPromise);
+    return requestPromise.finally(() => {
+      if (this.requestPromises.get(grantType) === requestPromise) {
+        this.requestPromises.delete(grantType);
+      }
     });
   }
 
