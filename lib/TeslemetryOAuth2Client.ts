@@ -97,23 +97,24 @@ export default class TeslemetryOAuth2Client {
    * Refresh the token using the refresh token
    */
   async refreshToken(): Promise<OAuth2Token> {
-    if (!this.token?.refresh_token) {
-      throw new Error("No refresh token available");
-    }
-    const body = {
-      grant_type: "refresh_token",
-      client_id: TeslemetryOAuth2Client.CLIENT_ID,
-      refresh_token: this.token.refresh_token,
-    };
-    return this.requestToken(body);
+    return this.requestToken(() => {
+      if (!this.token?.refresh_token) {
+        throw new Error("No refresh token available");
+      }
+      return {
+        grant_type: "refresh_token",
+        client_id: TeslemetryOAuth2Client.CLIENT_ID,
+        refresh_token: this.token.refresh_token,
+      };
+    });
   }
 
   private async requestToken(
-    body: any,
+    body: any | (() => any),
     opts: { requireRefreshToken?: boolean } = {},
   ): Promise<OAuth2Token> {
     const requestPromise = this.requestQueue.then(() =>
-      this._requestToken(body, opts),
+      this._requestToken(typeof body === "function" ? body() : body, opts),
     );
     this.requestQueue = requestPromise.then(
       () => undefined,

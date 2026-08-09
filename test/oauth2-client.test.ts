@@ -219,6 +219,66 @@ test("token requests commit in enqueue order", async () => {
   }
 });
 
+test("queued refresh uses the token rotated by the previous refresh", async () => {
+  const { app, settingsStore } = createApp({
+    access_token: "old-access",
+    refresh_token: "old-refresh",
+    expires_in: 3600,
+    token_type: "Bearer",
+  });
+  const originalFetch = global.fetch;
+  const refreshTokens: string[] = [];
+  let releaseFirstRefresh!: () => void;
+  const firstRefreshReady = new Promise<void>((resolve) => {
+    releaseFirstRefresh = resolve;
+  });
+  global.fetch = (async (_url, init) => {
+    const body = JSON.parse(String(init?.body));
+    refreshTokens.push(body.refresh_token);
+    const requestNumber = refreshTokens.length;
+    return {
+      ok: true,
+      json: async () => {
+        if (requestNumber === 1) {
+          await firstRefreshReady;
+          return {
+            access_token: "first-access",
+            refresh_token: "rotated-refresh",
+            expires_in: 3600,
+            token_type: "Bearer",
+          };
+        }
+        return {
+          access_token: "second-access",
+          expires_in: 3600,
+          token_type: "Bearer",
+        };
+      },
+    } as Response;
+  }) as typeof fetch;
+
+  try {
+    const client = new TeslemetryOAuth2Client(app as any);
+    const firstRefresh = client.refreshToken();
+    const secondRefresh = client.refreshToken();
+
+    await Promise.resolve();
+    assert.deepEqual(refreshTokens, ["old-refresh"]);
+    releaseFirstRefresh();
+    await firstRefresh;
+    const token = await secondRefresh;
+
+    assert.deepEqual(refreshTokens, ["old-refresh", "rotated-refresh"]);
+    assert.equal(token.refresh_token, "rotated-refresh");
+    assert.equal(
+      (settingsStore.teslemetry_oauth2_token as any).refresh_token,
+      "rotated-refresh",
+    );
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
 test("refreshToken() normalizes expires_at when the response omits expires_in", async () => {
   const { app } = createApp({
     access_token: "old-access",
