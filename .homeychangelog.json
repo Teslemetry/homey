@@ -79,5 +79,8 @@
   },
   "1.2.2": {
     "en": "Improves security by preventing access tokens from appearing in SDK debug logs."
+  },
+  "1.2.3": {
+    "en": "Reliability fixes: prevents rare background errors from crashing the app, restores devices automatically after your login token refreshes, and fixes an issue where re-authentication could stop working after a token refresh."
   }
 }
