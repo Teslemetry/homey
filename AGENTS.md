@@ -528,6 +528,45 @@ a second signal arriving before the first write settles would otherwise see
 the same stale value and could double- or mis-fire `vehicle_arrived_home`/
 `vehicle_left_home`. See `test/vehicle-presence.test.ts`.
 
+### Location Coordinates (`measure_latitude`, `measure_longitude`)
+
+Unlike At-Home/At-Work above, these two capabilities deliberately do expose
+raw coordinates - `VehicleDevice` reads the same `Location` signal already
+consumed internally for window control/homelink actuation
+(`this.vehicle.sse.cache?.data?.Location`), gated on the identical
+`vehicle_location` scope: if the scope isn't granted, `Location` never
+arrives and both capabilities stay an honest unset/`null`, exactly like
+`alarm_presence`/`alarm_generic.at_work`. Never fall back to `{ latitude: 0,
+longitude: 0 }` here (that internal-only default used for window-control
+math is a real, misleading coordinate) - only write when a genuine
+`Location` value arrives.
+
+### Driver Seat Occupancy & Unbuckled Alarm (`driver_seat_occupied`, `alarm_generic.driver_unbuckled`)
+
+`DriverSeatBelt`'s raw value is buckle status (`BuckleStatusLatched`/
+`BuckleStatusUnlatched`/`...Unknown`/`...Faulted`), **not** "belt fastened" -
+an unlatched belt in an empty seat is not an alarm. `VehicleDevice` tracks
+`DriverSeatOccupied` and the latched/unlatched read of `DriverSeatBelt`
+independently (`driverSeatOccupied`/`driverSeatBeltUnlatched` fields,
+`Unknown`/`Faulted` readings ignored) and only sets
+`alarm_generic.driver_unbuckled` once both are known, via
+`updateDriverUnbuckledAlarm()` - true only when the seat is occupied AND the
+belt is unlatched. Neither Tesla vehicle metadata nor `capabilityGating.ts`
+exposes a "has seat sensor" flag, so both capabilities register
+unconditionally and rely on the same honest-unknown-until-a-signal-arrives
+behavior as At-Home/At-Work above for a vehicle/firmware that never reports
+them. See `test/vehicle-driver-seat-location.test.ts`.
+
+### Gear Flow Cards (`gear_changed`, `gear_is`)
+
+`gear` is a plain `CHANGE_TRIGGER_CAPABILITIES` entry (auto-fires
+`gear_changed` off any real P/R/N/D transition) plus a driver-scoped
+`gear_is` condition, mirroring `tpms_warning_changed`/`tpms_warning_is`
+exactly - the closest existing analog (same driver, same custom-enum
+capability shape). A "changed from P to D or R" automation composes
+`gear_changed` with a `gear_is` check, rather than this app tracking the
+previous gear value itself.
+
 ### Connection Lifecycle: Single-Flight Init, Startup Retry, Freshness Watchdog (`app.ts`)
 
 `app.ts` owns one shared, generation-safe pipeline for building/rebuilding

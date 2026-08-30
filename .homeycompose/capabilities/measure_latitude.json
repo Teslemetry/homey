@@ -1,0 +1,22 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Latitude",
+    "nl": "Breedtegraad",
+    "da": "Breddegrad",
+    "de": "Breitengrad",
+    "es": "Latitud",
+    "fr": "Latitude",
+    "it": "Latitudine",
+    "no": "Breddegrad",
+    "sv": "Latitud",
+    "pl": "Szerokość geograficzna",
+    "ru": "Широта",
+    "ko": "위도",
+    "ar": "خط العرض"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "decimals": 6
+}

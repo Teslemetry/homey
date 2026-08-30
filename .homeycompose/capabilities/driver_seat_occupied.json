@@ -1,0 +1,21 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Driver Seat Occupied",
+    "nl": "Bestuurdersstoel Bezet",
+    "da": "Førersæde Optaget",
+    "de": "Fahrersitz Belegt",
+    "es": "Asiento del Conductor Ocupado",
+    "fr": "Siège Conducteur Occupé",
+    "it": "Sedile Conducente Occupato",
+    "no": "Førersete Opptatt",
+    "sv": "Förarsäte Upptaget",
+    "pl": "Fotel Kierowcy Zajęty",
+    "ru": "Место водителя занято",
+    "ko": "운전석 착석 감지",
+    "ar": "مقعد السائق مشغول"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

@@ -220,6 +220,15 @@ export default class VehicleDevice extends TeslemetryDevice {
   private previousLocatedAtHome?: boolean;
   private previousVehicleState?: SseState["state"];
 
+  /**
+   * DriverSeatOccupied and the latched/unlatched read of DriverSeatBelt,
+   * tracked independently since alarm_generic.driver_unbuckled is only
+   * meaningful once both are known - an unlatched belt in an empty seat is
+   * not an alarm. See updateDriverUnbuckledAlarm().
+   */
+  private driverSeatOccupied?: boolean;
+  private driverSeatBeltUnlatched?: boolean;
+
   /** Count of signal handlers that threw during registration/replay; see onSignal(). */
   private signalHandlerFailures = 0;
 
@@ -235,6 +244,25 @@ export default class VehicleDevice extends TeslemetryDevice {
     if (anySoft) level = "soft";
     if (anyHard) level = "hard";
     this.update("tpms_warning", level);
+  }
+
+  /**
+   * alarm_generic.driver_unbuckled is only ever set once both signals have
+   * reported at least once - an unlatched belt with no known occupancy (or
+   * vice versa) is not evidence of anything, so the alarm stays at its
+   * unset/null "unknown" value rather than guessing.
+   */
+  private updateDriverUnbuckledAlarm(): void {
+    if (
+      this.driverSeatOccupied === undefined ||
+      this.driverSeatBeltUnlatched === undefined
+    ) {
+      return;
+    }
+    this.update(
+      "alarm_generic.driver_unbuckled",
+      this.driverSeatOccupied && this.driverSeatBeltUnlatched,
+    );
   }
 
   /**
@@ -815,6 +843,34 @@ export default class VehicleDevice extends TeslemetryDevice {
     // behavior when it hasn't.
     this.onSignal("LocatedAtHome", (value) => this.handleLocatedAtHome(value));
     this.onSignal("LocatedAtWork", (value) => this.handleLocatedAtWork(value));
+
+    // Raw coordinates, gated on the same vehicle_location scope as the
+    // presence signals above - if it isn't granted, Location never arrives
+    // and measure_latitude/measure_longitude just stay at their unset/null
+    // value.
+    this.onSignal("Location", (value) => {
+      if (!value) return;
+      this.update("measure_latitude", value.latitude);
+      this.update("measure_longitude", value.longitude);
+    });
+
+    // Driver seat occupancy/belt. DriverSeatBelt reports latched/unlatched
+    // buckle status, not "belt fastened" - Unknown/Faulted readings are
+    // ignored rather than treated as either state. See
+    // updateDriverUnbuckledAlarm() for why the alarm needs both signals.
+    this.onSignal("DriverSeatOccupied", (value) => {
+      if (value === undefined || value === null) return;
+      this.update("driver_seat_occupied", value);
+      this.driverSeatOccupied = value;
+      this.updateDriverUnbuckledAlarm();
+    });
+    this.onSignal("DriverSeatBelt", (value) => {
+      if (value !== "BuckleStatusLatched" && value !== "BuckleStatusUnlatched") {
+        return;
+      }
+      this.driverSeatBeltUnlatched = value === "BuckleStatusUnlatched";
+      this.updateDriverUnbuckledAlarm();
+    });
 
     // Guest Mode
     this.onSignal("GuestModeEnabled", (value) =>

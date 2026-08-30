@@ -251,3 +251,13 @@ test("update() logs a rejected capability write and does not fire a trigger", as
   assert.deepEqual(loggedErrors, [[writeError]]);
   assert.deepEqual(triggerCalls, []);
 });
+
+test("update() fires gear_changed with the new gear on a real transition", async () => {
+  const { stub, triggerCalls } = createDeviceStub({ gear: "P" });
+
+  await stub.update("gear", "D");
+
+  assert.deepEqual(triggerCalls, [
+    { cardId: "gear_changed", tokens: { gear: "D" } },
+  ]);
+});

@@ -3707,6 +3707,81 @@
         ]
       },
       {
+        "id": "gear_changed",
+        "title": {
+          "en": "The gear has changed"
+        },
+        "tokens": [
+          {
+            "name": "gear",
+            "type": "string",
+            "title": {
+              "en": "Gear"
+            },
+            "example": {
+              "en": "D"
+            }
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.driver_unbuckled_true",
+        "title": {
+          "en": "The driver is unbuckled",
+          "nl": "De bestuurder is niet vastgemaakt",
+          "da": "Føreren er ikke fastspændt",
+          "de": "Der Fahrer ist nicht angeschnallt",
+          "es": "El conductor no tiene el cinturón abrochado",
+          "fr": "Le conducteur n'est pas attaché",
+          "it": "Il conducente non è allacciato",
+          "no": "Føreren er ikke fastspent",
+          "sv": "Föraren är inte fastspänd",
+          "pl": "Kierowca nie ma zapiętych pasów",
+          "ru": "Водитель не пристёгнут",
+          "ko": "운전자가 안전벨트를 매지 않았습니다",
+          "ar": "السائق غير مربوط بحزام الأمان"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.driver_unbuckled_false",
+        "title": {
+          "en": "The driver buckled up or the seat is now empty",
+          "nl": "De bestuurder heeft de gordel vastgemaakt of de stoel is nu leeg",
+          "da": "Føreren har spændt selen, eller sædet er nu tomt",
+          "de": "Der Fahrer hat sich angeschnallt oder der Sitz ist jetzt leer",
+          "es": "El conductor se abrochó el cinturón o el asiento ahora está vacío",
+          "fr": "Le conducteur a attaché sa ceinture ou le siège est maintenant vide",
+          "it": "Il conducente si è allacciato o il sedile ora è vuoto",
+          "no": "Føreren har festet beltet, eller setet er nå tomt",
+          "sv": "Föraren har spänt fast sig eller sätet är nu tomt",
+          "pl": "Kierowca zapiął pasy lub fotel jest teraz pusty",
+          "ru": "Водитель пристегнулся, или сиденье теперь пусто",
+          "ko": "운전자가 안전벨트를 맸거나 좌석이 비었습니다",
+          "ar": "قام السائق بربط الحزام أو أصبح المقعد فارغًا الآن"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          }
+        ]
+      },
+      {
         "id": "alarm_generic.fault_true",
         "title": {
           "en": "A fault has been detected"
@@ -5541,6 +5616,80 @@
                 }
               }
             ]
+          }
+        ]
+      },
+      {
+        "id": "gear_is",
+        "title": {
+          "en": "Gear is"
+        },
+        "titleFormatted": {
+          "en": "Gear is [[gear]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
+          },
+          {
+            "type": "dropdown",
+            "name": "gear",
+            "title": {
+              "en": "Gear"
+            },
+            "values": [
+              {
+                "id": "P",
+                "label": {
+                  "en": "Park"
+                }
+              },
+              {
+                "id": "R",
+                "label": {
+                  "en": "Reverse"
+                }
+              },
+              {
+                "id": "N",
+                "label": {
+                  "en": "Neutral"
+                }
+              },
+              {
+                "id": "D",
+                "label": {
+                  "en": "Drive"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "alarm_generic.driver_unbuckled",
+        "title": {
+          "en": "The driver is !{{unbuckled|buckled up or the seat is empty}}",
+          "nl": "De bestuurder is !{{niet vastgemaakt|vastgemaakt of de stoel is leeg}}",
+          "da": "Føreren er !{{ikke fastspændt|fastspændt, eller sædet er tomt}}",
+          "de": "Der Fahrer ist !{{nicht angeschnallt|angeschnallt oder der Sitz ist leer}}",
+          "es": "El conductor !{{no tiene el cinturón abrochado|tiene el cinturón abrochado o el asiento está vacío}}",
+          "fr": "Le conducteur !{{n'est pas attaché|est attaché ou le siège est vide}}",
+          "it": "Il conducente !{{non è allacciato|è allacciato o il sedile è vuoto}}",
+          "no": "Føreren er !{{ikke fastspent|fastspent, eller setet er tomt}}",
+          "sv": "Föraren är !{{inte fastspänd|fastspänd eller sätet är tomt}}",
+          "pl": "Kierowca !{{nie ma zapiętych pasów|ma zapięte pasy lub fotel jest pusty}}",
+          "ru": "Водитель !{{не пристёгнут|пристёгнут, или сиденье пусто}}",
+          "ko": "운전자가 !{{안전벨트를 매지 않음|안전벨트를 맸거나 좌석이 비어 있음}}",
+          "ar": "السائق !{{غير مربوط بالحزام|مربوط بالحزام أو المقعد فارغ}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=vehicle"
           }
         ]
       },
@@ -9760,7 +9909,11 @@
         "measure_voltage.brick_max",
         "measure_voltage.brick_min",
         "measure_temperature.module_max",
-        "measure_temperature.module_min"
+        "measure_temperature.module_min",
+        "driver_seat_occupied",
+        "alarm_generic.driver_unbuckled",
+        "measure_latitude",
+        "measure_longitude"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -10844,6 +10997,38 @@
           "desc": {
             "en": "Lowest temperature reported across the HV battery's modules. Diagnostic only."
           }
+        },
+        "alarm_generic.driver_unbuckled": {
+          "title": {
+            "en": "Driver Unbuckled",
+            "nl": "Bestuurder Niet Vastgemaakt",
+            "da": "Fører Ikke Fastspændt",
+            "de": "Fahrer Nicht Angeschnallt",
+            "es": "Conductor Sin Cinturón",
+            "fr": "Conducteur Non Attaché",
+            "it": "Conducente Senza Cintura",
+            "no": "Fører Ikke Fastspent",
+            "sv": "Förare Ej Fastspänd",
+            "pl": "Kierowca Bez Pasów",
+            "ru": "Водитель не пристёгнут",
+            "ko": "운전자 미착용",
+            "ar": "السائق غير مربوط بالحزام"
+          },
+          "desc": {
+            "en": "On when the driver's seat is occupied and the seatbelt is not fastened. This is an alarm, not a belt-fastened status - it stays off both when the belt is buckled and when the seat is empty.",
+            "nl": "Aan wanneer de bestuurdersstoel bezet is en de gordel niet is vastgemaakt. Dit is een alarm, geen 'gordel vast'-status - het blijft uit zowel wanneer de gordel vast zit als wanneer de stoel leeg is.",
+            "da": "Til, når førersædet er optaget, og selen ikke er spændt. Dette er en alarm, ikke en 'sele fastspændt'-status - den forbliver fra, både når selen er spændt, og når sædet er tomt.",
+            "de": "Ein, wenn der Fahrersitz belegt ist und der Sicherheitsgurt nicht angelegt ist. Dies ist ein Alarm, kein Status für 'Gurt angelegt' - er bleibt aus, sowohl wenn der Gurt angelegt ist als auch wenn der Sitz leer ist.",
+            "es": "Activo cuando el asiento del conductor está ocupado y el cinturón no está abrochado. Esto es una alarma, no un estado de 'cinturón abrochado' - permanece apagado tanto cuando el cinturón está abrochado como cuando el asiento está vacío.",
+            "fr": "Activé lorsque le siège conducteur est occupé et que la ceinture n'est pas attachée. Il s'agit d'une alarme, pas d'un statut « ceinture attachée » - elle reste désactivée aussi bien lorsque la ceinture est attachée que lorsque le siège est vide.",
+            "it": "Attivo quando il sedile del conducente è occupato e la cintura non è allacciata. Si tratta di un allarme, non di uno stato di 'cintura allacciata' - resta disattivato sia quando la cintura è allacciata sia quando il sedile è vuoto.",
+            "no": "På når førersetet er opptatt og setebeltet ikke er festet. Dette er en alarm, ikke en 'belte festet'-status - den forblir av både når beltet er festet og når setet er tomt.",
+            "sv": "På när förarsätet är upptaget och säkerhetsbältet inte är fastspänt. Detta är ett larm, inte en status för 'bälte fastspänt' - det förblir av både när bältet är fastspänt och när sätet är tomt.",
+            "pl": "Włączone, gdy fotel kierowcy jest zajęty, a pas bezpieczeństwa nie jest zapięty. To jest alarm, a nie status 'pas zapięty' - pozostaje wyłączony zarówno gdy pas jest zapięty, jak i gdy fotel jest pusty.",
+            "ru": "Активно, когда место водителя занято, а ремень безопасности не пристёгнут. Это сигнал тревоги, а не статус 'ремень пристёгнут' - он остаётся неактивным как при пристёгнутом ремне, так и при пустом сиденье.",
+            "ko": "운전석에 사람이 있고 안전벨트를 매지 않았을 때 켜집니다. 이는 '벨트 착용' 상태가 아니라 경고이며, 벨트를 맸을 때와 좌석이 비어 있을 때 모두 꺼진 상태로 유지됩니다.",
+            "ar": "يتم التفعيل عندما يكون مقعد السائق مشغولاً وحزام الأمان غير مربوط. هذا إنذار وليس حالة 'الحزام مربوط' - يبقى متوقفًا سواء عند ربط الحزام أو عندما يكون المقعد فارغًا."
+          }
         }
       },
       "id": "vehicle"
@@ -11381,6 +11566,27 @@
         }
       ]
     },
+    "driver_seat_occupied": {
+      "type": "boolean",
+      "title": {
+        "en": "Driver Seat Occupied",
+        "nl": "Bestuurdersstoel Bezet",
+        "da": "Førersæde Optaget",
+        "de": "Fahrersitz Belegt",
+        "es": "Asiento del Conductor Ocupado",
+        "fr": "Siège Conducteur Occupé",
+        "it": "Sedile Conducente Occupato",
+        "no": "Førersete Opptatt",
+        "sv": "Förarsäte Upptaget",
+        "pl": "Fotel Kierowcy Zajęty",
+        "ru": "Место водителя занято",
+        "ko": "운전석 착석 감지",
+        "ar": "مقعد السائق مشغول"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
     "gear": {
       "icon": "/assets/capabilities/gear.svg",
       "type": "enum",
@@ -11638,6 +11844,50 @@
           }
         }
       ]
+    },
+    "measure_latitude": {
+      "type": "number",
+      "title": {
+        "en": "Latitude",
+        "nl": "Breedtegraad",
+        "da": "Breddegrad",
+        "de": "Breitengrad",
+        "es": "Latitud",
+        "fr": "Latitude",
+        "it": "Latitudine",
+        "no": "Breddegrad",
+        "sv": "Latitud",
+        "pl": "Szerokość geograficzna",
+        "ru": "Широта",
+        "ko": "위도",
+        "ar": "خط العرض"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "decimals": 6
+    },
+    "measure_longitude": {
+      "type": "number",
+      "title": {
+        "en": "Longitude",
+        "nl": "Lengtegraad",
+        "da": "Længdegrad",
+        "de": "Längengrad",
+        "es": "Longitud",
+        "fr": "Longitude",
+        "it": "Longitudine",
+        "no": "Lengdegrad",
+        "sv": "Longitud",
+        "pl": "Długość geograficzna",
+        "ru": "Долгота",
+        "ko": "경도",
+        "ar": "خط الطول"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "decimals": 6
     },
     "measure_pressure": {
       "icon": "/assets/capabilities/measure_pressure.svg",

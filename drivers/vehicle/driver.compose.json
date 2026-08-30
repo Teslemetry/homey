@@ -122,7 +122,11 @@
     "measure_voltage.brick_max",
     "measure_voltage.brick_min",
     "measure_temperature.module_max",
-    "measure_temperature.module_min"
+    "measure_temperature.module_min",
+    "driver_seat_occupied",
+    "alarm_generic.driver_unbuckled",
+    "measure_latitude",
+    "measure_longitude"
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {
@@ -1205,6 +1209,38 @@
       },
       "desc": {
         "en": "Lowest temperature reported across the HV battery's modules. Diagnostic only."
+      }
+    },
+    "alarm_generic.driver_unbuckled": {
+      "title": {
+        "en": "Driver Unbuckled",
+        "nl": "Bestuurder Niet Vastgemaakt",
+        "da": "Fører Ikke Fastspændt",
+        "de": "Fahrer Nicht Angeschnallt",
+        "es": "Conductor Sin Cinturón",
+        "fr": "Conducteur Non Attaché",
+        "it": "Conducente Senza Cintura",
+        "no": "Fører Ikke Fastspent",
+        "sv": "Förare Ej Fastspänd",
+        "pl": "Kierowca Bez Pasów",
+        "ru": "Водитель не пристёгнут",
+        "ko": "운전자 미착용",
+        "ar": "السائق غير مربوط بالحزام"
+      },
+      "desc": {
+        "en": "On when the driver's seat is occupied and the seatbelt is not fastened. This is an alarm, not a belt-fastened status - it stays off both when the belt is buckled and when the seat is empty.",
+        "nl": "Aan wanneer de bestuurdersstoel bezet is en de gordel niet is vastgemaakt. Dit is een alarm, geen 'gordel vast'-status - het blijft uit zowel wanneer de gordel vast zit als wanneer de stoel leeg is.",
+        "da": "Til, når førersædet er optaget, og selen ikke er spændt. Dette er en alarm, ikke en 'sele fastspændt'-status - den forbliver fra, både når selen er spændt, og når sædet er tomt.",
+        "de": "Ein, wenn der Fahrersitz belegt ist und der Sicherheitsgurt nicht angelegt ist. Dies ist ein Alarm, kein Status für 'Gurt angelegt' - er bleibt aus, sowohl wenn der Gurt angelegt ist als auch wenn der Sitz leer ist.",
+        "es": "Activo cuando el asiento del conductor está ocupado y el cinturón no está abrochado. Esto es una alarma, no un estado de 'cinturón abrochado' - permanece apagado tanto cuando el cinturón está abrochado como cuando el asiento está vacío.",
+        "fr": "Activé lorsque le siège conducteur est occupé et que la ceinture n'est pas attachée. Il s'agit d'une alarme, pas d'un statut « ceinture attachée » - elle reste désactivée aussi bien lorsque la ceinture est attachée que lorsque le siège est vide.",
+        "it": "Attivo quando il sedile del conducente è occupato e la cintura non è allacciata. Si tratta di un allarme, non di uno stato di 'cintura allacciata' - resta disattivato sia quando la cintura è allacciata sia quando il sedile è vuoto.",
+        "no": "På når førersetet er opptatt og setebeltet ikke er festet. Dette er en alarm, ikke en 'belte festet'-status - den forblir av både når beltet er festet og når setet er tomt.",
+        "sv": "På när förarsätet är upptaget och säkerhetsbältet inte är fastspänt. Detta är ett larm, inte en status för 'bälte fastspänt' - det förblir av både när bältet är fastspänt och när sätet är tomt.",
+        "pl": "Włączone, gdy fotel kierowcy jest zajęty, a pas bezpieczeństwa nie jest zapięty. To jest alarm, a nie status 'pas zapięty' - pozostaje wyłączony zarówno gdy pas jest zapięty, jak i gdy fotel jest pusty.",
+        "ru": "Активно, когда место водителя занято, а ремень безопасности не пристёгнут. Это сигнал тревоги, а не статус 'ремень пристёгнут' - он остаётся неактивным как при пристёгнутом ремне, так и при пустом сиденье.",
+        "ko": "운전석에 사람이 있고 안전벨트를 매지 않았을 때 켜집니다. 이는 '벨트 착용' 상태가 아니라 경고이며, 벨트를 맸을 때와 좌석이 비어 있을 때 모두 꺼진 상태로 유지됩니다.",
+        "ar": "يتم التفعيل عندما يكون مقعد السائق مشغولاً وحزام الأمان غير مربوط. هذا إنذار وليس حالة 'الحزام مربوط' - يبقى متوقفًا سواء عند ربط الحزام أو عندما يكون المقعد فارغًا."
       }
     }
   }
