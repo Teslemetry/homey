@@ -1,0 +1,22 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Longitude",
+    "nl": "Lengtegraad",
+    "da": "Længdegrad",
+    "de": "Längengrad",
+    "es": "Longitud",
+    "fr": "Longitude",
+    "it": "Longitudine",
+    "no": "Lengdegrad",
+    "sv": "Longitud",
+    "pl": "Długość geograficzna",
+    "ru": "Долгота",
+    "ko": "경도",
+    "ar": "خط الطول"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "decimals": 6
+}

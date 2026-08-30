@@ -653,6 +653,60 @@
           }
         }
       ]
+    },
+    {
+      "id": "gear_changed",
+      "title": {
+        "en": "The gear has changed"
+      },
+      "tokens": [
+        {
+          "name": "gear",
+          "type": "string",
+          "title": {
+            "en": "Gear"
+          },
+          "example": {
+            "en": "D"
+          }
+        }
+      ]
+    },
+    {
+      "id": "alarm_generic.driver_unbuckled_true",
+      "title": {
+        "en": "The driver is unbuckled",
+        "nl": "De bestuurder is niet vastgemaakt",
+        "da": "Føreren er ikke fastspændt",
+        "de": "Der Fahrer ist nicht angeschnallt",
+        "es": "El conductor no tiene el cinturón abrochado",
+        "fr": "Le conducteur n'est pas attaché",
+        "it": "Il conducente non è allacciato",
+        "no": "Føreren er ikke fastspent",
+        "sv": "Föraren är inte fastspänd",
+        "pl": "Kierowca nie ma zapiętych pasów",
+        "ru": "Водитель не пристёгнут",
+        "ko": "운전자가 안전벨트를 매지 않았습니다",
+        "ar": "السائق غير مربوط بحزام الأمان"
+      }
+    },
+    {
+      "id": "alarm_generic.driver_unbuckled_false",
+      "title": {
+        "en": "The driver buckled up or the seat is now empty",
+        "nl": "De bestuurder heeft de gordel vastgemaakt of de stoel is nu leeg",
+        "da": "Føreren har spændt selen, eller sædet er nu tomt",
+        "de": "Der Fahrer hat sich angeschnallt oder der Sitz ist jetzt leer",
+        "es": "El conductor se abrochó el cinturón o el asiento ahora está vacío",
+        "fr": "Le conducteur a attaché sa ceinture ou le siège est maintenant vide",
+        "it": "Il conducente si è allacciato o il sedile ora è vuoto",
+        "no": "Føreren har festet beltet, eller setet er nå tomt",
+        "sv": "Föraren har spänt fast sig eller sätet är nu tomt",
+        "pl": "Kierowca zapiął pasy lub fotel jest teraz pusty",
+        "ru": "Водитель пристегнулся, или сиденье теперь пусто",
+        "ko": "운전자가 안전벨트를 맸거나 좌석이 비었습니다",
+        "ar": "قام السائق بربط الحزام أو أصبح المقعد فارغًا الآن"
+      }
     }
   ],
   "conditions": [
@@ -1011,6 +1065,68 @@
           ]
         }
       ]
+    },
+    {
+      "id": "gear_is",
+      "title": {
+        "en": "Gear is"
+      },
+      "titleFormatted": {
+        "en": "Gear is [[gear]]"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "gear",
+          "title": {
+            "en": "Gear"
+          },
+          "values": [
+            {
+              "id": "P",
+              "label": {
+                "en": "Park"
+              }
+            },
+            {
+              "id": "R",
+              "label": {
+                "en": "Reverse"
+              }
+            },
+            {
+              "id": "N",
+              "label": {
+                "en": "Neutral"
+              }
+            },
+            {
+              "id": "D",
+              "label": {
+                "en": "Drive"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "alarm_generic.driver_unbuckled",
+      "title": {
+        "en": "The driver is !{{unbuckled|buckled up or the seat is empty}}",
+        "nl": "De bestuurder is !{{niet vastgemaakt|vastgemaakt of de stoel is leeg}}",
+        "da": "Føreren er !{{ikke fastspændt|fastspændt, eller sædet er tomt}}",
+        "de": "Der Fahrer ist !{{nicht angeschnallt|angeschnallt oder der Sitz ist leer}}",
+        "es": "El conductor !{{no tiene el cinturón abrochado|tiene el cinturón abrochado o el asiento está vacío}}",
+        "fr": "Le conducteur !{{n'est pas attaché|est attaché ou le siège est vide}}",
+        "it": "Il conducente !{{non è allacciato|è allacciato o il sedile è vuoto}}",
+        "no": "Føreren er !{{ikke fastspent|fastspent, eller setet er tomt}}",
+        "sv": "Föraren är !{{inte fastspänd|fastspänd eller sätet är tomt}}",
+        "pl": "Kierowca !{{nie ma zapiętych pasów|ma zapięte pasy lub fotel jest pusty}}",
+        "ru": "Водитель !{{не пристёгнут|пристёгнут, или сиденье пусто}}",
+        "ko": "운전자가 !{{안전벨트를 매지 않음|안전벨트를 맸거나 좌석이 비어 있음}}",
+        "ar": "السائق !{{غير مربوط بالحزام|مربوط بالحزام أو المقعد فارغ}}"
+      }
     }
   ],
   "actions": [

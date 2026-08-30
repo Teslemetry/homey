@@ -137,6 +137,7 @@ export default class TeslemetryDevice extends Homey.Device {
     "powershare_status",
     "powershare_type",
     "powershare_stop_reason",
+    "gear",
   ]);
 
   /**

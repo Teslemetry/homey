@@ -551,6 +551,15 @@ export default class TeslemetryApp extends Homey.App {
       );
 
     this.homey.flow
+      .getConditionCard('gear_is')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; gear: string }) => {
+          if (!args.device) return false;
+          return args.device.getCapabilityValue('gear') === args.gear;
+        },
+      );
+
+    this.homey.flow
       .getConditionCard('cop_mode_is')
       .registerRunListener(
         async (args: { device?: VehicleDevice; mode: string }) => {
