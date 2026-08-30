@@ -52,7 +52,9 @@
   "category": [
     "energy"
   ],
-  "permissions": [],
+  "permissions": [
+    "homey:manager:geolocation"
+  ],
   "images": {
     "small": "/assets/images/small.png",
     "large": "/assets/images/large.png",
@@ -4173,6 +4175,35 @@
           }
         ],
         "id": "cop_temperature_limit_is"
+      },
+      {
+        "title": {
+          "en": "Distance from home comparison"
+        },
+        "titleFormatted": {
+          "en": "[[device]] is within [[radius]] km of home"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_distance.home",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "radius",
+            "title": {
+              "en": "Radius (km)"
+            },
+            "min": 0,
+            "max": 1000,
+            "step": 0.1
+          }
+        ],
+        "id": "distance_from_home"
       },
       {
         "title": {
@@ -9913,7 +9944,8 @@
         "driver_seat_occupied",
         "alarm_generic.driver_unbuckled",
         "measure_latitude",
-        "measure_longitude"
+        "measure_longitude",
+        "measure_distance.home"
       ],
       "capabilitiesOptions": {
         "measure_distance.range": {
@@ -10785,6 +10817,26 @@
             "ru": "Расстояние на FSD с момента сброса",
             "ko": "FSD 재설정 이후 주행 거리",
             "ar": "مسافة القيادة الذاتية الكاملة منذ إعادة الضبط"
+          },
+          "units": {
+            "en": "km"
+          }
+        },
+        "measure_distance.home": {
+          "title": {
+            "en": "Distance from Home",
+            "nl": "Afstand tot Huis",
+            "da": "Afstand fra Hjem",
+            "de": "Entfernung von Zuhause",
+            "es": "Distancia desde Casa",
+            "fr": "Distance depuis la Maison",
+            "it": "Distanza da Casa",
+            "no": "Avstand fra Hjem",
+            "sv": "Avstånd från Hemmet",
+            "pl": "Odległość od Domu",
+            "ru": "Расстояние от дома",
+            "ko": "집으로부터의 거리",
+            "ar": "المسافة من المنزل"
           },
           "units": {
             "en": "km"
@@ -11864,7 +11916,7 @@
       },
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor",
+      "uiComponent": null,
       "decimals": 6
     },
     "measure_longitude": {
@@ -11886,7 +11938,7 @@
       },
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor",
+      "uiComponent": null,
       "decimals": 6
     },
     "measure_pressure": {

@@ -237,6 +237,36 @@ test("powershare_status_is matches the Cybertruck's current Powershare status", 
   );
 });
 
+test("distance_from_home is true only when the known distance is within the requested radius", async () => {
+  const { conditionListeners } = createAppStub();
+  const device = {
+    getCapabilityValue: (cap: string) =>
+      cap === "measure_distance.home" ? 5 : undefined,
+  };
+
+  assert.equal(
+    await conditionListeners["distance_from_home"]({ device, radius: 10 }),
+    true,
+  );
+  assert.equal(
+    await conditionListeners["distance_from_home"]({ device, radius: 1 }),
+    false,
+  );
+});
+
+test("distance_from_home fails closed when the distance is unknown", async () => {
+  const { conditionListeners } = createAppStub();
+  const device = {
+    getCapabilityValue: (cap: string) =>
+      cap === "measure_distance.home" ? null : undefined,
+  };
+
+  assert.equal(
+    await conditionListeners["distance_from_home"]({ device, radius: 1000 }),
+    false,
+  );
+});
+
 // --- device trigger predicates: a stale device must fail closed (false) ---
 
 test("battery_below's trigger predicate returns false instead of throwing when the device is a stale/missing runtime reference", async () => {
