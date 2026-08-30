@@ -126,7 +126,8 @@
     "driver_seat_occupied",
     "alarm_generic.driver_unbuckled",
     "measure_latitude",
-    "measure_longitude"
+    "measure_longitude",
+    "measure_distance.home"
   ],
   "capabilitiesOptions": {
     "measure_distance.range": {
@@ -998,6 +999,26 @@
         "ru": "Расстояние на FSD с момента сброса",
         "ko": "FSD 재설정 이후 주행 거리",
         "ar": "مسافة القيادة الذاتية الكاملة منذ إعادة الضبط"
+      },
+      "units": {
+        "en": "km"
+      }
+    },
+    "measure_distance.home": {
+      "title": {
+        "en": "Distance from Home",
+        "nl": "Afstand tot Huis",
+        "da": "Afstand fra Hjem",
+        "de": "Entfernung von Zuhause",
+        "es": "Distancia desde Casa",
+        "fr": "Distance depuis la Maison",
+        "it": "Distanza da Casa",
+        "no": "Avstand fra Hjem",
+        "sv": "Avstånd från Hemmet",
+        "pl": "Odległość od Domu",
+        "ru": "Расстояние от дома",
+        "ko": "집으로부터의 거리",
+        "ar": "المسافة من المنزل"
       },
       "units": {
         "en": "km"

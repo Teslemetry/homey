@@ -613,6 +613,24 @@ export default class TeslemetryApp extends Homey.App {
         },
       );
 
+    // measure_distance.home is null whenever either position is unknown
+    // (see VehicleDevice.updateDistanceFromHome) - fail closed rather than
+    // let a stale/missing distance read as "within range".
+    this.homey.flow
+      .getConditionCard('distance_from_home')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; radius: number }) => {
+          if (!args.device) return false;
+          const distance = args.device.getCapabilityValue(
+            'measure_distance.home',
+          );
+          if (typeof distance !== 'number' || !Number.isFinite(distance)) {
+            return false;
+          }
+          return distance <= args.radius;
+        },
+      );
+
     // Vehicle trigger cards with per-card arguments need a run listener to
     // decide whether *this* card's threshold was actually crossed; cards
     // without args default to firing whenever .trigger() is called.

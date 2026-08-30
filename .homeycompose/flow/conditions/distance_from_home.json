@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Distance from home comparison"
+  },
+  "titleFormatted": {
+    "en": "[[device]] is within [[radius]] km of home"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_distance.home",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "radius",
+      "title": {
+        "en": "Radius (km)"
+      },
+      "min": 0,
+      "max": 1000,
+      "step": 0.1
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import {
 } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 import { checkVehicleEligibility } from "../../lib/TeslemetryDriver.js";
+import haversineDistanceKm from "../../lib/haversineDistance.js";
 import {
   isCapabilitySupported,
   filterVehicleCapabilities,
@@ -852,6 +853,7 @@ export default class VehicleDevice extends TeslemetryDevice {
       if (!value) return;
       this.update("measure_latitude", value.latitude);
       this.update("measure_longitude", value.longitude);
+      this.updateDistanceFromHome(value.latitude, value.longitude);
     });
 
     // Driver seat occupancy/belt. DriverSeatBelt reports latched/unlatched
@@ -1399,6 +1401,56 @@ export default class VehicleDevice extends TeslemetryDevice {
   private handleLocatedAtWork(value: boolean | null | undefined): void {
     if (value === undefined || value === null) return;
     this.update("alarm_generic.at_work", value);
+  }
+
+  /**
+   * measure_distance.home: straight-line distance between the vehicle's
+   * last-reported Location and the Homey hub's own geolocation
+   * (`homey:manager:geolocation`). Written as null - never 0 or a stale
+   * figure - whenever either side is unknown, since a confidently wrong
+   * zero would fire a gate automation.
+   */
+  private updateDistanceFromHome(
+    vehicleLatitude: number | undefined | null,
+    vehicleLongitude: number | undefined | null,
+  ): void {
+    const homeyLocation = this.getHomeyLocation();
+    if (
+      typeof vehicleLatitude !== "number" ||
+      typeof vehicleLongitude !== "number" ||
+      !Number.isFinite(vehicleLatitude) ||
+      !Number.isFinite(vehicleLongitude) ||
+      !homeyLocation
+    ) {
+      this.update("measure_distance.home", null);
+      return;
+    }
+    this.update(
+      "measure_distance.home",
+      haversineDistanceKm(
+        { latitude: vehicleLatitude, longitude: vehicleLongitude },
+        homeyLocation,
+      ),
+    );
+  }
+
+  private getHomeyLocation(): { latitude: number; longitude: number } | null {
+    try {
+      const latitude = this.homey.geolocation.getLatitude();
+      const longitude = this.homey.geolocation.getLongitude();
+      if (
+        typeof latitude !== "number" ||
+        typeof longitude !== "number" ||
+        !Number.isFinite(latitude) ||
+        !Number.isFinite(longitude)
+      ) {
+        return null;
+      }
+      return { latitude, longitude };
+    } catch (error) {
+      this.error(error);
+      return null;
+    }
   }
 
   private triggerFlow(

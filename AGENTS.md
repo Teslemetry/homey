@@ -539,7 +539,31 @@ arrives and both capabilities stay an honest unset/`null`, exactly like
 `alarm_presence`/`alarm_generic.at_work`. Never fall back to `{ latitude: 0,
 longitude: 0 }` here (that internal-only default used for window-control
 math is a real, misleading coordinate) - only write when a genuine
-`Location` value arrives.
+`Location` value arrives. Homey has no location/GPS/geofence primitive of
+its own, so these two stay off the device tile (`"uiComponent": null` in
+`.homeycompose/capabilities/measure_latitude.json`/`measure_longitude.json`
+- readable via API/Insights/Flow, just not shown) rather than being
+displayed as two standalone numbers no flow card can act on; see Distance
+From Home below for the derived value that makes them flow-usable.
+
+### Distance From Home (`measure_distance.home`, `distance_from_home` condition)
+
+Straight-line (haversine, `lib/haversineDistance.ts`) distance between the
+vehicle's last-reported `Location` and the Homey hub's own position
+(`this.homey.geolocation`, requiring the `homey:manager:geolocation`
+permission - this app's only declared permission). `VehicleDevice.
+updateDistanceFromHome()` writes `null`, never `0` or a stale figure,
+whenever either side is unknown (no `Location` yet, or the hub has no
+configured/permitted geolocation) - a confidently wrong zero would fire a
+gate automation. It only recomputes when a live `Location` event arrives,
+so it does not track a later change to the hub's own position on its own.
+The `distance_from_home` Flow condition (driver-scoped, user-supplied
+`radius` in km) fails closed (`false`) whenever the capability reads `null`
+rather than treating "unknown" as "not within range" being ambiguous with
+"actually far away". This is a derived value, not a Tesla-reported signal -
+`alarm_presence`/`alarm_generic.at_work` (At-Home/At-Work above) remain the
+authoritative answer to "is it home"; this complements them for automations
+that need an actual distance/radius.
 
 ### Driver Seat Occupancy & Unbuckled Alarm (`driver_seat_occupied`, `alarm_generic.driver_unbuckled`)
 
