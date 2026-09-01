@@ -114,6 +114,31 @@ test("MinutesToArrival fires minutes_to_arrival_above/below on a real change, no
   assert.deepEqual(triggerCalls[0].state, { previous: 20, current: 5 });
 });
 
+test("MilesToArrival fires distance_to_arrival_above/below on a real change, not on the first reading", async () => {
+  const { stub, sse, capabilities, triggerCalls } = createDeviceStub({
+    "measure_distance.arrival": undefined,
+  });
+  await stub.onInit();
+
+  sse.data.emit("MilesToArrival", 10);
+  await flush();
+  assert.equal(capabilities["measure_distance.arrival"], 10 * 1.609344);
+  assert.deepEqual(triggerCalls, []);
+
+  sse.data.emit("MilesToArrival", 2);
+  await flush();
+  assert.equal(capabilities["measure_distance.arrival"], 2 * 1.609344);
+  assert.deepEqual(
+    triggerCalls.map((c) => c.cardId).sort(),
+    ["distance_to_arrival_above", "distance_to_arrival_below"],
+  );
+  assert.deepEqual(triggerCalls[0].tokens, { kilometers: 2 * 1.609344 });
+  assert.deepEqual(triggerCalls[0].state, {
+    previous: 10 * 1.609344,
+    current: 2 * 1.609344,
+  });
+});
+
 test("RouteTrafficMinutesDelay fires route_traffic_delay_above/below on a real change, not on the first reading", async () => {
   const { stub, sse, capabilities, triggerCalls } = createDeviceStub({
     route_traffic_delay: undefined,

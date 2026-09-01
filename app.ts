@@ -669,6 +669,11 @@ export default class TeslemetryApp extends Homey.App {
       'minutes',
     );
     this.registerThresholdCards(
+      'distance_to_arrival',
+      'measure_distance.arrival',
+      'kilometers',
+    );
+    this.registerThresholdCards(
       'route_traffic_delay',
       'route_traffic_delay',
       'minutes',
