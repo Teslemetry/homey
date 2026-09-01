@@ -451,7 +451,13 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
     this.onSignal("EstBatteryRange", (value) => {
       if (value !== undefined && value !== null) {
-        this.update("measure_distance.range", value * MILES_TO_KILOMETERS);
+        this.updateWithThresholdTriggers(
+          "measure_distance.range",
+          value * MILES_TO_KILOMETERS,
+          "range_remaining_above",
+          "range_remaining_below",
+          "kilometers",
+        );
       }
     });
 
@@ -473,7 +479,13 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.onSignal("ChargeAmps", (value) => this.update("charging_amps", value));
     this.onSignal("TimeToFullCharge", (value) => {
       if (value !== undefined && value !== null) {
-        this.update("time_to_full_charge", value * 60);
+        this.updateWithThresholdTriggers(
+          "time_to_full_charge",
+          value * 60,
+          "time_to_full_charge_above",
+          "time_to_full_charge_below",
+          "minutes",
+        );
       }
     });
     this.onSignal("ScheduledChargingMode", (value) =>
@@ -618,7 +630,13 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("measure_temperature", value),
     );
     this.onSignal("OutsideTemp", (value) =>
-      this.update("measure_temperature.outside", value),
+      this.updateWithThresholdTriggers(
+        "measure_temperature.outside",
+        value,
+        "outside_temperature_above",
+        "outside_temperature_below",
+        "degrees",
+      ),
     );
     this.onSignal("HvacSteeringWheelHeatLevel", (value) =>
       this.update("steering_wheel_heater", String(value)),
@@ -722,28 +740,16 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Tire Pressure (TPMS)
     this.onSignal("TpmsPressureFl", (value) =>
-      this.update(
-        "measure_pressure.fl",
-        value !== undefined && value !== null ? value * ATM_TO_BAR : value,
-      ),
+      this.handleTirePressure("fl", "Front left", value),
     );
     this.onSignal("TpmsPressureFr", (value) =>
-      this.update(
-        "measure_pressure.fr",
-        value !== undefined && value !== null ? value * ATM_TO_BAR : value,
-      ),
+      this.handleTirePressure("fr", "Front right", value),
     );
     this.onSignal("TpmsPressureRl", (value) =>
-      this.update(
-        "measure_pressure.rl",
-        value !== undefined && value !== null ? value * ATM_TO_BAR : value,
-      ),
+      this.handleTirePressure("rl", "Rear left", value),
     );
     this.onSignal("TpmsPressureRr", (value) =>
-      this.update(
-        "measure_pressure.rr",
-        value !== undefined && value !== null ? value * ATM_TO_BAR : value,
-      ),
+      this.handleTirePressure("rr", "Rear right", value),
     );
 
     // HV battery pack diagnostics
@@ -1366,6 +1372,39 @@ export default class VehicleDevice extends TeslemetryDevice {
     ) {
       this.triggerFlow("charge_limit_reached", { battery: value });
     }
+  }
+
+  /**
+   * Updates one tire's measure_pressure.<position> capability (converting
+   * the raw atmospheres reading to bar) and fires the single shared
+   * tire_pressure_below trigger for it.
+   *
+   * All four tires share one trigger card rather than getting a card set
+   * each: twelve near-identical cards would bury the Flow picker for a
+   * value users almost always want to watch as "any tire", and the `tire`
+   * token tells a flow which one actually crossed. Like battery_below, the
+   * card carries a per-flow numeric argument, so it fires on every real
+   * change with {previous, current} state and lets its registerRunListener
+   * in app.ts decide whether that specific card's threshold was crossed.
+   */
+  private handleTirePressure(
+    position: string,
+    tire: string,
+    value: number | undefined | null,
+  ): void {
+    if (value === undefined || value === null) return;
+    const capability = `measure_pressure.${position}`;
+    const bar = value * ATM_TO_BAR;
+    const previous = this.getCapabilityValue(capability) as number | null;
+    this.update(capability, bar);
+    if (previous === null || previous === undefined || previous === bar) {
+      return;
+    }
+    if (!this.isLive()) return;
+    this.homey.flow
+      .getDeviceTriggerCard("tire_pressure_below")
+      .trigger(this, { bar, tire }, { previous, current: bar })
+      .catch(this.error);
   }
 
   /**

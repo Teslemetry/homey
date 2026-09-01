@@ -157,7 +157,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     const onLiveStatus = (event: SseLiveStatus) => {
       const data = event.live_status as LiveStatusResponse;
 
-      this.update("measure_battery", data.percentage_charged);
+      this.handleBatteryLevel(data.percentage_charged);
       this.updateWithThresholdTriggers(
         "measure_power",
         data.battery_power !== undefined ? data.battery_power * -1 : undefined,
@@ -416,6 +416,33 @@ export default class PowerwallDevice extends TeslemetryDevice {
         this.error("Failed to update Powerwall tariff rates", e);
       }
     }, delay);
+  }
+
+  /**
+   * Updates measure_battery and fires the shared battery_below trigger.
+   *
+   * battery_below is deliberately not vehicle-only: its wording ("Battery
+   * level drops below") and its measure_battery device filter apply just as
+   * well to a Powerwall's state of charge, and the battery_level condition
+   * already reached both drivers through that same filter. Without this the
+   * card was visible to Powerwall users but could never fire. Mirrors
+   * VehicleDevice.handleBatteryLevel, minus the vehicle-only
+   * charge_limit_reached branch.
+   */
+  private handleBatteryLevel(value: number | undefined | null): void {
+    if (value === undefined || value === null) return;
+    const previous = this.getCapabilityValue("measure_battery") as
+      | number
+      | null;
+    this.update("measure_battery", value);
+    if (previous === null || previous === undefined || previous === value) {
+      return;
+    }
+    if (!this.isLive()) return;
+    this.homey.flow
+      .getDeviceTriggerCard("battery_below")
+      .trigger(this, { battery: value }, { previous, current: value })
+      .catch(this.error);
   }
 
   private clearTariffRates(): void {

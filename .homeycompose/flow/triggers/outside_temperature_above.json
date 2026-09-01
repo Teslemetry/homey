@@ -1,0 +1,40 @@
+{
+  "title": {
+    "en": "Outside temperature rises above"
+  },
+  "titleFormatted": {
+    "en": "Outside temperature on [[device]] rises above [[degrees]]°C"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_temperature.outside",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "degrees",
+      "title": {
+        "en": "Degrees"
+      },
+      "min": -50,
+      "max": 60,
+      "step": 0.5
+    }
+  ],
+  "tokens": [
+    {
+      "name": "degrees",
+      "type": "number",
+      "title": {
+        "en": "Outside temperature"
+      },
+      "example": {
+        "en": "4"
+      }
+    }
+  ]
+}

@@ -138,6 +138,12 @@ export default class TeslemetryDevice extends Homey.Device {
     "powershare_type",
     "powershare_stop_reason",
     "gear",
+    "wifi_connected",
+    "cellular_connected",
+    "driver_seat_occupied",
+    "connected_vehicle",
+    "navigation_destination",
+    "charging_amps",
   ]);
 
   /**
@@ -151,6 +157,7 @@ export default class TeslemetryDevice extends Homey.Device {
     "off_grid_vehicle_charging_reserve",
     "grid_buy_rate",
     "grid_sell_rate",
+    "charging_amps",
   ]);
 
   async onInit() {

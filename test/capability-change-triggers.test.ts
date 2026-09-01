@@ -261,3 +261,74 @@ test("update() fires gear_changed with the new gear on a real transition", async
     { cardId: "gear_changed", tokens: { gear: "D" } },
   ]);
 });
+
+// --- Tier 3 capabilities: cheap <capability>_changed triggers, no
+// threshold plumbing. Booleans and strings carry their value straight
+// through as the token; charging_amps is numeric, so it also lives in
+// NUMERIC_CHANGE_TRIGGER_CAPABILITIES and must suppress a non-finite token.
+
+test("update() fires the connectivity/occupancy/destination changed triggers with their new value", async () => {
+  for (const [capability, previous, next] of [
+    ["wifi_connected", true, false],
+    ["cellular_connected", false, true],
+    ["driver_seat_occupied", false, true],
+    ["connected_vehicle", "disconnected", "Model 3"],
+    ["navigation_destination", "Home", "Work"],
+    ["charging_amps", 16, 32],
+  ] as Array<[string, unknown, unknown]>) {
+    const { stub, triggerCalls } = createDeviceStub({ [capability]: previous });
+
+    await stub.update(capability, next);
+
+    assert.deepEqual(
+      triggerCalls,
+      [{ cardId: `${capability}_changed`, tokens: { [capability]: next } }],
+      `${capability} did not fire its changed trigger`,
+    );
+  }
+});
+
+test("update() does not fire the new changed triggers on a first reading or an unchanged value", async () => {
+  for (const capability of [
+    "wifi_connected",
+    "cellular_connected",
+    "driver_seat_occupied",
+    "connected_vehicle",
+    "navigation_destination",
+    "charging_amps",
+  ]) {
+    const first = createDeviceStub({ [capability]: null });
+    await first.stub.update(capability, false);
+    assert.deepEqual(first.triggerCalls, [], `${capability} fired on a baseline`);
+
+    const same = createDeviceStub({ [capability]: "x" });
+    await same.stub.update(capability, "x");
+    assert.deepEqual(same.triggerCalls, [], `${capability} fired when unchanged`);
+  }
+});
+
+test("update() writes charging_amps but suppresses its numeric trigger for a non-finite value", async () => {
+  const { stub, triggerCalls } = createDeviceStub({ charging_amps: 16 });
+
+  await stub.update("charging_amps", Number.NaN);
+
+  assert.ok(Number.isNaN(stub.getCapabilityValue("charging_amps") as number));
+  assert.deepEqual(triggerCalls, []);
+});
+
+test("update() clears navigation_destination to an empty string and fires the change", async () => {
+  const { stub, triggerCalls } = createDeviceStub({
+    navigation_destination: "Work",
+  });
+
+  // VehicleDevice maps a cleared destination to "" - a real, meaningful
+  // transition ("navigation ended"), not a suppressed null.
+  await stub.update("navigation_destination", "");
+
+  assert.deepEqual(triggerCalls, [
+    {
+      cardId: "navigation_destination_changed",
+      tokens: { navigation_destination: "" },
+    },
+  ]);
+});

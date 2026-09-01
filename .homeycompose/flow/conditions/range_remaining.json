@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Range comparison"
+  },
+  "titleFormatted": {
+    "en": "Range on [[device]] is above [[kilometers]] km"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_distance.range",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "kilometers",
+      "title": {
+        "en": "Kilometers"
+      },
+      "min": 0,
+      "max": 1000,
+      "step": 1
+    }
+  ]
+}

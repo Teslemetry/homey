@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "WiFi connection has changed"
+  },
+  "titleFormatted": {
+    "en": "WiFi connection on [[device]] has changed"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=wifi_connected",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "wifi_connected",
+      "type": "boolean",
+      "title": {
+        "en": "Connected"
+      },
+      "example": true
+    }
+  ]
+}
