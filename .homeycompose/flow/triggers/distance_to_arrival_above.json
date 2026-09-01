@@ -1,0 +1,40 @@
+{
+  "title": {
+    "en": "Distance to arrival rises above"
+  },
+  "titleFormatted": {
+    "en": "Distance to arrival on [[device]] rises above [[kilometers]] km"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_distance.arrival",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "kilometers",
+      "title": {
+        "en": "Kilometers"
+      },
+      "min": 0,
+      "max": 1000,
+      "step": 0.1
+    }
+  ],
+  "tokens": [
+    {
+      "name": "kilometers",
+      "type": "number",
+      "title": {
+        "en": "Distance to arrival"
+      },
+      "example": {
+        "en": "12"
+      }
+    }
+  ]
+}

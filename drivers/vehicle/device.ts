@@ -815,7 +815,13 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
     this.onSignal("MilesToArrival", (value) => {
       if (value !== undefined && value !== null) {
-        this.update("measure_distance.arrival", value * MILES_TO_KILOMETERS);
+        this.updateWithThresholdTriggers(
+          "measure_distance.arrival",
+          value * MILES_TO_KILOMETERS,
+          "distance_to_arrival_above",
+          "distance_to_arrival_below",
+          "kilometers",
+        );
       }
     });
     this.onSignal("RouteTrafficMinutesDelay", (value) =>
