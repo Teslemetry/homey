@@ -20,6 +20,8 @@ sourceMapSupport.install();
 // accounts with energy sites but no vehicles.
 const SSE_DATA_EVENTS = ['state', 'data', 'connectivity', 'live_status'] as const;
 
+const METERS_PER_SECOND_TO_KMH = 3.6;
+
 /** The four tire pressure subcapabilities the shared tire_pressure condition scans. */
 const TIRE_PRESSURE_CAPABILITIES = [
   'measure_pressure.fl',
@@ -557,6 +559,46 @@ export default class TeslemetryApp extends Homey.App {
           return args.device.getCapabilityValue('tpms_warning') === args.level;
         },
       );
+
+    // Speed cards are km/h; measure_speed is stored in m/s (see
+    // VehicleDevice.handleSpeed, which fires the triggers already converted).
+    this.homey.flow
+      .getConditionCard('vehicle_speed')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; speed: number }) => {
+          if (!args.device) return false;
+          const metersPerSecond = args.device.getCapabilityValue(
+            'measure_speed',
+          ) as number | null;
+          if (typeof metersPerSecond !== 'number') return false;
+          return metersPerSecond * METERS_PER_SECOND_TO_KMH > args.speed;
+        },
+      );
+
+    for (const cardId of ['vehicle_speed_above', 'vehicle_speed_below']) {
+      this.homey.flow
+        .getDeviceTriggerCard(cardId)
+        .registerRunListener(
+          async (
+            args: { device?: VehicleDevice; speed: number },
+            state: { previous: number; current: number },
+          ) => {
+            if (!args.device) return false;
+            return cardId === 'vehicle_speed_above'
+              ? state.previous <= args.speed && state.current > args.speed
+              : state.previous >= args.speed && state.current < args.speed;
+          },
+        );
+    }
+
+    // driver_seat_occupied is a custom boolean capability, so unlike an
+    // alarm_* subcapability it gets no auto-wired is/isn't condition.
+    this.homey.flow
+      .getConditionCard('driver_seat_occupied')
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        if (!args.device) return false;
+        return args.device.getCapabilityValue('driver_seat_occupied') === true;
+      });
 
     this.homey.flow
       .getConditionCard('gear_is')

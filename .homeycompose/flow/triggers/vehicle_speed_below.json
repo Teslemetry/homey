@@ -1,0 +1,40 @@
+{
+  "title": {
+    "en": "Speed drops below"
+  },
+  "titleFormatted": {
+    "en": "Speed of [[device]] drops below [[speed]] km/h"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_speed",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "speed",
+      "title": {
+        "en": "Speed"
+      },
+      "min": 0,
+      "max": 300,
+      "step": 1
+    }
+  ],
+  "tokens": [
+    {
+      "name": "speed",
+      "type": "number",
+      "title": {
+        "en": "Speed"
+      },
+      "example": {
+        "en": "50"
+      }
+    }
+  ]
+}

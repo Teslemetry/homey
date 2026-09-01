@@ -1,0 +1,21 @@
+{
+  "title": {
+    "en": "The driver seat is !{{occupied|empty}}"
+  },
+  "titleFormatted": {
+    "en": "The driver seat of [[device]] is !{{occupied|empty}}"
+  },
+  "hint": {
+    "en": "Whether the vehicle reports someone sitting in the driver's seat. Stays unknown (and this card false) on a vehicle that never reports seat occupancy."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=driver_seat_occupied",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ]
+}

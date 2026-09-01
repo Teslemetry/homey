@@ -2572,6 +2572,88 @@
       },
       {
         "title": {
+          "en": "Speed rises above"
+        },
+        "titleFormatted": {
+          "en": "Speed of [[device]] rises above [[speed]] km/h"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_speed",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "speed",
+            "title": {
+              "en": "Speed"
+            },
+            "min": 0,
+            "max": 300,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "speed",
+            "type": "number",
+            "title": {
+              "en": "Speed"
+            },
+            "example": {
+              "en": "50"
+            }
+          }
+        ],
+        "id": "vehicle_speed_above"
+      },
+      {
+        "title": {
+          "en": "Speed drops below"
+        },
+        "titleFormatted": {
+          "en": "Speed of [[device]] drops below [[speed]] km/h"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_speed",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "speed",
+            "title": {
+              "en": "Speed"
+            },
+            "min": 0,
+            "max": 300,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "speed",
+            "type": "number",
+            "title": {
+              "en": "Speed"
+            },
+            "example": {
+              "en": "50"
+            }
+          }
+        ],
+        "id": "vehicle_speed_below"
+      },
+      {
+        "title": {
           "en": "The vehicle has gone to sleep"
         },
         "titleFormatted": {
@@ -4756,7 +4838,7 @@
             },
             "min": 0,
             "max": 1000,
-            "step": 0.1
+            "step": 0.01
           }
         ],
         "id": "distance_from_home"
@@ -4789,6 +4871,28 @@
           }
         ],
         "id": "distance_to_arrival"
+      },
+      {
+        "title": {
+          "en": "The driver seat is !{{occupied|empty}}"
+        },
+        "titleFormatted": {
+          "en": "The driver seat of [[device]] is !{{occupied|empty}}"
+        },
+        "hint": {
+          "en": "Whether the vehicle reports someone sitting in the driver's seat. Stays unknown (and this card false) on a vehicle that never reports seat occupancy."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=driver_seat_occupied",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "id": "driver_seat_occupied"
       },
       {
         "title": {
@@ -5574,6 +5678,38 @@
           }
         ],
         "id": "tire_pressure"
+      },
+      {
+        "title": {
+          "en": "Speed comparison"
+        },
+        "titleFormatted": {
+          "en": "Speed of [[device]] is above [[speed]] km/h"
+        },
+        "hint": {
+          "en": "Use 0 km/h to test whether the vehicle is moving at all."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_speed",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "speed",
+            "title": {
+              "en": "Speed"
+            },
+            "min": 0,
+            "max": 300,
+            "step": 1
+          }
+        ],
+        "id": "vehicle_speed"
       },
       {
         "id": "onoff.charge_grid",

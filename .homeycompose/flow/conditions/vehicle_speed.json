@@ -1,0 +1,31 @@
+{
+  "title": {
+    "en": "Speed comparison"
+  },
+  "titleFormatted": {
+    "en": "Speed of [[device]] is above [[speed]] km/h"
+  },
+  "hint": {
+    "en": "Use 0 km/h to test whether the vehicle is moving at all."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_speed",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "speed",
+      "title": {
+        "en": "Speed"
+      },
+      "min": 0,
+      "max": 300,
+      "step": 1
+    }
+  ]
+}

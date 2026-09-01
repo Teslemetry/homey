@@ -185,6 +185,7 @@ function daysArgToDaysOfWeek(days: string): string {
 
 const MILES_TO_KILOMETERS = 1.609344;
 const MPH_TO_METERS_PER_SECOND = 0.44704;
+const METERS_PER_SECOND_TO_KMH = 3.6;
 const ATM_TO_BAR = 1.01325;
 
 const TPMS_WHEEL_FIELDS = [
@@ -783,7 +784,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
     this.onSignal("VehicleSpeed", (value) => {
       if (value !== undefined && value !== null) {
-        this.update("measure_speed", value * MPH_TO_METERS_PER_SECOND);
+        this.handleSpeed(value);
       }
     });
     this.onSignal("Gear", (value) => {
@@ -1371,6 +1372,42 @@ export default class VehicleDevice extends TeslemetryDevice {
       value >= chargeLimit * 100
     ) {
       this.triggerFlow("charge_limit_reached", { battery: value });
+    }
+  }
+
+  /**
+   * Updates measure_speed and fires the vehicle_speed_above/below triggers.
+   *
+   * measure_speed is stored in m/s (Homey's unit for the capability) but the
+   * Flow cards take km/h, which is what a driver actually thinks in - so the
+   * tokens and the {previous, current} state this fires are km/h, matching
+   * the card's own argument. The vehicle_speed condition in app.ts applies
+   * the same conversion when it reads the capability back.
+   */
+  private handleSpeed(mph: number): void {
+    const metersPerSecond = mph * MPH_TO_METERS_PER_SECOND;
+    const previousMetersPerSecond = this.getCapabilityValue("measure_speed") as
+      | number
+      | null;
+    this.update("measure_speed", metersPerSecond);
+    if (
+      previousMetersPerSecond === null ||
+      previousMetersPerSecond === undefined ||
+      previousMetersPerSecond === metersPerSecond
+    ) {
+      return;
+    }
+    if (!this.isLive()) return;
+    const speed = metersPerSecond * METERS_PER_SECOND_TO_KMH;
+    const state = {
+      previous: previousMetersPerSecond * METERS_PER_SECOND_TO_KMH,
+      current: speed,
+    };
+    for (const cardId of ["vehicle_speed_above", "vehicle_speed_below"]) {
+      this.homey.flow
+        .getDeviceTriggerCard(cardId)
+        .trigger(this, { speed }, state)
+        .catch(this.error);
     }
   }
 
