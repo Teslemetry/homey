@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Driver seat occupancy has changed"
+  },
+  "titleFormatted": {
+    "en": "Driver seat occupancy on [[device]] has changed"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=driver_seat_occupied",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "driver_seat_occupied",
+      "type": "boolean",
+      "title": {
+        "en": "Occupied"
+      },
+      "example": true
+    }
+  ]
+}

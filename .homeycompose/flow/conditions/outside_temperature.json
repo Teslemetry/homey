@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Outside temperature comparison"
+  },
+  "titleFormatted": {
+    "en": "Outside temperature on [[device]] is above [[degrees]]°C"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_temperature.outside",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "degrees",
+      "title": {
+        "en": "Degrees"
+      },
+      "min": -50,
+      "max": 60,
+      "step": 0.5
+    }
+  ]
+}

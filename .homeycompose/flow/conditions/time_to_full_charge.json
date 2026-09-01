@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Time to full charge comparison"
+  },
+  "titleFormatted": {
+    "en": "Time to full charge on [[device]] is above [[minutes]] minutes"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=time_to_full_charge",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "minutes",
+      "title": {
+        "en": "Minutes"
+      },
+      "min": 0,
+      "max": 1440,
+      "step": 1
+    }
+  ]
+}

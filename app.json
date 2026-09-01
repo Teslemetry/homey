@@ -285,7 +285,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "capabilities=evcharger_charging",
+            "filter": "capabilities=measure_battery",
             "title": {
               "en": "Device"
             }
@@ -320,6 +320,35 @@
       },
       {
         "title": {
+          "en": "Cellular connection has changed"
+        },
+        "titleFormatted": {
+          "en": "Cellular connection on [[device]] has changed"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=cellular_connected",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "cellular_connected",
+            "type": "boolean",
+            "title": {
+              "en": "Connected"
+            },
+            "example": true
+          }
+        ],
+        "id": "cellular_connected_changed"
+      },
+      {
+        "title": {
           "en": "The charge limit has been reached"
         },
         "titleFormatted": {
@@ -348,6 +377,35 @@
           }
         ],
         "id": "charge_limit_reached"
+      },
+      {
+        "title": {
+          "en": "Charging amps has changed"
+        },
+        "titleFormatted": {
+          "en": "Charging amps on [[device]] has changed"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=charging_amps",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "charging_amps",
+            "type": "number",
+            "title": {
+              "en": "Amps"
+            },
+            "example": 16
+          }
+        ],
+        "id": "charging_amps_changed"
       },
       {
         "title": {
@@ -408,6 +466,35 @@
           }
         ],
         "id": "charging_stopped"
+      },
+      {
+        "title": {
+          "en": "Connected vehicle has changed"
+        },
+        "titleFormatted": {
+          "en": "Connected vehicle on [[device]] has changed"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=connected_vehicle",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "connected_vehicle",
+            "type": "string",
+            "title": {
+              "en": "Vehicle"
+            },
+            "example": "Model 3"
+          }
+        ],
+        "id": "connected_vehicle_changed"
       },
       {
         "title": {
@@ -702,6 +789,35 @@
           }
         ],
         "id": "distance_to_arrival_below"
+      },
+      {
+        "title": {
+          "en": "Driver seat occupancy has changed"
+        },
+        "titleFormatted": {
+          "en": "Driver seat occupancy on [[device]] has changed"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=driver_seat_occupied",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "driver_seat_occupied",
+            "type": "boolean",
+            "title": {
+              "en": "Occupied"
+            },
+            "example": true
+          }
+        ],
+        "id": "driver_seat_occupied_changed"
       },
       {
         "title": {
@@ -1101,6 +1217,35 @@
       },
       {
         "title": {
+          "en": "Navigation destination has changed"
+        },
+        "titleFormatted": {
+          "en": "Navigation destination on [[device]] has changed"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=navigation_destination",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "navigation_destination",
+            "type": "string",
+            "title": {
+              "en": "Destination"
+            },
+            "example": "Home"
+          }
+        ],
+        "id": "navigation_destination_changed"
+      },
+      {
+        "title": {
           "en": "The off-grid vehicle charging reserve has changed"
         },
         "titleFormatted": {
@@ -1238,6 +1383,88 @@
           }
         ],
         "id": "operation_mode_changed"
+      },
+      {
+        "title": {
+          "en": "Outside temperature rises above"
+        },
+        "titleFormatted": {
+          "en": "Outside temperature on [[device]] rises above [[degrees]]°C"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_temperature.outside",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "degrees",
+            "title": {
+              "en": "Degrees"
+            },
+            "min": -50,
+            "max": 60,
+            "step": 0.5
+          }
+        ],
+        "tokens": [
+          {
+            "name": "degrees",
+            "type": "number",
+            "title": {
+              "en": "Outside temperature"
+            },
+            "example": {
+              "en": "4"
+            }
+          }
+        ],
+        "id": "outside_temperature_above"
+      },
+      {
+        "title": {
+          "en": "Outside temperature drops below"
+        },
+        "titleFormatted": {
+          "en": "Outside temperature on [[device]] drops below [[degrees]]°C"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_temperature.outside",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "degrees",
+            "title": {
+              "en": "Degrees"
+            },
+            "min": -50,
+            "max": 60,
+            "step": 0.5
+          }
+        ],
+        "tokens": [
+          {
+            "name": "degrees",
+            "type": "number",
+            "title": {
+              "en": "Outside temperature"
+            },
+            "example": {
+              "en": "4"
+            }
+          }
+        ],
+        "id": "outside_temperature_below"
       },
       {
         "title": {
@@ -1575,6 +1802,88 @@
           }
         ],
         "id": "powershare_type_changed"
+      },
+      {
+        "title": {
+          "en": "Range rises above"
+        },
+        "titleFormatted": {
+          "en": "Range on [[device]] rises above [[kilometers]] km"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_distance.range",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "kilometers",
+            "title": {
+              "en": "Kilometers"
+            },
+            "min": 0,
+            "max": 1000,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "kilometers",
+            "type": "number",
+            "title": {
+              "en": "Range"
+            },
+            "example": {
+              "en": "50"
+            }
+          }
+        ],
+        "id": "range_remaining_above"
+      },
+      {
+        "title": {
+          "en": "Range drops below"
+        },
+        "titleFormatted": {
+          "en": "Range on [[device]] drops below [[kilometers]] km"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_distance.range",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "kilometers",
+            "title": {
+              "en": "Kilometers"
+            },
+            "min": 0,
+            "max": 1000,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "kilometers",
+            "type": "number",
+            "title": {
+              "en": "Range"
+            },
+            "example": {
+              "en": "50"
+            }
+          }
+        ],
+        "id": "range_remaining_below"
       },
       {
         "title": {
@@ -2070,6 +2379,142 @@
       },
       {
         "title": {
+          "en": "Time to full charge rises above"
+        },
+        "titleFormatted": {
+          "en": "Time to full charge on [[device]] rises above [[minutes]] minutes"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=time_to_full_charge",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "minutes",
+            "title": {
+              "en": "Minutes"
+            },
+            "min": 0,
+            "max": 1440,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "minutes",
+            "type": "number",
+            "title": {
+              "en": "Time to full charge"
+            },
+            "example": {
+              "en": "30"
+            }
+          }
+        ],
+        "id": "time_to_full_charge_above"
+      },
+      {
+        "title": {
+          "en": "Time to full charge drops below"
+        },
+        "titleFormatted": {
+          "en": "Time to full charge on [[device]] drops below [[minutes]] minutes"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=time_to_full_charge",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "minutes",
+            "title": {
+              "en": "Minutes"
+            },
+            "min": 0,
+            "max": 1440,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "minutes",
+            "type": "number",
+            "title": {
+              "en": "Time to full charge"
+            },
+            "example": {
+              "en": "30"
+            }
+          }
+        ],
+        "id": "time_to_full_charge_below"
+      },
+      {
+        "title": {
+          "en": "A tire pressure drops below"
+        },
+        "titleFormatted": {
+          "en": "A tire pressure on [[device]] drops below [[bar]] bar"
+        },
+        "hint": {
+          "en": "Triggers when any one of the four tires crosses below the given pressure. The Tire token names which tire crossed."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_pressure.fl",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "bar",
+            "title": {
+              "en": "Bar"
+            },
+            "min": 0,
+            "max": 6,
+            "step": 0.1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "bar",
+            "type": "number",
+            "title": {
+              "en": "Pressure"
+            },
+            "example": {
+              "en": "2.4"
+            }
+          },
+          {
+            "name": "tire",
+            "type": "string",
+            "title": {
+              "en": "Tire"
+            },
+            "example": {
+              "en": "Front left"
+            }
+          }
+        ],
+        "id": "tire_pressure_below"
+      },
+      {
+        "title": {
           "en": "The vehicle has been unplugged"
         },
         "titleFormatted": {
@@ -2162,6 +2607,35 @@
           }
         ],
         "id": "vehicle_woke_up"
+      },
+      {
+        "title": {
+          "en": "WiFi connection has changed"
+        },
+        "titleFormatted": {
+          "en": "WiFi connection on [[device]] has changed"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=wifi_connected",
+            "title": {
+              "en": "Device"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "wifi_connected",
+            "type": "boolean",
+            "title": {
+              "en": "Connected"
+            },
+            "example": true
+          }
+        ],
+        "id": "wifi_connected_changed"
       },
       {
         "id": "onoff.charge_grid_true",
@@ -4605,6 +5079,35 @@
       },
       {
         "title": {
+          "en": "Outside temperature comparison"
+        },
+        "titleFormatted": {
+          "en": "Outside temperature on [[device]] is above [[degrees]]°C"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_temperature.outside",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "degrees",
+            "title": {
+              "en": "Degrees"
+            },
+            "min": -50,
+            "max": 60,
+            "step": 0.5
+          }
+        ],
+        "id": "outside_temperature"
+      },
+      {
+        "title": {
           "en": "Powershare status is",
           "nl": "Powershare-status is",
           "da": "Powershare-status er",
@@ -4786,6 +5289,35 @@
           }
         ],
         "id": "powershare_status_is"
+      },
+      {
+        "title": {
+          "en": "Range comparison"
+        },
+        "titleFormatted": {
+          "en": "Range on [[device]] is above [[kilometers]] km"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_distance.range",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "kilometers",
+            "title": {
+              "en": "Kilometers"
+            },
+            "min": 0,
+            "max": 1000,
+            "step": 1
+          }
+        ],
+        "id": "range_remaining"
       },
       {
         "title": {
@@ -4981,6 +5513,67 @@
           }
         ],
         "id": "software_update_status_is"
+      },
+      {
+        "title": {
+          "en": "Time to full charge comparison"
+        },
+        "titleFormatted": {
+          "en": "Time to full charge on [[device]] is above [[minutes]] minutes"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=time_to_full_charge",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "minutes",
+            "title": {
+              "en": "Minutes"
+            },
+            "min": 0,
+            "max": 1440,
+            "step": 1
+          }
+        ],
+        "id": "time_to_full_charge"
+      },
+      {
+        "title": {
+          "en": "Any tire pressure is low"
+        },
+        "titleFormatted": {
+          "en": "Any tire pressure on [[device]] is below [[bar]] bar"
+        },
+        "hint": {
+          "en": "True when at least one of the four tires reports a pressure below the given value. Tires that have not reported a pressure yet are ignored."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=measure_pressure.fl",
+            "title": {
+              "en": "Device"
+            }
+          },
+          {
+            "type": "number",
+            "name": "bar",
+            "title": {
+              "en": "Bar"
+            },
+            "min": 0,
+            "max": 6,
+            "step": 0.1
+          }
+        ],
+        "id": "tire_pressure"
       },
       {
         "id": "onoff.charge_grid",

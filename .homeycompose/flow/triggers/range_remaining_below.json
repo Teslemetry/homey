@@ -1,0 +1,40 @@
+{
+  "title": {
+    "en": "Range drops below"
+  },
+  "titleFormatted": {
+    "en": "Range on [[device]] drops below [[kilometers]] km"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_distance.range",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "kilometers",
+      "title": {
+        "en": "Kilometers"
+      },
+      "min": 0,
+      "max": 1000,
+      "step": 1
+    }
+  ],
+  "tokens": [
+    {
+      "name": "kilometers",
+      "type": "number",
+      "title": {
+        "en": "Range"
+      },
+      "example": {
+        "en": "50"
+      }
+    }
+  ]
+}

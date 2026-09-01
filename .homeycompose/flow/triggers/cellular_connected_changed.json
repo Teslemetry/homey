@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Cellular connection has changed"
+  },
+  "titleFormatted": {
+    "en": "Cellular connection on [[device]] has changed"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=cellular_connected",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "cellular_connected",
+      "type": "boolean",
+      "title": {
+        "en": "Connected"
+      },
+      "example": true
+    }
+  ]
+}

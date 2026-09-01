@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Connected vehicle has changed"
+  },
+  "titleFormatted": {
+    "en": "Connected vehicle on [[device]] has changed"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=connected_vehicle",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "connected_vehicle",
+      "type": "string",
+      "title": {
+        "en": "Vehicle"
+      },
+      "example": "Model 3"
+    }
+  ]
+}

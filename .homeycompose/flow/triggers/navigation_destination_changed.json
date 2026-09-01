@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Navigation destination has changed"
+  },
+  "titleFormatted": {
+    "en": "Navigation destination on [[device]] has changed"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=navigation_destination",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "navigation_destination",
+      "type": "string",
+      "title": {
+        "en": "Destination"
+      },
+      "example": "Home"
+    }
+  ]
+}

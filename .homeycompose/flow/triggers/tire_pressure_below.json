@@ -1,0 +1,53 @@
+{
+  "title": {
+    "en": "A tire pressure drops below"
+  },
+  "titleFormatted": {
+    "en": "A tire pressure on [[device]] drops below [[bar]] bar"
+  },
+  "hint": {
+    "en": "Triggers when any one of the four tires crosses below the given pressure. The Tire token names which tire crossed."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_pressure.fl",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "bar",
+      "title": {
+        "en": "Bar"
+      },
+      "min": 0,
+      "max": 6,
+      "step": 0.1
+    }
+  ],
+  "tokens": [
+    {
+      "name": "bar",
+      "type": "number",
+      "title": {
+        "en": "Pressure"
+      },
+      "example": {
+        "en": "2.4"
+      }
+    },
+    {
+      "name": "tire",
+      "type": "string",
+      "title": {
+        "en": "Tire"
+      },
+      "example": {
+        "en": "Front left"
+      }
+    }
+  ]
+}

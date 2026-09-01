@@ -20,6 +20,14 @@ sourceMapSupport.install();
 // accounts with energy sites but no vehicles.
 const SSE_DATA_EVENTS = ['state', 'data', 'connectivity', 'live_status'] as const;
 
+/** The four tire pressure subcapabilities the shared tire_pressure condition scans. */
+const TIRE_PRESSURE_CAPABILITIES = [
+  'measure_pressure.fl',
+  'measure_pressure.fr',
+  'measure_pressure.rl',
+  'measure_pressure.rr',
+] as const;
+
 // Exact wire topics this app consumes, passed explicitly to the stream so
 // the server only forwards what's actually used - see drivers/vehicle/device.ts
 // for the vehicle signals and drivers/battery|solar|gateway|wall-connector/device.ts
@@ -638,13 +646,45 @@ export default class TeslemetryApp extends Homey.App {
       .getDeviceTriggerCard('battery_below')
       .registerRunListener(
         async (
-          args: { device?: VehicleDevice; percentage: number },
+          args: {
+            device?: VehicleDevice | PowerwallDevice;
+            percentage: number;
+          },
           state: { previous: number; current: number },
         ) => {
           if (!args.device) return false;
           return state.previous >= args.percentage && state.current < args.percentage;
         },
       );
+
+    // Tire pressure: one shared trigger/condition pair across all four
+    // tires (see VehicleDevice.handleTirePressure for why). The trigger
+    // does the usual crossing check on whichever tire fired; the condition
+    // answers "is ANY tire below this", ignoring tires that have not
+    // reported a pressure yet - an unreported tire is unknown, not low.
+    this.homey.flow
+      .getDeviceTriggerCard('tire_pressure_below')
+      .registerRunListener(
+        async (
+          args: { device?: VehicleDevice; bar: number },
+          state: { previous: number; current: number },
+        ) => {
+          if (!args.device) return false;
+          return state.previous >= args.bar && state.current < args.bar;
+        },
+      );
+
+    this.homey.flow
+      .getConditionCard('tire_pressure')
+      .registerRunListener(async (args: { device?: VehicleDevice; bar: number }) => {
+        if (!args.device) return false;
+        return TIRE_PRESSURE_CAPABILITIES.some((capability) => {
+          const pressure = args.device?.getCapabilityValue(capability) as
+            | number
+            | null;
+          return typeof pressure === 'number' && pressure < args.bar;
+        });
+      });
 
     // Power/tariff threshold trigger and condition cards: same
     // above/below-crossing pattern as battery_below, registered once per
@@ -661,6 +701,23 @@ export default class TeslemetryApp extends Homey.App {
     this.registerThresholdCards('battery_power', 'measure_power', 'watts');
     this.registerThresholdCards('grid_buy_rate', 'grid_buy_rate', 'rate');
     this.registerThresholdCards('grid_sell_rate', 'grid_sell_rate', 'rate');
+
+    // Vehicle sensor threshold cards: same pattern, Vehicle-only.
+    this.registerThresholdCards(
+      'range_remaining',
+      'measure_distance.range',
+      'kilometers',
+    );
+    this.registerThresholdCards(
+      'time_to_full_charge',
+      'time_to_full_charge',
+      'minutes',
+    );
+    this.registerThresholdCards(
+      'outside_temperature',
+      'measure_temperature.outside',
+      'degrees',
+    );
 
     // Route/ETA threshold cards: same pattern, Vehicle-only.
     this.registerThresholdCards(

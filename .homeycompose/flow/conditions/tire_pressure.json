@@ -1,0 +1,31 @@
+{
+  "title": {
+    "en": "Any tire pressure is low"
+  },
+  "titleFormatted": {
+    "en": "Any tire pressure on [[device]] is below [[bar]] bar"
+  },
+  "hint": {
+    "en": "True when at least one of the four tires reports a pressure below the given value. Tires that have not reported a pressure yet are ignored."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=measure_pressure.fl",
+      "title": {
+        "en": "Device"
+      }
+    },
+    {
+      "type": "number",
+      "name": "bar",
+      "title": {
+        "en": "Bar"
+      },
+      "min": 0,
+      "max": 6,
+      "step": 0.1
+    }
+  ]
+}

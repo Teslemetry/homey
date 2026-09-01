@@ -1,0 +1,28 @@
+{
+  "title": {
+    "en": "Charging amps has changed"
+  },
+  "titleFormatted": {
+    "en": "Charging amps on [[device]] has changed"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=charging_amps",
+      "title": {
+        "en": "Device"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "charging_amps",
+      "type": "number",
+      "title": {
+        "en": "Amps"
+      },
+      "example": 16
+    }
+  ]
+}

@@ -9,7 +9,7 @@
     {
       "type": "device",
       "name": "device",
-      "filter": "capabilities=evcharger_charging",
+      "filter": "capabilities=measure_battery",
       "title": {
         "en": "Device"
       }
