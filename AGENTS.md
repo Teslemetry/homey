@@ -1,273 +1,205 @@
 ## Project Overview
 
-Homey app for Teslemetry. Provides real-time control and monitoring of Tesla vehicles and energy products (Powerwall, Solar, Wall Connector, Gateway) using Server-Sent Events (no polling).
+Homey app for Teslemetry. Real-time control and monitoring of Tesla vehicles and
+energy products (Powerwall, Solar, Wall Connector, Gateway) over Server-Sent
+Events (no polling).
 
 ## Commands
 
 ```bash
 npm run build           # Compile TypeScript to .homeybuild/
-npm test                # Build, then run test/*.test.ts with Node's built-in test runner
-npm run lint            # oxlint check (see .oxlintrc.json)
+npm test                # Build, then run test/*.test.ts with Node's test runner
+npm run lint            # oxlint (see .oxlintrc.json)
 npm run dev             # Run app on local Homey
-npm run app:validate    # Validate app (required before commit)
-npm run smoke:packaged-build  # Verify every driver actually loads out of a real .homeybuild bundle
+npm run app:validate    # homey app validate --level verified
+npm run smoke:packaged-build  # Verify every driver loads out of a real .homeybuild bundle
 ```
 
-Always run `npm run app:validate` before committing changes.
+Always run `npm run app:validate` before committing.
 
 ### Testing
 
-`npm test` runs against the **compiled output** in `.homeybuild/`, not the
-TypeScript sources directly - Node's native TS support strips types but
-doesn't resolve TS-style `.js`-extension imports to their `.ts` source or
-elide type-only named imports the way `tsc` does, so it can't load the
-source files' full import graph. `test/support/loader.mjs` stubs the
-`homey` SDK import (it only resolves to real classes inside the actual
-Homey runtime) so device/driver/app classes can be exercised directly via
-their prototypes without a live Homey instance; `test/support/homey-stub.js`
-holds the stand-in `Device`/`Driver`/`App` base classes. The same loader
-also redirects `@teslemetry/api` to `test/support/teslemetry-api-stub.js` -
-the compiled runtime imports are `Teslemetry` in `app.js` and the pure
-`getTariffPeriods` helper in the Powerwall device. Constructing the real
-`Teslemetry` class would issue live network calls, while the stub safely
-re-exports the real tariff helper for its tests. Each test calls the stub's
-`configureTeslemetryStub(factory)` before triggering a build to control
-`createProducts()` timing/outcome and drive the returned `sse` EventEmitter
-directly - see `test/app-connection-lifecycle.test.ts`.
+`npm test` runs against the **compiled output** in `.homeybuild/`, not the TS
+sources - Node's native TS support can't resolve TS-style `.js`-extension
+imports or elide type-only named imports, so it can't load the source import
+graph. `test/support/loader.mjs` redirects two imports so classes can be
+exercised via their prototypes with no live Homey and no network:
 
-`npm test`'s module resolution (Node's own `node_modules` upward search) always
-falls back to this repo's own root `node_modules`, which always has every
-dependency built - so it can't catch a dependency missing specifically from
-the *packaged* `.homeybuild/` bundle Homey actually uploads and runs on-device.
-`npm run smoke:packaged-build` (`scripts/smoke-test-packaged-build.mjs`) closes
-that gap: it runs the real `homey app build`, copies the result to an isolated
-directory with no such ancestor `node_modules` to fall back to, and imports
-every compiled `app.js`/`api.js`/`driver.js`/`device.js` from there (stubbing
-only the Homey runtime, so packaged dependencies such as `@teslemetry/api`
-must resolve for real) to confirm each one still resolves every import with
-nothing else available.
+- `homey` → `test/support/homey-stub.js` (stand-in `Device`/`Driver`/`App`).
+- `@teslemetry/api` → `test/support/teslemetry-api-stub.js`. Call its
+  `configureTeslemetryStub(factory)` before triggering a build to control
+  `createProducts()` timing/outcome and drive the returned `sse` EventEmitter
+  (see `test/app-connection-lifecycle.test.ts`). It re-exports the *real*
+  `getTariffPeriods` by relative path so tariff tests use real window math.
+
+`npm test` resolves modules from this repo's root `node_modules`, so it can
+never catch a dependency missing from the *packaged* bundle Homey uploads.
+`npm run smoke:packaged-build` closes that gap - see the header of
+`scripts/smoke-test-packaged-build.mjs`.
 
 ## Architecture
 
 ### Core Files
 
-- `app.ts` - Main entry point. Initializes OAuth2 client and Teslemetry SDK connection. Manages `Products` instance containing all vehicles/energy sites.
+- `app.ts` - Entry point. OAuth2 client + Teslemetry SDK connection, owns the
+  `Products` instance and all app-level Flow card registration.
 - `api.ts` - OAuth status and token revocation endpoints
 - `lib/TeslemetryOAuth2Client.ts` - PKCE OAuth2 flow, token storage/refresh
-- `lib/TeslemetryDriver.ts` - Base driver class with OAuth2 pairing/repair flow
-- `lib/TeslemetryDevice.ts` - Base device class with capability sync
+- `lib/TeslemetryDriver.ts` - Base driver: OAuth2 pairing/repair, eligibility
+- `lib/TeslemetryDevice.ts` - Base device: capability sync, availability
+- `docs/` - Vendored Homey SDK reference (capabilities, flow cards, custom
+  capabilities). Consult before inventing a capability shape.
 
 ### Driver Pattern
 
-Each device type (vehicle, battery, solar, gateway, wall-connector) follows the same structure:
+Each device type (vehicle, battery, solar, gateway, wall-connector):
 - `drivers/<type>/driver.ts` - Extends `TeslemetryDriver`, implements `onPairListDevices()`
 - `drivers/<type>/device.ts` - Extends `TeslemetryDevice`, registers signal handlers and capability listeners
 
 ### Data Flow
 
 1. `TeslemetryApp` creates `Products` from `@teslemetry/api`
-2. Devices get their product instance (e.g., `this.homey.app.products.vehicles[vin]`)
-3. Incoming data: `vehicle.sse.onSignal("SignalName", callback)` → `this.update(capability, value)`
-4. Outgoing commands: `registerCapabilityListener` → `vehicle.api.methodName()`
+2. Devices get their product instance (e.g. `this.homey.app.products.vehicles[vin]`)
+3. Incoming: `vehicle.sse.onSignal("SignalName", cb)` → `this.update(capability, value)`
+4. Outgoing: `registerCapabilityListener` → `vehicle.api.methodName()`
 
 ### Homey Compose
 
-Configuration lives in `.homeycompose/` - this generates `app.json` at build time:
-- `.homeycompose/app.json` - Base app manifest (edit this, not `app.json`)
+`.homeycompose/` generates `app.json` at build time:
+- `.homeycompose/app.json` - Base app manifest (edit this, never `app.json`)
 - `.homeycompose/capabilities/` - Custom capability definitions (base capabilities only, NOT subcapabilities)
-- `.homeycompose/flow/` - Flow card definitions (triggers, actions)
+- `.homeycompose/flow/` - App-level flow cards
 - `.homeycompose/drivers/` - Driver capability configurations
-- `drivers/<type>/driver.flow.compose.json` - Driver-specific flow cards (triggers, conditions, actions)
+- `drivers/<type>/driver.flow.compose.json` - Driver-scoped flow cards
 
 ### Subcapability Flow Cards
 
-Homey does **not** auto-generate flow cards for subcapabilities (e.g., `alarm_generic.off_grid`, `onoff.charge_grid`). You must define them manually in `drivers/<type>/driver.flow.compose.json`. Do **not** create files like `.homeycompose/capabilities/alarm_generic.off_grid.json` — the `.` in capability names is reserved and will fail validation.
+Homey does **not** auto-generate flow cards for subcapabilities (e.g.
+`alarm_generic.off_grid`, `onoff.charge_grid`); define them manually in
+`drivers/<type>/driver.flow.compose.json`. Do **not** create files like
+`.homeycompose/capabilities/alarm_generic.off_grid.json` - the `.` in a
+capability name is reserved and fails validation.
 
-Use the subcapability ID in the flow card ID following the pattern `<capability>.<sub>_<state>`:
+Card ids follow `<capability>.<sub>_<state>`:
+- **Boolean triggers** (`alarm_generic`, `onoff`): `_true` / `_false`
+- **On/off actions**: `_on` / `_off` / `_toggle`
+- **Other boolean capabilities**: Homey auto-wires a manually-defined
+  subcapability action only when `<action>` is one of the *base* capability's
+  own `$flow.actions` ids - not always `on`/`off`. Check
+  `node_modules/homey-lib/assets/capability/capabilities/<cap>.json` before
+  naming one. (`windowcoverings_closed` uses `close`/`open`/`toggle`, hence
+  `windowcoverings_closed.tonneau_close`.)
 
-```json
-{
-  "triggers": [
-    {
-      "id": "alarm_generic.off_grid_true",
-      "title": { "en": "Grid power lost" }
-    },
-    {
-      "id": "alarm_generic.off_grid_false",
-      "title": { "en": "Grid power restored" }
-    }
-  ],
-  "actions": [
-    {
-      "id": "onoff.charge_grid_on",
-      "title": { "en": "Enable charge from grid" }
-    }
-  ]
-}
-```
-
-ID patterns by capability type:
-- **Boolean triggers** (`alarm_generic`, `onoff`): `<cap>.<sub>_true`, `<cap>.<sub>_false`
-- **On/off actions**: `<cap>.<sub>_on`, `<cap>.<sub>_off`, `<cap>.<sub>_toggle`
-- **Other boolean capabilities' own action ids**: Homey auto-wires a manually-defined subcapability action card whenever its id is `<cap>.<sub>_<action>`, where `<action>` is one of the base capability's own `$flow.actions` ids (`assets/capability/capabilities/<cap>.json` in the installed `homey-lib` package) - not always `on`/`off`. `windowcoverings_closed`'s own actions are `close`/`open`/`toggle`, so its tonneau subcapability actions are `windowcoverings_closed.tonneau_close`/`_open`/`_toggle` (see `VehicleDevice`'s tonneau `registerCapabilityListener`). Check that file before naming a new subcapability action card.
-
-### Flow Card Device Filters
-
-All app-level flow cards in `.homeycompose/flow/` **must** include an `args` entry with a device `filter` so cards only appear for users who have a device with the relevant capability. Without this, energy-only users see vehicle cards and vice versa. Verified apps also require `titleFormatted`.
-
-```json
-{
-  "title": { "en": "Steering wheel heater changed" },
-  "titleFormatted": { "en": "Steering wheel heater changed on [[device]]" },
-  "args": [
-    {
-      "type": "device",
-      "name": "device",
-      "filter": "capabilities=steering_wheel_heater",
-      "title": { "en": "Device" }
-    }
-  ]
-}
-```
-
-### App-Level vs Driver-Scoped Flow Cards
+### Flow Card Scoping (app-level vs driver-scoped)
 
 A capability ID is not unique across drivers (`measure_power` exists on Solar,
-Gateway, and Powerwall). An app-level card's device `filter` matches by
-capability ID alone, so `capabilities=measure_power` would show a Solar
-threshold card on Gateway and Powerwall devices too. When a card must be
-scoped to one exact driver/capability pair, define it in that driver's
-`driver.flow.compose.json` instead - Homey Compose auto-unshifts a `device`
-arg filtered by `driver_id` (see `HomeyCompose.js`'s driver `$flow` merge),
-so the source JSON must not declare its own `device` arg. That auto-injected
-device arg carries no `title`, so a driver-scoped card's `titleFormatted`
-must not reference `[[device]]` (`homey app validate` rejects it) - word the
-sentence around the other args only, e.g. `"Rises above [[watts]] W"`.
-`titleFormatted` is otherwise required by the verified level for any card
-with args beyond `device`, even at driver scope. Capability IDs unique to one
-driver (`grid_buy_rate`, `backup_reserve`) can safely stay app-level with a
-capability filter, matching the existing convention in `.homeycompose/flow/`.
+Gateway and Powerwall), and an app-level device `filter` matches on capability
+ID alone.
 
-A driver-scoped card that also needs a capability filter (e.g. an action only
-some vehicles in that driver support) still must not declare its own `device`
-arg - add `"$filter": "capabilities=<capability>"` to the card instead;
-`HomeyCompose.js` appends it to the auto-injected `device` arg's filter as
-`driver_id=<id>&capabilities=<capability>`. See the seat heater/cooler action
-cards in `drivers/vehicle/driver.flow.compose.json` for the pattern, gated on
-the same `capabilityGating.ts` predicate the device capabilities use - one
-predicate, so pairing and Flow-card visibility can't disagree about which
-vehicles have a given seat feature.
+- **App-level** (`.homeycompose/flow/`): only for capability IDs unique to one
+  driver (`grid_buy_rate`, `backup_reserve`). Every app-level card **must**
+  declare a `device` arg with a `filter` - without it, energy-only users see
+  vehicle cards and vice versa.
+- **Driver-scoped** (`driver.flow.compose.json`): for any card that must be
+  pinned to one driver/capability pair. Homey Compose auto-unshifts a
+  `driver_id`-filtered `device` arg, so the source JSON **must not** declare
+  its own `device` arg; add `"$filter": "capabilities=<cap>"` to the card
+  instead when it also needs a capability filter. The auto-injected arg has no
+  `title`, so a driver-scoped `titleFormatted` **must not** reference
+  `[[device]]` (`homey app validate` rejects it) - word it around the other
+  args, e.g. `"Rises above [[watts]] W"`.
+
+`titleFormatted` is required by the verified level for any card with args
+beyond `device`, at either scope. Capability-gated cards (e.g. seat
+heater/cooler in `drivers/vehicle/driver.flow.compose.json`) use the same
+`drivers/vehicle/capabilityGating.ts` predicate the device capabilities use, so
+pairing and Flow-card visibility can't disagree.
 
 ## Key Patterns
 
 ### Checking HA Parity
 
-The capability-expansion work in this app is required to mirror the
-Teslemetry Home Assistant integration's own capability choice, units, and
-semantics rather than inventing a shape from the raw `@teslemetry/api` field.
-A local checkout of `home-assistant/core` is available at
-`~/firstmate/projects/hass-teslemetry` - grep
+Capability choice, units and semantics mirror the Teslemetry Home Assistant
+integration rather than the raw `@teslemetry/api` field shape. A checkout of
+`home-assistant/core` lives at `~/firstmate/projects/hass-teslemetry`; grep
 `homeassistant/components/teslemetry/{sensor,binary_sensor,switch,number}.py`
-and `strings.json` there for the field/entity in question before designing a
-new Homey capability; a field with no HA entity there generally belongs in
-the PR body's skip list, not invented as a Homey-only shape.
+and `strings.json` for the field before designing a new Homey capability. A
+field with no HA entity there generally belongs in the skip list, not invented
+as a Homey-only shape.
 
-### Capability Listeners
+### Commands: `action()` / `vehicleAction()`
 
-**Do not await vehicle SDK actions directly in `registerCapabilityListener`** - they
-can take up to a minute. Return the `action()`/`vehicleAction()` call (see below)
-instead, which internally races a 9s timeout so the listener still settles well
-within Homey's ~10s flow-card timeout:
+**Never await a raw SDK command** in a capability listener or Flow action - they
+can take a minute. Always return `this.action(...)` / `this.vehicleAction(...)`,
+which race the command against a fixed 9s `ACTION_TIMEOUT`:
 
 ```typescript
-// Correct
-this.registerCapabilityListener("locked", async (value) => {
-  return this.vehicleAction(
+this.registerCapabilityListener("locked", async (value) =>
+  this.vehicleAction(
     value ? this.vehicle.api.lockDoors() : this.vehicle.api.unlockDoors(),
-  );
-});
-
-// Wrong - blocks the listener on the raw SDK promise, no timeout race
-this.registerCapabilityListener("locked", async (value) => {
-  await this.vehicle.api.lockDoors();  // Don't do this
-});
-```
-
-### Vehicle Command Response Validation (`VehicleDevice.vehicleAction()`)
-
-Every vehicle SDK command resolves `{ response: { result: boolean, reason?:
-string } }` **except** `wakeUp()`, whose response is the vehicle's own state
-payload. Homey only observes whether a listener/Flow promise resolves or
-rejects - it has no idea what `result: false` means - so every vehicle command
-(capability listener and Flow action alike) must route through
-`VehicleDevice.vehicleAction()`, not the base `TeslemetryDevice.action()`
-directly:
-
-```typescript
-return this.vehicleAction(this.vehicle.api.someCommand(args));
-```
-
-`vehicleAction()` validates `response.result` via `handleApiResponse` before
-handing the promise to `action()`'s timeout race; its generic constraint
-requires the resolved type to include `response.result`, so passing
-`wakeUp()`'s promise won't compile - call `this.action(this.vehicle.api.wakeUp())`
-directly for that one exemption. Do not hand-roll `.then(this.handleApiResponse)`
-per call site - always go through `vehicleAction()`. Energy-site commands
-(Powerwall/Solar/Gateway/Wall Connector, via `this.site.api...`) have a
-different, less consistent response shape and still call the base
-`action()` directly - `vehicleAction()` is vehicle-only.
-
-### API Error Handling
-
-`handleApiResponse` (thrown into a rejection on `result: false`) and
-`handleApiError` (translates/logs a rejected API error, and marks the device
-`"auth"`-unavailable on `invalid_token`/`subscription_required`) are inherited
-from `TeslemetryDevice` and used internally by `action()`/`vehicleAction()`.
-Call them directly only for a command that bypasses those wrappers.
-
-### Action Timeout (`TeslemetryDevice.action()`)
-
-`action()` races every API command against a fixed 9s `ACTION_TIMEOUT` so flow
-cards don't hang past Homey's own ~10s flow-card timeout. **Do not raise
-`ACTION_TIMEOUT`** — it's deliberately kept just under Homey's built-in cap.
-
-When the timeout wins the race, the flow card reports success even though the
-real command is still in flight. If that command later rejects, `action()`
-logs it via `this.error(...)` (tagged with the device name and the timeout
-value) instead of discarding it — this is the only trace of a command that
-silently "succeeded" but actually failed, so don't remove or downgrade that
-log when touching this method.
-
-### Signal-to-Capability Mapping
-
-Some SSE signals use enum strings that need mapping:
-
-```typescript
-const chargePortLatchMap = new Map([
-  ["ChargePortLatchEngaged", true],
-  ["ChargePortLatchDisengaged", false],
-]);
-
-this.vehicle.sse.onSignal("ChargePortLatch", (value) =>
-  this.update("locked.charge_latch", chargePortLatchMap.get(value))
+  ),
 );
 ```
 
+- **Do not raise `ACTION_TIMEOUT`** - it is deliberately just under Homey's own
+  ~10s flow-card cap. When the timeout wins, the card reports success while the
+  command is still in flight; if that command later rejects, `action()` logs it
+  via `this.error(...)`. That log is the only trace of a silent failure - never
+  remove or downgrade it.
+- Every vehicle SDK command resolves `{ response: { result, reason? } }` and
+  Homey only sees resolve-vs-reject, so **every** vehicle command must route
+  through `VehicleDevice.vehicleAction()`, which validates `response.result`
+  via `handleApiResponse`. Never hand-roll `.then(this.handleApiResponse)`.
+  `wakeUp()` is the sole exemption (its response is the vehicle state payload,
+  and `vehicleAction()`'s generic constraint rejects it at compile time) - call
+  `this.action(this.vehicle.api.wakeUp())` for that one.
+- Energy-site commands (`this.site.api...`) have a different, less consistent
+  response shape and call the base `action()` directly; `vehicleAction()` is
+  vehicle-only.
+- `handleApiResponse` / `handleApiError` (the latter marks the device
+  `"auth"`-unavailable on `invalid_token`/`subscription_required`) are used
+  internally by these wrappers; call them directly only for a command that
+  bypasses both.
+
+### Capability Updates
+
+`update()` no-ops on unsupported capabilities: `this.update("measure_battery", v)`.
+
+SSE signal handlers routinely discard the returned Promise, so `update()` and
+`updateWithThresholdTriggers()` **must never reject** - each wraps its whole
+body in one top-level `try`/`catch` logging via `this.error`. This is a single
+containment boundary, not per-call-site `.catch()` scatter; a detached
+`trigger()` inside either method still keeps its own `.catch(this.error)` since
+that Promise is never returned. See `test/update-boundary-containment.test.ts`.
+
 ### Cumulative Energy Meters
 
-Homey's energy tab uses `cumulative: true` meter capabilities (`meter_power.*`) to calculate energy flow arrows and history. These values **must be monotonically increasing** (like a utility meter that never resets). If a cumulative meter value decreases, Homey's energy tracking and flow visualization break.
+Homey's energy tab uses `cumulative: true` `meter_power.*` capabilities, whose
+values **must be monotonically increasing** - a decrease breaks energy tracking
+and flow visualization.
 
-The `energy_totals` SSE event carries per-type daily totals (midnight to now, already summed server-side - not a `time_series` to sum client-side). Use `updateCumulativeMeter()` in `TeslemetryDevice` to convert those daily totals into monotonically increasing values. It tracks a persistent offset across day boundaries using Homey's device store, detecting day rollover by comparing the date derived from the event's `createdAt` (UTC, since `energy_totals` carries no per-site local timestamp).
-
-`updateCumulativeMeter()` serializes updates per device/capability and atomically persists one versioned state object under `meter_<capability>_state`. Callers must pass a zero-padded ISO `YYYY-MM-DD` date: same-day regressions are clamped, later dates roll over once, and stale earlier dates are ignored. See `test/cumulative-meter.test.ts` for the behavioral contract.
+The `energy_totals` SSE event carries per-type daily totals (midnight to now,
+already summed server-side). `TeslemetryDevice.updateCumulativeMeter()`
+converts those into monotonic values, tracking a persistent offset across day
+boundaries via the device store (`meter_<capability>_state`), keyed on the date
+derived from the event's `createdAt` (UTC - `energy_totals` carries no per-site
+local timestamp). Callers must pass a zero-padded ISO `YYYY-MM-DD` date.
+`test/cumulative-meter.test.ts` is the behavioral contract.
 
 ### Non-Cumulative "Today" Totals (Insight gauges)
 
-Unlike the cumulative meters above, each `*_today` capability is a plain (non-`cumulative`) gauge with `insights: true` that should read 0 from local midnight until the day's first activity. `energy_totals` only pushes when a value changes, so a quiet period leaves the last-received total sitting there rather than zeroing it. Every device with a `*_today` capability compensates with its own timer, scheduled via `msUntilNextLocalMidnight()` (`lib/localMidnight.ts`) off the site's `installation_time_zone` (from `site_info`/`siteInfoDocument`, not `this.homey.clock.getTimezone()` which is the Homey box's own location), that force-resets the capability(ies) at the local-midnight boundary and reschedules itself. `GatewayDevice`/`PowerwallDevice` each hand-roll their own copy of this timer (per-device duplication is the established convention here, not a shared base-class helper). See `test/local-midnight.test.ts` for the boundary math and `test/solar-generation-today.test.ts`/`test/gateway-live-status.test.ts`/`test/battery-site-info.test.ts` for the time-controlled repro pattern.
+Each `*_today` capability is a plain (non-`cumulative`) gauge with
+`insights: true` that must read 0 from local midnight until the day's first
+activity. `energy_totals` only pushes on change, so each owning device runs its
+own timer - scheduled via `msUntilNextLocalMidnight()` (`lib/localMidnight.ts`)
+off the site's `installation_time_zone` from `site_info`/`siteInfoDocument`,
+**not** `this.homey.clock.getTimezone()` (the Homey box's own location) - that
+force-resets the capability at the boundary and reschedules itself.
+Per-device duplication is the convention here, not a shared base-class helper.
 
-Every recurring `homey.setTimeout` reschedule body (this one and `PowerwallDevice`'s `tariffTimer` below) must wrap its callback in `try`/`catch` - an unguarded one crashes the whole app process on its next scheduled fire, not just this device.
-
-These gauges mirror the Home Assistant teslemetry integration's default-enabled energy-history sensors (`ENERGY_HISTORY_FIELDS` in `home-assistant/core`'s `homeassistant/components/teslemetry/const.py`, filtered to `entity_registry_enabled_default` in `sensor.py`) as Homey Insights, driven by the same `energy_totals` SSE push consumed for the cumulative meters above - not HA's separate REST-polled history coordinator. Field names come straight from `@teslemetry/api`'s `SseEnergyTotals.totals` (`ENERGY_HISTORY_TOTAL_FIELDS`), which mirror HA's list field-for-field:
+**Every recurring `homey.setTimeout` reschedule body must wrap its callback in
+`try`/`catch`** (this timer and `PowerwallDevice`'s `tariffTimer`) - an
+unguarded throw crashes the whole app process on its next fire.
 
 | Capability | Device | `energy_totals` field |
 | --- | --- | --- |
@@ -278,502 +210,333 @@ These gauges mirror the Home Assistant teslemetry integration's default-enabled 
 | `battery_charged_today` | Powerwall | `total_battery_charge` |
 | `battery_discharged_today` | Powerwall | `total_battery_discharge` |
 
-Per-source breakdown fields in `ENERGY_HISTORY_FIELDS` (e.g. `battery_energy_imported_from_solar`, generator fields) are disabled by default in HA too and deliberately not surfaced here. These gauges are purely additive; they don't replace the `meter_power*` cumulative-meter path, which every `*_today`-producing `handleEnergyTotals` handler still updates alongside the gauge.
+Field names come from `@teslemetry/api`'s `ENERGY_HISTORY_TOTAL_FIELDS`, which
+mirrors HA's default-enabled energy-history sensors. Per-source breakdown
+fields (`battery_energy_imported_from_solar`, generator fields) are disabled by
+default in HA too and deliberately not surfaced. These gauges are additive -
+every `*_today` handler still updates the `meter_power*` cumulative meter too.
+
+Boundary/repro patterns: `test/local-midnight.test.ts`,
+`test/solar-generation-today.test.ts`, `test/gateway-live-status.test.ts`,
+`test/battery-site-info.test.ts`.
 
 ### Grid Tariff Rate (`grid_buy_rate` / `grid_sell_rate`)
 
-The Powerwall driver resolves the live buy/sell grid rate via `getTariffPeriods`
-from `@teslemetry/api`, called from `PowerwallDevice.recomputeTariffRates`.
-The SSE protocol splits `tariff_content_v2` out of a now-slim `site_info` event
-(a `null` body means the tariff was removed), so `PowerwallDevice` subscribes to
-both `site.sse` `site_info` and `tariff_content_v2` events and, on either, re-reads
-`site.sse.siteInfoDocument` - the SDK's merged view of both - rather than trying
-to reassemble them itself.
+`PowerwallDevice.recomputeTariffRates` resolves the live buy/sell rate via
+`getTariffPeriods` from `@teslemetry/api` (>= 0.11.0 vendors and re-exports it
+from `tesla-fleet-api` - no separate dependency). The SSE protocol splits
+`tariff_content_v2` out of a now-slim `site_info` (a `null` body means the
+tariff was removed), so the device subscribes to **both** events and re-reads
+`site.sse.siteInfoDocument` - the SDK's merged view - rather than reassembling
+them. `siteInfoDocument` is typed opaque, so tariff data needs an
+`as unknown as TariffContentV2` cast.
 
-A period boundary arrives with the clock, not a new SSE event, so
-`recomputeTariffRates` retains the last-seen tariff document/timezone on the
-device instance and schedules a Homey timeout at `getTariffPeriods`' own
-`resolution.nextChange` instant, recomputing and rescheduling itself each
-time. Every call clears any previously scheduled timer first, so a fresh
-`site_info`/`tariff_content_v2` event always wins over a stale boundary. When
-the tariff is absent or unresolvable (no timezone, or no matching season),
-`clearTariffRates` unsets both rate capabilities and their currency `units`
-rather than leaving a stale price in place; the boundary timer is cleaned up
-in `onUninit` via the same `pollingCleanup` array every other listener uses.
-
-- `getTariffPeriods`/`TariffContentV2` are imported directly from
-  `@teslemetry/api` (>= 0.11.0, which vendors and re-exports them from
-  `tesla-fleet-api`) - no separate dependency needed. `@teslemetry/api` types
-  the merged `siteInfoDocument` as opaque `Record<string, unknown>`, so
-  tariff data needs an `as unknown as TariffContentV2` cast for
-  `getTariffPeriods`.
-- `test/support/teslemetry-api-stub.js` re-exports the real `getTariffPeriods`
-  via a relative path into `node_modules/@teslemetry/api/dist/index.mjs` (a
-  bare `"@teslemetry/api"` re-import there would recurse into the redirect
-  itself), keeping tariff tests on real tariff-window math instead of a
-  hand-rolled fake.
-- Surfaced as two plain (non-dotted) custom capabilities, `grid_buy_rate` /
-  `grid_sell_rate` - a base capability name may not contain a `.` (reserved
-  for subcapabilities), so this can't reuse the `<capability>.<sub>` pattern
-  above. There is no Homey system capability for pricing.
-- Currency varies per site and isn't known at compose time, so `units` isn't
-  set in `.homeycompose/capabilities/*.json`; `recomputeTariffRates` sets it
-  at runtime via `setCapabilityOptions` once `getTariffPeriods` reports it.
-
-### Capability Updates
-
-Use the `update()` method which safely handles unsupported capabilities:
-
-```typescript
-this.update("measure_battery", value);  // No-op if capability not present
-```
-
-Callers throughout the SSE signal handlers routinely discard the returned
-Promise (no `await`, no `.catch`), so `update()` and
-`updateWithThresholdTriggers()` must never reject - each wraps its entire
-body in one top-level `try`/`catch` that logs via `this.error` rather than
-propagating. This is a single containment boundary, not per-call-site
-`.catch()` scatter; a detached `trigger()` call inside either method still
-keeps its own explicit `.catch(this.error)` since that Promise is never
-returned to the caller at all. See
-`test/update-boundary-containment.test.ts` for the injected-failure
-coverage (thrown `getCapabilities`/`getCapabilityValue`/`isLive`/
-`getDeviceTriggerCard`, proof of no `unhandledRejection`, and proof one
-device's failing update doesn't block another device's).
+- A period boundary arrives with the clock, not an SSE event, so
+  `recomputeTariffRates` retains the last-seen document/timezone and schedules
+  a timeout at `getTariffPeriods`' own `resolution.nextChange`. Every call
+  clears any pending timer first, so a fresh event always beats a stale
+  boundary; the timer is cleaned up in `onUninit` via `pollingCleanup`.
+- When the tariff is absent or unresolvable (no timezone, no matching season),
+  `clearTariffRates` unsets both capabilities *and* their currency `units`
+  rather than leaving a stale price in place.
+- Both are plain (non-dotted) custom capabilities - a base capability name may
+  not contain `.`, and Homey has no system pricing capability. Currency varies
+  per site and is unknown at compose time, so `units` is set at runtime via
+  `setCapabilityOptions`.
 
 ### Device `onInit` Ordering ("registered but dead")
 
 Every device stream (`site.sse`/`vehicle.sse` `.on`/`onSignal`) replays the
-last cached payload for that event *synchronously* the moment a listener is
-registered. If a handler throws while processing that replay and nothing
-catches it, the throw propagates out of the still-synchronous portion of
-`onInit`, rejecting its promise before any registration after that point
-runs - the device ends up paired in Homey but permanently unresponsive.
-Register the essential listeners (state/connectivity/live SSE listeners and
-all `registerCapabilityListener` command listeners) before anything that
-replays a less-trusted cached value, and guard the fallible replay so it
-can't undo that registration - see `PowerwallDevice.onInit` (guards
-`recomputeTariffRates`) and `VehicleDevice.onInit` (splits essential
-registration into `registerCommandCapabilityListeners()`, run first, with
-the fallible `registerSignalListeners()` wrapped in `try`/`catch`).
-`VehicleDevice`'s private `onSignal()` wrapper goes further and isolates
-each individual signal so one signal's throw can't abort every signal
-registered after it - see `signalHandlerFailures` for the resulting
-degraded-health log line.
+last cached payload **synchronously** on registration. An uncaught throw while
+processing that replay propagates out of the still-synchronous part of
+`onInit`, so nothing registered after it ever runs - the device is paired but
+permanently unresponsive.
+
+Register essential listeners (state/connectivity/live SSE and all
+`registerCapabilityListener` command listeners) **before** anything replaying a
+less-trusted cached value, and guard the fallible replay. See
+`PowerwallDevice.onInit` (guards `recomputeTariffRates`) and
+`VehicleDevice.onInit` (`registerCommandCapabilityListeners()` first, fallible
+`registerSignalListeners()` wrapped). `VehicleDevice`'s private `onSignal()`
+wrapper further isolates each individual signal (see `signalHandlerFailures`).
 
 This only protects against a *synchronous* throw. An `async` handler never
-throws synchronously - JS converts any error inside it into a rejected
-Promise before the call returns, so wrapping the call site in `try`/`catch`
-does nothing; the rejection surfaces later as an unhandled rejection unless
-the async boundary contains it itself (as `updateWithThresholdTriggers()`'s
-containment boundary does, above).
+throws synchronously - the rejection surfaces later as an unhandled rejection
+unless the async boundary contains it itself.
 
-### Missing-Product Honest Unavailability (all five drivers)
+### Missing or Ineligible Products
 
-A saved device's product id (energy site id, vehicle VIN, wall connector
-DIN) can stop resolving in `products` (e.g. the underlying binding goes
-stale, or a physical connector is replaced). Per the "registered but dead"
-pattern above, every driver's device `onInit` returns early in that case -
-an accurate `error.<x>_not_found` message (never the misleading
-`error.invalid_refresh_token`), zero SSE listeners, zero command listeners.
-There is no product-binding repair/rebind flow: the device stays honestly
-unavailable and the user deletes and re-pairs it. Do not add mutable
-store-backed binding overrides, driver-specific identity-repair views, or
-repair-candidate matching; Homey's generic OAuth repair flow is responsible
-only for restoring account authorization.
+A saved device's product id (site id, VIN, wall connector DIN) can stop
+resolving in `products`, or resolve but no longer be eligible. In **either**
+case every driver's `onInit` returns early: nothing assigned, zero SSE
+listeners, zero command listeners, and the device marked unavailable via
+`markUnavailable(reason, message)` with an accurate message (never the
+misleading `error.invalid_refresh_token`). Recovery is symmetric - a later
+successful bind clears it.
 
-`<Device>.getSiteId()` / `getVin()` (Vehicle) / `getSiteId()`+`getDin()`
-(Wall Connector) resolve the product id from the immutable pairing `data` -
-all product lookups go through these methods, never `getData()` directly.
-`EnergyDetails.id` (`@teslemetry/api`) is `number`, so pairing `data.id`
-(or Wall Connector's `data.site`) keeps that raw numeric id, not
-stringified - changing its type would make an already-paired device look
-unpaired (Homey's pairing dedup compares `data` verbatim) and offer it again
-as a duplicate. `getSiteId()` still canonicalizes with `String(...)` on
-every call so string-keyed product-registry lookups match. See
-`test/energy-driver-pairing.test.ts`.
+- Eligibility is revalidated at bind/rebind only (not during an uninterrupted
+  cached `Products` generation). `checkVehicleEligibility()` /
+  `isVehicleEligible()` / `isEnergySiteEligible()` in `lib/TeslemetryDriver.ts`
+  are the single source of truth, shared by pairing and every
+  `resolveAndBindVehicle()`/`resolveAndBindSite()` so the two can't drift.
+  Vehicle: `access && fleet_telemetry && !polling`. Energy: `access` only
+  (energy metadata exposes no telemetry/polling equivalent). Messages name the
+  specific failed condition (`error.vehicle_access_required`,
+  `error.vehicle_telemetry_unavailable`, `error.vehicle_polling_mode`,
+  `error.energy_site_access_required`).
+- There is **no product-binding repair/rebind flow**: the device stays honestly
+  unavailable and the user deletes and re-pairs. Do not add store-backed
+  binding overrides, identity-repair views, or repair-candidate matching -
+  Homey's generic OAuth repair flow only restores account authorization.
+- Product ids come from `getSiteId()` / `getVin()` / `getDin()`, resolved from
+  the immutable pairing `data` - never `getData()` directly. `EnergyDetails.id`
+  is a `number`, so pairing `data.id` (Wall Connector: `data.site`) keeps the
+  raw numeric id; changing its type would make an already-paired device look
+  unpaired (Homey's dedup compares `data` verbatim). `getSiteId()`
+  canonicalizes with `String(...)` for string-keyed registry lookups.
+- Wall Connector also validates its DIN's continued presence: its `live_status`
+  handler counts consecutive events missing its DIN, skipping the first
+  `DIN_MISS_GRACE_EVENTS` after a bind, then marks `"connector"` unavailable (a
+  distinct reason from `"binding"`) after `DIN_MISS_THRESHOLD` more.
+- **`onUninit()` must be safe after any of these early returns** - a missing
+  product never assigns the fields a normal bind would. Guard with
+  `this.vehicle?.sse`, a `pollingCleanup` initialized to `[]` at declaration,
+  and optional chaining at every use site.
 
-Wall Connector additionally validates its DIN's continued presence, not just
-its site's: `WallConnecter`'s `live_status` handler counts consecutive
-events where its bound DIN is absent from the site's `wall_connectors` list.
-`DIN_MISS_GRACE_EVENTS` skips the first couple of events after a bind (an
-initial/cached snapshot may not yet include every connector); `DIN_MISS_THRESHOLD`
-further consecutive misses then trigger `markUnavailable("connector", ...)`
-- a distinct `AvailabilityReason` from `"binding"` (the site itself missing).
-Recovery is symmetric: the next `live_status` event carrying that DIN clears
-the reason and resets the miss streak. See `test/wall-connector-availability.test.ts`.
-
-Every device's `onUninit()` must be safe to call after any of these early
-returns - a missing-product `onInit()` never assigns the product/cleanup
-fields a normal bind would, so dereferencing them unconditionally in
-`onUninit()` throws a secondary error that masks the original failure.
-`VehicleDevice`/`WallConnecter` guard this with `this.vehicle?.sse` and a
-`pollingCleanup` field initialized to `[]` at declaration plus optional
-chaining at every use site.
-
-### Present-But-Ineligible Products (bind-time eligibility revalidation)
-
-A product can stay listed in `Products` after losing access/subscription/
-telemetry eligibility - the metadata entry isn't removed, only its
-eligibility fields change. `checkVehicleEligibility()` /
-`isVehicleEligible()` / `isEnergySiteEligible()` (`lib/TeslemetryDriver.ts`)
-are the single source of truth for "is this product pairable/bindable right
-now", shared by pairing (`drivers/vehicle/driver.ts`,
-`listEnergySiteCandidates()`) and every driver's `resolveAndBindVehicle()`/
-`resolveAndBindSite()` so the two can't drift apart. The vehicle predicate
-is `access && fleet_telemetry && !polling`; the energy predicate is
-`access` only - energy metadata exposes no telemetry/polling equivalent.
-
-A product that resolves but fails this predicate is treated like the
-missing-product case above: nothing is assigned, zero listeners are
-registered, and the device is marked unavailable with the `"eligibility"`
-`AvailabilityReason` and a message naming the specific failed condition
-(`error.vehicle_access_required` / `error.vehicle_telemetry_unavailable` /
-`error.vehicle_polling_mode` / `error.energy_site_access_required`).
-Recovery is symmetric with binding. This does not detect an eligibility
-change during an uninterrupted, indefinitely cached `Products` generation -
-only revalidates at bind/rebind. See `test/device-oninit-ineligible-product.test.ts`.
+Tests: `test/energy-driver-pairing.test.ts`,
+`test/device-oninit-ineligible-product.test.ts`,
+`test/wall-connector-availability.test.ts`,
+`test/partial-init-uninit-safety.test.ts`.
 
 ### Firing Flow Trigger Cards
 
-Homey does not reliably auto-fire trigger cards for this app's capabilities,
-so every trigger card is fired explicitly from device code - always guarded
-by comparing the old value to the new one, never firing when no prior value
-exists (no baseline to compare against) or on a repeated identical value.
+Homey does not reliably auto-fire trigger cards for this app's capabilities, so
+every trigger is fired explicitly from device code - **always** guarded by
+comparing old value to new, never firing without a prior value (no baseline) or
+on a repeated identical value.
 
-- **Simple 1:1 capability-changed cards** (`<capability>_changed`, one card
-  per capability, token name matches the capability): add the capability to
-  `TeslemetryDevice.CHANGE_TRIGGER_CAPABILITIES`. `update()` then fires it
-  automatically whenever `setCapabilityValue` changes the value from a known
-  *persisted* prior value (`getCapabilityValue()`, retained across app
-  restarts) - a fresh device's first reading only sets the baseline. Numeric-
-  token cards must also be listed in `NUMERIC_CHANGE_TRIGGER_CAPABILITIES`;
-  `update()` still writes the value but suppresses the trigger unless the
-  new token is a finite number. See `test/capability-change-triggers.test.ts`.
-- **Value-specific branching** (a raw signal fans out to several differently
-  named cards depending on the transition, e.g. `charging_started` vs
-  `charging_complete` vs `plugged_in` off the same `DetailedChargeState`
-  signal): track the previous raw value in a private device field and branch
-  in a dedicated handler method, calling
-  `this.homey.flow.getDeviceTriggerCard(id).trigger(this, tokens).catch(this.error)`
-  directly. See `VehicleDevice.handleDetailedChargeState`.
-- **Threshold/argument-gated cards** (a trigger with a per-flow-card numeric
-  argument, e.g. "battery drops below `[[percentage]]`%"): fire on every real
-  value change with a `state` object (`{ previous, current }`) as the third
-  `.trigger()` argument, then register a `registerRunListener` in
-  `app.ts`'s `registerFlowCards()` that compares `args` against `state` to
-  decide whether that card's threshold was crossed. See
-  `VehicleDevice.handleBatteryLevel` / the `battery_below` listener in
-  `app.ts`. For a numeric *capability* (not a raw signal needing
-  device-specific branching), use `TeslemetryDevice.updateWithThresholdTriggers()`
-  instead of hand-rolling this per device - `app.ts`'s `registerThresholdCards()`
-  registers the above/below/condition run listeners for a
-  `(cardPrefix, capability, argName)` triple. See the solar/grid/load/battery
-  power and buy/sell tariff rate cards for the pattern end to end.
-- **Boolean system capabilities with their own `$flow` definition** (any
-  `alarm_*`, not just `alarm_generic.<sub>`) are the one exception to the
-  "not reliably auto-fired" rule: Homey's platform auto-fires the
-  `<cap>_true`/`<cap>_false` triggers and the plain `<cap>` is/isn't
-  condition whenever `update()` changes the value - no `registerRunListener`
-  or explicit `.trigger()` needed. A subcapability still needs its own
-  manual card definitions (see "Subcapability Flow Cards" above); a plain
-  system capability used as-is (`alarm_motion`, `alarm_presence`) needs
-  none. If a trigger needs a custom token or distinct name, define a
-  separate, explicitly-fired trigger instead (see `wall_connector_fault_code`,
-  `vehicle_arrived_home`/`vehicle_left_home`) - firing the same card
-  manually on top of the auto-fire would double-run any flow built on it.
+- **Simple 1:1 capability-changed cards** (`<capability>_changed`, token name
+  matches the capability): add the capability to
+  `TeslemetryDevice.CHANGE_TRIGGER_CAPABILITIES`; `update()` fires it whenever
+  `setCapabilityValue` changes the value from a known *persisted* prior value.
+  Numeric-token cards must **also** be in `NUMERIC_CHANGE_TRIGGER_CAPABILITIES`
+  - `update()` still writes the value but suppresses the trigger unless the new
+  token is a finite number. See `test/capability-change-triggers.test.ts`.
+- **Value-specific branching** (one raw signal fanning out to differently named
+  cards, e.g. `charging_started` vs `charging_complete` vs `plugged_in` off
+  `DetailedChargeState`): track the previous raw value in a private field and
+  call `getDeviceTriggerCard(id).trigger(this, tokens).catch(this.error)`. See
+  `VehicleDevice.handleDetailedChargeState`.
+- **Threshold/argument-gated cards**: fire on every real change with a `state`
+  object (`{ previous, current }`) as `.trigger()`'s third argument, and
+  register a `registerRunListener` in `app.ts` comparing `args` against
+  `state`. For a numeric *capability*, use
+  `TeslemetryDevice.updateWithThresholdTriggers()` rather than hand-rolling -
+  `app.ts`'s `registerThresholdCards()` wires the above/below/condition
+  listeners for a `(cardPrefix, capability, argName)` triple.
+- **Boolean system capabilities with their own `$flow`** (any `alarm_*`) are
+  the exception: Homey auto-fires `<cap>_true`/`<cap>_false` and the plain
+  `<cap>` condition on every `update()` change - no listener or `.trigger()`
+  needed, and firing one manually would double-run every flow built on it. A
+  *subcapability* still needs its own manual definitions. For a custom token or
+  clearer name, define a separate explicitly-fired trigger instead (see
+  `wall_connector_fault_code`, `vehicle_arrived_home`/`vehicle_left_home`).
+
+### Vehicle Location, Presence and Seat Capabilities
+
+All of these depend on signals that simply never arrive without the
+`vehicle_location` scope or on older firmware. The contract is
+**honest-unknown**: leave the capability unset/`null`; never substitute a
+default, throw, or mark the device unavailable.
+
+- **`alarm_presence` / `alarm_generic.at_work`** pass Tesla's own
+  `LocatedAtHome`/`LocatedAtWork` booleans straight through - these are genuine
+  Fleet Telemetry fields (2024.44.32+), not a Homey-side geofence, and need no
+  location math or geolocation permission. `handleLocatedAtHome` tracks the
+  previous value in `previousLocatedAtHome` rather than reading it back via
+  `getCapabilityValue()` - `update()` writes asynchronously, so a second signal
+  arriving first would see a stale value and mis-fire
+  `vehicle_arrived_home`/`vehicle_left_home`.
+- **`measure_latitude` / `measure_longitude`** expose raw coordinates from the
+  same `Location` signal used internally for window control. **Never** fall
+  back to `{ latitude: 0, longitude: 0 }` (the internal-only default for window
+  math is a real, misleading coordinate) - only write on a genuine `Location`.
+  Homey has no location primitive, so both are `"uiComponent": null` (readable
+  via API/Insights/Flow, not shown on the tile).
+- **`measure_distance.home`** (Distance From Home) is haversine (`lib/haversineDistance.ts`) between
+  the last `Location` and `this.homey.geolocation` (requiring
+  `homey:manager:geolocation`, this app's only declared permission).
+  `updateDistanceFromHome()` writes `null` - never `0` or a stale figure -
+  whenever either side is unknown, and the `distance_from_home` condition
+  **fails closed** on `null`; a confidently wrong zero would fire a gate
+  automation. It only recomputes on a live `Location` event, so it does not
+  track a later change to the hub's own position. `alarm_presence` remains the
+  authoritative "is it home".
+- **`driver_seat_occupied` / `alarm_generic.driver_unbuckled`**:
+  `DriverSeatBelt`'s raw value is *buckle status*
+  (`BuckleStatusLatched`/`Unlatched`/`Unknown`/`Faulted`), **not** "belt
+  fastened" - an unlatched belt in an empty seat is not an alarm.
+  `VehicleDevice` tracks occupancy and latch state independently (ignoring
+  `Unknown`/`Faulted`) and `updateDriverUnbuckledAlarm()` only sets the alarm
+  once both are known, true only when occupied AND unlatched. No metadata flag
+  exposes "has seat sensor", so both register unconditionally.
+
+Tests: `test/vehicle-presence.test.ts`,
+`test/vehicle-distance-from-home.test.ts`,
+`test/vehicle-driver-seat-location.test.ts`.
 
 ### TPMS Warning Level (`tpms_warning`)
 
-`TpmsSoftWarnings`/`TpmsHardWarnings` are per-tire boolean objects
-(`front_left`/`front_right`/`rear_left`/`rear_right`); `VehicleDevice`
-aggregates both across every tire into a single custom enum capability,
-`tpms_warning` (`off`/`soft`/`hard`, hard beating soft beating off), rather
-than exposing eight separate per-wheel alarms. It's a plain
-`CHANGE_TRIGGER_CAPABILITIES` entry (see `tpms_warning_changed`), not an
-`alarm_generic` subcapability, since it has three states, not two.
-`TpmsLastSeenPressureTimeFl/Fr/Rl/Rr` (a per-tire last-seen timestamp with a
-documented timezone defect - it reports as though the reading time were
-Pacific Time regardless of the vehicle's real timezone) are not currently
-surfaced by this capability or any other.
+`TpmsSoftWarnings`/`TpmsHardWarnings` are per-tire boolean objects;
+`VehicleDevice` aggregates both across all four tires into one custom enum
+capability (`off`/`soft`/`hard`, hard beats soft beats off) rather than eight
+per-wheel alarms. Three states, so it is a plain
+`CHANGE_TRIGGER_CAPABILITIES` entry, not an `alarm_generic` subcapability.
+`TpmsLastSeenPressureTime*` is not surfaced - it reports as though the reading
+time were Pacific Time regardless of the vehicle's real timezone.
 
-### At-Home/At-Work Presence (`alarm_presence`, `alarm_generic.at_work`)
-
-Presence is sourced from the vehicle's own native `LocatedAtHome`/
-`LocatedAtWork` signals - Tesla-computed booleans ("is the vehicle at the
-active driver profile's saved home/work location") that
-`@teslemetry/api`'s type comments and the Teslemetry Home Assistant
-integration's `binary_sensor.py` both confirm are genuine Fleet Telemetry
-fields (Requires 2024.44.32), not something this app derives from raw
-coordinates. This is deliberately not a Homey-side geofence and requires no
-location math, geolocation permission, or device setting.
-`VehicleDevice.handleLocatedAtHome`/`handleLocatedAtWork` (registered via
-`onSignal("LocatedAtHome"/"LocatedAtWork", ...)`) just pass the boolean
-straight through to `alarm_presence`/`alarm_generic.at_work`.
-`alarm_presence` is a plain system capability (free `alarm_presence_true`/
-`_false`/condition cards - see the "Boolean system capabilities" bullet
-above - plus the explicitly-fired, distinctly-named `vehicle_arrived_home`/
-`vehicle_left_home` triggers since the generic wording isn't clear enough on
-its own); `alarm_generic.at_work` is a subcapability with its own
-manually-defined `_true`/`_false`/condition cards (worded directly as
-"arrived at work"/"left work", so no supplementary trigger is needed).
-
-If the account hasn't granted the `vehicle_location` scope, neither signal
-ever arrives (cached or live), so the handlers never run and both
-capabilities just stay at their unset/`null` value - an honest "unknown"
-rather than a thrown error or a device marked unavailable. `handleLocatedAtHome`
-tracks the previous value in `previousLocatedAtHome` rather than reading it
-back via `getCapabilityValue()`, since `update()` writes it asynchronously -
-a second signal arriving before the first write settles would otherwise see
-the same stale value and could double- or mis-fire `vehicle_arrived_home`/
-`vehicle_left_home`. See `test/vehicle-presence.test.ts`.
-
-### Location Coordinates (`measure_latitude`, `measure_longitude`)
-
-Unlike At-Home/At-Work above, these two capabilities deliberately do expose
-raw coordinates - `VehicleDevice` reads the same `Location` signal already
-consumed internally for window control/homelink actuation
-(`this.vehicle.sse.cache?.data?.Location`), gated on the identical
-`vehicle_location` scope: if the scope isn't granted, `Location` never
-arrives and both capabilities stay an honest unset/`null`, exactly like
-`alarm_presence`/`alarm_generic.at_work`. Never fall back to `{ latitude: 0,
-longitude: 0 }` here (that internal-only default used for window-control
-math is a real, misleading coordinate) - only write when a genuine
-`Location` value arrives. Homey has no location/GPS/geofence primitive of
-its own, so these two stay off the device tile (`"uiComponent": null` in
-`.homeycompose/capabilities/measure_latitude.json`/`measure_longitude.json`
-- readable via API/Insights/Flow, just not shown) rather than being
-displayed as two standalone numbers no flow card can act on; see Distance
-From Home below for the derived value that makes them flow-usable.
-
-### Distance From Home (`measure_distance.home`, `distance_from_home` condition)
-
-Straight-line (haversine, `lib/haversineDistance.ts`) distance between the
-vehicle's last-reported `Location` and the Homey hub's own position
-(`this.homey.geolocation`, requiring the `homey:manager:geolocation`
-permission - this app's only declared permission). `VehicleDevice.
-updateDistanceFromHome()` writes `null`, never `0` or a stale figure,
-whenever either side is unknown (no `Location` yet, or the hub has no
-configured/permitted geolocation) - a confidently wrong zero would fire a
-gate automation. It only recomputes when a live `Location` event arrives,
-so it does not track a later change to the hub's own position on its own.
-The `distance_from_home` Flow condition (driver-scoped, user-supplied
-`radius` in km) fails closed (`false`) whenever the capability reads `null`
-rather than treating "unknown" as "not within range" being ambiguous with
-"actually far away". This is a derived value, not a Tesla-reported signal -
-`alarm_presence`/`alarm_generic.at_work` (At-Home/At-Work above) remain the
-authoritative answer to "is it home"; this complements them for automations
-that need an actual distance/radius.
-
-### Driver Seat Occupancy & Unbuckled Alarm (`driver_seat_occupied`, `alarm_generic.driver_unbuckled`)
-
-`DriverSeatBelt`'s raw value is buckle status (`BuckleStatusLatched`/
-`BuckleStatusUnlatched`/`...Unknown`/`...Faulted`), **not** "belt fastened" -
-an unlatched belt in an empty seat is not an alarm. `VehicleDevice` tracks
-`DriverSeatOccupied` and the latched/unlatched read of `DriverSeatBelt`
-independently (`driverSeatOccupied`/`driverSeatBeltUnlatched` fields,
-`Unknown`/`Faulted` readings ignored) and only sets
-`alarm_generic.driver_unbuckled` once both are known, via
-`updateDriverUnbuckledAlarm()` - true only when the seat is occupied AND the
-belt is unlatched. Neither Tesla vehicle metadata nor `capabilityGating.ts`
-exposes a "has seat sensor" flag, so both capabilities register
-unconditionally and rely on the same honest-unknown-until-a-signal-arrives
-behavior as At-Home/At-Work above for a vehicle/firmware that never reports
-them. See `test/vehicle-driver-seat-location.test.ts`.
-
-### Gear Flow Cards (`gear_changed`, `gear_is`)
-
-`gear` is a plain `CHANGE_TRIGGER_CAPABILITIES` entry (auto-fires
-`gear_changed` off any real P/R/N/D transition) plus a driver-scoped
-`gear_is` condition, mirroring `tpms_warning_changed`/`tpms_warning_is`
-exactly - the closest existing analog (same driver, same custom-enum
-capability shape). A "changed from P to D or R" automation composes
-`gear_changed` with a `gear_is` check, rather than this app tracking the
-previous gear value itself.
-
-### Connection Lifecycle: Single-Flight Init, Startup Retry, Freshness Watchdog (`app.ts`)
+### Connection Lifecycle (`app.ts`)
 
 `app.ts` owns one shared, generation-safe pipeline for building/rebuilding
 `teslemetry`/`products`:
 
 - **`initializeTeslemetry(forceRebuild?)`** is single-flight: every caller
-  (boot `onInit()`, `getTeslemetry()`/`getProducts()`, the startup retry
-  timer, a token-refresh rebuild) chains onto one `initChain` promise, so
-  builds never run concurrently and no caller can observe a half-built
-  generation. `forceRebuild` always builds a fresh generation even if the
-  current one is `ready`; a plain call is a no-op once already ready.
-- **`doInitialize()`** only publishes to `this.teslemetry`/`this.products`
+  (boot, `getTeslemetry()`/`getProducts()`, the startup retry timer, a
+  token-refresh rebuild) chains onto one `initChain`, so builds never run
+  concurrently and no caller observes a half-built generation. `forceRebuild`
+  always builds fresh; a plain call is a no-op once ready.
+- **`doInitialize()`** publishes to `this.teslemetry`/`this.products` only
   after `createProducts()` fully succeeds, and closes the previous
-  generation's stream only *after* the new one has started, so a
-  token-refresh rebuild never has a gap with zero active stream.
-  `this.generation` is bumped on every publish/cleanup; every stream handler
-  captures its own generation and no-ops once superseded, so a straggler
-  event from an old/closed SDK can't mutate current state.
-- **`scheduleStartupRetry()`** covers a transient `createProducts()` failure
-  at boot: bounded exponential backoff (`STARTUP_RETRY_BASE_MS` doubling up
-  to `STARTUP_RETRY_MAX_MS`), cleared as soon as any build succeeds. Doesn't
-  schedule without a valid token. `isReady()` reflects whether a generation
-  has ever been fully published; devices that fail to bind while not yet
-  ready use the `"startup"` availability reason instead of a misleading
-  "product not found" message.
-- **The stream freshness watchdog** tracks per-product last-genuine-event
-  time. The SDK emits `disconnect` before every reconnect attempt regardless
-  of cause, so `handleStreamDisconnect()` starts a `STREAM_STALE_GRACE_MS`
-  timer on the first one; if it fires with no genuine data in between, every
-  currently-bound device is marked unavailable with reason `"stream"`. Each
-  device recovers independently the moment its *own* product's next genuine
-  (non-`isCache`) event arrives - never on a blanket reconnect or the SDK's
+  generation's stream only *after* the new one has started, so a rebuild never
+  leaves a gap with no active stream. `this.generation` is bumped on every
+  publish/cleanup and every stream handler captures its own generation and
+  no-ops once superseded, so a straggler event from a dead SDK can't mutate
+  current state.
+- **`scheduleStartupRetry()`** covers a transient boot-time `createProducts()`
+  failure with bounded exponential backoff (`STARTUP_RETRY_BASE_MS` →
+  `STARTUP_RETRY_MAX_MS`), cleared on any successful build, never scheduled
+  without a valid token. `isReady()` reflects whether a generation was ever
+  fully published; devices failing to bind before then use the `"startup"`
+  availability reason, not a misleading "product not found".
+- **Stream freshness watchdog**: the SDK emits `disconnect` before every
+  reconnect regardless of cause, so `handleStreamDisconnect()` starts a
+  `STREAM_STALE_GRACE_MS` timer on the first one; if it fires with no genuine
+  data in between, every bound device is marked unavailable with reason
+  `"stream"`. Each device recovers independently on its **own** product's next
+  genuine (non-`isCache`) event - never on a blanket reconnect or the SDK's
   optimistic `connect` event.
-- **`rebindAllDeviceProducts()`** walks every driver's `getDevices()` and
-  calls `TeslemetryDevice.rebindProduct()` after each successful build -
-  without it, an already-paired device keeps listening on the old, dead
-  per-product stream.
+- **`rebindAllDeviceProducts()`** walks every driver's `getDevices()` and calls
+  `rebindProduct()` after each successful build - without it, an already-paired
+  device keeps listening on the old, dead per-product stream.
+- **Token-save recovery**: `TeslemetryOAuth2Client.saveToken()` invokes a plain
+  `onTokenSaved` callback, **not** a custom event on `this.app.homey` - `App`
+  and `Homey` are distinct EventEmitters with no bridging for custom events, so
+  that hop never fires. `app.ts` assigns `onTokenSaved` to force the same
+  `initializeTeslemetry(true)` rebuild every other recovery path uses.
 
-**Token-save recovery wiring.** `TeslemetryOAuth2Client.saveToken()` invokes a
-plain `onTokenSaved` callback rather than a custom event on `this.app.homey`:
-`App` and `Homey` are distinct `EventEmitter` instances with no bridging for
-custom events, so a custom-event hop between them never fires. `app.ts`'s
-`onInit()` assigns `this.oauth.onTokenSaved` to force the same
-`initializeTeslemetry(true)` rebuild every other recovery path uses. See
-`test/oauth2-client.test.ts` and `test/app-connection-lifecycle.test.ts`.
+Tests: `test/app-connection-lifecycle.test.ts`, `test/oauth2-client.test.ts`,
+`test/product-rebind-recovery.test.ts`.
 
-### Credential Teardown & Availability Reasons (`app.ts`, `lib/TeslemetryDevice.ts`)
+### Availability Reasons and Credential Teardown
 
-Every device's unavailability is tracked as one typed `AvailabilityReason`
-(`"startup" | "binding" | "stream" | "auth" | "connector"`,
-`lib/TeslemetryDevice.ts`) via `markUnavailable(reason, message)` /
-`clearAvailabilityReason(reason)` - never a raw `setUnavailable()`/
-`setAvailable()` call. `clearAvailabilityReason()` is a no-op unless the
-device's *current* reason matches, so one recovery signal can never paper
-over an unrelated cause.
+Unavailability is always one typed `AvailabilityReason` (`"startup" |
+"binding" | "eligibility" | "stream" | "auth" | "connector"`, defined in
+`lib/TeslemetryDevice.ts`) set via `markUnavailable(reason, message)` /
+`clearAvailabilityReason(reason)` - **never** a raw
+`setUnavailable()`/`setAvailable()`. `clearAvailabilityReason()` is a no-op
+unless the device's *current* reason matches, so one recovery signal can never
+paper over an unrelated cause.
 
 `teardownCredentials(message)` is the single path for every credential-removal
-event: the SSE `auth_failure` terminal event and the manual Disconnect
-action (`api.ts`'s `deleteOAuthToken` → `app.disconnectAccount()`). Both
-close the stream, clear the token, and mark every device unavailable with
-reason `"auth"`; only that specific device's own genuine post-reauth data
-event clears it (`handleGenuineStreamEvent()`, shared with the freshness
-watchdog).
+event (the SSE `auth_failure` terminal event, and `api.ts`'s
+`deleteOAuthToken` → `app.disconnectAccount()`): close the stream, clear the
+token, mark every device `"auth"`-unavailable. Only that device's own genuine
+post-reauth data event clears it (`handleGenuineStreamEvent()`, shared with the
+freshness watchdog), so a device-level `handleApiError()` auth failure and an
+app-level stream auth failure recover through the identical per-device path.
 
-`TeslemetryDevice.handleApiError()` marks the same `"auth"` reason on
-`invalid_token`/`subscription_required` from an individual command response,
-so a device-level auth failure and an app-level stream auth failure recover
-through the identical per-device evidence path. See
-`test/app-connection-lifecycle.test.ts` for the coverage across all of the
-above.
+### SSE Topic Selection
 
-### SSE Topic Selection (`app.ts`)
-
-`Teslemetry`'s `stream.topics` option (`@teslemetry/api` >= 0.10.0) selects
-an exact allowlist of wire events instead of receiving every topic the
-account is eligible for. `app.ts` passes exactly the topics this app's
-devices consume: `state`/`data`/`connectivity` for vehicles (see
-`drivers/vehicle/device.ts`) and `live_status`/`site_info`/
-`tariff_content_v2`/`energy_totals` for energy sites (see
-`drivers/battery|solar|gateway|wall-connector/device.ts`). Adding a signal
-or event the app didn't previously consume from an already-selected topic
-needs no change here; consuming a wire event not in that list does.
-
-### Lint (oxlint)
-
-`npm run lint` runs [oxlint](https://oxc.rs) (native Rust/TS parser, no `tsc`
-bridge) instead of ESLint. `.oxlintrc.json` mirrors the rule set and options
-`eslint-config-athom` enforces. Two categories of that coverage have no
-oxlint equivalent and are not enforced:
-- Pure formatting rules (`comma-dangle`, `semi`, `quote-props`, spacing rules,
-  etc.) — oxlint deliberately excludes these and expects a formatter (e.g.
-  Prettier) to own them; none is currently installed.
-- A handful of non-formatting rules with no oxlint port: `no-restricted-syntax`
-  (custom for-in/labeled-statement ban), `import/no-extraneous-dependencies`,
-  `import/order`, and most of `eslint-plugin-node`'s CJS-require-focused
-  rules (`node/no-missing-require`, `node/no-deprecated-api`, etc.) — lower
-  impact here since the app is ESM-only.
-
-`@typescript-eslint/recommended` and `eslint-plugin-homey-app`'s rules are
-not active: `.eslintrc.json` extends `"athom"`, which resolves to
-`eslint-config-athom`'s `index.js`, not `homey-app.js` (the config that adds
-those).
-
-### TypeScript version
-
-On TypeScript 7, `tsconfig.json` sets `compilerOptions.types` explicitly to
-`["node", "homey"]`. TS7 dropped automatic inclusion of everything under
-`@types/*` - without this, ambient globals from `@types/node` and
-`@types/homey` (the Homey app SDK types) stop resolving and the build fails.
-If you add a package whose types are only used ambiently (not via an
-explicit `import`), add it to this list.
+`app.ts`'s `SSE_TOPICS` is an exact allowlist passed to `Teslemetry`'s
+`stream.topics` option. Adding a signal from an already-selected topic needs no
+change; consuming a wire event not in that list does.
 
 ### Stale Device References (Flow cards)
 
-A saved Flow action/condition/trigger can outlive its device: removing and
-re-pairing the same Tesla site (Powerwall, vehicle, etc.) gives Homey a new
-runtime device ID while this app returns the same `deviceData.id`, so the old
-Flow argument still points at a runtime ID no driver instance has anymore.
-Deserializing that argument calls the Apps SDK's private
-`Driver.getDeviceById`, which throws synchronously *before* any app code
-runs - an uncaught exception there can crash the whole `com.teslemetry`
-process, not just fail one Flow card.
+A saved Flow argument can outlive its device: re-pairing the same Tesla product
+gives Homey a new runtime device ID while this app returns the same
+`deviceData.id`. Deserializing that argument calls the SDK's private
+`Driver.getDeviceById`, which throws **synchronously before any app code runs**
+- uncaught, that crashes the whole `com.teslemetry` process.
 
 Two coordinated guards close this:
 
-- `TeslemetryDriver.getDeviceById` is overridden to resolve by scanning
-  `getDevices()` and comparing runtime `getId()` (not `getDevice({id})`,
-  which compares pairing `deviceData`, not the runtime ID being deserialized
-  here) and returns `undefined` instead of throwing on a miss, rate-limited
-  per missing ID. This is a workaround for an undeclared/private SDK method,
-  not a supported contract - see the comment on the override for the
-  version it targets and re-verify after any Apps SDK bump.
+- `TeslemetryDriver.getDeviceById` is overridden to scan `getDevices()`
+  comparing runtime `getId()` (not `getDevice({id})`, which compares pairing
+  `deviceData`) and return `undefined` on a miss, rate-limited per missing ID.
+  This targets an undeclared/private SDK method - re-verify after any Apps SDK
+  bump (see the comment on the override).
 - Every app-owned Flow run listener in `app.ts` must treat `args.device` as
   possibly `undefined`: actions call `requireFlowDevice()` to reject with a
-  clear, user-actionable error; conditions and device-trigger predicates
-  return `false`. Never let a stale device silently no-op an action or match
-  a condition/trigger by accident.
+  user-actionable error; conditions and device-trigger predicates return
+  `false`. Never let a stale device silently no-op an action or match by
+  accident.
 
-Separately, `TeslemetryDevice.isLive()` (`!destroyed` AND still present in
+Separately, `TeslemetryDevice.isLive()` (`!destroyed` AND still in
 `driver.getDevices()`) must be checked immediately before every
-`.trigger(this, ...)` call this app makes itself. `destroyed` alone isn't
-enough: the Apps SDK removes a deleted device from the driver's runtime map
-*before* calling `onUninit()`, so a capability write already in flight can
-resume in that gap with `destroyed` still `false`. See `test/device-liveness.test.ts`.
+`.trigger(this, ...)` this app fires. `destroyed` alone is insufficient: the
+SDK removes a deleted device from the driver's map *before* calling
+`onUninit()`, so an in-flight capability write can resume in that gap. See
+`test/device-liveness.test.ts` and `test/flow-listener-stale-device.test.ts`.
+
+## Tooling
+
+### Lint
+
+`npm run lint` runs [oxlint](https://oxc.rs) (native Rust/TS parser). There is
+no ESLint config in this repo. `.oxlintrc.json` mirrors what
+`eslint-config-athom` enforced, minus two categories with no oxlint
+equivalent: pure formatting rules (oxlint expects a formatter to own these;
+none is installed) and a few unported rules (`no-restricted-syntax`,
+`import/no-extraneous-dependencies`, `import/order`, most CJS-oriented
+`eslint-plugin-node` rules - low impact in an ESM-only app).
+
+### TypeScript
+
+`tsconfig.json` sets `compilerOptions.types` explicitly to `["node", "homey"]`
+because TypeScript 7 dropped automatic inclusion of everything under
+`@types/*`. Add any package whose types are used *ambiently* (not via an
+explicit `import`) to that list, or its globals stop resolving and the build
+fails.
 
 ### Dependency Vulnerabilities (`npm audit`)
 
-`@teslemetry/api` and `source-map-support` (the runtime dependencies) pull in
-no transitive dependencies of their own - every `npm audit` finding traces
-back to the `homey` devDependency (the CLI/release toolchain), so treat audit
-findings as toolchain hygiene, not runtime exposure. `package.json`'s
-`overrides` block pins several of `homey`'s transitive deps (`uuid`, `tmp`,
-`minimatch`, `update-notifier`, `sharp`) past their advisory-fixed versions;
-verify any new override with `npm run build && npm test && npm run lint &&
-npm run app:validate`, since forcing a transitive major can break the CLI in
-ways this app's own test suite can't catch on its own. The remaining
-findings (`socket.io-client`/`engine.io-client`/`parseuri`, pinned by
-`homey-api`) are left alone: `homey-api`'s client talks live protocol to a
-paired Homey box during `homey app run`/`select`, a path this repo has no
-way to exercise in CI, and `npm audit fix --force`'s only route is
-downgrading `homey` itself to a much older release - a regression, not a
-fix. This is an upstream (Athom) gap, not something fixable from this repo;
-re-run `npm audit` after any `homey`/`homey-api` release to see whether it's
-been closed before adding another override.
+The runtime dependencies (`@teslemetry/api`, `source-map-support`) have no
+transitive dependencies, so every audit finding traces to the `homey`
+devDependency - toolchain hygiene, not runtime exposure. `package.json`'s
+`overrides` pin several of `homey`'s transitive deps past their advisory-fixed
+versions; verify any new override with `npm run build && npm test &&
+npm run lint && npm run app:validate`, since forcing a transitive major can
+break the CLI in ways this suite can't catch. The remaining
+`socket.io-client`/`engine.io-client`/`parseuri` findings (pinned by
+`homey-api`) are deliberately left alone: that client only talks to a paired
+Homey box during `homey app run`, a path CI cannot exercise, and
+`npm audit fix --force`'s only route is downgrading `homey` itself. This is an
+upstream (Athom) gap; re-check after any `homey`/`homey-api` release.
 
-### Release Workflow (`homey-app-release.yml`)
+### Release Workflow
 
-Cutting a release is one manual `workflow_dispatch` on `homey-app-release.yml`
-(version bump type + changelog) with three chained jobs: `version` (runs
-Athom's `github-action-homey-app-version`, commits, tags, creates the GitHub
-Release), `validate` (calls `homey-app-validate.yml` as a reusable workflow,
-checked out at the exact commit `version` produced), then `publish` (Athom's
-`github-action-homey-app-publish`). Only `publish` runs under the `production`
-GitHub Environment, whose required reviewer is the run's single approval
-gate - by the time someone approves, the candidate is already versioned and
-validated. Athom's publish still lands the build as a draft in Athom's
-dashboard; promoting it there is a separate, manual step.
-
-The `version` job's commit/tag/release step is idempotent (checks before
-creating the tag and the GitHub Release) and skips re-running Athom's bump
-action on a same-run retry (detected via `GITHUB_RUN_ATTEMPT` plus the prior
-commit message), so a re-run of a failed `version` job resumes rather than
-double-bumping the version.
+Cutting a release is one `workflow_dispatch` on
+`.github/workflows/homey-app-release.yml` (version bump type + changelog):
+`version` → `validate` (reusable `homey-app-validate.yml`, checked out at the
+exact commit `version` produced) → `publish`. Only `publish` runs under the
+`production` GitHub Environment, whose required reviewer is the run's single
+approval gate, so the candidate is already versioned and validated by the time
+anyone approves. The `version` job is idempotent (checks before tagging and
+before creating the Release, and skips re-running the bump action on a same-run
+retry), so a failed job resumes rather than double-bumping. Athom's publish
+lands the build as a draft in Athom's dashboard; promoting it there is a
+separate manual step.
 
 ## Maintaining this file
 
