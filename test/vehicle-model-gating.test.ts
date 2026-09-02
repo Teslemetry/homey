@@ -33,6 +33,8 @@ const SEAT_FEATURE_CAPABILITIES = [
 
 const SUNROOF_CAPABILITIES = ["windowcoverings_closed.sunroof"];
 
+const COP_TEMPERATURE_LIMIT_CAPABILITIES = ["cop_temperature_limit"];
+
 const POWERSHARE_CAPABILITIES = [
   "powershare_status",
   "powershare_type",
@@ -48,6 +50,7 @@ function createDeviceStub(
     has_seat_cooling?: boolean;
     rear_seat_heaters?: number;
     sun_roof_installed?: boolean;
+    cop_user_set_temp_supported?: boolean;
   },
 ) {
   const added: string[] = [];
@@ -69,6 +72,7 @@ function createDeviceStub(
           ...TONNEAU_CAPABILITIES,
           ...SEAT_FEATURE_CAPABILITIES,
           ...SUNROOF_CAPABILITIES,
+          ...COP_TEMPERATURE_LIMIT_CAPABILITIES,
           ...POWERSHARE_CAPABILITIES,
           ...BIOWEAPON_CAPABILITIES,
         ],
@@ -414,6 +418,59 @@ test("ensureCapabilities preserves the sunroof capability (no widening) when veh
   );
   assert.deepEqual(
     added.filter((cap) => SUNROOF_CAPABILITIES.includes(cap)),
+    [],
+  );
+});
+
+test("ensureCapabilities adds the cop_temperature_limit capability for a vehicle with cop_user_set_temp_supported", async () => {
+  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"], {
+    cop_user_set_temp_supported: true,
+  });
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(new Set(added), new Set(COP_TEMPERATURE_LIMIT_CAPABILITIES));
+});
+
+test("ensureCapabilities does not add the cop_temperature_limit capability for a vehicle without cop_user_set_temp_supported", async () => {
+  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"], {
+    cop_user_set_temp_supported: false,
+  });
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    added.filter((cap) => COP_TEMPERATURE_LIMIT_CAPABILITIES.includes(cap)),
+    [],
+  );
+});
+
+test("ensureCapabilities removes the cop_temperature_limit capability already present on a vehicle without cop_user_set_temp_supported", async () => {
+  const { stub, removed } = createDeviceStub(
+    MODEL_Y_VIN,
+    ["measure_battery", ...COP_TEMPERATURE_LIMIT_CAPABILITIES],
+    { cop_user_set_temp_supported: false },
+  );
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(new Set(removed), new Set(COP_TEMPERATURE_LIMIT_CAPABILITIES));
+});
+
+test("ensureCapabilities preserves the cop_temperature_limit capability (no widening) when vehicle metadata is temporarily absent", async () => {
+  const { stub, added, removed } = createDeviceStub(MODEL_Y_VIN, [
+    "measure_battery",
+    ...COP_TEMPERATURE_LIMIT_CAPABILITIES,
+  ]);
+
+  await stub.ensureCapabilities();
+
+  assert.deepEqual(
+    removed.filter((cap) => COP_TEMPERATURE_LIMIT_CAPABILITIES.includes(cap)),
+    [],
+  );
+  assert.deepEqual(
+    added.filter((cap) => COP_TEMPERATURE_LIMIT_CAPABILITIES.includes(cap)),
     [],
   );
 });

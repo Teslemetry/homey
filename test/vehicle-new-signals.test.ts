@@ -31,6 +31,8 @@ function createDeviceStub(
     metadata: { access: true, fleet_telemetry: "fleet_telemetry_config_id", polling: false, config: { rhd: false, can_actuate_trunks: false, ...config } },
   };
   const capabilityOptionCalls: Array<{ capability: string; options: unknown }> = [];
+  const addedCapabilities: string[] = [];
+  const removedCapabilities: string[] = [];
   const stub = Object.assign(new VehicleDevice(), {
     homey: {
       app: { products: { vehicles: { [vin]: vehicle } } },
@@ -54,6 +56,14 @@ function createDeviceStub(
     setCapabilityOptions: async (capability: string, options: unknown) => {
       capabilityOptionCalls.push({ capability, options });
     },
+    addCapability: async (capability: string) => {
+      addedCapabilities.push(capability);
+      capabilities[capability] = undefined;
+    },
+    removeCapability: async (capability: string) => {
+      removedCapabilities.push(capability);
+      delete capabilities[capability];
+    },
     getStoreValue: () => null,
     registerCapabilityListener: () => {},
     log: () => {},
@@ -61,7 +71,14 @@ function createDeviceStub(
     setUnavailable: async () => {},
   });
   stub.driver.getDevices = () => [stub];
-  return { stub, sse, capabilities, capabilityOptionCalls };
+  return {
+    stub,
+    sse,
+    capabilities,
+    capabilityOptionCalls,
+    addedCapabilities,
+    removedCapabilities,
+  };
 }
 
 test("MilesSinceReset converts miles to km on measure_distance.since_reset", async () => {
@@ -372,9 +389,11 @@ test("CabinOverheatProtectionMode Unknown state is skipped (no mapped value)", a
 });
 
 test("CabinOverheatProtectionTemperatureLimit maps Low/Medium/High to cop_temperature_limit", async () => {
-  const { stub, sse, capabilities } = createDeviceStub({
-    cop_temperature_limit: undefined,
-  });
+  const { stub, sse, capabilities } = createDeviceStub(
+    { cop_temperature_limit: undefined },
+    DEFAULT_VIN,
+    { cop_user_set_temp_supported: true },
+  );
   await stub.onInit();
 
   sse.data.emit(
@@ -396,31 +415,25 @@ test("CabinOverheatProtectionTemperatureLimit maps Low/Medium/High to cop_temper
   assert.equal(capabilities["cop_temperature_limit"], "high");
 });
 
-test("cop_temperature_limit is only setable when cop_user_set_temp_supported is true", async () => {
-  const { stub, capabilityOptionCalls } = createDeviceStub(
+test("cop_temperature_limit is kept when cop_user_set_temp_supported is true", async () => {
+  const { stub, removedCapabilities } = createDeviceStub(
     { cop_temperature_limit: undefined },
     DEFAULT_VIN,
     { cop_user_set_temp_supported: true },
   );
   await stub.onInit();
 
-  const call = capabilityOptionCalls.find(
-    (c) => c.capability === "cop_temperature_limit",
-  );
-  assert.equal((call?.options as { setable?: boolean })?.setable, true);
+  assert.ok(!removedCapabilities.includes("cop_temperature_limit"));
 });
 
-test("cop_temperature_limit is not setable when cop_user_set_temp_supported is false/absent", async () => {
-  const { stub, capabilityOptionCalls } = createDeviceStub(
+test("cop_temperature_limit is removed when cop_user_set_temp_supported is false/absent", async () => {
+  const { stub, removedCapabilities } = createDeviceStub(
     { cop_temperature_limit: undefined },
     DEFAULT_VIN,
   );
   await stub.onInit();
 
-  const call = capabilityOptionCalls.find(
-    (c) => c.capability === "cop_temperature_limit",
-  );
-  assert.equal((call?.options as { setable?: boolean })?.setable, false);
+  assert.ok(removedCapabilities.includes("cop_temperature_limit"));
 });
 
 test("a null TpmsSoftWarnings/TpmsHardWarnings reading is treated as no warning on those tires", async () => {
