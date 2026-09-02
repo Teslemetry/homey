@@ -409,11 +409,6 @@ export default class VehicleDevice extends TeslemetryDevice {
       ...this.driver.manifest.capabilitiesOptions["onoff.trunk"],
       setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
     }).catch(this.error);
-    this.setCapabilityOptions("cop_temperature_limit", {
-      ...this.driver.manifest.capabilitiesOptions["cop_temperature_limit"],
-      setable: !!this.vehicle.metadata.config?.cop_user_set_temp_supported,
-    }).catch(this.error);
-
     // Essential behavior: state/connectivity SSE listeners and all command
     // capability listeners. Registered before the signal replay below so a
     // synchronous throw from a malformed cached signal (e.g.
@@ -1652,9 +1647,10 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   /**
    * Shared by the cop_temperature_limit capability listener and the
-   * set_cop_temperature_limit flow action. Only meaningful on vehicles with
-   * config.cop_user_set_temp_supported - the capability is otherwise
-   * read-only (see resolveAndBindVehicle's setCapabilityOptions call).
+   * set_cop_temperature_limit flow action. The capability itself is gated
+   * out of ensureCapabilities() for vehicles without
+   * config.cop_user_set_temp_supported (see capabilityGating.ts), so this
+   * check is defense-in-depth against a stale flow argument.
    */
   private async setCopTemperatureLimit(value: string): Promise<void> {
     if (!this.vehicle.metadata.config?.cop_user_set_temp_supported) {
