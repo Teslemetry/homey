@@ -22,10 +22,6 @@ export function checkVehicleEligibility(
   return { eligible: true };
 }
 
-export function isVehicleEligible(metadata: VehicleDetails["metadata"]): boolean {
-  return checkVehicleEligibility(metadata).eligible;
-}
-
 /**
  * Locale key for each way checkVehicleEligibility() can report a vehicle
  * ineligible. Shared by pairing (drivers/vehicle/driver.ts) and bind-time
