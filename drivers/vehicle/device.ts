@@ -6,20 +6,16 @@ import {
   VehicleDetails,
 } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
-import { checkVehicleEligibility } from "../../lib/TeslemetryDriver.js";
+import {
+  checkVehicleEligibility,
+  VEHICLE_INELIGIBILITY_MESSAGE_KEY,
+} from "../../lib/TeslemetryDriver.js";
 import haversineDistanceKm from "../../lib/haversineDistance.js";
 import {
   isCapabilitySupported,
   filterVehicleCapabilities,
   isMetadataGatedCapability,
 } from "./capabilityGating.js";
-
-/** Locale key for each way checkVehicleEligibility() can report a vehicle ineligible. */
-const VEHICLE_INELIGIBILITY_MESSAGE_KEY = {
-  access: "error.vehicle_access_required",
-  telemetry: "error.vehicle_telemetry_unavailable",
-  polling: "error.vehicle_polling_mode",
-} as const;
 
 const isBool = (x: any) => typeof x === "boolean";
 
