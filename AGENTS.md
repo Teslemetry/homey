@@ -283,7 +283,16 @@ successful bind clears it.
   (energy metadata exposes no telemetry/polling equivalent). Messages name the
   specific failed condition (`error.vehicle_access_required`,
   `error.vehicle_telemetry_unavailable`, `error.vehicle_polling_mode`,
-  `error.energy_site_access_required`).
+  `error.energy_site_access_required`) via the shared
+  `VEHICLE_INELIGIBILITY_MESSAGE_KEY` map in `lib/TeslemetryDriver.ts`.
+- `VehicleDriver.onPairListDevices()` silently excludes ineligible vehicles
+  from the pairing list only when at least one eligible vehicle remains. If
+  **every** vehicle on the account is present but ineligible, it throws the
+  specific `VEHICLE_INELIGIBILITY_MESSAGE_KEY` message instead of handing
+  pairing an empty list - an online-in-Teslemetry vehicle that simply lacks
+  Fleet Telemetry configuration must never look identical to "no vehicles
+  found". A genuinely empty account (no vehicles at all) still returns `[]`
+  with no error.
 - There is **no product-binding repair/rebind flow**: the device stays honestly
   unavailable and the user deletes and re-pairs. Do not add store-backed
   binding overrides, identity-repair views, or repair-candidate matching -
