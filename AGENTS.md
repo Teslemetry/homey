@@ -276,8 +276,8 @@ successful bind clears it.
 
 - Eligibility is revalidated at bind/rebind only (not during an uninterrupted
   cached `Products` generation). `checkVehicleEligibility()` /
-  `isVehicleEligible()` / `isEnergySiteEligible()` in `lib/TeslemetryDriver.ts`
-  are the single source of truth, shared by pairing and every
+  `isEnergySiteEligible()` in `lib/TeslemetryDriver.ts` are the single source
+  of truth, shared by pairing and every
   `resolveAndBindVehicle()`/`resolveAndBindSite()` so the two can't drift.
   Vehicle: `access && fleet_telemetry && !polling`. Energy: `access` only
   (energy metadata exposes no telemetry/polling equivalent). Messages name the
@@ -313,6 +313,7 @@ successful bind clears it.
   and optional chaining at every use site.
 
 Tests: `test/energy-driver-pairing.test.ts`,
+`test/vehicle-driver-pairing.test.ts`,
 `test/device-oninit-ineligible-product.test.ts`,
 `test/wall-connector-availability.test.ts`,
 `test/partial-init-uninit-safety.test.ts`.
