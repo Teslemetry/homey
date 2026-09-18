@@ -9,6 +9,13 @@ export interface OAuth2Token {
   expires_at?: number; // Calculated timestamp
 }
 
+/**
+ * Why a token was persisted. A "grant" can name a different Teslemetry
+ * account than the one currently connected; a "refresh" only rotates the
+ * access token of the account already connected.
+ */
+export type TokenSaveReason = "grant" | "refresh";
+
 export default class TeslemetryOAuth2Client {
   static TOKEN_URL = "https://api.teslemetry.com/oauth/token";
   static AUTHORIZATION_URL = "https://teslemetry.com/connect";
@@ -20,12 +27,17 @@ export default class TeslemetryOAuth2Client {
   private token: OAuth2Token | null = null;
   private requestQueue: Promise<void> = Promise.resolve();
 
-  // Set by TeslemetryApp.onInit() to trigger a fresh Products generation
-  // whenever a token is persisted. A plain callback, not a custom event on
-  // this.app.homey - App and Homey are distinct EventEmitter instances with
-  // no bridging for custom events, so a custom-event hop between them never
-  // actually fires (see AGENTS.md's connection-lifecycle notes).
-  onTokenSaved?: (token: OAuth2Token) => void;
+  // The refresh every concurrent caller joins, so a burst of commands that
+  // all find the access token inside its expiry window produces one token
+  // request and one save instead of one per command.
+  private refreshInFlight?: Promise<OAuth2Token>;
+
+  // Set by TeslemetryApp.onInit() to react to a persisted token. A plain
+  // callback, not a custom event on this.app.homey - App and Homey are
+  // distinct EventEmitter instances with no bridging for custom events, so a
+  // custom-event hop between them never actually fires (see AGENTS.md's
+  // connection-lifecycle notes).
+  onTokenSaved?: (token: OAuth2Token, reason: TokenSaveReason) => void;
 
   constructor(app: TeslemetryApp) {
     this.app = app;
@@ -41,14 +53,14 @@ export default class TeslemetryOAuth2Client {
     }
   }
 
-  private saveToken(token: OAuth2Token) {
+  private saveToken(token: OAuth2Token, reason: TokenSaveReason) {
     // Calculate expires_at if not present
     if (!token.expires_at) {
       token.expires_at = Date.now() + token.expires_in * 1000;
     }
     this.token = token;
     this.app.homey.settings.set(TeslemetryOAuth2Client.SETTINGS_KEY, token);
-    this.onTokenSaved?.(token);
+    this.onTokenSaved?.(token, reason);
   }
 
   /**
@@ -97,28 +109,49 @@ export default class TeslemetryOAuth2Client {
 
     // The initial grant has no prior refresh token to fall back on, so a
     // missing one here is a genuine server-side error, not an omission.
-    return this.requestToken(body, { requireRefreshToken: true });
+    return this.requestToken(body, {
+      reason: "grant",
+      requireRefreshToken: true,
+    });
   }
 
   /**
-   * Refresh the token using the refresh token
+   * Refresh the token using the refresh token. Concurrent callers share one
+   * request: issuing a second refresh behind the first would only spend the
+   * token the first one just rotated, and persist a second identical result.
    */
   async refreshToken(): Promise<OAuth2Token> {
-    return this.requestToken(() => {
-      if (!this.token?.refresh_token) {
-        throw new Error("No refresh token available");
+    if (this.refreshInFlight) return this.refreshInFlight;
+    // Released inside the request, so a caller resuming off this promise
+    // always sees the slot free and its own later refresh starts afresh.
+    // Nothing else writes the slot, and no second refresh can be created
+    // while it is held, so this can only ever release its own.
+    const refresh = (async () => {
+      try {
+        return await this.requestToken(
+          () => {
+            if (!this.token?.refresh_token) {
+              throw new Error("No refresh token available");
+            }
+            return {
+              grant_type: "refresh_token",
+              client_id: TeslemetryOAuth2Client.CLIENT_ID,
+              refresh_token: this.token.refresh_token,
+            };
+          },
+          { reason: "refresh" },
+        );
+      } finally {
+        this.refreshInFlight = undefined;
       }
-      return {
-        grant_type: "refresh_token",
-        client_id: TeslemetryOAuth2Client.CLIENT_ID,
-        refresh_token: this.token.refresh_token,
-      };
-    });
+    })();
+    this.refreshInFlight = refresh;
+    return refresh;
   }
 
   private async requestToken(
     body: any | (() => any),
-    opts: { requireRefreshToken?: boolean } = {},
+    opts: { reason: TokenSaveReason; requireRefreshToken?: boolean },
   ): Promise<OAuth2Token> {
     const requestPromise = this.requestQueue.then(() =>
       this._requestToken(typeof body === "function" ? body() : body, opts),
@@ -132,7 +165,7 @@ export default class TeslemetryOAuth2Client {
 
   private async _requestToken(
     body: any,
-    opts: { requireRefreshToken?: boolean },
+    opts: { reason: TokenSaveReason; requireRefreshToken?: boolean },
   ): Promise<OAuth2Token> {
     const response = await fetch(TeslemetryOAuth2Client.TOKEN_URL, {
       method: "POST",
@@ -151,7 +184,9 @@ export default class TeslemetryOAuth2Client {
       if (errorCode === "invalid_refresh_token") {
         this.clearToken();
       }
-      if (errorCode === "invalid_token") {
+      // Only a grant can recover this way: a refresh the server just
+      // rejected has nothing left to retry with but the same refresh token.
+      if (errorCode === "invalid_token" && opts.reason !== "refresh") {
         this.refreshToken().catch((refreshError) => {
           this.app.error("Failed to refresh token after invalid_token error:", refreshError);
         });
@@ -181,7 +216,7 @@ export default class TeslemetryOAuth2Client {
       expires_at: Date.now() + expiresIn * 1000,
     };
 
-    this.saveToken(token);
+    this.saveToken(token, opts.reason);
     return token;
   }
 

@@ -62,9 +62,13 @@ export default class TeslemetryApp extends Homey.App {
 
   // Every attempt to build/rebuild teslemetry/products is chained onto this
   // promise, so overlapping callers (concurrent getProducts()/getTeslemetry()
-  // calls, a token refresh landing mid-build) can never observe or publish a
-  // half-built generation - see initializeTeslemetry().
+  // calls, a credential change landing mid-build) can never observe or publish
+  // a half-built generation - see initializeTeslemetry().
   private initChain: Promise<void> = Promise.resolve();
+
+  // A forced rebuild that is queued on initChain but has not started yet -
+  // see initializeTeslemetry().
+  private queuedForcedRebuild?: Promise<void>;
   private shuttingDown = false;
 
   // Bumped when a completed build is published and on every teardown. Captured by
@@ -104,10 +108,13 @@ export default class TeslemetryApp extends Homey.App {
 
     this.oauth = new TeslemetryOAuth2Client(this);
 
-    // A saved token can be refreshed/replaced at any time; force a fresh
-    // Products generation rather than trusting the current one still
-    // matches the new token.
-    this.oauth.onTokenSaved = () => {
+    // Only a new authorization grant can point at a different account and
+    // so need a fresh Products generation. A refresh just rotates the access
+    // token of the account already connected, and the SDK resolves that
+    // token through this same client on every request, so rebuilding for one
+    // would tear down a working stream for nothing.
+    this.oauth.onTokenSaved = (_token, reason) => {
+      if (reason === 'refresh' && this.ready) return;
       this.log('Token saved, re-initializing Teslemetry...');
       this.initializeTeslemetry(true).catch((error) => {
         this.error('Failed to reinitialize after token save:', error);
@@ -854,13 +861,28 @@ export default class TeslemetryApp extends Homey.App {
    * itself failed) - callers decide whether that's fatal or retryable.
    */
   private initializeTeslemetry(forceRebuild = false): Promise<void> {
+    // A forced rebuild that hasn't started yet will already pick up whatever
+    // made this caller ask for one, so a burst of credential changes builds a
+    // single generation instead of one per change. Cleared as that rebuild
+    // starts, so a change arriving mid-build still gets its own.
+    if (forceRebuild && this.queuedForcedRebuild) return this.queuedForcedRebuild;
+
+    // While this one holds the slot no later forced rebuild can queue behind
+    // it, so releasing the slot here can only ever release this rebuild's own.
+    let holdsQueuedSlot = forceRebuild;
     const run = async () => {
+      if (holdsQueuedSlot) {
+        holdsQueuedSlot = false;
+        this.queuedForcedRebuild = undefined;
+      }
       if (this.shuttingDown) return;
       if (!forceRebuild && this.ready) return;
       await this.doInitialize();
     };
-    this.initChain = this.initChain.then(run, run);
-    return this.initChain;
+    const queued = this.initChain.then(run, run);
+    this.initChain = queued;
+    if (forceRebuild) this.queuedForcedRebuild = queued;
+    return queued;
   }
 
   /**

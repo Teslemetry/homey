@@ -256,7 +256,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     // tariff/timezone can never leave this device without them.
     this.site.sse.on("live_status", onLiveStatus);
 
-    this.registerCapabilityListener("backup_reserve", async (value) => {
+    this.registerCommandListener("backup_reserve", async (value) => {
       this.log(
         `Setting backup reserve to ${Math.round(value * 100)} (from ${value})`,
       );
@@ -265,7 +265,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
       );
     });
 
-    this.registerCapabilityListener(
+    this.registerCommandListener(
       "off_grid_vehicle_charging_reserve",
       async (value) => {
         this.log(
@@ -279,7 +279,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
       },
     );
 
-    this.registerCapabilityListener("allow_export", async (value) => {
+    this.registerCommandListener("allow_export", async (value) => {
       this.log(`Setting allow export to ${value}`);
       return this.action(
         this.site.api.gridImportExport(
@@ -289,12 +289,12 @@ export default class PowerwallDevice extends TeslemetryDevice {
       );
     });
 
-    this.registerCapabilityListener("operation_mode", async (value) => {
+    this.registerCommandListener("operation_mode", async (value) => {
       this.log(`Setting operation mode to ${value}`);
       return this.action(this.site.api.setOperationMode(value));
     });
 
-    this.registerCapabilityListener("onoff.charge_grid", async (value) => {
+    this.registerCommandListener("onoff.charge_grid", async (value) => {
       // When this is missing, its allowed
       this.log(`Setting charge from grid to ${!value}`);
       return this.action(
@@ -305,7 +305,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
       );
     });
 
-    this.registerCapabilityListener("onoff.storm", async (value) => {
+    this.registerCommandListener("onoff.storm", async (value) => {
       return this.action(this.site.api.setStormMode(value));
     });
 

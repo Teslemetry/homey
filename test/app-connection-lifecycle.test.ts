@@ -511,7 +511,7 @@ test("device auth-unavailability clears only on this device's own genuine post-r
   assert.equal(authDevice.availableCalls.length, 1, "cleared only once its own product proved reauth worked");
 });
 
-test("a saved token forces a Products rebuild through the real OAuth2 client (token-saved wiring)", async () => {
+test("a new grant forces a Products rebuild through the real OAuth2 client (token-saved wiring)", async () => {
   const initialToken = {
     access_token: "initial-access",
     refresh_token: "initial-refresh",
@@ -543,8 +543,8 @@ test("a saved token forces a Products rebuild through the real OAuth2 client (to
     ({
       ok: true,
       json: async () => ({
-        access_token: "refreshed-access",
-        refresh_token: "refreshed-refresh",
+        access_token: "granted-access",
+        refresh_token: "granted-refresh",
         expires_in: 3600,
         token_type: "Bearer",
       }),
@@ -556,7 +556,7 @@ test("a saved token forces a Products rebuild through the real OAuth2 client (to
     // initializeTeslemetry(true) through the real onTokenSaved callback -
     // the emitter-mismatch regression this replaces left buildCount/
     // getReboundCount() stuck at 1 forever, with no error raised anywhere.
-    await app.oauth.refreshToken();
+    await app.oauth.exchangeCodeForToken("code", "verifier");
     // saveToken() kicks off the rebuild synchronously but doesn't await it;
     // a plain (non-forced) call chains onto the same single-flight promise
     // and resolves once that in-flight rebuild actually finishes.
@@ -565,12 +565,12 @@ test("a saved token forces a Products rebuild through the real OAuth2 client (to
     global.fetch = originalFetch;
   }
 
-  assert.equal(buildCount, 2, "the saved token triggered a second Products generation");
+  assert.equal(buildCount, 2, "the new grant triggered a second Products generation");
   assert.equal(device.getReboundCount(), 2, "the already-paired device rebound to the new generation");
   assert.equal(
     (settingsStore.teslemetry_oauth2_token as { access_token: string }).access_token,
-    "refreshed-access",
-    "the refreshed token was persisted",
+    "granted-access",
+    "the granted token was persisted",
   );
 });
 
