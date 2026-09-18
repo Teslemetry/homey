@@ -181,6 +181,26 @@ export default class TeslemetryDevice extends Homey.Device {
    */
   public rebindProduct(): void {}
 
+  /** Capabilities already handed to registerCapabilityListener. */
+  private registeredCommandCapabilities?: Set<string>;
+
+  /**
+   * Registers a command capability listener exactly once per device
+   * lifetime. Homey keeps one listener per capability and warns when a
+   * second is registered, and a rebind has nothing to re-register anyway -
+   * these listeners read `this.site`/`this.vehicle` at call time, so
+   * rebinding already points them at the new product.
+   */
+  protected registerCommandListener(
+    capability: string,
+    listener: Parameters<Homey.Device["registerCapabilityListener"]>[1],
+  ): void {
+    const registered = (this.registeredCommandCapabilities ??= new Set());
+    if (registered.has(capability)) return;
+    registered.add(capability);
+    this.registerCapabilityListener(capability, listener);
+  }
+
   /**
    * Whether this device instance is still safe to fire a Flow trigger for.
    * `destroyed` alone isn't enough: the Apps SDK removes a deleted device

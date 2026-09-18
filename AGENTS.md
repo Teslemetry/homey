@@ -61,7 +61,9 @@ Each device type (vehicle, battery, solar, gateway, wall-connector):
 1. `TeslemetryApp` creates `Products` from `@teslemetry/api`
 2. Devices get their product instance (e.g. `this.homey.app.products.vehicles[vin]`)
 3. Incoming: `vehicle.sse.onSignal("SignalName", cb)` → `this.update(capability, value)`
-4. Outgoing: `registerCapabilityListener` → `vehicle.api.methodName()`
+4. Outgoing: `registerCommandListener` → `vehicle.api.methodName()`
+   (`TeslemetryDevice.registerCommandListener` wraps Homey's
+   `registerCapabilityListener` so a rebind can't re-register it)
 
 ### Homey Compose
 
@@ -134,7 +136,7 @@ can take a minute. Always return `this.action(...)` / `this.vehicleAction(...)`,
 which race the command against a fixed 9s `ACTION_TIMEOUT`:
 
 ```typescript
-this.registerCapabilityListener("locked", async (value) =>
+this.registerCommandListener("locked", async (value) =>
   this.vehicleAction(
     value ? this.vehicle.api.lockDoors() : this.vehicle.api.unlockDoors(),
   ),
@@ -253,7 +255,7 @@ processing that replay propagates out of the still-synchronous part of
 permanently unresponsive.
 
 Register essential listeners (state/connectivity/live SSE and all
-`registerCapabilityListener` command listeners) **before** anything replaying a
+`registerCommandListener` command listeners) **before** anything replaying a
 less-trusted cached value, and guard the fallible replay. See
 `PowerwallDevice.onInit` (guards `recomputeTariffRates`) and
 `VehicleDevice.onInit` (`registerCommandCapabilityListeners()` first, fallible
@@ -412,9 +414,11 @@ time were Pacific Time regardless of the vehicle's real timezone.
 
 - **`initializeTeslemetry(forceRebuild?)`** is single-flight: every caller
   (boot, `getTeslemetry()`/`getProducts()`, the startup retry timer, a
-  token-refresh rebuild) chains onto one `initChain`, so builds never run
+  re-auth rebuild) chains onto one `initChain`, so builds never run
   concurrently and no caller observes a half-built generation. `forceRebuild`
-  always builds fresh; a plain call is a no-op once ready.
+  always builds fresh; a plain call is a no-op once ready. Forced rebuilds
+  requested while one is still queued join it, so a burst of credential
+  changes produces one generation.
 - **`doInitialize()`** publishes to `this.teslemetry`/`this.products` only
   after `createProducts()` fully succeeds, and closes the previous
   generation's stream only *after* the new one has started, so a rebuild never
@@ -439,13 +443,25 @@ time were Pacific Time regardless of the vehicle's real timezone.
   `rebindProduct()` after each successful build - without it, an already-paired
   device keeps listening on the old, dead per-product stream.
 - **Token-save recovery**: `TeslemetryOAuth2Client.saveToken()` invokes a plain
-  `onTokenSaved` callback, **not** a custom event on `this.app.homey` - `App`
-  and `Homey` are distinct EventEmitters with no bridging for custom events, so
-  that hop never fires. `app.ts` assigns `onTokenSaved` to force the same
-  `initializeTeslemetry(true)` rebuild every other recovery path uses.
+  `onTokenSaved(token, reason)` callback, **not** a custom event on
+  `this.app.homey` - `App` and `Homey` are distinct EventEmitters with no
+  bridging for custom events, so that hop never fires. Only `reason: "grant"`
+  (a new authorization) rebuilds via `initializeTeslemetry(true)`. A
+  `"refresh"` must **not**: the SDK resolves the access token through this
+  same client on every request, so rebuilding for a rotated token tears down
+  a working SSE connection - and a command an hour after the last one
+  refreshes, so that turned ordinary Flow use into a stream churn that left
+  devices without live data. `refreshToken()` also coalesces concurrent
+  callers into one request, so two commands in the same tick can't each
+  rotate and persist a token.
+- **Reconnect backoff is the stream library's**, not this app's:
+  `TeslemetryStream._connectLoop` waits `min(2**retries, 600)` seconds and
+  only resets `retries` once an event actually arrives, so a run of failed
+  attempts can add up to tens of minutes with no ceiling on the total. There
+  is no app-side hook to bound it; it belongs upstream in `@teslemetry/api`.
 
 Tests: `test/app-connection-lifecycle.test.ts`, `test/oauth2-client.test.ts`,
-`test/product-rebind-recovery.test.ts`.
+`test/product-rebind-recovery.test.ts`, `test/token-refresh-reinit.test.ts`.
 
 ### Availability Reasons and Credential Teardown
 

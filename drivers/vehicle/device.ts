@@ -973,7 +973,7 @@ export default class VehicleDevice extends TeslemetryDevice {
   // --- Capability Listeners (Actions) ---
   private registerCommandCapabilityListeners(): void {
     // Locked
-    this.registerCapabilityListener("locked", async (value) => {
+    this.registerCommandListener("locked", async (value) => {
       return this.vehicleAction(
         value
           ? this.vehicle.api.lockDoors()
@@ -982,23 +982,23 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
 
     // Climate
-    this.registerCapabilityListener("thermostat_mode", async (value) => {
+    this.registerCommandListener("thermostat_mode", async (value) => {
       await this.setThermostatMode(value);
     });
 
-    this.registerCapabilityListener("cop_mode", async (value) => {
+    this.registerCommandListener("cop_mode", async (value) => {
       await this.setCopMode(value);
     });
 
-    this.registerCapabilityListener("cop_temperature_limit", async (value) => {
+    this.registerCommandListener("cop_temperature_limit", async (value) => {
       await this.setCopTemperatureLimit(value);
     });
 
-    this.registerCapabilityListener("target_temperature", async (value) => {
+    this.registerCommandListener("target_temperature", async (value) => {
       return this.vehicleAction(this.vehicle.api.setTemps(value, value));
     });
 
-    this.registerCapabilityListener("steering_wheel_heater", async (value) => {
+    this.registerCommandListener("steering_wheel_heater", async (value) => {
       switch (value) {
         case "0":
           return this.vehicleAction(
@@ -1016,13 +1016,13 @@ export default class VehicleDevice extends TeslemetryDevice {
           throw new Error("Invalid level");
       }
     });
-    this.registerCapabilityListener("seat_heater.front_left", async (value) => {
+    this.registerCommandListener("seat_heater.front_left", async (value) => {
       return this.vehicleAction(
         this.vehicle.api.setSeatHeater("front_left", Number(value)),
       );
     });
 
-    this.registerCapabilityListener(
+    this.registerCommandListener(
       "seat_heater.front_right",
       async (value) => {
         return this.vehicleAction(
@@ -1030,17 +1030,17 @@ export default class VehicleDevice extends TeslemetryDevice {
         );
       },
     );
-    this.registerCapabilityListener("seat_heater.rear_left", async (value) => {
+    this.registerCommandListener("seat_heater.rear_left", async (value) => {
       return this.vehicleAction(
         this.vehicle.api.setSeatHeater("rear_left", Number(value)),
       );
     });
-    this.registerCapabilityListener("seat_heater.rear_right", async (value) => {
+    this.registerCommandListener("seat_heater.rear_right", async (value) => {
       return this.vehicleAction(
         this.vehicle.api.setSeatHeater("rear_right", Number(value)),
       );
     });
-    this.registerCapabilityListener(
+    this.registerCommandListener(
       "seat_heater.rear_center",
       async (value) => {
         return this.vehicleAction(
@@ -1048,12 +1048,12 @@ export default class VehicleDevice extends TeslemetryDevice {
         );
       },
     );
-    this.registerCapabilityListener("seat_cooler.front_left", async (value) => {
+    this.registerCommandListener("seat_cooler.front_left", async (value) => {
       return this.vehicleAction(
         this.vehicle.api.setSeatCooler("front_left", Number(value)),
       );
     });
-    this.registerCapabilityListener(
+    this.registerCommandListener(
       "seat_cooler.front_right",
       async (value) => {
         return this.vehicleAction(
@@ -1063,7 +1063,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
 
     // Charge
-    this.registerCapabilityListener("evcharger_charging", async (value) => {
+    this.registerCommandListener("evcharger_charging", async (value) => {
       return this.vehicleAction(
         value
           ? this.vehicle.api.startCharging()
@@ -1071,17 +1071,17 @@ export default class VehicleDevice extends TeslemetryDevice {
       );
     });
 
-    this.registerCapabilityListener("charge_limit", async (value: number) => {
+    this.registerCommandListener("charge_limit", async (value: number) => {
       return this.vehicleAction(
         this.vehicle.api.setChargeLimit(Math.round(value * 100)),
       );
     });
 
-    this.registerCapabilityListener("charging_amps", async (value: number) => {
+    this.registerCommandListener("charging_amps", async (value: number) => {
       return this.vehicleAction(this.vehicle.api.setChargingAmps(value));
     });
 
-    this.registerCapabilityListener("onoff.charge_port", async (value) => {
+    this.registerCommandListener("onoff.charge_port", async (value) => {
       return this.vehicleAction(
         value
           ? this.vehicle.api.openChargePort()
@@ -1090,17 +1090,17 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
 
     // Sentry & Valet
-    this.registerCapabilityListener("onoff.sentry", async (value) => {
+    this.registerCommandListener("onoff.sentry", async (value) => {
       return this.vehicleAction(this.vehicle.api.setSentryMode(value));
     });
 
     // Guest Mode
-    this.registerCapabilityListener("onoff.guest_mode", async (value) => {
+    this.registerCommandListener("onoff.guest_mode", async (value) => {
       return this.vehicleAction(this.vehicle.api.setGuestMode(value));
     });
 
     // Auto seat climate & auto steering wheel heat
-    this.registerCapabilityListener(
+    this.registerCommandListener(
       "onoff.auto_seat_climate_left",
       async (value) => {
         return this.vehicleAction(
@@ -1108,7 +1108,7 @@ export default class VehicleDevice extends TeslemetryDevice {
         );
       },
     );
-    this.registerCapabilityListener(
+    this.registerCommandListener(
       "onoff.auto_seat_climate_right",
       async (value) => {
         return this.vehicleAction(
@@ -1116,7 +1116,7 @@ export default class VehicleDevice extends TeslemetryDevice {
         );
       },
     );
-    this.registerCapabilityListener(
+    this.registerCommandListener(
       "onoff.auto_steering_wheel_heat",
       async (value) => {
         return this.vehicleAction(
@@ -1126,18 +1126,18 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
 
     // Doors/Frunk/Trunk
-    this.registerCapabilityListener("onoff.frunk", async (value) => {
+    this.registerCommandListener("onoff.frunk", async (value) => {
       if (value) {
         await this.vehicleAction(this.vehicle.api.actuateTrunk("front"));
       }
       // Cannot be closed
     });
 
-    this.registerCapabilityListener("onoff.trunk", async (_value) => {
+    this.registerCommandListener("onoff.trunk", async (_value) => {
       return this.vehicleAction(this.vehicle.api.actuateTrunk("rear"));
     });
 
-    this.registerCapabilityListener("windowcoverings_closed", async (value) => {
+    this.registerCommandListener("windowcoverings_closed", async (value) => {
       const { latitude, longitude } = this.vehicle.sse.cache?.data
         ?.Location || { latitude: 0, longitude: 0 };
       return this.vehicleAction(
@@ -1149,7 +1149,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Cybertruck tonneau: closure() only supports the open/close endpoints,
     // not an arbitrary position, so this is the sole settable tonneau control.
-    this.registerCapabilityListener(
+    this.registerCommandListener(
       "windowcoverings_closed.tonneau",
       async (value) => {
         return this.vehicleAction(
@@ -1161,7 +1161,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     // Legacy S/X sunroof: sunRoofControl only supports vent/close/stop
     // endpoints, not an arbitrary position, so this is the sole settable
     // sunroof control (no continuous position telemetry exists to read back).
-    this.registerCapabilityListener(
+    this.registerCommandListener(
       "windowcoverings_closed.sunroof",
       async (value) => {
         return this.vehicleAction(
@@ -1171,19 +1171,19 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
 
     // Buttons
-    this.registerCapabilityListener("button.flash", async () => {
+    this.registerCommandListener("button.flash", async () => {
       return this.vehicleAction(this.vehicle.api.flashLights());
     });
 
-    this.registerCapabilityListener("button.honk", async () => {
+    this.registerCommandListener("button.honk", async () => {
       return this.vehicleAction(this.vehicle.api.honkHorn());
     });
 
-    this.registerCapabilityListener("button.keyless", async () => {
+    this.registerCommandListener("button.keyless", async () => {
       return this.vehicleAction(this.vehicle.api.remoteStart());
     });
 
-    this.registerCapabilityListener("button.homelink", async () => {
+    this.registerCommandListener("button.homelink", async () => {
       const { latitude, longitude } = this.vehicle.sse.cache?.data
         ?.Location || { latitude: 0, longitude: 0 };
       return this.vehicleAction(
@@ -1193,33 +1193,33 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // wakeUp()'s response shape is the vehicle's own state payload, not a
     // { result, reason } envelope - route it through action() directly.
-    this.registerCapabilityListener("button.wakeup", async () => {
+    this.registerCommandListener("button.wakeup", async () => {
       return this.action(this.vehicle.api.wakeUp());
     });
 
-    this.registerCapabilityListener("button.bioweapon", async () => {
+    this.registerCommandListener("button.bioweapon", async () => {
       return this.vehicleAction(
         this.vehicle.api.setBioweaponDefenseMode(true, true),
       );
     });
 
     // Media Play/Pause Toggle
-    this.registerCapabilityListener("speaker_playing", async () => {
+    this.registerCommandListener("speaker_playing", async () => {
       return this.vehicleAction(this.vehicle.api.mediaTogglePlayback());
     });
 
     // Media Next Track
-    this.registerCapabilityListener("speaker_next", async () => {
+    this.registerCommandListener("speaker_next", async () => {
       return this.vehicleAction(this.vehicle.api.mediaNextTrack());
     });
 
     // Media Previous Track
-    this.registerCapabilityListener("speaker_prev", async () => {
+    this.registerCommandListener("speaker_prev", async () => {
       return this.vehicleAction(this.vehicle.api.mediaPreviousTrack());
     });
 
     // Media Volume Control
-    this.registerCapabilityListener("volume_set", async (value: number) => {
+    this.registerCommandListener("volume_set", async (value: number) => {
       this.muted = false;
       const volume = value * this.volumeMax;
       this.lastVolume = volume;
@@ -1227,7 +1227,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
 
     // Media Mute Toggle
-    this.registerCapabilityListener("volume_mute", async (value: boolean) => {
+    this.registerCommandListener("volume_mute", async (value: boolean) => {
       this.muted = value;
       if (value) {
         // Mute: set volume to 0
@@ -1241,7 +1241,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
 
     // Media Volume Step (relative, using Tesla's own reported increment)
-    this.registerCapabilityListener("volume_up", async () => {
+    this.registerCommandListener("volume_up", async () => {
       this.muted = false;
       const volume = Math.min(
         this.volumeMax,
@@ -1251,7 +1251,7 @@ export default class VehicleDevice extends TeslemetryDevice {
       return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
     });
 
-    this.registerCapabilityListener("volume_down", async () => {
+    this.registerCommandListener("volume_down", async () => {
       this.muted = false;
       const volume = Math.max(
         0,

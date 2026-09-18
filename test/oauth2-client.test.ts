@@ -218,7 +218,7 @@ test("token requests commit in enqueue order", async () => {
   }
 });
 
-test("queued refresh uses the token rotated by the previous refresh", async () => {
+test("concurrent refreshes share one token request", async () => {
   const { app, settingsStore } = createApp({
     access_token: "old-access",
     refresh_token: "old-refresh",
@@ -227,28 +227,20 @@ test("queued refresh uses the token rotated by the previous refresh", async () =
   });
   const originalFetch = global.fetch;
   const refreshTokens: string[] = [];
-  let releaseFirstRefresh!: () => void;
-  const firstRefreshReady = new Promise<void>((resolve) => {
-    releaseFirstRefresh = resolve;
+  let releaseRefresh!: () => void;
+  const refreshReady = new Promise<void>((resolve) => {
+    releaseRefresh = resolve;
   });
   global.fetch = (async (_url, init) => {
     const body = JSON.parse(String(init?.body));
     refreshTokens.push(body.refresh_token);
-    const requestNumber = refreshTokens.length;
     return {
       ok: true,
       json: async () => {
-        if (requestNumber === 1) {
-          await firstRefreshReady;
-          return {
-            access_token: "first-access",
-            refresh_token: "rotated-refresh",
-            expires_in: 3600,
-            token_type: "Bearer",
-          };
-        }
+        await refreshReady;
         return {
-          access_token: "second-access",
+          access_token: "first-access",
+          refresh_token: "rotated-refresh",
           expires_in: 3600,
           token_type: "Bearer",
         };
@@ -258,21 +250,29 @@ test("queued refresh uses the token rotated by the previous refresh", async () =
 
   try {
     const client = new TeslemetryOAuth2Client(app as any);
+    // Two commands resolving an access token in the same tick. A second
+    // request would only spend the refresh token the first one rotates, and
+    // persist a second identical token - which every onTokenSaved consumer
+    // then has to treat as a real credential change.
     const firstRefresh = client.refreshToken();
     const secondRefresh = client.refreshToken();
 
     await Promise.resolve();
     assert.deepEqual(refreshTokens, ["old-refresh"]);
-    releaseFirstRefresh();
-    await firstRefresh;
-    const token = await secondRefresh;
+    releaseRefresh();
+    const first = await firstRefresh;
+    const second = await secondRefresh;
 
-    assert.deepEqual(refreshTokens, ["old-refresh", "rotated-refresh"]);
-    assert.equal(token.refresh_token, "rotated-refresh");
+    assert.deepEqual(refreshTokens, ["old-refresh"], "the second caller joined the first request");
+    assert.equal(second, first, "both callers get the same token");
     assert.equal(
       (settingsStore.teslemetry_oauth2_token as any).refresh_token,
       "rotated-refresh",
     );
+
+    // Once it has settled, a later refresh issues its own request again.
+    await client.refreshToken();
+    assert.deepEqual(refreshTokens, ["old-refresh", "rotated-refresh"]);
   } finally {
     global.fetch = originalFetch;
   }
