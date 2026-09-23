@@ -39,6 +39,25 @@ class FakeStream extends EventEmitter {
   }
 }
 
+/** Lets a test assert the stream-stale-check timer is actually
+ *  scheduled/cancelled, without waiting out the real 90s grace period. */
+function createFakeTimers() {
+  const timers: Array<{ id: number; callback: () => void; delay: number }> = [];
+  let nextId = 1;
+  return {
+    timers,
+    setTimeout: (callback: () => void, delay: number) => {
+      const id = nextId++;
+      timers.push({ id, callback, delay });
+      return id;
+    },
+    clearTimeout: (id: number) => {
+      const index = timers.findIndex((timer) => timer.id === id);
+      if (index !== -1) timers.splice(index, 1);
+    },
+  };
+}
+
 function createFlowStub() {
   const card = { registerRunListener: () => card, trigger: async () => {} };
   return {
@@ -50,11 +69,12 @@ function createFlowStub() {
 
 function createApp() {
   const drivers: Record<string, { getDevices: () => unknown[] }> = {};
+  const fakeTimers = createFakeTimers();
   const app = Object.assign(new TeslemetryApp(), {
     homey: {
       __: (key: string) => key,
-      setTimeout: (callback: () => void, delay: number) => setTimeout(callback, delay),
-      clearTimeout: (id: NodeJS.Timeout) => clearTimeout(id),
+      setTimeout: fakeTimers.setTimeout,
+      clearTimeout: fakeTimers.clearTimeout,
       drivers: { getDrivers: () => drivers },
       flow: createFlowStub(),
       settings: {
@@ -72,7 +92,7 @@ function createApp() {
     log: () => {},
     error: () => {},
   });
-  return { app, drivers };
+  return { app, drivers, timers: fakeTimers.timers };
 }
 
 function createPowerwallDevice(app: InstanceType<typeof TeslemetryApp>) {
@@ -110,6 +130,7 @@ function createPowerwallDevice(app: InstanceType<typeof TeslemetryApp>) {
 function createFakeVehicle() {
   const stateEmitter = new EventEmitter();
   return {
+    vin: VIN,
     sse: {
       cache: { data: {} },
       on: (event: string, listener: (...args: unknown[]) => void) => {
@@ -164,7 +185,7 @@ function createVehicleDevice(app: InstanceType<typeof TeslemetryApp>, vehicle: R
 }
 
 test("PowerwallDevice keeps receiving live updates after a bare SSE disconnect/reconnect with no Products rebuild", async () => {
-  const { app, drivers } = createApp();
+  const { app, drivers, timers } = createApp();
   const { device, capabilities } = createPowerwallDevice(app);
   drivers.battery = { getDevices: () => [device] };
 
@@ -192,7 +213,14 @@ test("PowerwallDevice keeps receiving live updates after a bare SSE disconnect/r
   // `_connectLoop` emits "disconnect" and reconnects internally - no
   // generation rebuild, no rebindProduct() call.
   sdk!.sse.emit("disconnect");
+  assert.equal(timers.length, 1, "disconnect starts the stream-stale grace timer");
   sdk!.sse.emit("connect");
+
+  // The reconnect's first genuine top-level data event is what actually
+  // cancels the freshness watchdog - proving that path, not just the
+  // per-product listener, survives a bare disconnect/reconnect.
+  sdk!.sse.emit("live_status", { site_id: Number(SITE_ID) });
+  assert.equal(timers.length, 0, "a genuine post-reconnect event cancels the stale-check timer");
 
   siteStream.emit("live_status", { live_status: { percentage_charged: 55 } });
   assert.equal(
@@ -203,7 +231,7 @@ test("PowerwallDevice keeps receiving live updates after a bare SSE disconnect/r
 });
 
 test("VehicleDevice keeps receiving live updates after a bare SSE disconnect/reconnect with no Products rebuild", async () => {
-  const { app, drivers } = createApp();
+  const { app, drivers, timers } = createApp();
   const vehicle = createFakeVehicle();
   const { device, capabilities } = createVehicleDevice(app, vehicle);
   drivers.vehicle = { getDevices: () => [device] };
@@ -221,7 +249,14 @@ test("VehicleDevice keeps receiving live updates after a bare SSE disconnect/rec
   assert.equal(capabilities.vehicle_state, "online", "live before the drop");
 
   sdk!.sse.emit("disconnect");
+  assert.equal(timers.length, 1, "disconnect starts the stream-stale grace timer");
   sdk!.sse.emit("connect");
+
+  // The reconnect's first genuine top-level data event is what actually
+  // cancels the freshness watchdog - proving that path, not just the
+  // per-product listener, survives a bare disconnect/reconnect.
+  sdk!.sse.emit("state", { vin: VIN });
+  assert.equal(timers.length, 0, "a genuine post-reconnect event cancels the stale-check timer");
 
   vehicle.sse.emitState({ state: "asleep" });
   assert.equal(
