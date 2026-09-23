@@ -172,13 +172,13 @@ test("live DriverSeatOccupied/DriverSeatBelt events combine into the driver-unbu
 
   await stub.onInit();
   sse.data.emit("DriverSeatOccupied", true);
-  sse.data.emit("DriverSeatBelt", "BuckleStatusUnlatched");
+  sse.data.emit("DriverSeatBelt", true);
 
   assert.equal(capabilities.driver_seat_occupied, true);
   assert.equal(capabilities["alarm_generic.driver_unbuckled"], true);
 });
 
-test("an Unknown/Faulted DriverSeatBelt reading is ignored rather than treated as latched or unlatched", async () => {
+test("a null DriverSeatBelt reading is ignored rather than treated as buckled or unbuckled", async () => {
   const capabilities: Record<string, unknown> = {
     driver_seat_occupied: null,
     "alarm_generic.driver_unbuckled": null,
@@ -187,7 +187,7 @@ test("an Unknown/Faulted DriverSeatBelt reading is ignored rather than treated a
 
   await stub.onInit();
   sse.data.emit("DriverSeatOccupied", true);
-  sse.data.emit("DriverSeatBelt", "BuckleStatusUnknown");
+  sse.data.emit("DriverSeatBelt", null);
 
   assert.equal(capabilities["alarm_generic.driver_unbuckled"], null);
 });

@@ -219,10 +219,10 @@ export default class VehicleDevice extends TeslemetryDevice {
   private previousVehicleState?: SseState["state"];
 
   /**
-   * DriverSeatOccupied and the latched/unlatched read of DriverSeatBelt,
-   * tracked independently since alarm_generic.driver_unbuckled is only
-   * meaningful once both are known - an unlatched belt in an empty seat is
-   * not an alarm. See updateDriverUnbuckledAlarm().
+   * DriverSeatOccupied and DriverSeatBelt ("the driver has unbuckled their
+   * seat belt"), tracked independently since alarm_generic.driver_unbuckled
+   * is only meaningful once both are known - an unbuckled belt in an empty
+   * seat is not an alarm. See updateDriverUnbuckledAlarm().
    */
   private driverSeatOccupied?: boolean;
   private driverSeatBeltUnlatched?: boolean;
@@ -860,10 +860,10 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.updateDistanceFromHome(value.latitude, value.longitude);
     });
 
-    // Driver seat occupancy/belt. DriverSeatBelt reports latched/unlatched
-    // buckle status, not "belt fastened" - Unknown/Faulted readings are
-    // ignored rather than treated as either state. See
-    // updateDriverUnbuckledAlarm() for why the alarm needs both signals.
+    // Driver seat occupancy/belt. DriverSeatBelt is "the driver has
+    // unbuckled their seat belt", not "belt fastened" - an unknown reading
+    // arrives as null and is ignored rather than treated as either state.
+    // See updateDriverUnbuckledAlarm() for why the alarm needs both signals.
     this.onSignal("DriverSeatOccupied", (value) => {
       if (value === undefined || value === null) return;
       this.update("driver_seat_occupied", value);
@@ -871,10 +871,8 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.updateDriverUnbuckledAlarm();
     });
     this.onSignal("DriverSeatBelt", (value) => {
-      if (value !== "BuckleStatusLatched" && value !== "BuckleStatusUnlatched") {
-        return;
-      }
-      this.driverSeatBeltUnlatched = value === "BuckleStatusUnlatched";
+      if (value === undefined || value === null) return;
+      this.driverSeatBeltUnlatched = value;
       this.updateDriverUnbuckledAlarm();
     });
 
