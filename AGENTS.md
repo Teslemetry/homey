@@ -461,7 +461,8 @@ time were Pacific Time regardless of the vehicle's real timezone.
   is no app-side hook to bound it; it belongs upstream in `@teslemetry/api`.
 
 Tests: `test/app-connection-lifecycle.test.ts`, `test/oauth2-client.test.ts`,
-`test/product-rebind-recovery.test.ts`, `test/token-refresh-reinit.test.ts`.
+`test/product-rebind-recovery.test.ts`, `test/token-refresh-reinit.test.ts`,
+`test/stream-disconnect-recovery.test.ts`.
 
 ### Availability Reasons and Credential Teardown
 
