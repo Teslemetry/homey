@@ -12,7 +12,16 @@
 // network I/O) via a relative file path so the tariff tests still exercise
 // actual behavior instead of a hand-rolled fake; a bare "@teslemetry/api"
 // re-import here would just recurse back into this same redirect.
-export { getTariffPeriods } from "../../node_modules/@teslemetry/api/dist/index.mjs";
+//
+// TeslemetryStream is re-exported the same way for the same reason: its
+// _dispatch() routing of a wire event to the right per-product emitter is
+// the thing energy-site-live-dispatch.test.ts has to exercise for real
+// (see that file's header), and constructing one performs no I/O until
+// connect() is called.
+export {
+  getTariffPeriods,
+  TeslemetryStream,
+} from "../../node_modules/@teslemetry/api/dist/index.mjs";
 
 let nextFactory = null;
 

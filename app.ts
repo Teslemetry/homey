@@ -51,7 +51,10 @@ const SSE_TOPICS = [
  */
 interface ProductEventPayload {
   vin?: string;
-  site_id?: string;
+  // The wire sends `site_id` as a JSON number (only the legacy python
+  // teslemetry-stream client gets a digit string), so this is never assumed
+  // to be a string - see productKeyForEvent().
+  site_id?: string | number;
   isCache?: boolean;
 }
 
@@ -1116,7 +1119,7 @@ export default class TeslemetryApp extends Homey.App {
    */
   private productKeyForEvent(payload: ProductEventPayload): string | undefined {
     if (payload.vin) return `vehicle:${payload.vin}`;
-    if (payload.site_id) return `site:${payload.site_id}`;
+    if (payload.site_id) return `site:${String(payload.site_id)}`;
     return undefined;
   }
 

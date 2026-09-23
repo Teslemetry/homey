@@ -30,7 +30,9 @@ exercised via their prototypes with no live Homey and no network:
   `configureTeslemetryStub(factory)` before triggering a build to control
   `createProducts()` timing/outcome and drive the returned `sse` EventEmitter
   (see `test/app-connection-lifecycle.test.ts`). It re-exports the *real*
-  `getTariffPeriods` by relative path so tariff tests use real window math.
+  `getTariffPeriods` and `TeslemetryStream` by relative path so tariff tests
+  use real window math and `test/energy-site-live-dispatch.test.ts` exercises
+  real per-product event routing.
 
 `npm test` resolves modules from this repo's root `node_modules`, so it can
 never catch a dependency missing from the *packaged* bundle Homey uploads.
@@ -385,13 +387,16 @@ default, throw, or mark the device unavailable.
   track a later change to the hub's own position. `alarm_presence` remains the
   authoritative "is it home".
 - **`driver_seat_occupied` / `alarm_generic.driver_unbuckled`**:
-  `DriverSeatBelt`'s raw value is *buckle status*
-  (`BuckleStatusLatched`/`Unlatched`/`Unknown`/`Faulted`), **not** "belt
-  fastened" - an unlatched belt in an empty seat is not an alarm.
-  `VehicleDevice` tracks occupancy and latch state independently (ignoring
-  `Unknown`/`Faulted`) and `updateDriverUnbuckledAlarm()` only sets the alarm
-  once both are known, true only when occupied AND unlatched. No metadata flag
-  exposes "has seat sensor", so both register unconditionally.
+  `DriverSeatBelt` means "the driver has **un**buckled their seat belt"
+  (the API schema's own wording), **not** "belt fastened" - so `true` is the
+  unbuckled read, and an unbuckled belt in an empty seat is still not an
+  alarm. It was a `BuckleStatus*` enum before `@teslemetry/api` 0.12.0 and is
+  now a plain `boolean | null`; an unknown reading arrives as `null` and is
+  ignored rather than treated as either state. `VehicleDevice` tracks
+  occupancy and buckle state independently and
+  `updateDriverUnbuckledAlarm()` only sets the alarm once both are known,
+  true only when occupied AND unbuckled. No metadata flag exposes "has seat
+  sensor", so both register unconditionally.
 
 Tests: `test/vehicle-presence.test.ts`,
 `test/vehicle-distance-from-home.test.ts`,
@@ -481,6 +486,27 @@ token, mark every device `"auth"`-unavailable. Only that device's own genuine
 post-reauth data event clears it (`handleGenuineStreamEvent()`, shared with the
 freshness watchdog), so a device-level `handleApiError()` auth failure and an
 app-level stream auth failure recover through the identical per-device path.
+
+### Energy Site Event Routing (`site_id` is a number)
+
+`/api/metadata` keys energy sites by a **string** id, so
+`createProducts()` registers each site's emitter under that string - but the
+SSE wire sends `site_id` (and `totals.id`) as a **JSON number**. The SDK's
+`TeslemetryStream._dispatch` has to `String()` it before the
+`energySites.get(...)` lookup; `@teslemetry/api` < 0.12.0 did not, which is
+why this app needs **>= 0.12.0**. Vehicles were never affected - their
+emitters are keyed by a VIN, a string on both sides.
+
+That failure mode is worth recognising because it looks healthy: the SDK's
+energy cache is a plain object (numeric keys coerce to strings), so the one
+cached replay every `site.sse.on(...)` registration performs still delivers a
+value. Energy devices therefore update **exactly once per bind** (app start,
+rebuild, rebind) and then go silent, staying `available` with `lastSeenAt`
+advancing and nothing logged. Any app-side code reading `site_id` off a raw
+wire payload (`TeslemetryApp.productKeyForEvent`) must `String()` it too.
+`test/energy-site-live-dispatch.test.ts` drives real wire-shaped events
+through the real `TeslemetryStream` into a real `PowerwallDevice` - a
+hand-written site emitter would mock away the step that broke.
 
 ### SSE Topic Selection
 
