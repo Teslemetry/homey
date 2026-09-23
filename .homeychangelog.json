@@ -88,5 +88,8 @@
   },
   "1.4.0": {
     "en": "Fixes energy devices stopping updates after a login token refresh. Adds Flow cards for more vehicle capabilities, distance-to-arrival triggers, and seat occupancy and speed conditions. Hides the cabin overheat temperature limit on vehicles that do not support it, and explains why pairing found no eligible vehicles."
+  },
+  "1.4.1": {
+    "en": "Fixes energy devices (Powerwall, solar, gateway) receiving only one update after connecting and then going silent."
   }
 }
