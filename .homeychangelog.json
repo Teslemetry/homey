@@ -97,5 +97,8 @@
   },
   "1.5.0": {
     "en": "Bug-fix release. Energy: Homey Energy no longer over-counts solar, grid and Powerwall energy outside UTC. Vehicles: rear seat heaters are back on Model 3/Y; charging amps, current, power and energy readings are fixed; climate shows Auto while preconditioning; close trunk and pause no longer toggle the wrong way; charge-time and navigation values clear when they end; controls lost when the car config was unknown return. Powerwall: grid charging and the export rule no longer overwrite each other; reserve tokens are now percentages (35, not 0.35) - update Flows that scaled them; new pairings only get controls the site supports. Account: devices now say when to re-authenticate or renew instead of Connecting forever, and expired tokens refresh automatically. Plus many smaller command, restart and Wall Connector fixes."
+  },
+  "1.6.0": {
+    "en": "The car's charged-energy meter now counts up across all charging sessions instead of resetting at each charge. Powerwall controls your site's hardware doesn't support (storm watch, charge from grid, export rule, off-grid EV reserve) are removed from already-paired Powerwalls, and the sunroof opened/closed triggers and condition, which never fired, are removed. Flows that used any of these need updating."
   }
 }
