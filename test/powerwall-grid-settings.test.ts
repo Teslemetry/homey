@@ -109,7 +109,7 @@ test("toggling Charge From Grid on a VPP site sends only the grid-charging field
 test("a site that reports no export rule shows allow_export unknown, not an invented 'battery_ok'", async () => {
   const { stub, capabilities, listeners, bodies, siteInfo, flush } = createPowerwall();
   await stub.onInit();
-  siteInfo({ components: { battery: true, solar: false } });
+  siteInfo({ components: { battery: true, solar: true } });
   await flush();
 
   assert.equal(capabilities.allow_export, null);

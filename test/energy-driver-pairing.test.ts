@@ -9,6 +9,12 @@ import PowerwallDevice from "../.homeybuild/drivers/battery/device.js";
 import SolarDevice from "../.homeybuild/drivers/solar/device.js";
 import GatewayDevice from "../.homeybuild/drivers/gateway/device.js";
 
+// Pairing now sets each Powerwall candidate's component-gated capability
+// list (see energy-capability-gates.test.ts); these tests only check which
+// sites are offered.
+const withoutCapabilities = (candidates: Array<Record<string, unknown>>) =>
+  candidates.map(({ capabilities: _capabilities, ...rest }) => rest);
+
 function createSite(
   id: string | number,
   name: string,
@@ -37,6 +43,7 @@ function createDriverStub<T>(
   const logs: unknown[] = [];
   return {
     driver: Object.assign(new Driver(), {
+      manifest: { capabilities: [] },
       homey: {
         app: {
           products: { energySites },
@@ -66,7 +73,7 @@ test("PowerwallDriver.onPairListDevices returns the healthy site when another si
     }),
   ]);
 
-  const result = await driver.onPairListDevices();
+  const result = withoutCapabilities(await driver.onPairListDevices());
 
   assert.deepEqual(result, [
     { name: "Home Battery Powerwall", data: { id: "site-1" }, class: "battery" },
@@ -88,7 +95,7 @@ test("PowerwallDriver.onPairListDevices excludes an inaccessible site without ca
     }),
   ]);
 
-  const result = await driver.onPairListDevices();
+  const result = withoutCapabilities(await driver.onPairListDevices());
 
   assert.deepEqual(result, [
     { name: "Home Battery Powerwall", data: { id: "site-1" }, class: "battery" },
@@ -118,7 +125,7 @@ test("SolarDriver.onPairListDevices isolates a per-site failure and still return
 
 test("GatewayDriver.onPairListDevices isolates a per-site failure and still returns the healthy gateway site", async () => {
   const { driver, errors } = createDriverStub(GatewayDriver, [
-    createSite("site-1", "Home Gateway", true, async () => ({ response: {} })),
+    createSite("site-1", "Home Gateway", true, async () => ({ response: { components: { battery: true } } })),
     createSite("site-2", "Broken Site", true, async () => {
       throw new Error("account revoked");
     }),
@@ -167,7 +174,7 @@ test("energy-site drivers keep pairing data.id as the SDK's real numeric type, n
   const { driver: batteryDriver } = createDriverStub(PowerwallDriver, [
     numericSite(async () => ({ response: { components: { battery: true } } })),
   ]);
-  const batteryResult = await batteryDriver.onPairListDevices();
+  const batteryResult = withoutCapabilities(await batteryDriver.onPairListDevices());
   assert.deepEqual(batteryResult, [
     { name: "Numeric Site Powerwall", data: { id: 123 }, class: "battery" },
   ]);
@@ -183,7 +190,7 @@ test("energy-site drivers keep pairing data.id as the SDK's real numeric type, n
   assert.equal(typeof solarResult[0].data.id, "number");
 
   const { driver: gatewayDriver } = createDriverStub(GatewayDriver, [
-    numericSite(async () => ({ response: {} })),
+    numericSite(async () => ({ response: { components: { battery: true } } })),
   ]);
   const gatewayResult = await gatewayDriver.onPairListDevices();
   assert.deepEqual(gatewayResult, [
@@ -290,7 +297,7 @@ test("TeslemetryDriver.onPair's list_devices handler logs session/products_fetch
   };
 
   await driver.onPair(session);
-  const result = await handlers["list_devices"]();
+  const result = withoutCapabilities(await handlers["list_devices"]());
 
   assert.deepEqual(result, [
     { name: "Home Battery Powerwall", data: { id: "site-1" }, class: "battery" },

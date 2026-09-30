@@ -7,6 +7,10 @@ import {
 } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 import { isEnergySiteEligible } from "../../lib/TeslemetryDriver.js";
+import {
+  isComponentGatedCapability,
+  isPowerwallCapabilitySupported,
+} from "./driver.js";
 import msUntilNextLocalMidnight from "../../lib/localMidnight.js";
 
 const TODAY_TOTAL_CAPABILITIES = [
@@ -22,6 +26,9 @@ interface SiteInfoDocument {
   off_grid_vehicle_charging_reserve_percent?: number;
   default_real_mode?: string;
   components?: {
+    battery?: boolean;
+    solar?: boolean;
+    storm_mode_capable?: boolean;
     customer_preferred_export_rule?: string;
     non_export_configured?: boolean;
     disallow_charge_from_grid_with_solar_installed?: boolean;
@@ -141,6 +148,45 @@ export default class PowerwallDevice extends TeslemetryDevice {
       return;
     }
     this.bindSite(site);
+  }
+
+  /**
+   * Keeps pairing's component gating (PowerwallDriver.onPairListDevices)
+   * from being undone by ensureCapabilities(): a gated capability is only
+   * added once this site's components say it is supported, and never while
+   * they are unknown. One the device already has is always kept - removing
+   * it from a paired device would break its Flows.
+   */
+  protected getExpectedCapabilities(): string[] {
+    const current = new Set(this.getCapabilities());
+    const components = this.siteComponents();
+    return super
+      .getExpectedCapabilities()
+      .filter(
+        (capability) =>
+          !isComponentGatedCapability(capability) ||
+          current.has(capability) ||
+          (components !== undefined &&
+            isPowerwallCapabilitySupported(capability, components)),
+      );
+  }
+
+  /** Read from homey.app.products, since ensureCapabilities() runs before bindSite(). */
+  private siteComponents(): SiteInfoDocument["components"] {
+    const siteInfo = this.homey.app.products?.energySites?.[this.getSiteId()]
+      ?.sse?.siteInfoDocument as SiteInfoDocument | undefined;
+    return siteInfo?.components;
+  }
+
+  /**
+   * Rejects a command the site's hardware can't honour, for devices paired
+   * before pairing filtered these capabilities out.
+   */
+  private assertCapabilitySupported(capability: string): void {
+    const components = this.siteComponents();
+    if (components && !isPowerwallCapabilitySupported(capability, components)) {
+      throw new Error(this.homey.__("error.energy_site_feature_unsupported"));
+    }
   }
 
   public getProductKey(): string | undefined {
@@ -277,6 +323,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     this.registerCommandListener(
       "off_grid_vehicle_charging_reserve",
       async (value) => {
+        this.assertCapabilitySupported("off_grid_vehicle_charging_reserve");
         this.log(
           `Setting off-grid vehicle charging reserve to ${Math.round(value * 100)} (from ${value})`,
         );
@@ -298,6 +345,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     });
 
     this.registerCommandListener("onoff.charge_grid", async (value) => {
+      this.assertCapabilitySupported("onoff.charge_grid");
       if (typeof value !== "boolean") {
         throw new Error(`Invalid charge from grid value: ${value}`);
       }
@@ -314,6 +362,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     });
 
     this.registerCommandListener("onoff.storm", async (value) => {
+      this.assertCapabilitySupported("onoff.storm");
       return this.action(this.site.api.setStormMode(value));
     });
 
@@ -476,6 +525,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
   public async flowSetOffGridVehicleChargingReserve(
     percentage: number,
   ): Promise<void> {
+    this.assertCapabilitySupported("off_grid_vehicle_charging_reserve");
     this.log(`Setting off-grid vehicle charging reserve to ${percentage}%`);
     await this.action(
       this.site.api.setOffGridVehicleChargingReserve(percentage),
@@ -498,6 +548,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     if (mode !== "battery_ok" && mode !== "pv_only" && mode !== "never") {
       throw new Error(`Invalid allow export value: ${mode}`);
     }
+    this.assertCapabilitySupported("allow_export");
     this.log(`Setting allow export to ${mode}`);
     await this.action(this.site.api.gridImportExport(mode));
   }
