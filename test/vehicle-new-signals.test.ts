@@ -426,10 +426,11 @@ test("cop_temperature_limit is kept when cop_user_set_temp_supported is true", a
   assert.ok(!removedCapabilities.includes("cop_temperature_limit"));
 });
 
-test("cop_temperature_limit is removed when cop_user_set_temp_supported is false/absent", async () => {
+test("cop_temperature_limit is removed when cop_user_set_temp_supported is false", async () => {
   const { stub, removedCapabilities } = createDeviceStub(
     { cop_temperature_limit: undefined },
     DEFAULT_VIN,
+    { cop_user_set_temp_supported: false },
   );
   await stub.onInit();
 

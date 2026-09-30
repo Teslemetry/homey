@@ -13,8 +13,7 @@ import {
 import haversineDistanceKm from "../../lib/haversineDistance.js";
 import {
   isCapabilitySupported,
-  filterVehicleCapabilities,
-  isMetadataGatedCapability,
+  isCapabilitySupportUnknown,
 } from "./capabilityGating.js";
 
 const isBool = (x: any) => typeof x === "boolean";
@@ -237,6 +236,17 @@ export default class VehicleDevice extends TeslemetryDevice {
   private driverSeatOccupied?: boolean;
   private driverSeatBeltUnlatched?: boolean;
 
+  /**
+   * Last HvacLeft/RightTemperatureRequest per physical side and the streamed
+   * RightHandDrive, which beats metadata's `config.rhd` (null when the server
+   * couldn't read the vehicle's config). See updateDriverTemperatureRequest().
+   */
+  private hvacTemperatureRequest: {
+    left?: SseData["data"]["HvacLeftTemperatureRequest"];
+    right?: SseData["data"]["HvacRightTemperatureRequest"];
+  } = {};
+  private streamedRightHandDrive?: boolean;
+
   /** Count of signal handlers that threw during registration/replay; see onSignal(). */
   private signalHandlerFailures = 0;
 
@@ -405,14 +415,17 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.clearAvailabilityReason("binding");
     this.clearAvailabilityReason("eligibility");
 
-    this.setCapabilityOptions("onoff.frunk", {
-      ...this.driver.manifest.capabilitiesOptions["onoff.frunk"],
-      setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
-    }).catch(this.error);
-    this.setCapabilityOptions("onoff.trunk", {
-      ...this.driver.manifest.capabilitiesOptions["onoff.trunk"],
-      setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
-    }).catch(this.error);
+    // `null` means the server couldn't read the vehicle's config: leave
+    // settability as it is rather than locking the tiles.
+    const canActuateTrunks = this.vehicle.metadata.config?.can_actuate_trunks;
+    if (canActuateTrunks != null) {
+      for (const capability of ["onoff.frunk", "onoff.trunk"]) {
+        this.setCapabilityOptions(capability, {
+          ...this.driver.manifest.capabilitiesOptions[capability],
+          setable: canActuateTrunks,
+        }).catch(this.error);
+      }
+    }
     // A device keeps the capabilitiesOptions it was paired with, so re-apply
     // the manifest's range to already-paired vehicles.
     this.setCapabilityOptions(
@@ -653,12 +666,21 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
     this.onSignal("Version", () => this.recomputeSoftwareUpdateStatus());
 
-    this.onSignal(
-      this.vehicle.metadata.config?.rhd
-        ? "HvacRightTemperatureRequest"
-        : "HvacLeftTemperatureRequest",
-      (value) => this.update("target_temperature", value),
-    );
+    // Temperature requests are per physical side, not driver/passenger;
+    // track both and let the current RHD reading pick the driver's.
+    this.onSignal("HvacLeftTemperatureRequest", (value) => {
+      this.hvacTemperatureRequest.left = value;
+      this.updateDriverTemperatureRequest();
+    });
+    this.onSignal("HvacRightTemperatureRequest", (value) => {
+      this.hvacTemperatureRequest.right = value;
+      this.updateDriverTemperatureRequest();
+    });
+    this.onSignal("RightHandDrive", (value) => {
+      if (value === null || value === undefined) return;
+      this.streamedRightHandDrive = value;
+      this.updateDriverTemperatureRequest();
+    });
     this.onSignal("InsideTemp", (value) =>
       this.update("measure_temperature", value),
     );
@@ -1328,24 +1350,34 @@ export default class VehicleDevice extends TeslemetryDevice {
    * heater, seat coolers) via the same predicate pairing uses. `this.vehicle`
    * isn't bound yet when this runs (called from super.onInit(), before
    * resolveAndBindVehicle()), so metadata is read directly from
-   * homey.app.products instead. If that product isn't resolvable yet, VIN-
-   * gated capabilities (Cybertruck hardware - VIN is always known) still
-   * filter normally, but metadata-gated seat capabilities keep whatever the
-   * device already has rather than widening back to the manifest default.
+   * homey.app.products instead. A metadata-gated capability whose config key
+   * is unknown - product not resolvable yet, or the key `null` because the
+   * server couldn't read the vehicle's config - keeps whatever the device
+   * already has rather than being removed (breaking its Flows) or widened
+   * back to the manifest default. VIN-gated capabilities (Cybertruck hardware
+   * - VIN is always known) still filter normally.
    */
   protected getExpectedCapabilities(): string[] {
     const capabilities = super.getExpectedCapabilities();
     const vin = this.getVin();
     const config = this.homey.app.products?.vehicles?.[vin]?.metadata?.config;
-    if (config) {
-      return filterVehicleCapabilities(capabilities, vin, config);
-    }
     const current = new Set(this.getCapabilities());
     return capabilities.filter((cap) =>
-      isMetadataGatedCapability(cap)
+      isCapabilitySupportUnknown(cap, config)
         ? current.has(cap)
-        : isCapabilitySupported(cap, vin, undefined),
+        : isCapabilitySupported(cap, vin, config),
     );
+  }
+
+  /** Writes the driver-side temperature request to target_temperature. */
+  private updateDriverTemperatureRequest(): void {
+    const rightHandDrive =
+      this.streamedRightHandDrive ?? !!this.vehicle.metadata.config?.rhd;
+    const value = rightHandDrive
+      ? this.hvacTemperatureRequest.right
+      : this.hvacTemperatureRequest.left;
+    if (value === undefined) return;
+    this.update("target_temperature", value);
   }
 
   /**

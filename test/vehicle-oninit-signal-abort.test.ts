@@ -243,19 +243,16 @@ test("VehicleDevice.onInit does not log a degraded-health summary on a normal in
 });
 
 test("missing optional metadata.config.rhd does not throw during registration and falls back to the left-side signal", async () => {
-  const { stub, sse } = createDeviceStub({ metadataConfig: {} });
+  const { stub, sse, capabilities } = createDeviceStub({ metadataConfig: {} });
+  sse.cache.data.HvacLeftTemperatureRequest = 19;
+  sse.cache.data.HvacRightTemperatureRequest = 21;
 
   await assert.doesNotReject(() => stub.onInit());
 
   assert.equal(
-    sse.signalListenerCount("HvacLeftTemperatureRequest"),
-    1,
-    "falls back to the left-side signal when rhd is absent",
-  );
-  assert.equal(
-    sse.signalListenerCount("HvacRightTemperatureRequest"),
-    0,
-    "does not register the right-side signal when rhd is absent",
+    capabilities.target_temperature,
+    19,
+    "falls back to the left-side request when rhd is absent",
   );
 });
 

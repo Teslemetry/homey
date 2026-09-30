@@ -19,18 +19,20 @@ const MODEL_S_X_ONLY_CAPABILITIES = new Set(["button.bioweapon"]);
 
 /**
  * Capabilities gated on vehicle config metadata (seat cooling / rear seat
- * heater layout) rather than VIN. Metadata can be temporarily unresolved
- * (e.g. products not loaded yet), unlike VIN which is always known from
- * pairing data/store.
+ * heater layout / sunroof / COP limit) rather than VIN, keyed to the config
+ * field each one reads. Metadata can be temporarily unresolved (products not
+ * loaded yet), and `/api/metadata` returns every config field as `null` when
+ * the server can't read the vehicle's config - unlike VIN, which is always
+ * known from pairing data/store.
  */
-const METADATA_GATED_CAPABILITIES = new Set([
-  "seat_cooler.front_left",
-  "seat_cooler.front_right",
-  "seat_heater.rear_left",
-  "seat_heater.rear_right",
-  "seat_heater.rear_center",
-  "windowcoverings_closed.sunroof",
-  "cop_temperature_limit",
+const METADATA_GATED_CAPABILITIES = new Map<string, keyof VehicleConfig>([
+  ["seat_cooler.front_left", "has_seat_cooling"],
+  ["seat_cooler.front_right", "has_seat_cooling"],
+  ["seat_heater.rear_left", "rear_seat_heaters"],
+  ["seat_heater.rear_right", "rear_seat_heaters"],
+  ["seat_heater.rear_center", "rear_seat_heaters"],
+  ["windowcoverings_closed.sunroof", "sun_roof_installed"],
+  ["cop_temperature_limit", "cop_user_set_temp_supported"],
 ]);
 
 /**
@@ -85,7 +87,16 @@ export function filterVehicleCapabilities(
   return capabilities.filter((cap) => isCapabilitySupported(cap, vin, config));
 }
 
-/** Whether `capability`'s support depends on vehicle config metadata (as opposed to VIN alone). */
-export function isMetadataGatedCapability(capability: string): boolean {
-  return METADATA_GATED_CAPABILITIES.has(capability);
+/**
+ * Whether `capability`'s support depends on vehicle config metadata (as
+ * opposed to VIN alone) that `config` doesn't know - absent, or `null`.
+ * Callers keep such a capability as the device already has it rather than
+ * reading "unknown" as "hardware absent".
+ */
+export function isCapabilitySupportUnknown(
+  capability: string,
+  config: VehicleConfig | undefined,
+): boolean {
+  const key = METADATA_GATED_CAPABILITIES.get(capability);
+  return key !== undefined && config?.[key] == null;
 }
