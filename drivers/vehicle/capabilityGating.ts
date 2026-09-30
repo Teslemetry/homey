@@ -19,7 +19,7 @@ const MODEL_S_X_ONLY_CAPABILITIES = new Set(["button.bioweapon"]);
 
 /**
  * Capabilities gated on vehicle config metadata (seat cooling / rear seat
- * heater count) rather than VIN. Metadata can be temporarily unresolved
+ * heater layout) rather than VIN. Metadata can be temporarily unresolved
  * (e.g. products not loaded yet), unlike VIN which is always known from
  * pairing data/store.
  */
@@ -50,14 +50,17 @@ export function isCapabilitySupported(
   ) {
     return !!config?.has_seat_cooling;
   }
+  // `rear_seat_heaters` is a rear-bench layout code, not a heater count: any
+  // non-zero value has left/right heaters, and only 1 and 3 add a centre one
+  // (mirrors HA teslemetry select.py).
   if (
     capability === "seat_heater.rear_left" ||
     capability === "seat_heater.rear_right"
   ) {
-    return (config?.rear_seat_heaters ?? 0) >= 2;
+    return !!config?.rear_seat_heaters;
   }
   if (capability === "seat_heater.rear_center") {
-    return (config?.rear_seat_heaters ?? 0) >= 3;
+    return [1, 3].includes(config?.rear_seat_heaters ?? 0);
   }
   if (capability === "windowcoverings_closed.sunroof") {
     return !!config?.sun_roof_installed;
