@@ -461,14 +461,16 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("measure_voltage", value),
     );
     this.onSignal("ChargeCurrentRequest", (value) =>
-      this.update("measure_current", value),
+      this.update("charging_amps", value),
     );
     this.onSignal("ChargeLimitSoc", (value) => {
       if (value !== undefined && value !== null) {
         this.update("charge_limit", value / 100);
       }
     });
-    this.onSignal("ChargeAmps", (value) => this.update("charging_amps", value));
+    this.onSignal("ChargeAmps", (value) =>
+      this.update("measure_current", this.isUnplugged() ? 0 : value),
+    );
     this.onSignal("TimeToFullCharge", (value) => {
       if (value !== undefined && value !== null) {
         this.updateWithThresholdTriggers(
@@ -487,20 +489,36 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("scheduled_charging_pending", value),
     );
 
-    // AC Charging
-    this.onSignal("ACChargingEnergyIn", (value) =>
-      this.update("meter_power", value),
-    );
-    this.onSignal("ACChargingPower", (value) =>
-      this.update("measure_power", value ? value * 1000 : value),
-    );
-
-    // DC Charging
+    // Measured at the battery, so it holds for both AC and DC charging;
+    // ACChargingEnergyIn is wall-side and must be ignored during DC.
     this.onSignal("DCChargingEnergyIn", (value) =>
       this.update("meter_power", value),
     );
+
+    // One wire message carries both power fields (DC is 0 during an AC
+    // session), so each handler resolves from the latest of both rather
+    // than letting whichever key arrives last win.
+    const handleChargingPower = (
+      key: "ACChargingPower" | "DCChargingPower",
+      value: number | null | undefined,
+    ) => {
+      if (this.isUnplugged()) return this.update("measure_power", 0);
+      const ac =
+        key === "ACChargingPower"
+          ? value
+          : this.vehicle.sse.cache.data?.ACChargingPower;
+      const dc =
+        key === "DCChargingPower"
+          ? value
+          : this.vehicle.sse.cache.data?.DCChargingPower;
+      const kw = typeof dc === "number" && dc > 0 ? dc : ac;
+      return this.update("measure_power", kw ? kw * 1000 : kw);
+    };
+    this.onSignal("ACChargingPower", (value) =>
+      handleChargingPower("ACChargingPower", value),
+    );
     this.onSignal("DCChargingPower", (value) =>
-      this.update("measure_power", value ? value * 1000 : value),
+      handleChargingPower("DCChargingPower", value),
     );
 
     // Lifetime Energy
@@ -1295,6 +1313,19 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   /**
+   * True while the latest DetailedChargeState is Disconnected. The charger
+   * power/current fields are never zeroed on the wire after unplugging, so
+   * their stale last values (including the cached replay on every bind) must
+   * not override the 0 written on disconnect.
+   */
+  private isUnplugged(): boolean {
+    return (
+      this.vehicle.sse.cache.data?.DetailedChargeState ===
+      "DetailedChargeStateDisconnected"
+    );
+  }
+
+  /**
    * Fires charging_started/complete/stopped and plugged_in/unplugged off
    * real DetailedChargeState transitions (old != new), mirroring the
    * TeslemetryDevice.update() *_changed pattern for the cases that need
@@ -1308,6 +1339,13 @@ export default class VehicleDevice extends TeslemetryDevice {
     const previous = this.previousDetailedChargeState;
     this.previousDetailedChargeState = value;
     this.update("evcharger_charging", ACTIVE_CHARGE_STATES.has(value));
+    // ACChargingPower is delta-gated (a 0.6 -> 0 kW drop is never sent), so
+    // the final draw would otherwise linger after unplugging. Only
+    // Disconnected guarantees no draw: a Complete car still pulls power.
+    if (value === "DetailedChargeStateDisconnected") {
+      this.update("measure_power", 0);
+      this.update("measure_current", 0);
+    }
 
     if (previous === undefined || previous === value) return;
 
