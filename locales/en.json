@@ -16,6 +16,8 @@
     "teslemetry_connecting": "Connecting to Teslemetry...",
     "stream_disconnected": "Connection to Teslemetry lost. Reconnecting...",
     "account_disconnected": "Teslemetry account disconnected. Please re-authenticate to reconnect this device.",
-    "frunk_cannot_close": "The frunk can't be closed remotely. Close it by hand."
+    "frunk_cannot_close": "The frunk can't be closed remotely. Close it by hand.",
+    "command_no_result": "Command had no result.",
+    "request_failed": "Teslemetry request failed."
   }
 }

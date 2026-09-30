@@ -16,6 +16,8 @@
     "teslemetry_connecting": "Conectando con Teslemetry...",
     "stream_disconnected": "Se perdió la conexión con Teslemetry. Reconectando...",
     "account_disconnected": "Cuenta de Teslemetry desconectada. Por favor, vuelve a autenticarte para reconectar este dispositivo.",
-    "frunk_cannot_close": "El maletero delantero no se puede cerrar a distancia. Ciérralo a mano."
+    "frunk_cannot_close": "El maletero delantero no se puede cerrar a distancia. Ciérralo a mano.",
+    "command_no_result": "El comando no devolvió ningún resultado.",
+    "request_failed": "La solicitud a Teslemetry ha fallado."
   }
 }

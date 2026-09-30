@@ -148,8 +148,9 @@ this.registerCommandListener("locked", async (value) =>
 - **Do not raise `ACTION_TIMEOUT`** - it is deliberately just under Homey's own
   ~10s flow-card cap. When the timeout wins, the card reports success while the
   command is still in flight; if that command later rejects, `action()` logs it
-  via `this.error(...)`. That log is the only trace of a silent failure - never
-  remove or downgrade it.
+  via `this.error(...)` and, for a capability listener, puts back the value
+  Homey committed. For a Flow card that log is the only trace of a silent
+  failure - never remove or downgrade it.
 - Every vehicle SDK command resolves `{ response: { result, reason? } }` and
   Homey only sees resolve-vs-reject, so **every** vehicle command must route
   through `VehicleDevice.vehicleAction()`, which validates `response.result`

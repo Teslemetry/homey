@@ -109,3 +109,99 @@ test("handleApiResponse does not throw when response.result is true", () => {
     (stub as any).handleApiResponse({ response: { result: true } }),
   );
 });
+
+// --- Undoing Homey's optimistic commit after a late failure ---
+
+function createListenerStub(capabilities: Record<string, unknown>) {
+  const { stub, errorCalls } = createDeviceStub();
+  const listeners: Record<string, (value: unknown) => Promise<void>> = {};
+  const pending: Array<(error: Error) => void> = [];
+  Object.assign(stub, {
+    getCapabilityValue: (c: string) => capabilities[c],
+    setCapabilityValue: async (c: string, v: unknown) => {
+      capabilities[c] = v;
+    },
+    registerCapabilityListener: (c: string, l: (value: unknown) => Promise<void>) => {
+      listeners[c] = l;
+    },
+  });
+  const command = () =>
+    (stub as any).action(
+      new Promise<void>((_resolve, reject) => pending.push(reject)),
+    );
+  (stub as any).registerCommandListener("onoff.sentry", async () => command());
+  (stub as any).registerCommandListener("charge_limit", async () => command());
+  (stub as any).registerCommandListener("button.honk", async () => command());
+  return { listeners, pending, errorCalls };
+}
+
+async function flush() {
+  for (let i = 0; i < 5; i++) await Promise.resolve();
+}
+
+test("a late failure leaves a value telemetry already changed alone", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const capabilities: Record<string, unknown> = { charge_limit: 0.8 };
+  const { listeners, pending } = createListenerStub(capabilities);
+
+  const call = listeners.charge_limit(0.9);
+  t.mock.timers.tick(9000);
+  await call;
+  capabilities.charge_limit = 0.9; // Homey's commit
+  capabilities.charge_limit = 0.85; // then telemetry reports another value
+  pending[0](new Error("could_not_wake_vehicle"));
+  await flush();
+
+  assert.equal(capabilities.charge_limit, 0.85);
+});
+
+test("a late failure of a superseded command does not undo the newer one", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const capabilities: Record<string, unknown> = { "onoff.sentry": false };
+  const { listeners, pending } = createListenerStub(capabilities);
+
+  const first = listeners["onoff.sentry"](true);
+  t.mock.timers.tick(9000);
+  await first;
+  capabilities["onoff.sentry"] = true;
+
+  const second = listeners["onoff.sentry"](true);
+  t.mock.timers.tick(9000);
+  await second;
+
+  pending[0](new Error("could_not_wake_vehicle"));
+  await flush();
+  assert.equal(capabilities["onoff.sentry"], true, "the newer command is still in flight");
+
+  pending[1](new Error("could_not_wake_vehicle"));
+  await flush();
+  assert.equal(capabilities["onoff.sentry"], true, "its pre-command value was already true");
+});
+
+test("a late failure of a button press writes nothing", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const capabilities: Record<string, unknown> = { "button.honk": null };
+  const { listeners, pending, errorCalls } = createListenerStub(capabilities);
+
+  const call = listeners["button.honk"](true);
+  t.mock.timers.tick(9000);
+  await call;
+  capabilities["button.honk"] = true;
+  pending[0](new Error("could_not_wake_vehicle"));
+  await flush();
+
+  assert.equal(capabilities["button.honk"], true);
+  assert.ok(
+    errorCalls.some((args) => String(args[0]).includes("failed after the 9000ms action timeout")),
+  );
+});
+
+test("a failure before the timeout rejects the listener and needs no undo", async () => {
+  const capabilities: Record<string, unknown> = { "onoff.sentry": false };
+  const { listeners, pending } = createListenerStub(capabilities);
+
+  const call = listeners["onoff.sentry"](true);
+  pending[0](new Error("vehicle asleep"));
+  await assert.rejects(call, /vehicle asleep/);
+  assert.equal(capabilities["onoff.sentry"], false);
+});

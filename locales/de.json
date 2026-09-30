@@ -16,6 +16,8 @@
     "teslemetry_connecting": "Verbindung zu Teslemetry wird hergestellt...",
     "stream_disconnected": "Verbindung zu Teslemetry unterbrochen. Verbindung wird wiederhergestellt...",
     "account_disconnected": "Teslemetry-Konto getrennt. Bitte authentifiziere dich erneut, um dieses Gerät wieder zu verbinden.",
-    "frunk_cannot_close": "Der Frunk kann nicht aus der Ferne geschlossen werden. Bitte schließe ihn von Hand."
+    "frunk_cannot_close": "Der Frunk kann nicht aus der Ferne geschlossen werden. Bitte schließe ihn von Hand.",
+    "command_no_result": "Der Befehl hat kein Ergebnis geliefert.",
+    "request_failed": "Teslemetry-Anfrage fehlgeschlagen."
   }
 }

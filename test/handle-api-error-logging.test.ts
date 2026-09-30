@@ -63,3 +63,20 @@ test("handleApiError still logs the server error shape correctly", () => {
   assert.equal(message, "API Error:");
   assert.equal(payload, JSON.stringify(apiError));
 });
+
+test("handleApiError never rethrows an Error with a blank message", () => {
+  const { stub } = createDeviceStub();
+
+  assert.throws(
+    () => stub.handleApiError(new Error("")),
+    (e: unknown) => e instanceof Error && e.message === "Teslemetry request failed",
+  );
+});
+
+test("handleApiError gives a raw-text or empty rejection a message", () => {
+  const { stub } = createDeviceStub();
+
+  assert.throws(() => stub.handleApiError("upstream connect error"), /^Error: upstream connect error$/);
+  assert.throws(() => stub.handleApiError({}), /^Error: Teslemetry request failed$/);
+  assert.throws(() => stub.handleApiError(undefined), /^Error: Teslemetry request failed$/);
+});
