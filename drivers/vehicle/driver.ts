@@ -61,6 +61,12 @@ export default class VehicleDriver extends TeslemetryDriver {
           data.metadata.config,
         );
 
+        // `null` means the server couldn't read the vehicle's config: keep
+        // the manifest's settability rather than writing `setable: null`.
+        const canActuateTrunks = data.metadata.config?.can_actuate_trunks;
+        const trunkOptions =
+          canActuateTrunks == null ? {} : { setable: canActuateTrunks };
+
         return {
           name: data.name,
           data: {
@@ -70,11 +76,11 @@ export default class VehicleDriver extends TeslemetryDriver {
           capabilitiesOptions: {
             "onoff.frunk": {
               ...this.manifest.capabilitiesOptions["onoff.frunk"],
-              setable: data.metadata.config?.can_actuate_trunks,
+              ...trunkOptions,
             },
             "onoff.trunk": {
               ...this.manifest.capabilitiesOptions["onoff.trunk"],
-              setable: data.metadata.config?.can_actuate_trunks,
+              ...trunkOptions,
             },
           },
           ...icon?.[data.vin[3]],
