@@ -87,6 +87,9 @@ export default class TeslemetryApp extends Homey.App {
   // True once a Products generation has been fully built and published.
   private ready = false;
 
+  // True while doInitialize() runs - see onTokenSaved in onInit().
+  private initializing = false;
+
   private startupRetryTimer?: NodeJS.Timeout;
   private startupRetryAttempt = 0;
   private static readonly STARTUP_RETRY_BASE_MS = 5_000;
@@ -104,7 +107,11 @@ export default class TeslemetryApp extends Homey.App {
   // genuine (non-cache) data event, for the stream freshness watchdog.
   private lastProductEventAt = new Map<string, number>();
   private productStaleTimers = new Map<string, NodeJS.Timeout>();
-  private static readonly STREAM_STALE_GRACE_MS = 90_000;
+  // A sleeping car's only genuine events are the server's state publishes,
+  // every 90 s. Measured from the disconnect, a 90 s grace expired just
+  // before the next publish whenever the one inside the reconnect backoff
+  // was lost; 150 s covers one lost publish without hiding a real outage.
+  private static readonly STREAM_STALE_GRACE_MS = 150_000;
 
   private logger = {
     info: (...args: unknown[]) => this.log(...args),
@@ -125,9 +132,11 @@ export default class TeslemetryApp extends Homey.App {
     // so need a fresh Products generation. A refresh just rotates the access
     // token of the account already connected, and the SDK resolves that
     // token through this same client on every request, so rebuilding for one
-    // would tear down a working stream for nothing.
+    // would tear down a working stream for nothing. That includes a build
+    // still in flight: booting on an expired token (the normal case) refreshes
+    // inside that build's own createProducts(), which then succeeds with it.
     this.oauth.onTokenSaved = (_token, reason) => {
-      if (reason === 'refresh' && this.ready) return;
+      if (reason === 'refresh' && (this.ready || this.initializing)) return;
       this.log('Token saved, re-initializing Teslemetry...');
       this.initializeTeslemetry(true).catch((error) => {
         this.error('Failed to reinitialize after token save:', error);
@@ -892,7 +901,12 @@ export default class TeslemetryApp extends Homey.App {
       }
       if (this.shuttingDown) return;
       if (!forceRebuild && this.ready) return;
-      await this.doInitialize();
+      this.initializing = true;
+      try {
+        await this.doInitialize();
+      } finally {
+        this.initializing = false;
+      }
     };
     const queued = this.initChain.then(run, run);
     this.initChain = queued;
@@ -1305,11 +1319,11 @@ export default class TeslemetryApp extends Homey.App {
    * terminal SSE auth_failure above, a refresh token the server rejected
    * (TeslemetryOAuth2Client.onCredentialsRejected), and the manual
    * Disconnect action (api.ts, via disconnectAccount()). Closes the stream,
-   * clears the token, and marks every device unavailable with the "auth"
-   * reason - no later unrelated event (a stray reconnect, a different
-   * device's data) can declare them healthy again; only that specific
-   * device's own genuine post-reauth data event can
-   * (handleGenuineStreamEvent).
+   * clears the token, unbinds every device (stopping its REST polling and
+   * timers), and marks every device unavailable with the "auth" reason - no
+   * later unrelated event (a stray reconnect, a different device's data) can
+   * declare them healthy again; only that specific device's own genuine
+   * post-reauth data event can (handleGenuineStreamEvent).
    */
   private teardownCredentials(message: string): void {
     this.cleanup();
@@ -1319,7 +1333,10 @@ export default class TeslemetryApp extends Homey.App {
       this.startupRetryTimer = undefined;
     }
     this.startupRetryAttempt = 0;
-    this.forEachTeslemetryDevice((device) => device.markUnavailable('auth', message));
+    this.forEachTeslemetryDevice((device) => {
+      device.unbindProduct();
+      device.markUnavailable('auth', message);
+    });
   }
 
   /** Called by api.ts's manual Disconnect action. */

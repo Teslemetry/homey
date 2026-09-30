@@ -86,27 +86,31 @@ export default class PowerwallDevice extends TeslemetryDevice {
 
   async onInit() {
     await super.onInit();
+    this.rebindProduct();
+  }
+
+  /** See TeslemetryDevice.rebindProduct(). */
+  public rebindProduct(): void {
+    this.unbindProduct();
     this.resolveAndBindSite();
   }
 
-  /**
-   * Re-resolves the current site id and rebinds, torn down and re-registered
-   * exactly like onInit(). See TeslemetryDevice.rebindProduct().
-   */
-  public rebindProduct(): void {
+  /** See TeslemetryDevice.unbindProduct(). */
+  public unbindProduct(): void {
     const pollingCleanup = this.pollingCleanup ?? [];
     this.pollingCleanup = [];
     pollingCleanup.forEach((stop) => stop());
-    // pollingCleanup just cleared the tariff timer; reset the retained
-    // tariff/timezone so the new site's cached site_info replay is what
-    // drives the next recompute, not this now-unbound site's data.
+    this.site = undefined!;
+    // pollingCleanup just cleared the tariff and midnight timers; reset the
+    // retained tariff/timezones so the next bind's site_info replay
+    // recomputes and reschedules them rather than skipping an unchanged
+    // timezone as "already scheduled". The rates themselves are left for
+    // that replay to overwrite - clearing them here would put a null gap in
+    // their Insights on every rebind. recomputeTariffRates() still clears
+    // them when a site_info genuinely carries no tariff.
     this.tariff = undefined;
     this.tariffTimeZone = undefined;
-    // pollingCleanup just cleared the midnight timer too; reset so the new
-    // site's cached site_info replay isn't skipped as "already scheduled".
     this.todayTotalsTimeZone = undefined;
-    this.clearTariffRates();
-    this.resolveAndBindSite();
   }
 
   private resolveAndBindSite(): void {
@@ -127,7 +131,6 @@ export default class PowerwallDevice extends TeslemetryDevice {
     // predicate pairing uses, so an already-paired site that loses access
     // doesn't stay bound with a frozen last-known state.
     if (!isEnergySiteEligible(site.metadata)) {
-      this.site = undefined!;
       this.error(
         `Failed to initialize Powerwall device: energy site ${siteId} is not eligible (access revoked)`,
       );
@@ -349,9 +352,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
 
   async onUninit(): Promise<void> {
     await super.onUninit();
-    const pollingCleanup = this.pollingCleanup ?? [];
-    this.pollingCleanup = [];
-    pollingCleanup.forEach((stop) => stop());
+    this.unbindProduct();
   }
 
   /**
