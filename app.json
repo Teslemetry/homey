@@ -2740,7 +2740,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=battery"
+            "filter": "driver_id=battery&capabilities=onoff.charge_grid"
           }
         ]
       },
@@ -2765,7 +2765,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=battery"
+            "filter": "driver_id=battery&capabilities=onoff.charge_grid"
           }
         ]
       },
@@ -2790,7 +2790,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=battery"
+            "filter": "driver_id=battery&capabilities=onoff.storm"
           }
         ]
       },
@@ -2815,7 +2815,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=battery"
+            "filter": "driver_id=battery&capabilities=onoff.storm"
           }
         ]
       },
@@ -5732,7 +5732,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=battery"
+            "filter": "driver_id=battery&capabilities=onoff.charge_grid"
           }
         ]
       },
@@ -8887,7 +8887,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=battery"
+            "filter": "driver_id=battery&capabilities=onoff.charge_grid"
           }
         ]
       },
@@ -8912,7 +8912,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=battery"
+            "filter": "driver_id=battery&capabilities=onoff.charge_grid"
           }
         ]
       },
@@ -8937,7 +8937,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=battery"
+            "filter": "driver_id=battery&capabilities=onoff.charge_grid"
           }
         ]
       },
@@ -8962,7 +8962,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=battery"
+            "filter": "driver_id=battery&capabilities=onoff.storm"
           }
         ]
       },
@@ -8987,7 +8987,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=battery"
+            "filter": "driver_id=battery&capabilities=onoff.storm"
           }
         ]
       },
@@ -9012,7 +9012,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=battery"
+            "filter": "driver_id=battery&capabilities=onoff.storm"
           }
         ]
       },

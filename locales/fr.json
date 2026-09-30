@@ -10,6 +10,7 @@
     "vehicle_telemetry_unavailable": "Fleet Telemetry n'est pas configuré pour ce véhicule.",
     "vehicle_polling_mode": "Ce véhicule est en mode d'interrogation hérité ; la télémétrie en direct n'est pas disponible.",
     "energy_site_access_required": "Ce site énergétique n'a plus accès à Teslemetry. Veuillez vérifier votre abonnement Teslemetry.",
+    "energy_site_feature_unsupported": "Le matériel de ce site énergétique ne prend pas en charge cette fonction.",
     "could_not_wake_vehicle": "Le véhicule ne s'est pas réveillé. Veuillez réessayer.",
     "insufficient_credits": "Crédits de commande insuffisants. Veuillez acheter des crédits supplémentaires pour exécuter des commandes.",
     "device_removed": "L'appareil sélectionné n'existe plus. Veuillez modifier ce Flow.",

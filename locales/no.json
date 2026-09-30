@@ -10,6 +10,7 @@
     "vehicle_telemetry_unavailable": "Fleet Telemetry er ikke konfigurert for dette kjøretøyet.",
     "vehicle_polling_mode": "Dette kjøretøyet er i gammel pollingmodus; sanntidstelemetri er ikke tilgjengelig.",
     "energy_site_access_required": "Dette energianlegget har ikke lenger tilgang til Teslemetry. Vennligst sjekk ditt Teslemetry-abonnement.",
+    "energy_site_feature_unsupported": "Maskinvaren til dette energianlegget støtter ikke denne funksjonen.",
     "could_not_wake_vehicle": "Kjøretøyet våknet ikke. Vennligst prøv igjen.",
     "insufficient_credits": "Utilstrekkelige kommando-kreditter. Vennligst kjøp flere kreditter for å kjøre kommandoer.",
     "device_removed": "Den valgte enheten finnes ikke lenger. Vennligst rediger denne Flow.",

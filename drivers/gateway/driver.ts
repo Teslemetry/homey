@@ -16,7 +16,10 @@ export default class GatewayDriver extends TeslemetryDriver {
       Object.values(products.energySites),
       async (site) => {
         const siteInfo = await site.api.getSiteInfo();
-        if (!siteInfo) return [];
+        const components = siteInfo?.response.components;
+        // A Wall-Connector-only site has no battery or solar, so no site-level
+        // grid/home power ever arrives for a Gateway to show (HA skips it too).
+        if (!components?.battery && !components?.solar) return [];
 
         return [
           {

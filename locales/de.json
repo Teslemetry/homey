@@ -10,6 +10,7 @@
     "vehicle_telemetry_unavailable": "Fleet Telemetry ist für dieses Fahrzeug nicht eingerichtet.",
     "vehicle_polling_mode": "Dieses Fahrzeug befindet sich im alten Abfragemodus; Live-Telemetrie ist nicht verfügbar.",
     "energy_site_access_required": "Diese Energieanlage hat keinen Teslemetry-Zugriff mehr. Bitte überprüfe dein Teslemetry-Abonnement.",
+    "energy_site_feature_unsupported": "Die Hardware dieser Energieanlage unterstützt diese Funktion nicht.",
     "could_not_wake_vehicle": "Fahrzeug ist nicht aufgewacht. Bitte versuche es erneut.",
     "insufficient_credits": "Unzureichende Befehlscredits. Bitte kaufe zusätzliche Credits, um Befehle auszuführen.",
     "device_removed": "Das ausgewählte Gerät existiert nicht mehr. Bitte bearbeite diesen Flow.",

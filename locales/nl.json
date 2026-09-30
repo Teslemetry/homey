@@ -10,6 +10,7 @@
     "vehicle_telemetry_unavailable": "Fleet Telemetry is niet geconfigureerd voor dit voertuig.",
     "vehicle_polling_mode": "Dit voertuig staat in de verouderde polling-modus; live telemetrie is niet beschikbaar.",
     "energy_site_access_required": "Deze energielocatie heeft geen toegang meer tot Teslemetry. Controleer uw Teslemetry-abonnement.",
+    "energy_site_feature_unsupported": "De hardware van deze energielocatie ondersteunt deze functie niet.",
     "could_not_wake_vehicle": "Voertuig werd niet wakker. Probeer het opnieuw.",
     "insufficient_credits": "Onvoldoende commando credits. Koop extra credits om commando's uit te voeren.",
     "device_removed": "Het geselecteerde apparaat bestaat niet meer. Bewerk deze Flow.",

@@ -10,6 +10,7 @@
     "vehicle_telemetry_unavailable": "Fleet Telemetry isn't configured for this vehicle.",
     "vehicle_polling_mode": "This vehicle is in legacy polling mode; live telemetry isn't available.",
     "energy_site_access_required": "This energy site no longer has Teslemetry access. Please check your Teslemetry subscription.",
+    "energy_site_feature_unsupported": "This energy site's hardware doesn't support this feature.",
     "could_not_wake_vehicle": "Vehicle didn't wake up. Please try again.",
     "insufficient_credits": "Insufficient command credits. Please purchase additional credits to run commands.",
     "device_removed": "The selected device no longer exists. Please edit this Flow.",

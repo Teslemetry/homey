@@ -2,6 +2,7 @@
   "triggers": [
     {
       "id": "onoff.charge_grid_true",
+      "$filter": "capabilities=onoff.charge_grid",
       "title": {
         "en": "Charge from grid has been enabled",
         "nl": "Opladen via het net is ingeschakeld",
@@ -20,6 +21,7 @@
     },
     {
       "id": "onoff.charge_grid_false",
+      "$filter": "capabilities=onoff.charge_grid",
       "title": {
         "en": "Charge from grid has been disabled",
         "nl": "Opladen via het net is uitgeschakeld",
@@ -38,6 +40,7 @@
     },
     {
       "id": "onoff.storm_true",
+      "$filter": "capabilities=onoff.storm",
       "title": {
         "en": "Storm watch has been enabled",
         "nl": "Stormwaarschuwing is ingeschakeld",
@@ -56,6 +59,7 @@
     },
     {
       "id": "onoff.storm_false",
+      "$filter": "capabilities=onoff.storm",
       "title": {
         "en": "Storm watch has been disabled",
         "nl": "Stormwaarschuwing is uitgeschakeld",
@@ -184,6 +188,7 @@
   "conditions": [
     {
       "id": "onoff.charge_grid",
+      "$filter": "capabilities=onoff.charge_grid",
       "title": {
         "en": "Charge from grid is !{{enabled|disabled}}",
         "nl": "Opladen via het net is !{{ingeschakeld|uitgeschakeld}}",
@@ -246,6 +251,7 @@
   "actions": [
     {
       "id": "onoff.charge_grid_on",
+      "$filter": "capabilities=onoff.charge_grid",
       "title": {
         "en": "Enable charge from grid",
         "nl": "Opladen via het net inschakelen",
@@ -264,6 +270,7 @@
     },
     {
       "id": "onoff.charge_grid_off",
+      "$filter": "capabilities=onoff.charge_grid",
       "title": {
         "en": "Disable charge from grid",
         "nl": "Opladen via het net uitschakelen",
@@ -282,6 +289,7 @@
     },
     {
       "id": "onoff.charge_grid_toggle",
+      "$filter": "capabilities=onoff.charge_grid",
       "title": {
         "en": "Toggle charge from grid",
         "nl": "Opladen via het net wisselen",
@@ -300,6 +308,7 @@
     },
     {
       "id": "onoff.storm_on",
+      "$filter": "capabilities=onoff.storm",
       "title": {
         "en": "Enable storm watch",
         "nl": "Stormwaarschuwing inschakelen",
@@ -318,6 +327,7 @@
     },
     {
       "id": "onoff.storm_off",
+      "$filter": "capabilities=onoff.storm",
       "title": {
         "en": "Disable storm watch",
         "nl": "Stormwaarschuwing uitschakelen",
@@ -336,6 +346,7 @@
     },
     {
       "id": "onoff.storm_toggle",
+      "$filter": "capabilities=onoff.storm",
       "title": {
         "en": "Toggle storm watch",
         "nl": "Stormwaarschuwing wisselen",
