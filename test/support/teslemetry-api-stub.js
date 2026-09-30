@@ -18,9 +18,15 @@
 // the thing energy-site-live-dispatch.test.ts has to exercise for real
 // (see that file's header), and constructing one performs no I/O until
 // connect() is called.
+//
+// The real Teslemetry class is re-exported as RealTeslemetry for tests that
+// need the real SDK's request path (auth callback, SSE reconnect loop, error
+// body shape) end to end; they stub global fetch and hand it to
+// configureTeslemetryStub() themselves (see command-auth-recovery.test.ts).
 export {
   getTariffPeriods,
   TeslemetryStream,
+  Teslemetry as RealTeslemetry,
 } from "../../node_modules/@teslemetry/api/dist/index.mjs";
 
 let nextFactory = null;

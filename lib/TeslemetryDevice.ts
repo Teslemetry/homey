@@ -499,6 +499,16 @@ export default class TeslemetryDevice extends Homey.Device {
     const error = toError(apiError, (key) => this.homey.__(key));
     if (apiError instanceof Error) throw error;
     this.error(error.message);
+    // The server rejected an access token it issued with time to spare
+    // (revoked or invalidated early). Only the SSE path forces a refresh on
+    // its own, so a still-connected stream would never replace it; refresh
+    // once here so the next command carries a new one. A rejected refresh
+    // token tears credentials down inside refreshToken() itself.
+    if (error.code === "invalid_token") {
+      this.homey.app.oauth.refreshToken().catch((refreshError) => {
+        this.error("Token refresh after a command invalid_token failed:", refreshError);
+      });
+    }
     if (error.code === "invalid_token" || error.code === "subscription_required") {
       this.markUnavailable("auth", error.message);
     }
