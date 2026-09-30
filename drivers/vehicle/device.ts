@@ -264,12 +264,13 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   /**
-   * Seat heater/cooler signals fire regardless of whether this vehicle's
-   * metadata exposes that seat's capability (see capabilityGating.ts). A
-   * vehicle without a given seat feature would otherwise log update()'s
-   * "not supported" line on every signal replay/update, indefinitely.
+   * Seat heater/cooler and cabin overheat protection limit signals fire
+   * regardless of whether this vehicle's metadata exposes the capability (see
+   * capabilityGating.ts). A vehicle without that feature would otherwise log
+   * update()'s "not supported" line on every signal replay/update,
+   * indefinitely.
    */
-  private updateSeatCapability(capability: string, value: unknown): void {
+  private updateGatedCapability(capability: string, value: unknown): void {
     if (this.getCapabilities().includes(capability)) {
       this.update(capability, value);
     }
@@ -591,7 +592,10 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("cop_mode", copModeMap.get(value)),
     );
     this.onSignal("CabinOverheatProtectionTemperatureLimit", (value) =>
-      this.update("cop_temperature_limit", copTemperatureLimitMap.get(value)),
+      this.updateGatedCapability(
+        "cop_temperature_limit",
+        copTemperatureLimitMap.get(value),
+      ),
     );
 
     // Software Update - derived from stream fields only (no REST-polled raw
@@ -643,25 +647,25 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.update("onoff.auto_seat_climate_right", value),
     );
     this.onSignal("SeatHeaterLeft", (value) =>
-      this.updateSeatCapability("seat_heater.front_left", String(value)),
+      this.updateGatedCapability("seat_heater.front_left", String(value)),
     );
     this.onSignal("SeatHeaterRight", (value) =>
-      this.updateSeatCapability("seat_heater.front_right", String(value)),
+      this.updateGatedCapability("seat_heater.front_right", String(value)),
     );
     this.onSignal("SeatHeaterRearLeft", (value) =>
-      this.updateSeatCapability("seat_heater.rear_left", String(value)),
+      this.updateGatedCapability("seat_heater.rear_left", String(value)),
     );
     this.onSignal("SeatHeaterRearRight", (value) =>
-      this.updateSeatCapability("seat_heater.rear_right", String(value)),
+      this.updateGatedCapability("seat_heater.rear_right", String(value)),
     );
     this.onSignal("SeatHeaterRearCenter", (value) =>
-      this.updateSeatCapability("seat_heater.rear_center", String(value)),
+      this.updateGatedCapability("seat_heater.rear_center", String(value)),
     );
     this.onSignal("ClimateSeatCoolingFrontLeft", (value) =>
-      this.updateSeatCapability("seat_cooler.front_left", String(value)),
+      this.updateGatedCapability("seat_cooler.front_left", String(value)),
     );
     this.onSignal("ClimateSeatCoolingFrontRight", (value) =>
-      this.updateSeatCapability("seat_cooler.front_right", String(value)),
+      this.updateGatedCapability("seat_cooler.front_right", String(value)),
     );
 
     // Doors & Windows (Assuming Signal names)
