@@ -175,6 +175,16 @@ export default class TeslemetryDevice extends Homey.Device {
     "charging_amps",
   ]);
 
+  /**
+   * Change-trigger tokens that must not carry the raw capability value. The
+   * reserve capabilities are stored as 0-1 fractions (Homey's slider shows
+   * them as %), but their `*_changed` cards promise a percentage token.
+   */
+  private static readonly CHANGE_TRIGGER_TOKEN_SCALE = new Map([
+    ["backup_reserve", 100],
+    ["off_grid_vehicle_charging_reserve", 100],
+  ]);
+
   async onInit() {
     await this.ensureCapabilities();
   }
@@ -323,9 +333,14 @@ export default class TeslemetryDevice extends Homey.Device {
         !isInvalidNumericToken &&
         this.isLive()
       ) {
+        const scale =
+          TeslemetryDevice.CHANGE_TRIGGER_TOKEN_SCALE.get(capability);
+        // Reserve percentages are whole numbers; round away the float noise
+        // of 0.35 * 100.
+        const token = scale === undefined ? value : Math.round(value * scale);
         this.homey.flow
           .getDeviceTriggerCard(`${capability}_changed`)
-          .trigger(this, { [capability]: value })
+          .trigger(this, { [capability]: token })
           .catch(this.error);
       }
       return true;
