@@ -856,10 +856,12 @@ export default class TeslemetryApp extends Homey.App {
       .getConditionCard(cardPrefix)
       .registerRunListener(async (args: ThresholdArgs) => {
         if (!args.device) return false;
-        return (
-          (args.device.getCapabilityValue(capability) as number) >=
-          (args[argName] as number)
-        );
+        // A cleared (null) value must fail closed - `null >= 0` is true in JS.
+        const value = args.device.getCapabilityValue(capability);
+        if (typeof value !== 'number' || !Number.isFinite(value)) {
+          return false;
+        }
+        return value >= (args[argName] as number);
       });
   }
 

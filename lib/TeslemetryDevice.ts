@@ -368,7 +368,13 @@ export default class TeslemetryDevice extends Homey.Device {
     // Same non-rejecting boundary contract as update() above - callers
     // discard this Promise from SSE signal handlers too.
     try {
-      if (value === undefined || value === null) return;
+      if (value === undefined) return;
+      // null is an explicit clear (e.g. navigation ended): write it so the
+      // threshold conditions fail closed, but never fire a trigger on it.
+      if (value === null) {
+        await this.update(capability, null);
+        return;
+      }
       const previous = this.getCapabilityValue(capability) as number | null;
       const updated = await this.update(capability, value);
       if (!updated) return;

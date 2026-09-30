@@ -76,15 +76,19 @@ test("MilesToArrival converts miles to km on measure_distance.arrival", async ()
   assert.equal(capabilities["measure_distance.arrival"], 10 * 1.609344);
 });
 
-test("null/undefined MilesToArrival is skipped", async () => {
+test("undefined MilesToArrival is skipped; null clears it", async () => {
   const { stub, sse, capabilities } = createDeviceStub({
     "measure_distance.arrival": 5,
   });
   await stub.onInit();
 
-  sse.data.emit("MilesToArrival", null);
-
+  sse.data.emit("MilesToArrival", undefined);
+  await new Promise((resolve) => setImmediate(resolve));
   assert.equal(capabilities["measure_distance.arrival"], 5);
+
+  sse.data.emit("MilesToArrival", null);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(capabilities["measure_distance.arrival"], null);
 });
 
 // updateWithThresholdTriggers() is fired without being awaited by the
@@ -181,16 +185,23 @@ test("ExpectedEnergyPercentAtTripArrival fires energy_at_arrival_above/below on 
   assert.deepEqual(triggerCalls[0].tokens, { percentage: 12 });
 });
 
-test("null/undefined RouteTrafficMinutesDelay and ExpectedEnergyPercentAtTripArrival are skipped", async () => {
-  const { stub, sse, capabilities } = createDeviceStub({
+test("undefined RouteTrafficMinutesDelay/ExpectedEnergyPercentAtTripArrival are skipped; null clears without triggering", async () => {
+  const { stub, sse, capabilities, triggerCalls } = createDeviceStub({
     route_traffic_delay: 5,
     "measure_battery.arrival": 30,
   });
   await stub.onInit();
 
-  sse.data.emit("RouteTrafficMinutesDelay", null);
+  sse.data.emit("RouteTrafficMinutesDelay", undefined);
   sse.data.emit("ExpectedEnergyPercentAtTripArrival", undefined);
-
+  await flush();
   assert.equal(capabilities["route_traffic_delay"], 5);
   assert.equal(capabilities["measure_battery.arrival"], 30);
+
+  sse.data.emit("RouteTrafficMinutesDelay", null);
+  sse.data.emit("ExpectedEnergyPercentAtTripArrival", null);
+  await flush();
+  assert.equal(capabilities["route_traffic_delay"], null);
+  assert.equal(capabilities["measure_battery.arrival"], null);
+  assert.deepEqual(triggerCalls, []);
 });

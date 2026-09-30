@@ -485,17 +485,15 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.onSignal("ChargeAmps", (value) =>
       this.update("measure_current", this.isUnplugged() ? 0 : value),
     );
-    this.onSignal("TimeToFullCharge", (value) => {
-      if (value !== undefined && value !== null) {
-        this.updateWithThresholdTriggers(
-          "time_to_full_charge",
-          value * 60,
-          "time_to_full_charge_above",
-          "time_to_full_charge_below",
-          "minutes",
-        );
-      }
-    });
+    this.onSignal("TimeToFullCharge", (value) =>
+      this.updateWithThresholdTriggers(
+        "time_to_full_charge",
+        value == null ? value : value * 60,
+        "time_to_full_charge_above",
+        "time_to_full_charge_below",
+        "minutes",
+      ),
+    );
     this.onSignal("ScheduledChargingMode", (value) =>
       this.update("scheduled_charging_mode", scheduledChargingModeMap.get(value)),
     );
@@ -840,9 +838,27 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
 
     // Navigation
-    this.onSignal("DestinationName", (value) =>
-      this.update("navigation_destination", value ?? ""),
-    );
+    this.onSignal("DestinationName", (value) => {
+      this.update("navigation_destination", value ?? "");
+      // Navigation ended: the car does not null these itself
+      // (RouteTrafficMinutesDelay is not even nullable), so clear them here.
+      if (value === null) {
+        this.updateWithThresholdTriggers(
+          "measure_battery.arrival",
+          null,
+          "energy_at_arrival_above",
+          "energy_at_arrival_below",
+          "percentage",
+        );
+        this.updateWithThresholdTriggers(
+          "route_traffic_delay",
+          null,
+          "route_traffic_delay_above",
+          "route_traffic_delay_below",
+          "minutes",
+        );
+      }
+    });
     this.onSignal("MinutesToArrival", (value) =>
       this.updateWithThresholdTriggers(
         "minutes_to_arrival",
@@ -852,17 +868,15 @@ export default class VehicleDevice extends TeslemetryDevice {
         "minutes",
       ),
     );
-    this.onSignal("MilesToArrival", (value) => {
-      if (value !== undefined && value !== null) {
-        this.updateWithThresholdTriggers(
-          "measure_distance.arrival",
-          value * MILES_TO_KILOMETERS,
-          "distance_to_arrival_above",
-          "distance_to_arrival_below",
-          "kilometers",
-        );
-      }
-    });
+    this.onSignal("MilesToArrival", (value) =>
+      this.updateWithThresholdTriggers(
+        "measure_distance.arrival",
+        value == null ? value : value * MILES_TO_KILOMETERS,
+        "distance_to_arrival_above",
+        "distance_to_arrival_below",
+        "kilometers",
+      ),
+    );
     this.onSignal("RouteTrafficMinutesDelay", (value) =>
       this.updateWithThresholdTriggers(
         "route_traffic_delay",
@@ -1381,6 +1395,13 @@ export default class VehicleDevice extends TeslemetryDevice {
     if (value === "DetailedChargeStateDisconnected") {
       this.update("measure_power", 0);
       this.update("measure_current", 0);
+      this.updateWithThresholdTriggers(
+        "time_to_full_charge",
+        null,
+        "time_to_full_charge_above",
+        "time_to_full_charge_below",
+        "minutes",
+      );
     }
 
     if (previous === undefined || previous === value) return;
