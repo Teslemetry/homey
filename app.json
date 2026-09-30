@@ -8103,7 +8103,7 @@
             "title": {
               "en": "Percentage"
             },
-            "min": 0,
+            "min": 50,
             "max": 100,
             "step": 1,
             "label": "%",
@@ -10788,6 +10788,11 @@
         "measure_distance.home"
       ],
       "capabilitiesOptions": {
+        "target_temperature": {
+          "min": 15,
+          "max": 28,
+          "step": 0.5
+        },
         "measure_distance.range": {
           "title": {
             "en": "Range",
@@ -12234,7 +12239,7 @@
         "ko": "%",
         "ar": "%"
       },
-      "min": 0,
+      "min": 0.5,
       "max": 1,
       "decimals": 2,
       "step": 0.01

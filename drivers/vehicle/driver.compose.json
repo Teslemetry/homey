@@ -130,6 +130,11 @@
     "measure_distance.home"
   ],
   "capabilitiesOptions": {
+    "target_temperature": {
+      "min": 15,
+      "max": 28,
+      "step": 0.5
+    },
     "measure_distance.range": {
       "title": {
         "en": "Range",
