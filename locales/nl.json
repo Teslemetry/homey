@@ -16,6 +16,8 @@
     "teslemetry_connecting": "Verbinden met Teslemetry...",
     "stream_disconnected": "Verbinding met Teslemetry verbroken. Opnieuw verbinden...",
     "account_disconnected": "Teslemetry-account losgekoppeld. Log opnieuw in om dit apparaat opnieuw te verbinden.",
-    "frunk_cannot_close": "De frunk kan niet op afstand worden gesloten. Sluit hem met de hand."
+    "frunk_cannot_close": "De frunk kan niet op afstand worden gesloten. Sluit hem met de hand.",
+    "command_no_result": "Het commando gaf geen resultaat.",
+    "request_failed": "Teslemetry-verzoek mislukt."
   }
 }

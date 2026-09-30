@@ -16,6 +16,8 @@
     "teslemetry_connecting": "Connexion à Teslemetry...",
     "stream_disconnected": "Connexion à Teslemetry perdue. Reconnexion en cours...",
     "account_disconnected": "Compte Teslemetry déconnecté. Veuillez vous ré-authentifier pour reconnecter cet appareil.",
-    "frunk_cannot_close": "Le coffre avant ne peut pas être fermé à distance. Fermez-le à la main."
+    "frunk_cannot_close": "Le coffre avant ne peut pas être fermé à distance. Fermez-le à la main.",
+    "command_no_result": "La commande n'a renvoyé aucun résultat.",
+    "request_failed": "La requête Teslemetry a échoué."
   }
 }

@@ -16,6 +16,8 @@
     "teslemetry_connecting": "Connessione a Teslemetry in corso...",
     "stream_disconnected": "Connessione a Teslemetry persa. Riconnessione in corso...",
     "account_disconnected": "Account Teslemetry disconnesso. Per favore riautenticati per riconnettere questo dispositivo.",
-    "frunk_cannot_close": "Il bagagliaio anteriore non può essere chiuso da remoto. Chiudilo a mano."
+    "frunk_cannot_close": "Il bagagliaio anteriore non può essere chiuso da remoto. Chiudilo a mano.",
+    "command_no_result": "Il comando non ha restituito alcun risultato.",
+    "request_failed": "Richiesta a Teslemetry non riuscita."
   }
 }

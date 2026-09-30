@@ -1034,8 +1034,9 @@ export default class VehicleDevice extends TeslemetryDevice {
   /**
    * Routes every vehicle command through action()'s 9s timeout race after
    * first validating Tesla's `{ response: { result, reason } }` envelope, so
-   * an explicit `result: false` always surfaces as a rejected capability/Flow
-   * promise instead of resolving as success. The generic constraint means a
+   * an explicit `result: false` surfaces as a rejected capability/Flow
+   * promise instead of resolving as success - except for the benign reasons
+   * handleApiResponse accepts (e.g. `already_set`). The generic constraint means a
    * command whose response shape lacks `result` (e.g. wakeUp()) won't compile
    * here - call action() directly for those instead.
    */

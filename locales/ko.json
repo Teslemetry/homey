@@ -16,6 +16,8 @@
     "teslemetry_connecting": "Teslemetry에 연결하는 중...",
     "stream_disconnected": "Teslemetry 연결이 끊어졌습니다. 다시 연결하는 중...",
     "account_disconnected": "Teslemetry 계정 연결이 끊어졌습니다. 이 기기를 다시 연결하려면 재인증해 주세요.",
-    "frunk_cannot_close": "프렁크는 원격으로 닫을 수 없습니다. 직접 닫아 주세요."
+    "frunk_cannot_close": "프렁크는 원격으로 닫을 수 없습니다. 직접 닫아 주세요.",
+    "command_no_result": "명령에 결과가 없습니다.",
+    "request_failed": "Teslemetry 요청에 실패했습니다."
   }
 }

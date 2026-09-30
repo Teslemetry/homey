@@ -16,6 +16,8 @@
     "teslemetry_connecting": "Ansluter till Teslemetry...",
     "stream_disconnected": "Anslutningen till Teslemetry förlorades. Återansluter...",
     "account_disconnected": "Teslemetry-kontot har kopplats bort. Vänligen autentisera om för att återansluta denna enhet.",
-    "frunk_cannot_close": "Frunken kan inte stängas på distans. Stäng den för hand."
+    "frunk_cannot_close": "Frunken kan inte stängas på distans. Stäng den för hand.",
+    "command_no_result": "Kommandot gav inget resultat.",
+    "request_failed": "Teslemetry-begäran misslyckades."
   }
 }

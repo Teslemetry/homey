@@ -1,8 +1,9 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import Homey from "homey";
 import type { SseEnergyTotals } from "@teslemetry/api";
 import type TeslemetryApp from "../app.js";
 import type TeslemetryDriver from "./TeslemetryDriver.js";
-import { TeslemetryApiError } from "../@types/error.js";
+import toError from "./toError.js";
 
 /**
  * Every reason a device can be unavailable, each with its own recovery
@@ -210,11 +211,27 @@ export default class TeslemetryDevice extends Homey.Device {
   private registeredCommandCapabilities?: Set<string>;
 
   /**
+   * The undo for the capability-listener call currently running, if any,
+   * read by action() when its command fails after the timeout already
+   * reported success. Async context rather than a field, because a listener
+   * may await other work before it reaches action().
+   */
+  private static readonly lateFailureUndo = new AsyncLocalStorage<(() => void) | undefined>();
+
+  /** The latest listener call per capability, so only it may undo. */
+  private commandCalls?: Map<string, number>;
+
+  /**
    * Registers a command capability listener exactly once per device
    * lifetime. Homey keeps one listener per capability and warns when a
    * second is registered, and a rebind has nothing to re-register anyway -
    * these listeners read `this.site`/`this.vehicle` at call time, so
    * rebinding already points them at the new product.
+   *
+   * Homey commits the requested value once the listener resolves, which
+   * action() does at its timeout even while the command is still in
+   * flight. If that command then fails, the capability is put back to its
+   * pre-command value - a sleeping car sends no telemetry to correct it.
    */
   protected registerCommandListener(
     capability: string,
@@ -223,7 +240,42 @@ export default class TeslemetryDevice extends Homey.Device {
     const registered = (this.registeredCommandCapabilities ??= new Set());
     if (registered.has(capability)) return;
     registered.add(capability);
-    this.registerCapabilityListener(capability, listener);
+    this.registerCapabilityListener(capability, async (value, opts) => {
+      const calls = (this.commandCalls ??= new Map());
+      const call = (calls.get(capability) ?? 0) + 1;
+      calls.set(capability, call);
+      let undo: (() => void) | undefined;
+      try {
+        const previous = this.getCapabilityValue(capability);
+        undo = () => this.undoLateFailure(capability, value, previous, call);
+      } catch (error) {
+        this.error(error);
+      }
+      return TeslemetryDevice.lateFailureUndo.run(undo, () =>
+        listener(value, opts),
+      );
+    });
+  }
+
+  /**
+   * Restores `previous` unless something already moved the capability off
+   * the value this call requested (telemetry, or a newer command).
+   */
+  private undoLateFailure(
+    capability: string,
+    requested: unknown,
+    previous: unknown,
+    call: number,
+  ): void {
+    try {
+      if (this.destroyed || this.commandCalls?.get(capability) !== call) return;
+      if (capability === "button" || capability.startsWith("button.")) return;
+      if (previous === requested) return;
+      if (this.getCapabilityValue(capability) !== requested) return;
+      this.setCapabilityValue(capability, previous).catch(this.error);
+    } catch (error) {
+      this.error(error);
+    }
   }
 
   /**
@@ -397,42 +449,48 @@ export default class TeslemetryDevice extends Homey.Device {
     }
   }
 
+  /**
+   * Reasons Tesla returns with `result: false` when the vehicle is already in
+   * the requested state (or has accepted the request), which HA's
+   * `handle_vehicle_command` also treats as success.
+   */
+  private static readonly BENIGN_COMMAND_REASONS = new Set([
+    "already_set",
+    "not_charging",
+    "requested",
+  ]);
+
   protected handleApiResponse = ({ response }: { response: any }): void => {
-    if (response.result === false) {
-      const error = new Error(response.reason) as Error & {
-        response: null;
-        code: string;
-      };
-      error.response = null;
-      error.code = "command_failed";
-      throw error;
-    }
+    if (response.result !== false) return;
+    if (TeslemetryDevice.BENIGN_COMMAND_REASONS.has(response.reason)) return;
+    const error = new Error(
+      response.reason || this.homey.__("error.command_no_result"),
+    ) as Error & {
+      response: null;
+      code: string;
+    };
+    error.response = null;
+    error.code = "command_failed";
+    throw error;
   };
 
-  protected handleApiError = (apiError: TeslemetryApiError | Error): never => {
-    // A plain Error means a lower layer already logged and translated it;
-    // JSON.stringify(Error) is "{}" (message/stack aren't enumerable), so
-    // rethrow it as-is instead of re-wrapping it into a blank-message Error.
+  protected handleApiError = (apiError: unknown): never => {
+    // JSON.stringify(Error) is "{}" (message/stack aren't enumerable), so a
+    // plain Error - which a lower layer already logged and translated - is
+    // logged by name and message and rethrown as-is by toError(), unless its
+    // message is blank.
     if (apiError instanceof Error) {
       this.error(`API Error: ${apiError.name}: ${apiError.message}`, apiError.stack);
-      throw apiError;
+    } else {
+      this.error("API Error:", JSON.stringify(apiError));
     }
-    const { error, error_description } = apiError;
-    this.error("API Error:", JSON.stringify(apiError));
-    const key = `error.${error}`;
-    const translation = this.homey.__(key);
-    if (translation && translation !== key) {
-      this.error(translation);
-      if (error === "invalid_token" || error === "subscription_required") {
-        this.markUnavailable("auth", translation);
-      }
-      throw new Error(translation);
+    const error = toError(apiError, (key) => this.homey.__(key));
+    if (apiError instanceof Error) throw error;
+    this.error(error.message);
+    if (error.code === "invalid_token" || error.code === "subscription_required") {
+      this.markUnavailable("auth", error.message);
     }
-    this.error(error_description);
-    if (error === "invalid_token" || error === "subscription_required") {
-      this.markUnavailable("auth", error_description);
-    }
-    throw new Error(error_description);
+    throw error;
   };
 
   /**
@@ -585,15 +643,19 @@ export default class TeslemetryDevice extends Homey.Device {
       }, TeslemetryDevice.ACTION_TIMEOUT);
     });
     const handled = promise.then(() => {}, this.handleApiError);
+    const undoLateFailure = TeslemetryDevice.lateFailureUndo.getStore();
     // If the timeout already won the race (flow card reported success), a
     // later rejection would otherwise vanish silently. Log it prominently
-    // instead of discarding it, since it's the only trace of the failure.
+    // instead of discarding it - for a Flow card it's the only trace of the
+    // failure - and undo the value Homey committed if a capability listener
+    // sent it.
     handled.catch((error) => {
       if (timedOut) {
         this.error(
           `Action on ${this.getName()} failed after the ${TeslemetryDevice.ACTION_TIMEOUT}ms action timeout had already reported success to the flow:`,
           error,
         );
+        undoLateFailure?.();
       }
     });
     // Clear the timer the moment the command settles first, so a fast

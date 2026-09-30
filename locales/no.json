@@ -16,6 +16,8 @@
     "teslemetry_connecting": "Kobler til Teslemetry...",
     "stream_disconnected": "Tilkoblingen til Teslemetry ble brutt. Kobler til på nytt...",
     "account_disconnected": "Teslemetry-kontoen er frakoblet. Vennligst logg inn på nytt for å koble til denne enheten igjen.",
-    "frunk_cannot_close": "Frunken kan ikke lukkes eksternt. Lukk den for hånd."
+    "frunk_cannot_close": "Frunken kan ikke lukkes eksternt. Lukk den for hånd.",
+    "command_no_result": "Kommandoen ga ikke noe resultat.",
+    "request_failed": "Teslemetry-forespørselen mislyktes."
   }
 }
