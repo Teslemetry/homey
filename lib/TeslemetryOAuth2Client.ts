@@ -237,8 +237,14 @@ export default class TeslemetryOAuth2Client {
       throw new Error("No OAuth2 token available");
     }
 
-    // Refresh if expiring in less than a minute
-    if (this.token.expires_at && Date.now() + 60_000 > this.token.expires_at) {
+    // Refresh if expiring in less than a minute. A refresh already in
+    // flight (forced after the server rejected this token, e.g. an SSE 401)
+    // is joined as well: the SDK retries at once, and handing that retry the
+    // rejected token would only earn the second 401 that tears down.
+    if (
+      this.refreshInFlight ||
+      (this.token.expires_at && Date.now() + 60_000 > this.token.expires_at)
+    ) {
       await this.refreshToken();
     }
 

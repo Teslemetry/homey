@@ -178,16 +178,10 @@ export default class TeslemetryDriver extends Homey.Driver {
       await device.ensureCapabilities();
     }
 
+    // Always a fresh login, unlike pairing: a stored token is no evidence
+    // the server still accepts it, and Repair is the user's way to replace it.
     session.setHandler("showView", async (viewId: string) => {
       if (viewId === "login_oauth2") {
-        if (this.homey.app.oauth.hasValidToken()) {
-          this.log(
-            "pairing[stage=credential_acquisition]: valid OAuth token already exists, skipping OAuth flow",
-          );
-          session.emit("authorized");
-          return;
-        }
-
         await this.handleOAuth2Login(session);
       }
     });
