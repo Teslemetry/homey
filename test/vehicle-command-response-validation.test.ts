@@ -153,7 +153,7 @@ const REPRESENTATIVE_CAPABILITY_COMMANDS: Array<{
     family: "media",
     capability: "speaker_playing",
     method: "mediaTogglePlayback",
-    value: undefined,
+    value: true,
   },
   {
     family: "seat climate",

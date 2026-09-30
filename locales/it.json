@@ -15,6 +15,7 @@
     "device_removed": "Il dispositivo selezionato non esiste più. Per favore modifica questo Flow.",
     "teslemetry_connecting": "Connessione a Teslemetry in corso...",
     "stream_disconnected": "Connessione a Teslemetry persa. Riconnessione in corso...",
-    "account_disconnected": "Account Teslemetry disconnesso. Per favore riautenticati per riconnettere questo dispositivo."
+    "account_disconnected": "Account Teslemetry disconnesso. Per favore riautenticati per riconnettere questo dispositivo.",
+    "frunk_cannot_close": "Il bagagliaio anteriore non può essere chiuso da remoto. Chiudilo a mano."
   }
 }

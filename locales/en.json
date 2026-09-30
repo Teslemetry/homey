@@ -15,6 +15,7 @@
     "device_removed": "The selected device no longer exists. Please edit this Flow.",
     "teslemetry_connecting": "Connecting to Teslemetry...",
     "stream_disconnected": "Connection to Teslemetry lost. Reconnecting...",
-    "account_disconnected": "Teslemetry account disconnected. Please re-authenticate to reconnect this device."
+    "account_disconnected": "Teslemetry account disconnected. Please re-authenticate to reconnect this device.",
+    "frunk_cannot_close": "The frunk can't be closed remotely. Close it by hand."
   }
 }

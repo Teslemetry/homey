@@ -15,6 +15,7 @@
     "device_removed": "Das ausgewählte Gerät existiert nicht mehr. Bitte bearbeite diesen Flow.",
     "teslemetry_connecting": "Verbindung zu Teslemetry wird hergestellt...",
     "stream_disconnected": "Verbindung zu Teslemetry unterbrochen. Verbindung wird wiederhergestellt...",
-    "account_disconnected": "Teslemetry-Konto getrennt. Bitte authentifiziere dich erneut, um dieses Gerät wieder zu verbinden."
+    "account_disconnected": "Teslemetry-Konto getrennt. Bitte authentifiziere dich erneut, um dieses Gerät wieder zu verbinden.",
+    "frunk_cannot_close": "Der Frunk kann nicht aus der Ferne geschlossen werden. Bitte schließe ihn von Hand."
   }
 }
