@@ -22,9 +22,11 @@ const TONNEAU_CARDS = [
   "action:windowcoverings_closed.tonneau_open",
   "action:windowcoverings_closed.tonneau_toggle",
 ];
-const SUNROOF_CARDS = TONNEAU_CARDS.map((card) =>
-  card.replace("tonneau", "sunroof"),
-);
+// Actions only: no sunroof position is ever reported, so its triggers and
+// condition were removed.
+const SUNROOF_CARDS = TONNEAU_CARDS.filter((card) =>
+  card.startsWith("action:"),
+).map((card) => card.replace("tonneau", "sunroof"));
 
 // Real /api/metadata config for a Model 3 (no tonneau, no sunroof).
 const MODEL_3_CONFIG = {
