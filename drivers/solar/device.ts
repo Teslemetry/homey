@@ -26,12 +26,14 @@ export default class SolarDevice extends TeslemetryDevice {
   }
 
   /**
-   * `energy_totals` only pushes on a change, so the "today" total goes
-   * silent overnight and keeps showing yesterday's value until the day's
-   * first sample arrives. This timer forces the reset at the actual local
-   * midnight boundary instead, using the site's own installation timezone -
-   * the same source the Powerwall tariff resolver trusts - since Tesla's
-   * daily totals roll over on that boundary, not the Homey box's timezone.
+   * The new day's first `energy_totals` only arrives with the api's next
+   * 5-minute poll, and the "today" gauge ignores the prior day's final
+   * published after midnight (see energyTotalsDay), so without this timer
+   * it would keep showing yesterday's value past the boundary. This timer
+   * forces the reset at the actual local midnight boundary, using the
+   * site's own installation timezone - the same source the Powerwall tariff
+   * resolver trusts - since Tesla's daily totals roll over on that
+   * boundary, not the Homey box's timezone.
    */
   private scheduleMidnightReset(timeZone: string): void {
     if (this.midnightTimer !== undefined) {
@@ -40,6 +42,7 @@ export default class SolarDevice extends TeslemetryDevice {
     const delay = msUntilNextLocalMidnight(this.now(), timeZone);
     const midnightTimer = this.homey.setTimeout(async () => {
       try {
+        this.closeEnergyTotalsDay();
         await this.update("solar_generation_today", 0);
         if (this.midnightTimer === midnightTimer && this.isLive()) {
           this.scheduleMidnightReset(timeZone);
@@ -135,12 +138,14 @@ export default class SolarDevice extends TeslemetryDevice {
       if (total_solar_generation === null || total_solar_generation === undefined) {
         return;
       }
-      const dateKey = event.createdAt.slice(0, 10);
-      await this.update("solar_generation_today", total_solar_generation / 1000);
+      const { date, current } = this.energyTotalsDay(event);
+      if (current) {
+        await this.update("solar_generation_today", total_solar_generation / 1000);
+      }
       await this.updateCumulativeMeter(
         "meter_power",
         total_solar_generation / 1000,
-        dateKey,
+        date,
       );
     };
     // EventEmitter doesn't await listeners, so an unhandled rejection here

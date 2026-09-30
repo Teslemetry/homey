@@ -185,18 +185,21 @@ and flow visualization.
 The `energy_totals` SSE event carries per-type daily totals (midnight to now,
 already summed server-side). `TeslemetryDevice.updateCumulativeMeter()`
 converts those into monotonic values, tracking a persistent offset across day
-boundaries via the device store (`meter_<capability>_state`), keyed on the date
-derived from the event's `createdAt` (UTC - `energy_totals` carries no per-site
-local timestamp). Callers must pass a zero-padded ISO `YYYY-MM-DD` date.
-`test/cumulative-meter.test.ts` is the behavioral contract.
+boundaries via the device store (`meter_<capability>_state`), keyed on the
+event's installation-local `date` (`TeslemetryDevice.energyTotalsDay()`), never
+`createdAt` - that is the latest bucket's end in UTC, and keying on it
+double-counts days outside UTC. Callers must pass a zero-padded ISO
+`YYYY-MM-DD` date. `test/cumulative-meter.test.ts` is the behavioral contract.
 
 ### Non-Cumulative "Today" Totals (Insight gauges)
 
 Each `*_today` capability is a plain (non-`cumulative`) gauge with
 `insights: true` that must read 0 from local midnight until the day's first
-activity. `energy_totals` only pushes on change, so each owning device runs its
-own timer - scheduled via `msUntilNextLocalMidnight()` (`lib/localMidnight.ts`)
-off the site's `installation_time_zone` from `site_info`/`siteInfoDocument`,
+activity. The api republishes `energy_totals` every 5 minutes but publishes the
+closed prior day's final just after midnight, so a gauge only takes an event
+`energyTotalsDay()` reports `current` (the reset calls `closeEnergyTotalsDay()`),
+and each owning device runs its own timer - scheduled via
+`msUntilNextLocalMidnight()` (`lib/localMidnight.ts`) off the site's `installation_time_zone` from `site_info`/`siteInfoDocument`,
 **not** `this.homey.clock.getTimezone()` (the Homey box's own location) - that
 force-resets the capability at the boundary and reschedules itself.
 Per-device duplication is the convention here, not a shared base-class helper.

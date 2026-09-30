@@ -54,12 +54,14 @@ export default class PowerwallDevice extends TeslemetryDevice {
   }
 
   /**
-   * `energy_totals` only pushes on a change, so a "today" total goes silent
-   * once its underlying activity stops for a stretch and keeps showing a
-   * stale value until the next sample arrives. This timer forces the reset
-   * at the actual local midnight boundary instead, using the site's own
-   * installation timezone - see SolarDevice.scheduleMidnightReset, the same
-   * fix applied there for solar_generation_today.
+   * The new day's first `energy_totals` only arrives with the api's next
+   * 5-minute poll, and a "today" gauge ignores the prior day's final
+   * published after midnight (see energyTotalsDay), so without this timer
+   * it would keep showing yesterday's value past the boundary. This timer
+   * forces the reset at the actual local midnight boundary, using the
+   * site's own installation timezone - see
+   * SolarDevice.scheduleMidnightReset, the same fix applied there for
+   * solar_generation_today.
    */
   private scheduleMidnightReset(timeZone: string): void {
     if (this.midnightTimer !== undefined) {
@@ -68,6 +70,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     const delay = msUntilNextLocalMidnight(this.now(), timeZone);
     const midnightTimer = this.homey.setTimeout(async () => {
       try {
+        this.closeEnergyTotalsDay();
         for (const capability of TODAY_TOTAL_CAPABILITIES) {
           await this.update(capability, 0);
         }
@@ -219,29 +222,33 @@ export default class PowerwallDevice extends TeslemetryDevice {
     };
 
     const handleEnergyTotals = async (event: SseEnergyTotals) => {
-      const dateKey = event.createdAt.slice(0, 10);
+      const { date, current } = this.energyTotalsDay(event);
       const { total_battery_charge, total_battery_discharge } = event.totals;
 
       if (total_battery_charge !== null && total_battery_charge !== undefined) {
-        await this.update("battery_charged_today", total_battery_charge / 1000);
+        if (current) {
+          await this.update("battery_charged_today", total_battery_charge / 1000);
+        }
         await this.updateCumulativeMeter(
           "meter_power.charged",
           total_battery_charge / 1000,
-          dateKey,
+          date,
         );
       }
       if (
         total_battery_discharge !== null &&
         total_battery_discharge !== undefined
       ) {
-        await this.update(
-          "battery_discharged_today",
-          total_battery_discharge / 1000,
-        );
+        if (current) {
+          await this.update(
+            "battery_discharged_today",
+            total_battery_discharge / 1000,
+          );
+        }
         await this.updateCumulativeMeter(
           "meter_power.discharged",
           total_battery_discharge / 1000,
-          dateKey,
+          date,
         );
       }
     };

@@ -91,5 +91,8 @@
   },
   "1.4.1": {
     "en": "Fixes energy devices (Powerwall, solar, gateway) receiving only one update after connecting and then going silent."
+  },
+  "1.4.2": {
+    "en": "Fixes Homey Energy over-counting and mis-timing solar, grid and Powerwall energy for sites outside UTC: the day now rolls over at the site's local midnight. Energy already over-counted cannot be removed from the history. Also stops the \"today\" totals briefly showing yesterday's value just after midnight."
   }
 }
