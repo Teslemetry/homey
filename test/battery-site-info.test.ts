@@ -183,11 +183,11 @@ test("PowerwallDevice's site_info handler falls back allow_export to 'never' whe
   assert.equal(capabilities.allow_export, "never");
 });
 
-test("PowerwallDevice's site_info handler defaults allow_export to 'battery_ok' when neither field is present", async () => {
+test("PowerwallDevice's site_info handler leaves allow_export unknown (null) when neither field is present, rather than inventing 'battery_ok'", async () => {
   const { stub, capabilities } = createDeviceStub({ components: {} });
   await stub.onInit();
 
-  assert.equal(capabilities.allow_export, "battery_ok");
+  assert.equal(capabilities.allow_export, null);
 });
 
 test("PowerwallDevice's site_info handler inverts disallow_charge_from_grid_with_solar_installed into onoff.charge_grid", async () => {
@@ -368,22 +368,22 @@ test("an async rejection inside the midnight reset timer callback does not escap
   await assert.doesNotReject(() => midnightTimer!.callback());
 });
 
-test("PowerwallDevice's allow_export command listener calls gridImportExport with the mode and inverted onoff.charge_grid", async () => {
+test("PowerwallDevice's allow_export command listener calls gridImportExport with only the mode", async () => {
   const { stub, apiCalls, capabilityListeners } = createDeviceStub();
   await stub.onInit();
 
   await capabilityListeners.allow_export("pv_only");
 
-  assert.deepEqual(apiCalls, [["gridImportExport", ["pv_only", false]]]);
+  assert.deepEqual(apiCalls, [["gridImportExport", ["pv_only"]]]);
 });
 
-test("PowerwallDevice's onoff.charge_grid command listener calls gridImportExport with the current allow_export and inverted value", async () => {
+test("PowerwallDevice's onoff.charge_grid command listener calls gridImportExport with only the inverted value", async () => {
   const { stub, apiCalls, capabilityListeners } = createDeviceStub();
   await stub.onInit();
 
   await capabilityListeners["onoff.charge_grid"](false);
 
-  assert.deepEqual(apiCalls, [["gridImportExport", ["battery_ok", true]]]);
+  assert.deepEqual(apiCalls, [["gridImportExport", [undefined, true]]]);
 });
 
 test("PowerwallDevice's onoff.storm command listener calls setStormMode", async () => {

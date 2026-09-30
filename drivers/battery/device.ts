@@ -193,8 +193,10 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.update("operation_mode", data.default_real_mode);
       this.update(
         "allow_export",
+        // Tesla omits the rule on VPP sites; only non_export_configured
+        // implies "never", otherwise the rule is unknown, never guessed.
         data.components?.customer_preferred_export_rule ??
-          (data.components?.non_export_configured ? "never" : "battery_ok"),
+          (data.components?.non_export_configured ? "never" : null),
       );
       this.update(
         "onoff.charge_grid",
@@ -286,15 +288,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
       },
     );
 
-    this.registerCommandListener("allow_export", async (value) => {
-      this.log(`Setting allow export to ${value}`);
-      return this.action(
-        this.site.api.gridImportExport(
-          value,
-          !this.getCapabilityValue("onoff.charge_grid"), // Not Allow
-        ),
-      );
-    });
+    this.registerCommandListener("allow_export", async (value) =>
+      this.setAllowExport(value),
+    );
 
     this.registerCommandListener("operation_mode", async (value) => {
       this.log(`Setting operation mode to ${value}`);
@@ -302,11 +298,16 @@ export default class PowerwallDevice extends TeslemetryDevice {
     });
 
     this.registerCommandListener("onoff.charge_grid", async (value) => {
-      // When this is missing, its allowed
-      this.log(`Setting charge from grid to ${!value}`);
+      if (typeof value !== "boolean") {
+        throw new Error(`Invalid charge from grid value: ${value}`);
+      }
+      this.log(`Setting charge from grid to ${value}`);
+      // Send only this setting: the export rule is dropped from the JSON
+      // body when undefined, so it is never rewritten from a derived value.
+      // The SDK types the rule as required, hence the cast.
       return this.action(
         this.site.api.gridImportExport(
-          this.getCapabilityValue("allow_export"),
+          undefined as never,
           !value, // Not Allow
         ),
       );
@@ -481,13 +482,21 @@ export default class PowerwallDevice extends TeslemetryDevice {
   public async flowSetAllowExport(
     mode: "battery_ok" | "pv_only" | "never",
   ): Promise<void> {
+    await this.setAllowExport(mode);
+  }
+
+  /**
+   * Sends only the export rule; grid charging is left out of the body so it
+   * is never rewritten from a possibly-null capability value.
+   */
+  private async setAllowExport(
+    mode: "battery_ok" | "pv_only" | "never" | null,
+  ): Promise<void> {
+    if (mode !== "battery_ok" && mode !== "pv_only" && mode !== "never") {
+      throw new Error(`Invalid allow export value: ${mode}`);
+    }
     this.log(`Setting allow export to ${mode}`);
-    await this.action(
-      this.site.api.gridImportExport(
-        mode,
-        !this.getCapabilityValue("onoff.charge_grid"),
-      ),
-    );
+    await this.action(this.site.api.gridImportExport(mode));
   }
 
   public async flowSetOperationMode(
