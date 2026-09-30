@@ -618,6 +618,43 @@ test("a seat signal for a capability this device does not expose neither logs 'n
   );
 });
 
+test("a cabin overheat protection limit signal on a vehicle without cop_temperature_limit neither logs 'not supported' nor writes a value", async () => {
+  // Real Model 3: the config flag is false, yet the car still streams the
+  // limit (e.g. ClimateOverheatProtectionTempLimitHigh).
+  const { stub, sse, capabilities, logs } = createSignalDeviceStub(
+    { measure_battery: undefined },
+    { cop_user_set_temp_supported: false },
+  );
+  await stub.onInit();
+
+  sse.data.emit(
+    "CabinOverheatProtectionTemperatureLimit",
+    "ClimateOverheatProtectionTempLimitHigh",
+  );
+
+  assert.equal(capabilities.cop_temperature_limit, undefined);
+  assert.ok(
+    !logs.some((line) =>
+      line.includes("Capability cop_temperature_limit is not supported"),
+    ),
+  );
+});
+
+test("a cabin overheat protection limit signal on a vehicle with cop_temperature_limit still updates it", async () => {
+  const { stub, sse, capabilities } = createSignalDeviceStub(
+    { measure_battery: undefined, cop_temperature_limit: undefined },
+    { cop_user_set_temp_supported: true },
+  );
+  await stub.onInit();
+
+  sse.data.emit(
+    "CabinOverheatProtectionTemperatureLimit",
+    "ClimateOverheatProtectionTempLimitHigh",
+  );
+
+  assert.equal(capabilities.cop_temperature_limit, "high");
+});
+
 test("a seat signal for a capability this device does expose still updates it", async () => {
   const { stub, sse, capabilities, logs } = createSignalDeviceStub(
     { measure_battery: undefined, "seat_heater.rear_left": undefined },
