@@ -79,10 +79,7 @@ export default class SolarDevice extends TeslemetryDevice {
     const site = this.homey.app.products?.energySites?.[siteId];
     if (!site) {
       if (!(this.homey.app.isReady?.() ?? true)) {
-        this.markUnavailable(
-          "startup",
-          this.homey.__("error.teslemetry_connecting"),
-        );
+        this.markAppNotReady();
         return;
       }
       this.error(

@@ -39,6 +39,13 @@ export default class TeslemetryOAuth2Client {
   // connection-lifecycle notes).
   onTokenSaved?: (token: OAuth2Token, reason: TokenSaveReason) => void;
 
+  // Set by TeslemetryApp.onInit() to tear credentials down everywhere once
+  // the server itself has rejected the refresh token. That rejection usually
+  // surfaces inside the SDK's own request preparation (a proactive refresh
+  // in getAccessToken()), where the SDK reports it as a status-less network
+  // error, so the token being cleared is the only reliable trigger.
+  onCredentialsRejected?: () => void;
+
   constructor(app: TeslemetryApp) {
     this.app = app;
     this.loadToken();
@@ -183,6 +190,7 @@ export default class TeslemetryOAuth2Client {
         typeof data.error === "string" ? data.error.toLowerCase() : data.error;
       if (errorCode === "invalid_refresh_token") {
         this.clearToken();
+        this.onCredentialsRejected?.();
       }
       // Only a grant can recover this way: a refresh the server just
       // rejected has nothing left to retry with but the same refresh token.
