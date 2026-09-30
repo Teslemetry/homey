@@ -68,12 +68,14 @@ export default class GatewayDevice extends TeslemetryDevice {
   }
 
   /**
-   * `energy_totals` only pushes on a change, so a "today" total goes silent
-   * once its underlying activity stops for a stretch and keeps showing a
-   * stale value until the next sample arrives. This timer forces the reset
-   * at the actual local midnight boundary instead, using the site's own
-   * installation timezone - see SolarDevice.scheduleMidnightReset, the same
-   * fix applied there for solar_generation_today.
+   * The new day's first `energy_totals` only arrives with the api's next
+   * 5-minute poll, and a "today" gauge ignores the prior day's final
+   * published after midnight (see energyTotalsDay), so without this timer
+   * it would keep showing yesterday's value past the boundary. This timer
+   * forces the reset at the actual local midnight boundary, using the
+   * site's own installation timezone - see
+   * SolarDevice.scheduleMidnightReset, the same fix applied there for
+   * solar_generation_today.
    */
   private scheduleMidnightReset(timeZone: string): void {
     if (this.midnightTimer !== undefined) {
@@ -82,6 +84,7 @@ export default class GatewayDevice extends TeslemetryDevice {
     const delay = msUntilNextLocalMidnight(this.now(), timeZone);
     const midnightTimer = this.homey.setTimeout(async () => {
       try {
+        this.closeEnergyTotalsDay();
         for (const capability of TODAY_TOTAL_CAPABILITIES) {
           await this.update(capability, 0);
         }
@@ -204,7 +207,7 @@ export default class GatewayDevice extends TeslemetryDevice {
     };
 
     const handleEnergyTotals = async (event: SseEnergyTotals) => {
-      const dateKey = event.createdAt.slice(0, 10);
+      const { date, current } = this.energyTotalsDay(event);
       const {
         grid_energy_imported,
         total_grid_energy_exported,
@@ -212,28 +215,36 @@ export default class GatewayDevice extends TeslemetryDevice {
       } = event.totals;
 
       if (grid_energy_imported !== null && grid_energy_imported !== undefined) {
-        await this.update("grid_imported_today", grid_energy_imported / 1000);
+        if (current) {
+          await this.update("grid_imported_today", grid_energy_imported / 1000);
+        }
         await this.updateCumulativeMeter(
           "meter_power.imported",
           grid_energy_imported / 1000,
-          dateKey,
+          date,
         );
       }
       if (
         total_grid_energy_exported !== null &&
         total_grid_energy_exported !== undefined
       ) {
-        await this.update(
-          "grid_exported_today",
-          total_grid_energy_exported / 1000,
-        );
+        if (current) {
+          await this.update(
+            "grid_exported_today",
+            total_grid_energy_exported / 1000,
+          );
+        }
         await this.updateCumulativeMeter(
           "meter_power.exported",
           total_grid_energy_exported / 1000,
-          dateKey,
+          date,
         );
       }
-      if (total_home_usage !== null && total_home_usage !== undefined) {
+      if (
+        current &&
+        total_home_usage !== null &&
+        total_home_usage !== undefined
+      ) {
         await this.update("home_usage_today", total_home_usage / 1000);
       }
     };

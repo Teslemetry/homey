@@ -1,4 +1,5 @@
 import Homey from "homey";
+import type { SseEnergyTotals } from "@teslemetry/api";
 import type TeslemetryApp from "../app.js";
 import type TeslemetryDriver from "./TeslemetryDriver.js";
 import { TeslemetryApiError } from "../@types/error.js";
@@ -36,10 +37,12 @@ export type AvailabilityReason =
  * One atomically-persisted snapshot of a cumulative meter's derived state.
  * `v` guards against trusting a differently-shaped or pre-migration value
  * found at the store key - an unrecognized shape is treated as absent
- * rather than partially applied.
+ * rather than partially applied. v1 keyed energy-site meters on
+ * `createdAt`'s UTC date and v2 on the event's site-local `date`, so a v1
+ * value is recalibrated rather than compared across two calendars.
  */
 interface CumulativeMeterState {
-  v: 1;
+  v: 2;
   date: string;
   lastTotal: number;
   offset: number;
@@ -51,7 +54,7 @@ function isCumulativeMeterState(
   if (typeof value !== "object" || value === null) return false;
   const state = value as Record<string, unknown>;
   return (
-    state.v === 1 &&
+    state.v === 2 &&
     typeof state.date === "string" &&
     typeof state.lastTotal === "number" &&
     typeof state.offset === "number"
@@ -427,6 +430,39 @@ export default class TeslemetryDevice extends Homey.Device {
    */
   private cumulativeMeterQueues?: Map<string, Promise<void>>;
 
+  /** Newest site-local day seen on this device's `energy_totals`. */
+  private latestEnergyTotalsDate?: string;
+  /** Newest day already ended by this device's local-midnight reset. */
+  private closedEnergyTotalsDate?: string;
+
+  /**
+   * The installation-local day an `energy_totals` event covers (its `date`,
+   * or `createdAt`'s UTC date only when `date` is absent), and whether it is
+   * the site's current day: the newest seen, and not one a local-midnight
+   * reset has since closed. The api publishes the prior day's final just
+   * after local midnight, so a `*_today` gauge must only take a `current`
+   * event or it flashes yesterday's total after its reset; the cumulative
+   * meters take every event and order days themselves.
+   */
+  protected energyTotalsDay(event: SseEnergyTotals): {
+    date: string;
+    current: boolean;
+  } {
+    const date = event.date ?? event.createdAt.slice(0, 10);
+    const latest = this.latestEnergyTotalsDate;
+    const closed = this.closedEnergyTotalsDate;
+    const current =
+      (latest === undefined || date >= latest) &&
+      (closed === undefined || date > closed);
+    if (current) this.latestEnergyTotalsDate = date;
+    return { date, current };
+  }
+
+  /** Called by a device's local-midnight reset: every day seen so far is over. */
+  protected closeEnergyTotalsDay(): void {
+    this.closedEnergyTotalsDate = this.latestEnergyTotalsDate;
+  }
+
   /**
    * Converts a source system's daily running total into a monotonically
    * increasing `meter_*` capability value. See AGENTS.md's "Cumulative
@@ -493,7 +529,7 @@ export default class TeslemetryDevice extends Homey.Device {
       lastTotal = todayTotal;
     }
 
-    const newState: CumulativeMeterState = { v: 1, date: dateKey, lastTotal, offset };
+    const newState: CumulativeMeterState = { v: 2, date: dateKey, lastTotal, offset };
     if (!(await this.setStore(storeKey, newState))) return;
 
     await this.update(capability, offset + lastTotal);
