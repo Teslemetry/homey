@@ -512,7 +512,7 @@ export default class TeslemetryDevice extends Homey.Device {
    * callbacks. Returns false if the write was skipped/failed because the
    * device is gone.
    */
-  private async setStore(key: string, value: unknown): Promise<boolean> {
+  protected async setStore(key: string, value: unknown): Promise<boolean> {
     if (this.destroyed) return false;
     try {
       await this.setStoreValue(key, value);

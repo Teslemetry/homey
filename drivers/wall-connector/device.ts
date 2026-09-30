@@ -17,7 +17,13 @@ export default class WallConnecter extends TeslemetryDevice {
   site!: EnergyDetails;
   din!: string;
   pollingCleanup: Array<() => void> = [];
+  /**
+   * Last wall_connector_fault_state seen, persisted under FAULT_CODE_STORE_KEY
+   * so the cached live_status replay after an app restart is compared
+   * against the pre-restart code instead of counting as a new fault.
+   */
   private previousFaultCode?: number;
+  private static readonly FAULT_CODE_STORE_KEY = "wall_connector_fault_code";
 
   /**
    * Number of live_status events seen since the current bind, and the
@@ -38,6 +44,12 @@ export default class WallConnecter extends TeslemetryDevice {
    */
   async onInit() {
     await super.onInit();
+    const storedFaultCode = this.getStoreValue(
+      WallConnecter.FAULT_CODE_STORE_KEY,
+    ) as unknown;
+    if (typeof storedFaultCode === "number") {
+      this.previousFaultCode = storedFaultCode;
+    }
     this.rebindProduct();
   }
 
@@ -210,18 +222,22 @@ export default class WallConnecter extends TeslemetryDevice {
   /**
    * Maps the raw wall_connector_fault_state code (0 = clear, nonzero = fault)
    * to the alarm_generic.fault capability, firing a tokenized trigger with
-   * the raw code on each new fault - there is no documented code table, so
-   * every nonzero value is logged as unknown.
+   * the raw code on each change to a new nonzero code - there is no
+   * documented code table, so every nonzero value is logged as unknown. The
+   * trigger needs a known prior code (persisted across restarts), so neither
+   * the first value ever seen nor a restart's cached replay fires it.
    */
   private handleFaultState(code: number | undefined): void {
     if (code === undefined || code === this.previousFaultCode) return;
+    const hadBaseline = this.previousFaultCode !== undefined;
     this.previousFaultCode = code;
+    this.setStore(WallConnecter.FAULT_CODE_STORE_KEY, code).catch(this.error);
 
     this.update("alarm_generic.fault", code !== 0);
 
     if (code !== 0) {
       this.log(`Unknown wall_connector_fault_state code: ${code}`);
-      if (this.isLive()) {
+      if (hadBaseline && this.isLive()) {
         this.homey.flow
           .getDeviceTriggerCard("wall_connector_fault_code")
           .trigger(this, { code })
