@@ -200,6 +200,21 @@ const TPMS_WHEEL_FIELDS = [
   "rear_right",
 ] as const;
 
+const CHARGE_SESSION_STORE_KEY = "meter_power_charge_session";
+
+interface ChargeSessionState {
+  session: number;
+  lastEnergy: number;
+}
+
+function isChargeSessionState(value: unknown): value is ChargeSessionState {
+  if (typeof value !== "object" || value === null) return false;
+  const state = value as Record<string, unknown>;
+  return (
+    typeof state.session === "number" && typeof state.lastEnergy === "number"
+  );
+}
+
 const ACTIVE_CHARGE_STATES = new Set<SseData["data"]["DetailedChargeState"]>([
   "DetailedChargeStateStarting",
   "DetailedChargeStateCharging",
@@ -246,6 +261,14 @@ export default class VehicleDevice extends TeslemetryDevice {
     right?: SseData["data"]["HvacRightTemperatureRequest"];
   } = {};
   private streamedRightHandDrive?: boolean;
+
+  /**
+   * The charge session DCChargingEnergyIn currently counts, and its last
+   * reading. Persisted (CHARGE_SESSION_STORE_KEY) so a restart's replay of
+   * the cached reading stays in the same session. See
+   * handleChargeSessionEnergy().
+   */
+  private chargeSession?: ChargeSessionState;
 
   /** Count of signal handlers that threw during registration/replay; see onSignal(). */
   private signalHandlerFailures = 0;
@@ -522,7 +545,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     // Measured at the battery, so it holds for both AC and DC charging;
     // ACChargingEnergyIn is wall-side and must be ignored during DC.
     this.onSignal("DCChargingEnergyIn", (value) =>
-      this.update("meter_power", value),
+      this.handleChargeSessionEnergy(value),
     );
 
     // One wire message carries both power fields (DC is 0 during an AC
@@ -1407,6 +1430,33 @@ export default class VehicleDevice extends TeslemetryDevice {
     return (
       this.vehicle.sse.cache.data?.DetailedChargeState ===
       "DetailedChargeStateDisconnected"
+    );
+  }
+
+  /**
+   * meter_power is a lifetime meter (Homey's `meter_power` only ever
+   * increases), but DCChargingEnergyIn counts one charge session and resets
+   * at the next. A reading below the previous one starts a new session, and
+   * updateCumulativeMeter() folds each session's final reading into the
+   * offset exactly as it folds a finished day for the energy devices, keyed
+   * on a fixed-width session number instead of a date. A session whose
+   * reset reading never arrives and that first reports above the previous
+   * session's final is read as a continuation - an undercount, never a
+   * double count. Null (no session value) leaves the meter as it is.
+   */
+  private handleChargeSessionEnergy(value: number | null | undefined) {
+    if (typeof value !== "number") return;
+    const stored = this.getStoreValue(CHARGE_SESSION_STORE_KEY) as unknown;
+    const session = (this.chargeSession ??= isChargeSessionState(stored)
+      ? stored
+      : { session: 0, lastEnergy: value });
+    if (value < session.lastEnergy) session.session++;
+    session.lastEnergy = value;
+    this.setStore(CHARGE_SESSION_STORE_KEY, { ...session });
+    return this.updateCumulativeMeter(
+      "meter_power",
+      value,
+      String(session.session).padStart(10, "0"),
     );
   }
 

@@ -189,8 +189,10 @@ converts those into monotonic values, tracking a persistent offset across day
 boundaries via the device store (`meter_<capability>_state`), keyed on the
 event's installation-local `date` (`TeslemetryDevice.energyTotalsDay()`), never
 `createdAt` - that is the latest bucket's end in UTC, and keying on it
-double-counts days outside UTC. Callers must pass a zero-padded ISO
-`YYYY-MM-DD` date. `test/cumulative-meter.test.ts` is the behavioral contract.
+double-counts days outside UTC. Callers must pass a fixed-width key: a
+zero-padded ISO `YYYY-MM-DD` date, or (vehicle `meter_power`, whose
+`DCChargingEnergyIn` resets per charge session) a zero-padded session number.
+`test/cumulative-meter.test.ts` is the behavioral contract.
 
 ### Non-Cumulative "Today" Totals (Insight gauges)
 
