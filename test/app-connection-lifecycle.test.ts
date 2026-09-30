@@ -264,7 +264,7 @@ test("a non-auth stream stall marks bound devices unavailable after the grace pe
   // it's an auth failure - a non-auth outage must not be silently ignored.
   sdk!.sse.emit("disconnect");
   assert.equal(timers.length, 2, "one stale-check grace period scheduled per product");
-  assert.equal(timers[0].delay, 90_000);
+  assert.equal(timers[0].delay, 150_000);
   assert.equal(vehicleDevice.unavailableCalls.length, 0, "not marked unavailable before the grace period elapses");
 
   // Grace period elapses with no genuine data.

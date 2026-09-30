@@ -100,24 +100,27 @@ export default class GatewayDevice extends TeslemetryDevice {
 
   async onInit() {
     await super.onInit();
+    this.rebindProduct();
+  }
+
+  /** See TeslemetryDevice.rebindProduct(). */
+  public rebindProduct(): void {
+    this.unbindProduct();
     this.resolveAndBindSite();
   }
 
-  /**
-   * Re-resolves the site and rebinds, torn down and re-registered exactly
-   * like onInit(). See TeslemetryDevice.rebindProduct().
-   */
-  public rebindProduct(): void {
+  /** See TeslemetryDevice.unbindProduct(). */
+  public unbindProduct(): void {
     const pollingCleanup = this.pollingCleanup ?? [];
     this.pollingCleanup = [];
     pollingCleanup.forEach((stop) => stop());
-    // pollingCleanup just cleared the midnight timer; reset so the cached
-    // site_info replay below doesn't treat an unchanged timezone as
+    this.site = undefined!;
+    // pollingCleanup just cleared the midnight timer; reset so the next
+    // bind's site_info replay doesn't treat an unchanged timezone as
     // "already scheduled" and skip rescheduling it.
     this.timeZone = undefined;
     this.hasGenerator = undefined;
     this.latestGeneratorPower = undefined;
-    this.resolveAndBindSite();
   }
 
   private resolveAndBindSite(): void {
@@ -138,7 +141,6 @@ export default class GatewayDevice extends TeslemetryDevice {
     // predicate pairing uses, so an already-paired site that loses access
     // doesn't stay bound with a frozen last-known state.
     if (!isEnergySiteEligible(site.metadata)) {
-      this.site = undefined!;
       this.error(
         `Failed to initialize Gateway device: energy site ${siteId} is not eligible (access revoked)`,
       );
@@ -341,8 +343,6 @@ export default class GatewayDevice extends TeslemetryDevice {
 
   async onUninit(): Promise<void> {
     await super.onUninit();
-    const pollingCleanup = this.pollingCleanup ?? [];
-    this.pollingCleanup = [];
-    pollingCleanup.forEach((stop) => stop());
+    this.unbindProduct();
   }
 }

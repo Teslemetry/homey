@@ -40,7 +40,7 @@ class FakeStream extends EventEmitter {
 }
 
 /** Lets a test assert the stream-stale-check timer is actually
- *  scheduled/cancelled, without waiting out the real 90s grace period. */
+ *  scheduled/cancelled, without waiting out the real 150s grace period. */
 function createFakeTimers() {
   const timers: Array<{ id: number; callback: () => void; delay: number }> = [];
   let nextId = 1;

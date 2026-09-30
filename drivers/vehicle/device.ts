@@ -351,22 +351,28 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   async onInit() {
     await super.onInit();
-    this.resolveAndBindVehicle();
+    this.rebindProduct();
   }
 
   /**
-   * Re-resolves the vehicle and rebinds, torn down and re-registered exactly
-   * like onInit(). See TeslemetryDevice.rebindProduct(). Re-registering the
-   * command capability listeners here is harmless, not load-bearing - they
-   * read `this.vehicle` dynamically on every call, so just reassigning it
-   * below would already point them at the new vehicle's API client.
+   * See TeslemetryDevice.rebindProduct(). Re-registering the command
+   * capability listeners here is harmless, not load-bearing - they read
+   * `this.vehicle` dynamically on every call, so just reassigning it would
+   * already point them at the new vehicle's API client.
    */
   public rebindProduct(): void {
+    this.unbindProduct();
+    this.resolveAndBindVehicle();
+  }
+
+  /** See TeslemetryDevice.unbindProduct(). */
+  public unbindProduct(): void {
     this.vehicle?.sse.off("state", this.handleVehicleState);
     this.vehicle?.sse.off("connectivity", this.handleConnectivity);
-    this.sseCleanup.forEach((off) => off());
+    const sseCleanup = this.sseCleanup ?? [];
     this.sseCleanup = [];
-    this.resolveAndBindVehicle();
+    sseCleanup.forEach((off) => off());
+    this.vehicle = undefined!;
   }
 
   public getProductKey(): string | undefined {
@@ -399,7 +405,6 @@ export default class VehicleDevice extends TeslemetryDevice {
     // loses eligibility doesn't stay bound with a frozen last-known state.
     const eligibility = checkVehicleEligibility(vehicle.metadata);
     if (!eligibility.eligible) {
-      this.vehicle = undefined!;
       this.log(
         `Vehicle ${this.getVin()} is present but not eligible (${eligibility.reason})`,
       );
@@ -1353,10 +1358,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   async onUninit() {
     await super.onUninit();
-    this.vehicle?.sse.off("state", this.handleVehicleState);
-    this.vehicle?.sse.off("connectivity", this.handleConnectivity);
-    this.sseCleanup.forEach((off) => off());
-    this.sseCleanup = [];
+    this.unbindProduct();
   }
 
   /**

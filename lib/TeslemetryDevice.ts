@@ -195,9 +195,11 @@ export default class TeslemetryDevice extends Homey.Device {
   }
 
   /**
-   * Re-resolves this device's product (energy site or vehicle) from
-   * `homey.app.products` and re-registers its SSE listeners, torn down and
-   * built up exactly as they are in `onInit()`. Whenever
+   * Unbinds, then re-resolves this device's product (energy site or vehicle)
+   * from `homey.app.products` and re-registers its SSE listeners. This is
+   * the only bind path - `onInit()` goes through it too - so a rebuild that
+   * lands while `onInit()` is still awaiting `ensureCapabilities()` can't
+   * leave the device bound twice. Whenever
    * `TeslemetryApp.initializeTeslemetry()` publishes a new `Products`/SSE
    * connection, an already-paired device would otherwise keep its listeners
    * on the old, now-dead per-product stream forever - it stays "available" but
@@ -206,6 +208,16 @@ export default class TeslemetryDevice extends Homey.Device {
    * subclasses with no such reference to go stale.
    */
   public rebindProduct(): void {}
+
+  /**
+   * Releases everything the current product binding holds - SSE listeners,
+   * REST pollers, timers - and drops the `site`/`vehicle` reference, so
+   * `getProductKey()` reports the device unbound. Idempotent. Called before
+   * every bind, from `onUninit()`, and for every device by
+   * `TeslemetryApp.teardownCredentials()`, which would otherwise leave e.g.
+   * the Wall Connector polling with credentials the user just removed.
+   */
+  public unbindProduct(): void {}
 
   /** Capabilities already handed to registerCapabilityListener. */
   private registeredCommandCapabilities?: Set<string>;
