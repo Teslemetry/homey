@@ -2,10 +2,10 @@ import TeslemetryDriver from "../../lib/TeslemetryDriver.js";
 
 /** The site_info `components` fields the gates below read. */
 interface SiteComponents {
-  battery?: boolean;
-  solar?: boolean;
-  storm_mode_capable?: boolean;
-  off_grid_vehicle_charging_reserve_supported?: boolean;
+  battery?: boolean | null;
+  solar?: boolean | null;
+  storm_mode_capable?: boolean | null;
+  off_grid_vehicle_charging_reserve_supported?: boolean | null;
 }
 
 /**
@@ -28,6 +28,21 @@ export function isPowerwallCapabilitySupported(
   components: SiteComponents,
 ): boolean {
   return COMPONENT_GATES[capability]?.(components) ?? true;
+}
+
+/**
+ * Whether `components` is a real read of the site's hardware: its required
+ * `battery` and `solar` booleans are both present. Anything less (no
+ * site_info yet, or a components block of nulls) is unknown, and must never
+ * be read as "unsupported".
+ */
+export function hasKnownComponents(
+  components: SiteComponents | undefined,
+): components is SiteComponents {
+  return (
+    typeof components?.battery === "boolean" &&
+    typeof components?.solar === "boolean"
+  );
 }
 
 export function isComponentGatedCapability(capability: string): boolean {

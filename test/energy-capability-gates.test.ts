@@ -274,14 +274,63 @@ test("app start adds a gated capability once the site's components say it's supp
   assert.deepEqual(added.sort(), ["off_grid_vehicle_charging_reserve", "onoff.storm"]);
 });
 
-test("an already-paired device keeps every gated capability it has", async () => {
-  const { device, removed } = createDevice(BATTERY_MANIFEST.capabilities, {
-    components: NO_SOLAR_COMPONENTS,
-  });
+test("an already-paired device loses the gated capabilities its site says are unsupported", async () => {
+  for (const [components, expected] of [
+    [REAL_PW3_COMPONENTS, ["off_grid_vehicle_charging_reserve"]],
+    [NO_SOLAR_COMPONENTS, ["allow_export", "onoff.charge_grid"]],
+    [NOT_STORM_CAPABLE_COMPONENTS, ["off_grid_vehicle_charging_reserve", "onoff.storm"]],
+  ] as const) {
+    const { device, added, removed } = createDevice(BATTERY_MANIFEST.capabilities, { components });
+
+    await device.ensureCapabilities();
+
+    assert.deepEqual(removed.sort(), [...expected].sort());
+    assert.deepEqual(added, []);
+  }
+});
+
+test("the real Powerwall 3 site_info, which omits the off-grid reserve flag, removes it", async () => {
+  const { off_grid_vehicle_charging_reserve_supported: _, ...components } = REAL_PW3_COMPONENTS;
+  const { device, removed } = createDevice(BATTERY_MANIFEST.capabilities, { components });
 
   await device.ensureCapabilities();
 
+  assert.deepEqual(removed, ["off_grid_vehicle_charging_reserve"]);
+});
+
+test("an already-paired device keeps every gated capability while its site's components are unknown", async () => {
+  for (const siteInfo of [
+    undefined,
+    {},
+    { components: {} },
+    // Every boolean null, as when the server can't read the site (H18's shape).
+    { components: { battery: null, solar: null, storm_mode_capable: null, off_grid_vehicle_charging_reserve_supported: null } },
+  ]) {
+    const { device, added, removed } = createDevice(BATTERY_MANIFEST.capabilities, siteInfo);
+
+    await device.ensureCapabilities();
+
+    assert.deepEqual(removed, [], JSON.stringify(siteInfo));
+    assert.deepEqual(added, [], JSON.stringify(siteInfo));
+  }
+});
+
+test("a device bound before its site_info arrived drops the unsupported capabilities when it does", async () => {
+  const { device, removed } = createDevice(BATTERY_MANIFEST.capabilities, undefined);
+  await device.onInit();
   assert.deepEqual(removed, []);
+
+  const { sse } = device.homey.app.products.energySites["2533979794926773"];
+  sse.siteInfoDocument = { components: REAL_PW3_COMPONENTS };
+  sse.emit("site_info", {});
+  await device.capabilityReconcile;
+
+  assert.deepEqual(removed, ["off_grid_vehicle_charging_reserve"]);
+
+  // A later identical site_info has nothing left to reconcile.
+  sse.emit("site_info", {});
+  await device.capabilityReconcile;
+  assert.deepEqual(removed, ["off_grid_vehicle_charging_reserve"]);
 });
 
 test("an already-paired device rejects commands its site's hardware can't honour, without sending them", async () => {

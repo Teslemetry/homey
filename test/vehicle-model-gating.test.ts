@@ -542,6 +542,25 @@ test("every seat heater/cooler action card filters its device argument by the ma
   }
 });
 
+test("the sunroof has open/close/toggle actions but no triggers or condition, since no sunroof position is ever reported", () => {
+  const appManifest = JSON.parse(
+    readFileSync(new URL("../app.json", import.meta.url), "utf8"),
+  );
+  const sunroofCards = (kind: string) =>
+    appManifest.flow[kind]
+      .map((c: { id: string }) => c.id)
+      .filter((id: string) => id.startsWith("windowcoverings_closed.sunroof"))
+      .sort();
+
+  assert.deepEqual(sunroofCards("triggers"), []);
+  assert.deepEqual(sunroofCards("conditions"), []);
+  assert.deepEqual(sunroofCards("actions"), [
+    "windowcoverings_closed.sunroof_close",
+    "windowcoverings_closed.sunroof_open",
+    "windowcoverings_closed.sunroof_toggle",
+  ]);
+});
+
 // Mirrors vehicle-new-signals.test.ts's stub shape (a real onInit() run is
 // needed so registerSignalListeners() actually wires up the seat signal
 // handlers), with a log spy added to assert on the "not supported" line.

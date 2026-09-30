@@ -8,6 +8,7 @@ import {
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 import { isEnergySiteEligible } from "../../lib/TeslemetryDriver.js";
 import {
+  hasKnownComponents,
   isComponentGatedCapability,
   isPowerwallCapabilitySupported,
 } from "./driver.js";
@@ -151,11 +152,12 @@ export default class PowerwallDevice extends TeslemetryDevice {
   }
 
   /**
-   * Keeps pairing's component gating (PowerwallDriver.onPairListDevices)
-   * from being undone by ensureCapabilities(): a gated capability is only
-   * added once this site's components say it is supported, and never while
-   * they are unknown. One the device already has is always kept - removing
-   * it from a paired device would break its Flows.
+   * Applies pairing's component gating (PowerwallDriver.onPairListDevices)
+   * to already-paired devices too: once this site's components are known, a
+   * gated capability is present exactly when they say it is supported, so a
+   * control the hardware can never honour is removed (breaking Flows built
+   * on it, by design). While they are unknown the device keeps whatever
+   * gated capabilities it has and gains none.
    */
   protected getExpectedCapabilities(): string[] {
     const current = new Set(this.getCapabilities());
@@ -165,10 +167,35 @@ export default class PowerwallDevice extends TeslemetryDevice {
       .filter(
         (capability) =>
           !isComponentGatedCapability(capability) ||
-          current.has(capability) ||
-          (components !== undefined &&
-            isPowerwallCapabilitySupported(capability, components)),
+          (hasKnownComponents(components)
+            ? isPowerwallCapabilitySupported(capability, components)
+            : current.has(capability)),
       );
+  }
+
+  /** The in-flight site_info-driven ensureCapabilities(), if any. */
+  private capabilityReconcile: Promise<void> | undefined;
+
+  /**
+   * ensureCapabilities() at onInit usually runs before the stream has
+   * delivered site_info, so the components are unknown and nothing is
+   * removed. Re-run it once a site_info makes the gated set disagree.
+   */
+  private reconcileGatedCapabilities(): void {
+    if (this.capabilityReconcile || !hasKnownComponents(this.siteComponents())) {
+      return;
+    }
+    const current = this.getCapabilities();
+    const expected = this.getExpectedCapabilities();
+    const differs =
+      current.some((cap) => !expected.includes(cap)) ||
+      expected.some((cap) => !current.includes(cap));
+    if (!differs) return;
+    this.capabilityReconcile = this.ensureCapabilities()
+      .catch(this.error)
+      .finally(() => {
+        this.capabilityReconcile = undefined;
+      });
   }
 
   /** Read from homey.app.products, since ensureCapabilities() runs before bindSite(). */
@@ -179,12 +206,15 @@ export default class PowerwallDevice extends TeslemetryDevice {
   }
 
   /**
-   * Rejects a command the site's hardware can't honour, for devices paired
-   * before pairing filtered these capabilities out.
+   * Rejects a command the site's hardware can't honour, for a Flow card
+   * still pointing at a capability getExpectedCapabilities() removed.
    */
   private assertCapabilitySupported(capability: string): void {
     const components = this.siteComponents();
-    if (components && !isPowerwallCapabilitySupported(capability, components)) {
+    if (
+      hasKnownComponents(components) &&
+      !isPowerwallCapabilitySupported(capability, components)
+    ) {
       throw new Error(this.homey.__("error.energy_site_feature_unsupported"));
     }
   }
@@ -223,6 +253,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
         | undefined;
       if (!data) return;
 
+      this.reconcileGatedCapabilities();
       this.update(
         "backup_reserve",
         data.backup_reserve_percent !== undefined
