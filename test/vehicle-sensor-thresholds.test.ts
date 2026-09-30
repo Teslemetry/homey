@@ -149,7 +149,7 @@ test("OutsideTemp fires outside_temperature_above/below on a real change", async
   assert.deepEqual(triggerCalls[0].state, { previous: 8, current: -2 });
 });
 
-test("null/undefined readings never write or trigger", async () => {
+test("undefined readings never write or trigger; null clears without triggering", async () => {
   const { stub, sse, capabilities, triggerCalls } = createDeviceStub({
     "measure_distance.range": 100,
     time_to_full_charge: 60,
@@ -159,12 +159,19 @@ test("null/undefined readings never write or trigger", async () => {
 
   sse.data.emit("EstBatteryRange", null);
   sse.data.emit("TimeToFullCharge", undefined);
-  sse.data.emit("OutsideTemp", null);
+  sse.data.emit("OutsideTemp", undefined);
   await flush();
 
   assert.equal(capabilities["measure_distance.range"], 100);
   assert.equal(capabilities["time_to_full_charge"], 60);
   assert.equal(capabilities["measure_temperature.outside"], 10);
+
+  sse.data.emit("TimeToFullCharge", null);
+  sse.data.emit("OutsideTemp", null);
+  await flush();
+
+  assert.equal(capabilities["time_to_full_charge"], null);
+  assert.equal(capabilities["measure_temperature.outside"], null);
   assert.deepEqual(triggerCalls, []);
 });
 
