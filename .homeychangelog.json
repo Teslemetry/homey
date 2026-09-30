@@ -94,5 +94,8 @@
   },
   "1.4.2": {
     "en": "Fixes Homey Energy over-counting and mis-timing solar, grid and Powerwall energy for sites outside UTC: the day now rolls over at the site's local midnight. Energy already over-counted cannot be removed from the history. Also stops the \"today\" totals briefly showing yesterday's value just after midnight."
+  },
+  "1.5.0": {
+    "en": "Bug-fix release. Energy: Homey Energy no longer over-counts solar, grid and Powerwall energy outside UTC. Vehicles: rear seat heaters are back on Model 3/Y; charging amps, current, power and energy readings are fixed; climate shows Auto while preconditioning; close trunk and pause no longer toggle the wrong way; charge-time and navigation values clear when they end; controls lost when the car config was unknown return. Powerwall: grid charging and the export rule no longer overwrite each other; reserve tokens are now percentages (35, not 0.35) - update Flows that scaled them; new pairings only get controls the site supports. Account: devices now say when to re-authenticate or renew instead of Connecting forever, and expired tokens refresh automatically. Plus many smaller command, restart and Wall Connector fixes."
   }
 }
