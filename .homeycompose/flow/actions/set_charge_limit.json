@@ -20,7 +20,7 @@
       "title": {
         "en": "Percentage"
       },
-      "min": 0,
+      "min": 50,
       "max": 100,
       "step": 1,
       "label": "%",

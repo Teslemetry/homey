@@ -57,6 +57,7 @@ async function createDeviceStub(
       flow: {
         getDeviceTriggerCard: () => ({ trigger: async () => {} }),
       },
+      geolocation: { getLatitude: () => 51.5, getLongitude: () => -0.12 },
     },
     driver: {
       manifest: { capabilities: Object.keys(capabilities), capabilitiesOptions: {} },

@@ -143,18 +143,28 @@ const VALID_DAYS_OF_WEEK_TOKENS = new Set([
   "friday",
   "saturday",
   "sunday",
+  "mon",
+  "tue",
+  "wed",
+  "thu",
+  "fri",
+  "sat",
+  "sun",
   "all",
   "weekdays",
+  "weekends",
 ]);
 
 /**
  * addChargeSchedule()/addPreconditionSchedule() take a comma-separated day
  * list in Tesla's own capitalization (e.g. "Thursday,Saturday"), or the
- * special values "All"/"Weekdays" (see PostApi1VehiclesByVinCommand
+ * special values "All"/"Weekdays"/"Weekends" (see PostApi1VehiclesByVinCommand
  * AddChargeScheduleData's doc comment) - not the free-text Homey Flow
- * argument's casing/spacing. Normalize to that exact form and reject an
- * unrecognized token so a typo fails the Flow instead of silently scheduling
- * for the wrong days.
+ * argument's casing/spacing. The accepted tokens mirror the Teslemetry
+ * server's own day map (full and three-letter names). Normalize to that exact
+ * form and reject an unrecognized token, which the server would otherwise
+ * silently drop, so a typo fails the Flow instead of scheduling for the wrong
+ * days.
  */
 function daysArgToDaysOfWeek(days: string): string {
   const tokens = days
@@ -403,6 +413,12 @@ export default class VehicleDevice extends TeslemetryDevice {
       ...this.driver.manifest.capabilitiesOptions["onoff.trunk"],
       setable: !!this.vehicle.metadata.config?.can_actuate_trunks,
     }).catch(this.error);
+    // A device keeps the capabilitiesOptions it was paired with, so re-apply
+    // the manifest's range to already-paired vehicles.
+    this.setCapabilityOptions(
+      "target_temperature",
+      this.driver.manifest.capabilitiesOptions["target_temperature"],
+    ).catch(this.error);
     // Essential behavior: state/connectivity SSE listeners and all command
     // capability listeners. Registered before the signal replay below so a
     // synchronous throw from a malformed cached signal (e.g.
@@ -1209,13 +1225,9 @@ export default class VehicleDevice extends TeslemetryDevice {
       return this.vehicleAction(this.vehicle.api.remoteStart());
     });
 
-    this.registerCommandListener("button.homelink", async () => {
-      const { latitude, longitude } = this.vehicle.sse.cache?.data
-        ?.Location || { latitude: 0, longitude: 0 };
-      return this.vehicleAction(
-        this.vehicle.api.triggerHomelink(latitude, longitude),
-      );
-    });
+    this.registerCommandListener("button.homelink", async () =>
+      this.triggerHomelink(),
+    );
 
     // wakeUp()'s response shape is the vehicle's own state payload, not a
     // { result, reason } envelope - route it through action() directly.
@@ -1251,47 +1263,55 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
 
     // Media Volume Control
-    this.registerCommandListener("volume_set", async (value: number) => {
-      this.muted = false;
-      const volume = value * this.volumeMax;
-      this.lastVolume = volume;
-      return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
-    });
+    this.registerCommandListener("volume_set", async (value: number) =>
+      this.adjustVolume(value * this.volumeMax),
+    );
 
-    // Media Mute Toggle
-    this.registerCommandListener("volume_mute", async (value: boolean) => {
-      this.muted = value;
-      if (value) {
-        // Mute: set volume to 0
-        this.update("volume_set", 0);
-        return this.vehicleAction(this.vehicle.api.adjustVolume(0));
-      }
-      // Unmute: restore last volume
-      const volume = this.lastVolume;
-      this.update("volume_set", volume / this.volumeMax);
-      return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
-    });
+    // Media Mute Toggle: mute sends 0 and shows it; unmute restores the last
+    // known volume.
+    this.registerCommandListener("volume_mute", async (value: boolean) =>
+      value
+        ? this.adjustVolume(0, { muted: true, showOnTile: true })
+        : this.adjustVolume(this.lastVolume, { showOnTile: true }),
+    );
 
     // Media Volume Step (relative, using Tesla's own reported increment)
-    this.registerCommandListener("volume_up", async () => {
-      this.muted = false;
-      const volume = Math.min(
-        this.volumeMax,
-        this.lastVolume + this.volumeIncrement,
-      );
-      this.lastVolume = volume;
-      return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
-    });
+    this.registerCommandListener("volume_up", async () =>
+      this.adjustVolume(
+        Math.min(this.volumeMax, this.lastVolume + this.volumeIncrement),
+      ),
+    );
 
-    this.registerCommandListener("volume_down", async () => {
-      this.muted = false;
-      const volume = Math.max(
-        0,
-        this.lastVolume - this.volumeIncrement,
-      );
-      this.lastVolume = volume;
-      return this.vehicleAction(this.vehicle.api.adjustVolume(volume));
-    });
+    this.registerCommandListener("volume_down", async () =>
+      this.adjustVolume(Math.max(0, this.lastVolume - this.volumeIncrement)),
+    );
+  }
+
+  /**
+   * Sends adjustVolume() after committing the local volume state it implies
+   * (the muted flag, the baseline the next volume step builds on and, for
+   * mute/unmute, the tile), and rolls all of it back if the command fails -
+   * otherwise a rejected mute leaves the tile at 0 with MediaAudioVolume
+   * updates suppressed, and a rejected step moves the baseline anyway.
+   */
+  private async adjustVolume(
+    volume: number,
+    { muted = false, showOnTile = false } = {},
+  ): Promise<void> {
+    const previousMuted = this.muted;
+    const previousVolume = this.lastVolume;
+    const previousTile = this.getCapabilityValue("volume_set");
+    this.muted = muted;
+    if (!muted) this.lastVolume = volume;
+    if (showOnTile) await this.update("volume_set", volume / this.volumeMax);
+    try {
+      await this.vehicleAction(this.vehicle.api.adjustVolume(volume));
+    } catch (error) {
+      this.muted = previousMuted;
+      this.lastVolume = previousVolume;
+      if (showOnTile) await this.update("volume_set", previousTile);
+      throw error;
+    }
   }
 
   async onUninit() {
@@ -1654,7 +1674,14 @@ export default class VehicleDevice extends TeslemetryDevice {
         }
         return;
       default:
-        if (climateKeep !== "ClimateKeeperModeStateOff") {
+        // Only turn the keeper off when it is known to be running - an
+        // unknown mode (not yet streamed, null or Unknown) would otherwise
+        // spend a command on a keeper that is most likely already off.
+        if (
+          climateKeep === "ClimateKeeperModeStateOn" ||
+          climateKeep === "ClimateKeeperModeStateDog" ||
+          climateKeep === "ClimateKeeperModeStateParty"
+        ) {
           await this.vehicleAction(this.vehicle.api.setClimateKeeperMode(0));
         }
     }
@@ -1779,12 +1806,26 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   public async flowTriggerHomelink(): Promise<void> {
-    const { latitude, longitude } = this.vehicle.sse.cache?.data?.Location || {
-      latitude: 0,
-      longitude: 0,
-    };
+    await this.triggerHomelink();
+  }
+
+  /**
+   * HomeLink opens the garage at home, so - like HA, which sends the
+   * configured home location - send Homey's own location, falling back to
+   * the vehicle's. Signed-command vehicles ignore the coordinates, but a
+   * legacy vehicle uses them to find the HomeLink device, so never send a
+   * made-up {0,0}.
+   */
+  private async triggerHomelink(): Promise<void> {
+    const location =
+      this.getHomeyLocation() ?? this.vehicle.sse.cache?.data?.Location;
+    if (!location) {
+      throw new Error(
+        "Cannot trigger HomeLink: neither Homey's nor the vehicle's location is known",
+      );
+    }
     await this.vehicleAction(
-      this.vehicle.api.triggerHomelink(latitude, longitude),
+      this.vehicle.api.triggerHomelink(location.latitude, location.longitude),
     );
   }
 
@@ -1812,7 +1853,7 @@ export default class VehicleDevice extends TeslemetryDevice {
         );
         break;
       default:
-        break;
+        throw new Error("Invalid level");
     }
   }
 
