@@ -2,6 +2,7 @@ import Homey from "homey";
 import type { EnergyDetails, VehicleDetails } from "@teslemetry/api";
 import type TeslemetryApp from "../app.js";
 import TeslemetryDevice from "./TeslemetryDevice.js";
+import toError from "./toError.js";
 
 /**
  * The single vehicle eligibility predicate, shared by pairing
@@ -108,7 +109,9 @@ export default class TeslemetryDriver extends Homey.Driver {
       if (result.status === "fulfilled") {
         candidates.push(...result.value);
       } else {
-        failures.push(`${accessible[index].id} (${result.reason})`);
+        failures.push(
+          `${accessible[index].id} (${toError(result.reason, (key) => this.homey.__(key)).message})`,
+        );
       }
     });
 
@@ -137,8 +140,11 @@ export default class TeslemetryDriver extends Homey.Driver {
       );
       return devices;
     } catch (err) {
-      this.error(`pairing[stage=list_devices]: onPairListDevices failed: ${err}`);
-      throw err;
+      // The pairing UI shows whatever this rejects with, so it's always an
+      // Error with a readable message, never a raw SDK error body.
+      const error = toError(err, (key) => this.homey.__(key));
+      this.error(`pairing[stage=list_devices]: onPairListDevices failed: ${error.message}`);
+      throw error;
     }
   }
 

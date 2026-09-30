@@ -436,10 +436,13 @@ time were Pacific Time regardless of the vehicle's real timezone.
   current state.
 - **`scheduleStartupRetry()`** covers a transient boot-time `createProducts()`
   failure with bounded exponential backoff (`STARTUP_RETRY_BASE_MS` →
-  `STARTUP_RETRY_MAX_MS`), cleared on any successful build, never scheduled
+  `STARTUP_RETRY_MAX_MS`; a lapsed subscription at the slow
+  `SUBSCRIPTION_RETRY_MS`), cleared on any successful build, never scheduled
   without a valid token. `isReady()` reflects whether a generation was ever
-  fully published; devices failing to bind before then use the `"startup"`
-  availability reason, not a misleading "product not found".
+  fully published; devices failing to bind before then take their reason
+  from `notReadyAvailability()` - `"auth"` naming the account problem (no
+  token, lapsed subscription), otherwise `"startup"` - never a misleading
+  "product not found".
 - **Stream freshness watchdog**: the SDK emits `disconnect` before every
   reconnect regardless of cause, so `handleStreamDisconnect()` starts a
   `STREAM_STALE_GRACE_MS` timer on the first one; if it fires with no genuine
@@ -483,11 +486,13 @@ unless the device's *current* reason matches, so one recovery signal can never
 paper over an unrelated cause.
 
 `teardownCredentials(message)` is the single path for every credential-removal
-event (the SSE `auth_failure` terminal event, and `api.ts`'s
-`deleteOAuthToken` → `app.disconnectAccount()`): close the stream, clear the
-token, mark every device `"auth"`-unavailable. Only that device's own genuine
-post-reauth data event clears it (`handleGenuineStreamEvent()`, shared with the
-freshness watchdog), so a device-level `handleApiError()` auth failure and an
+event (the SSE `auth_failure` terminal event, a refresh token the server
+rejects - `TeslemetryOAuth2Client.onCredentialsRejected`, since that usually
+fails inside the SDK's own request preparation as a status-less error - and
+`api.ts`'s `deleteOAuthToken` → `app.disconnectAccount()`): close the stream,
+clear the token, mark every device `"auth"`-unavailable. Only that device's
+own genuine post-reauth data event clears it (`handleGenuineStreamEvent()`,
+shared with the freshness watchdog), so a device-level `handleApiError()` auth failure and an
 app-level stream auth failure recover through the identical per-device path.
 
 ### Energy Site Event Routing (`site_id` is a number)

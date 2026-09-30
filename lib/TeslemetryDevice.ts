@@ -8,7 +8,9 @@ import { TeslemetryApiError } from "../@types/error.js";
  * Every reason a device can be unavailable, each with its own recovery
  * predicate (see markUnavailable/clearAvailabilityReason below):
  * - "startup": the app hasn't finished building its first Products
- *   generation yet; clears once this device successfully binds.
+ *   generation yet (and has a token and no lapsed subscription - see
+ *   TeslemetryApp.notReadyAvailability()); clears once this device
+ *   successfully binds.
  * - "binding": this device's specific product/site/vehicle isn't present in
  *   a ready Products generation; clears once this device successfully binds.
  * - "eligibility": the product is present in a ready Products generation but
@@ -19,8 +21,9 @@ import { TeslemetryApiError } from "../@types/error.js";
  * - "stream": the shared SSE connection has been disconnected/erroring past
  *   the freshness grace period; clears only when this device's own product
  *   receives a genuine (non-cache) data event.
- * - "auth": credentials are revoked/disconnected; clears only when this
- *   device's own product receives a genuine data event after reauth.
+ * - "auth": credentials are revoked/disconnected or the subscription has
+ *   lapsed; clears only when this device's own product receives a genuine
+ *   data event after reauth/renewal.
  * - "connector": Wall Connector only - the site itself resolves, but its
  *   saved DIN hasn't appeared in that site's live_status past the miss
  *   grace period; clears once a live_status event reports that DIN again.
@@ -102,6 +105,15 @@ export default class TeslemetryDevice extends Homey.Device {
     if (this.availabilityReason !== reason) return;
     this.availabilityReason = undefined;
     this.setAvailable().catch(this.error);
+  }
+
+  /**
+   * Marks this device unavailable because no Products generation is ready
+   * to bind against, naming the account-level cause when there is one.
+   */
+  protected markAppNotReady(): void {
+    const { reason, message } = this.homey.app.notReadyAvailability();
+    this.markUnavailable(reason, message);
   }
 
   protected getAvailabilityReason(): AvailabilityReason | undefined {

@@ -4,7 +4,9 @@ import Homey from 'homey';
 import { Products, Teslemetry } from '@teslemetry/api';
 import type { TeslemetryStreamErrorEvent } from '@teslemetry/api';
 import TeslemetryOAuth2Client from './lib/TeslemetryOAuth2Client.js';
+import toError from './lib/toError.js';
 import TeslemetryDevice from './lib/TeslemetryDevice.js';
+import type { AvailabilityReason } from './lib/TeslemetryDevice.js';
 import type { TeslemetryApiError } from './@types/error.d.ts';
 import type VehicleDevice from './drivers/vehicle/device.js';
 import type PowerwallDevice from './drivers/battery/device.js';
@@ -90,6 +92,14 @@ export default class TeslemetryApp extends Homey.App {
   private static readonly STARTUP_RETRY_BASE_MS = 5_000;
   private static readonly STARTUP_RETRY_MAX_MS = 300_000;
 
+  // Set while the account's subscription has lapsed (a 402
+  // subscription_required from /api/metadata or /sse), cleared by the next
+  // published generation or genuine stream event. A renewal is retried at
+  // the stream library's own reconnect ceiling rather than the transient
+  // backoff - see scheduleStartupRetry().
+  private subscriptionRequired = false;
+  private static readonly SUBSCRIPTION_RETRY_MS = 600_000;
+
   // Per-product ("vehicle:<vin>" / "site:<id>") timestamp of the last
   // genuine (non-cache) data event, for the stream freshness watchdog.
   private lastProductEventAt = new Map<string, number>();
@@ -121,8 +131,10 @@ export default class TeslemetryApp extends Homey.App {
       this.log('Token saved, re-initializing Teslemetry...');
       this.initializeTeslemetry(true).catch((error) => {
         this.error('Failed to reinitialize after token save:', error);
+        this.handleInitializeFailure(error);
       });
     };
+    this.oauth.onCredentialsRejected = () => this.stopSseAndSurfaceReauth();
 
     // Register Flow card handlers
     this.registerFlowCards();
@@ -131,14 +143,14 @@ export default class TeslemetryApp extends Homey.App {
     // must not strand every device for the lifetime of the process - retry
     // with bounded backoff instead of letting this catch be the end of it.
     await this.initializeTeslemetry().catch((error) => {
-      this.log(error.message);
-      this.scheduleStartupRetry();
+      this.handleInitializeFailure(error);
     });
   }
 
   async onUninit(): Promise<void> {
     this.shuttingDown = true;
     this.oauth.onTokenSaved = undefined;
+    this.oauth.onCredentialsRejected = undefined;
     if (this.startupRetryTimer !== undefined) {
       this.homey.clearTimeout(this.startupRetryTimer);
       this.startupRetryTimer = undefined;
@@ -916,13 +928,14 @@ export default class TeslemetryApp extends Homey.App {
 
     let products: Products;
     try {
-      // No .catch(this.handleApiError) here: a real API error surfaces via
-      // TeslemetryOAuth2Client's own handleApiError call during token
-      // fetching, which already logs and translates it before rethrowing.
       products = await sdk.createProducts();
     } catch (error) {
       sdk.sse.close();
-      throw error;
+      // A token-fetch failure is already a translated Error (the OAuth2
+      // client's own handleApiError); a metadata failure (402
+      // subscription_required) is the SDK's raw error body - every caller
+      // (startup, pairing, logs) gets a coded Error either way.
+      throw toError(error, (key) => this.homey.__(key));
     }
 
     if (this.shuttingDown || this.generation !== baseGeneration || !this.oauth.hasValidToken()) {
@@ -939,6 +952,7 @@ export default class TeslemetryApp extends Homey.App {
     this.teslemetry = sdk;
     this.products = products;
     this.ready = true;
+    this.subscriptionRequired = false;
     this.startupRetryAttempt = 0;
     if (this.startupRetryTimer !== undefined) {
       this.homey.clearTimeout(this.startupRetryTimer);
@@ -987,20 +1001,34 @@ export default class TeslemetryApp extends Homey.App {
   }
 
   /**
+   * A failed build (boot, the startup retry, or a new grant's rebuild). A
+   * lapsed subscription is the one account-level cause no device can name
+   * for itself, so it's surfaced on every device before retrying.
+   */
+  private handleInitializeFailure(error: Error & { code?: string }): void {
+    this.log(error.message);
+    if (error.code === 'subscription_required') this.markSubscriptionRequired();
+    this.scheduleStartupRetry();
+  }
+
+  /**
    * A transient startup/rebuild failure must not strand every device for
-   * the lifetime of the process. Retries with bounded exponential backoff;
-   * a successful doInitialize() cancels this on its own. Does not schedule
-   * without a valid token - that's an auth problem the OAuth pairing/repair
-   * flow must resolve, not a timer.
+   * the lifetime of the process. Retries with bounded exponential backoff
+   * (a lapsed subscription at a slow fixed interval instead, so a renewal
+   * still recovers); a successful doInitialize() cancels this on its own.
+   * Does not schedule without a valid token - that's an auth problem the
+   * OAuth pairing/repair flow must resolve, not a timer.
    */
   private scheduleStartupRetry(): void {
     if (this.startupRetryTimer !== undefined) return;
     if (!this.oauth.hasValidToken()) return;
 
-    const delay = Math.min(
-      TeslemetryApp.STARTUP_RETRY_BASE_MS * 2 ** this.startupRetryAttempt,
-      TeslemetryApp.STARTUP_RETRY_MAX_MS,
-    );
+    const delay = this.subscriptionRequired
+      ? TeslemetryApp.SUBSCRIPTION_RETRY_MS
+      : Math.min(
+        TeslemetryApp.STARTUP_RETRY_BASE_MS * 2 ** this.startupRetryAttempt,
+        TeslemetryApp.STARTUP_RETRY_MAX_MS,
+      );
     this.startupRetryAttempt++;
     this.log(
       `Retrying Teslemetry startup in ${Math.round(delay / 1000)}s (attempt ${this.startupRetryAttempt})`,
@@ -1008,8 +1036,7 @@ export default class TeslemetryApp extends Homey.App {
     this.startupRetryTimer = this.homey.setTimeout(() => {
       this.startupRetryTimer = undefined;
       this.initializeTeslemetry().catch((error) => {
-        this.log(error.message);
-        this.scheduleStartupRetry();
+        this.handleInitializeFailure(error);
       });
     }, delay);
   }
@@ -1087,6 +1114,21 @@ export default class TeslemetryApp extends Homey.App {
   }
 
   /**
+   * Why a device that found no ready Products generation to bind against is
+   * unavailable: the account-level cause the user has to act on when there
+   * is one, otherwise a build that is still in progress or retrying.
+   */
+  notReadyAvailability(): { reason: AvailabilityReason; message: string } {
+    if (!this.oauth.hasValidToken()) {
+      return { reason: 'auth', message: this.homey.__('error.account_disconnected') };
+    }
+    if (this.subscriptionRequired) {
+      return { reason: 'auth', message: this.homey.__('error.subscription_required') };
+    }
+    return { reason: 'startup', message: this.homey.__('error.teslemetry_connecting') };
+  }
+
+  /**
    * Check if the app is properly configured with OAuth2
    */
   isConfigured(): boolean {
@@ -1101,16 +1143,10 @@ export default class TeslemetryApp extends Homey.App {
       this.error(`API Error: ${apiError.name}: ${apiError.message}`, apiError.stack);
       throw apiError;
     }
-    const { error, error_description } = apiError;
     this.error('API Error:', JSON.stringify(apiError));
-    const key = `error.${error?.toLowerCase()}`;
-    const translation = this.homey.__(key);
-    if (translation && translation !== key) {
-      this.error(translation);
-      throw new Error(translation);
-    }
-    this.error(error_description);
-    throw new Error(error_description);
+    const error = toError(apiError, (key) => this.homey.__(key));
+    this.error(error.message);
+    throw error;
   };
 
   /**
@@ -1145,6 +1181,7 @@ export default class TeslemetryApp extends Homey.App {
     if (!key) return;
 
     this.lastProductEventAt.set(key, Date.now());
+    this.subscriptionRequired = false;
     this.cancelProductStaleCheck(key);
     for (const device of this.getDevicesForProductKey(key)) {
       device.clearAvailabilityReason('stream');
@@ -1192,6 +1229,8 @@ export default class TeslemetryApp extends Homey.App {
 
   private markProductStale(generation: number, key: string): void {
     if (generation !== this.generation) return;
+    // A lapsed subscription is why the stream is down; keep saying so.
+    if (this.subscriptionRequired) return;
     const lastEventAt = this.lastProductEventAt.get(key);
     const lastEventAge = lastEventAt === undefined ? 'never' : `${Date.now() - lastEventAt}ms`;
     this.log(
@@ -1204,10 +1243,11 @@ export default class TeslemetryApp extends Homey.App {
   }
 
   /**
-   * Called on every SSE reconnect failure. The stream itself now owns
-   * backoff, auth-failure classification, and the stop-loss policy (see
-   * `auth_failure` in attachStreamHandlers); the only actionable thing left
-   * for the app is to give the stream's single same-attempt retry a token
+   * Called on every SSE reconnect failure. The stream itself owns backoff,
+   * auth-failure classification, and the stop-loss policy (see
+   * `auth_failure` in attachStreamHandlers). What's left for the app: name
+   * an account-level cause (no token left, a lapsed subscription) on every
+   * device, and give the stream's single same-attempt auth retry a token
    * that's actually fresh, covering a token that was revoked early enough
    * that our proactive expiry-based refresh wouldn't have caught it.
    */
@@ -1219,6 +1259,16 @@ export default class TeslemetryApp extends Homey.App {
     this.log(
       `SSE stream error (generation ${generation}, retry ${event.retries}, status ${event.status ?? 'n/a'}): ${event.error instanceof Error ? event.error.message : String(event.error)}`,
     );
+    // Checked before the status: a token cleared while the SDK prepared its
+    // own request fails that attempt with no HTTP status at all.
+    if (!this.oauth.hasValidToken()) {
+      this.stopSseAndSurfaceReauth();
+      return;
+    }
+    if (event.status === 402) {
+      this.markSubscriptionRequired();
+      return;
+    }
     if (event.status !== 401 && event.status !== 403) return;
 
     this.log('SSE auth failure; forcing a token refresh before the SDK retries');
@@ -1239,17 +1289,31 @@ export default class TeslemetryApp extends Homey.App {
   }
 
   /**
+   * The subscription lapsed (402 from /api/metadata or /sse): every device
+   * says so under the "auth" reason, so only its own product's genuine data
+   * after a renewal clears it. The stream keeps retrying on its own backoff
+   * and a failed build on scheduleStartupRetry()'s slow interval.
+   */
+  private markSubscriptionRequired(): void {
+    this.subscriptionRequired = true;
+    const message = this.homey.__('error.subscription_required');
+    this.forEachTeslemetryDevice((device) => device.markUnavailable('auth', message));
+  }
+
+  /**
    * The single teardown path for every credential-removal event: the
-   * terminal SSE auth_failure above, and the manual Disconnect action
-   * (api.ts, via disconnectAccount()). Closes the stream, clears the token,
-   * and marks every device unavailable with the "auth" reason - no later
-   * unrelated event (a stray reconnect, a different device's data) can
-   * declare them healthy again; only that specific device's own genuine
-   * post-reauth data event can (handleGenuineStreamEvent).
+   * terminal SSE auth_failure above, a refresh token the server rejected
+   * (TeslemetryOAuth2Client.onCredentialsRejected), and the manual
+   * Disconnect action (api.ts, via disconnectAccount()). Closes the stream,
+   * clears the token, and marks every device unavailable with the "auth"
+   * reason - no later unrelated event (a stray reconnect, a different
+   * device's data) can declare them healthy again; only that specific
+   * device's own genuine post-reauth data event can
+   * (handleGenuineStreamEvent).
    */
   private teardownCredentials(message: string): void {
     this.cleanup();
-    this.oauth.clearToken();
+    if (this.oauth.hasValidToken()) this.oauth.clearToken();
     if (this.startupRetryTimer !== undefined) {
       this.homey.clearTimeout(this.startupRetryTimer);
       this.startupRetryTimer = undefined;

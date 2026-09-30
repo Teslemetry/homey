@@ -364,10 +364,7 @@ export default class VehicleDevice extends TeslemetryDevice {
       vehicle = found;
     } catch (e) {
       if (!(this.homey.app.isReady?.() ?? true)) {
-        this.markUnavailable(
-          "startup",
-          this.homey.__("error.teslemetry_connecting"),
-        );
+        this.markAppNotReady();
         return;
       }
       this.log("Failed to initialize Vehicle device");

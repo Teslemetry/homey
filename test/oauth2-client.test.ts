@@ -324,6 +324,10 @@ test("refreshToken() clears the stored token on the server's lowercase invalid_r
 
   try {
     const client = new TeslemetryOAuth2Client(app as any);
+    let rejections = 0;
+    client.onCredentialsRejected = () => {
+      rejections++;
+    };
     assert.equal(client.hasValidToken(), true);
 
     await assert.rejects(() => client.refreshToken());
@@ -333,6 +337,8 @@ test("refreshToken() clears the stored token on the server's lowercase invalid_r
     // silently leave the dead token in place.
     assert.equal(client.hasValidToken(), false);
     assert.equal(settingsStore.teslemetry_oauth2_token, undefined);
+    // ...and tells the app, which tears credentials down on every device.
+    assert.equal(rejections, 1);
   } finally {
     global.fetch = originalFetch;
   }
