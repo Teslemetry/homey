@@ -51,6 +51,7 @@ function createDeviceStub(
     rear_seat_heaters?: number;
     sun_roof_installed?: boolean;
     cop_user_set_temp_supported?: boolean;
+    rhd?: boolean;
   },
 ) {
   const added: string[] = [];
@@ -302,19 +303,47 @@ test("ensureCapabilities adds rear-heater/seat-cooler capabilities for a fully-e
   assert.deepEqual(new Set(added), new Set(SEAT_FEATURE_CAPABILITIES));
 });
 
-test("ensureCapabilities gates rear_left/rear_right on 2+ rear seat heaters but rear_center on 3", async () => {
-  const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"], {
-    has_seat_cooling: false,
-    rear_seat_heaters: 2,
+// `rear_seat_heaters` is a rear-bench layout code, not a heater count
+// (HA select.py): any non-zero value has left/right heaters, and only 1 (the
+// Model 3/Y full bench) and 3 add a centre heater.
+for (const [rearSeatHeaters, expected] of [
+  [0, []],
+  [
+    1,
+    [
+      "seat_heater.rear_left",
+      "seat_heater.rear_center",
+      "seat_heater.rear_right",
+    ],
+  ],
+  [2, ["seat_heater.rear_left", "seat_heater.rear_right"]],
+  [
+    3,
+    [
+      "seat_heater.rear_left",
+      "seat_heater.rear_center",
+      "seat_heater.rear_right",
+    ],
+  ],
+] as const) {
+  test(`ensureCapabilities adds the rear heaters rear_seat_heaters: ${rearSeatHeaters} actually has`, async () => {
+    // The captain's Model 3 reports rear_seat_heaters: 1 alongside rhd and no
+    // COP temperature limit support.
+    const { stub, added } = createDeviceStub(MODEL_Y_VIN, ["measure_battery"], {
+      has_seat_cooling: false,
+      rear_seat_heaters: rearSeatHeaters,
+      rhd: true,
+      cop_user_set_temp_supported: false,
+    });
+
+    await stub.ensureCapabilities();
+
+    assert.deepEqual(
+      new Set(added.filter((cap) => cap.startsWith("seat_heater.rear_"))),
+      new Set(expected),
+    );
   });
-
-  await stub.ensureCapabilities();
-
-  assert.deepEqual(
-    new Set(added),
-    new Set(["seat_heater.rear_left", "seat_heater.rear_right"]),
-  );
-});
+}
 
 test("ensureCapabilities leaves a fully-equipped vehicle's seat capabilities alone when it already has them", async () => {
   const { stub, added, removed } = createDeviceStub(
