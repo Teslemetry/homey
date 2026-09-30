@@ -581,9 +581,10 @@ export default class TeslemetryDevice extends Homey.Device {
    * increasing `meter_*` capability value. See AGENTS.md's "Cumulative
    * Energy Meters" section for why this exists.
    *
-   * `dateKey` must be a zero-padded ISO `YYYY-MM-DD` string - every caller
-   * derives it that way - so plain string comparison orders it correctly,
-   * with no timezone-parsing ambiguity from constructing a `Date`.
+   * `dateKey` must be a fixed-width key that orders by plain string
+   * comparison - a zero-padded ISO `YYYY-MM-DD` date for the daily totals
+   * (no timezone-parsing ambiguity from constructing a `Date`), or the
+   * vehicle's zero-padded charge session number.
    */
   protected updateCumulativeMeter(
     capability: string,

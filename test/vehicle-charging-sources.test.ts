@@ -28,6 +28,7 @@ function createVehicle(stream: any, capabilityNames: string[]) {
   const capabilities: Record<string, unknown> = {};
   for (const c of capabilityNames) capabilities[c] = null;
   const writes: Array<[string, unknown]> = [];
+  const store: Record<string, unknown> = {};
   const triggers: Array<[string, unknown]> = [];
   const vehicle = {
     vin: VIN,
@@ -73,7 +74,10 @@ function createVehicle(stream: any, capabilityNames: string[]) {
     setCapabilityOptions: async () => {},
     addCapability: async () => {},
     removeCapability: async () => {},
-    getStoreValue: () => null,
+    getStoreValue: (k: string) => store[k] ?? null,
+    setStoreValue: async (k: string, v: unknown) => {
+      store[k] = v;
+    },
     registerCapabilityListener: () => {},
     log: () => {},
     error: () => {},
@@ -135,8 +139,13 @@ test("meter_power follows DCChargingEnergyIn only; ACChargingEnergyIn never writ
   data(stream, { ACChargingEnergyIn: 1.546 });
   data(stream, { DCChargingEnergyIn: 1.22 });
   await flush();
-  const meter = writes.filter(([c]) => c === "meter_power").map(([, v]) => v);
-  assert.deepEqual(meter, [0.8, 1.22]);
+  // meter_power is the lifetime meter (see
+  // vehicle-meter-power-lifetime.test.ts): the first reading anchors it at
+  // its prior value (0 here) and it then moves by the DC delta only.
+  const meter = writes
+    .filter(([c]) => c === "meter_power")
+    .map(([, v]) => Math.round((v as number) * 1000) / 1000);
+  assert.deepEqual(meter, [0, 0.42]);
 });
 
 test("measure_power reports DC power when above 0, else AC power, whatever the key order", async () => {
