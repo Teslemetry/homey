@@ -569,7 +569,13 @@ export default class VehicleDevice extends TeslemetryDevice {
       if (signals.ClimateKeeperMode === "ClimateKeeperModeStateParty") {
         return this.update("thermostat_mode", "camp_mode");
       }
-      if (signals.HvacPower === "HvacPowerStateOn") {
+      // Scheduled or app-started preconditioning is the climate running
+      // (vehicle_data's is_climate_on is true). OverheatProtect stays "off":
+      // cabin overheat protection owns it via cop_mode.
+      if (
+        signals.HvacPower === "HvacPowerStateOn" ||
+        signals.HvacPower === "HvacPowerStatePrecondition"
+      ) {
         return this.update("thermostat_mode", "auto");
       }
       return this.update("thermostat_mode", "off");
