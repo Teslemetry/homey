@@ -114,7 +114,7 @@
         "en": "Battery power rises above"
       },
       "hint": {
-        "en": "Positive values mean the battery is discharging (supplying the home); negative values mean it's charging."
+        "en": "Positive values mean the battery is charging; negative values mean it's discharging (supplying the home)."
       },
       "args": [
         {
@@ -150,7 +150,7 @@
         "en": "Battery power drops below"
       },
       "hint": {
-        "en": "Positive values mean the battery is discharging (supplying the home); negative values mean it's charging."
+        "en": "Positive values mean the battery is charging; negative values mean it's discharging (supplying the home)."
       },
       "args": [
         {
@@ -224,7 +224,7 @@
         "en": "Battery power comparison"
       },
       "hint": {
-        "en": "Positive values mean the battery is discharging (supplying the home); negative values mean it's charging."
+        "en": "Positive values mean the battery is charging; negative values mean it's discharging (supplying the home)."
       },
       "args": [
         {

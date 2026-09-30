@@ -34,17 +34,18 @@ function createDeviceStub(capabilities: Record<string, unknown>) {
   return { stub, triggerCalls };
 }
 
-test("update() fires the matching *_changed trigger card with the new value when it changes", async () => {
+test("update() fires the matching *_changed trigger card with the new reserve as a percentage when it changes", async () => {
   const { stub, triggerCalls } = createDeviceStub({ backup_reserve: 0.2 });
 
   await stub.update("backup_reserve", 0.35);
 
+  assert.equal(stub.getCapabilityValue("backup_reserve"), 0.35);
   assert.deepEqual(triggerCalls, [
-    { cardId: "backup_reserve_changed", tokens: { backup_reserve: 0.35 } },
+    { cardId: "backup_reserve_changed", tokens: { backup_reserve: 35 } },
   ]);
 });
 
-test("update() fires off_grid_vehicle_charging_reserve_changed with the new reserve", async () => {
+test("update() fires off_grid_vehicle_charging_reserve_changed with the new reserve as a percentage", async () => {
   const { stub, triggerCalls } = createDeviceStub({
     off_grid_vehicle_charging_reserve: 0.2,
   });
@@ -54,7 +55,7 @@ test("update() fires off_grid_vehicle_charging_reserve_changed with the new rese
   assert.deepEqual(triggerCalls, [
     {
       cardId: "off_grid_vehicle_charging_reserve_changed",
-      tokens: { off_grid_vehicle_charging_reserve: 0.4 },
+      tokens: { off_grid_vehicle_charging_reserve: 40 },
     },
   ]);
 });

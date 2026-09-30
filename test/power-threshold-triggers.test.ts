@@ -170,14 +170,15 @@ test("GatewayDevice fires generator_power_above/below when the site has a genera
   );
 });
 
-test("PowerwallDevice fires battery_power_above/below using the sign-inverted (discharge-positive) value", async () => {
+test("PowerwallDevice fires battery_power_above/below using the sign-inverted (charge-positive) value", async () => {
   const { stub, handlers, triggerCalls, capabilities } = createDeviceStub(
     PowerwallDevice,
     { measure_battery: 50, measure_power: -1000 },
   );
   await stub.onInit();
 
-  // Raw SDK battery_power of 500 (charging) inverts to -500 (Homey convention).
+  // Raw SDK battery_power of 500 (discharging) inverts to -500: Homey Energy
+  // wants a home battery positive while charging.
   handlers["live_status"]({
     live_status: { percentage_charged: 55, battery_power: 500 },
   });

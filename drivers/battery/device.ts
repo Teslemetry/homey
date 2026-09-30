@@ -386,20 +386,25 @@ export default class PowerwallDevice extends TeslemetryDevice {
       return;
     }
 
-    this.updateWithThresholdTriggers(
-      "grid_buy_rate",
-      resolution.buy.price ?? undefined,
-      "grid_buy_rate_above",
-      "grid_buy_rate_below",
-      "grid_buy_rate",
-    );
-    this.updateWithThresholdTriggers(
-      "grid_sell_rate",
-      resolution.sell.price ?? undefined,
-      "grid_sell_rate_above",
-      "grid_sell_rate_below",
-      "grid_sell_rate",
-    );
+    // A side with no price (no sell_tariff, or a period without a rate) is
+    // written as null rather than skipped - updateWithThresholdTriggers()
+    // no-ops on null, which would leave the previous price in place.
+    for (const [capability, price] of [
+      ["grid_buy_rate", resolution.buy.price],
+      ["grid_sell_rate", resolution.sell.price],
+    ] as const) {
+      if (price === null) {
+        this.update(capability, null);
+      } else {
+        this.updateWithThresholdTriggers(
+          capability,
+          price,
+          `${capability}_above`,
+          `${capability}_below`,
+          capability,
+        );
+      }
+    }
 
     if (resolution.currency) {
       this.setCapabilityOptions("grid_buy_rate", {
