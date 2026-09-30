@@ -15,6 +15,7 @@
     "device_removed": "الجهاز المحدد لم يعد موجودًا. يرجى تعديل هذا التدفق (Flow).",
     "teslemetry_connecting": "جارٍ الاتصال بـ Teslemetry...",
     "stream_disconnected": "انقطع الاتصال بـ Teslemetry. جارٍ إعادة الاتصال...",
-    "account_disconnected": "تم قطع اتصال حساب Teslemetry. يرجى إعادة المصادقة لإعادة توصيل هذا الجهاز."
+    "account_disconnected": "تم قطع اتصال حساب Teslemetry. يرجى إعادة المصادقة لإعادة توصيل هذا الجهاز.",
+    "frunk_cannot_close": "لا يمكن إغلاق صندوق الأمتعة الأمامي عن بُعد. أغلقه يدويًا."
   }
 }

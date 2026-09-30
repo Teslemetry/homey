@@ -15,6 +15,7 @@
     "device_removed": "Het geselecteerde apparaat bestaat niet meer. Bewerk deze Flow.",
     "teslemetry_connecting": "Verbinden met Teslemetry...",
     "stream_disconnected": "Verbinding met Teslemetry verbroken. Opnieuw verbinden...",
-    "account_disconnected": "Teslemetry-account losgekoppeld. Log opnieuw in om dit apparaat opnieuw te verbinden."
+    "account_disconnected": "Teslemetry-account losgekoppeld. Log opnieuw in om dit apparaat opnieuw te verbinden.",
+    "frunk_cannot_close": "De frunk kan niet op afstand worden gesloten. Sluit hem met de hand."
   }
 }

@@ -15,6 +15,7 @@
     "device_removed": "Den valda enheten finns inte längre. Vänligen redigera detta Flow.",
     "teslemetry_connecting": "Ansluter till Teslemetry...",
     "stream_disconnected": "Anslutningen till Teslemetry förlorades. Återansluter...",
-    "account_disconnected": "Teslemetry-kontot har kopplats bort. Vänligen autentisera om för att återansluta denna enhet."
+    "account_disconnected": "Teslemetry-kontot har kopplats bort. Vänligen autentisera om för att återansluta denna enhet.",
+    "frunk_cannot_close": "Frunken kan inte stängas på distans. Stäng den för hand."
   }
 }

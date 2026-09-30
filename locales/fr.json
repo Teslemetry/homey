@@ -15,6 +15,7 @@
     "device_removed": "L'appareil sélectionné n'existe plus. Veuillez modifier ce Flow.",
     "teslemetry_connecting": "Connexion à Teslemetry...",
     "stream_disconnected": "Connexion à Teslemetry perdue. Reconnexion en cours...",
-    "account_disconnected": "Compte Teslemetry déconnecté. Veuillez vous ré-authentifier pour reconnecter cet appareil."
+    "account_disconnected": "Compte Teslemetry déconnecté. Veuillez vous ré-authentifier pour reconnecter cet appareil.",
+    "frunk_cannot_close": "Le coffre avant ne peut pas être fermé à distance. Fermez-le à la main."
   }
 }

@@ -15,6 +15,7 @@
     "device_removed": "Den valgte enhed findes ikke længere. Rediger venligst dette Flow.",
     "teslemetry_connecting": "Opretter forbindelse til Teslemetry...",
     "stream_disconnected": "Forbindelsen til Teslemetry blev afbrudt. Genopretter forbindelse...",
-    "account_disconnected": "Teslemetry-kontoen er afbrudt. Godkend venligst igen for at genforbinde denne enhed."
+    "account_disconnected": "Teslemetry-kontoen er afbrudt. Godkend venligst igen for at genforbinde denne enhed.",
+    "frunk_cannot_close": "Frunken kan ikke lukkes via fjernbetjening. Luk den manuelt."
   }
 }

@@ -1124,14 +1124,17 @@ export default class VehicleDevice extends TeslemetryDevice {
     );
 
     // Doors/Frunk/Trunk
+    // The frunk can only be opened remotely. Rejecting a close keeps Homey
+    // from committing "closed" while the frunk is still physically open.
     this.registerCommandListener("onoff.frunk", async (value) => {
-      if (value) {
-        await this.vehicleAction(this.vehicle.api.actuateTrunk("front"));
-      }
-      // Cannot be closed
+      if (!value) throw new Error(this.homey.__("error.frunk_cannot_close"));
+      return this.vehicleAction(this.vehicle.api.actuateTrunk("front"));
     });
 
-    this.registerCommandListener("onoff.trunk", async (_value) => {
+    // actuate_trunk is a toggle, so only send it when the rear trunk is not
+    // already in the requested state. An unknown state still sends it.
+    this.registerCommandListener("onoff.trunk", async (value) => {
+      if (this.vehicle.sse.cache?.data?.DoorState?.TrunkRear === value) return;
       return this.vehicleAction(this.vehicle.api.actuateTrunk("rear"));
     });
 
@@ -1201,8 +1204,14 @@ export default class VehicleDevice extends TeslemetryDevice {
       );
     });
 
-    // Media Play/Pause Toggle
-    this.registerCommandListener("speaker_playing", async () => {
+    // Media Play/Pause: media_toggle_playback is a toggle, so only send it
+    // when playback is not already in the requested state (HA parity: play
+    // unless playing, pause only while playing).
+    this.registerCommandListener("speaker_playing", async (value) => {
+      const playing =
+        this.vehicle.sse.cache?.data?.MediaPlaybackStatus ===
+        "MediaStatusPlaying";
+      if (value === playing) return;
       return this.vehicleAction(this.vehicle.api.mediaTogglePlayback());
     });
 

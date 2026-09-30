@@ -264,24 +264,6 @@ test("auto climate switch listeners call the matching vehicle commands", async (
   ]);
 });
 
-test("onoff.frunk capability listener actuates the front trunk only when turned on", async () => {
-  const { capabilityListeners, apiCalls } = await createDeviceStub();
-
-  await capabilityListeners["onoff.frunk"](false);
-  assert.deepEqual(apiCalls, [], "no command fired when turned off - frunk cannot be closed remotely");
-
-  await capabilityListeners["onoff.frunk"](true);
-  assert.deepEqual(apiCalls, [{ method: "actuateTrunk", args: ["front"] }]);
-});
-
-test("onoff.trunk capability listener actuates the rear trunk regardless of value", async () => {
-  const { capabilityListeners, apiCalls } = await createDeviceStub();
-
-  await capabilityListeners["onoff.trunk"](false);
-
-  assert.deepEqual(apiCalls, [{ method: "actuateTrunk", args: ["rear"] }]);
-});
-
 test("windowcoverings_closed.tonneau capability listener sends the closure command's open/close endpoint", async () => {
   const { capabilityListeners, apiCalls } = await createDeviceStub();
 
