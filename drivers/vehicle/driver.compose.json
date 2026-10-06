@@ -33,6 +33,7 @@
     "onoff.charge_port",
     "thermostat_mode",
     "evcharger_charging",
+    "ev_charging_state",
     "meter_power",
     "measure_power",
     "measure_voltage",

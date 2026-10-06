@@ -220,6 +220,20 @@ const ACTIVE_CHARGE_STATES = new Set<SseData["data"]["DetailedChargeState"]>([
   "DetailedChargeStateCharging",
 ]);
 
+// DetailedChargeStateUnknown is left unmapped so ev_charging_state keeps its
+// prior value instead of guessing a plug state.
+const evChargingStateMap = new Map<
+  SseData["data"]["DetailedChargeState"],
+  string
+>([
+  ["DetailedChargeStateDisconnected", "plugged_out"],
+  ["DetailedChargeStateNoPower", "plugged_in"],
+  ["DetailedChargeStateStarting", "plugged_in_charging"],
+  ["DetailedChargeStateCharging", "plugged_in_charging"],
+  ["DetailedChargeStateComplete", "plugged_in"],
+  ["DetailedChargeStateStopped", "plugged_in_paused"],
+]);
+
 export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
   private volumeMax: number = 10.333;
@@ -234,6 +248,12 @@ export default class VehicleDevice extends TeslemetryDevice {
    * only way to detect the Disconnected <-> anything-else transition.
    */
   private previousDetailedChargeState?: SseData["data"]["DetailedChargeState"];
+
+  /**
+   * The last PowershareStatus signal value. Powershare runs through the
+   * charge port, so Enabled means the car is plugged in and discharging.
+   */
+  private powershareStatus?: SseData["data"]["PowershareStatus"];
 
   private sseCleanup: Array<() => void> = [];
 
@@ -803,9 +823,12 @@ export default class VehicleDevice extends TeslemetryDevice {
     });
 
     // Cybertruck Powershare (vehicle-to-home)
-    this.onSignal("PowershareStatus", (value) =>
-      this.update("powershare_status", powershareStatusMap.get(value)),
-    );
+    this.onSignal("PowershareStatus", (value) => {
+      this.update("powershare_status", powershareStatusMap.get(value));
+      if (!powershareStatusMap.has(value)) return;
+      this.powershareStatus = value;
+      this.updateEvChargingState();
+    });
     this.onSignal("PowershareStopReason", (value) =>
       this.update("powershare_stop_reason", powershareStopReasonMap.get(value)),
     );
@@ -1474,6 +1497,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     const previous = this.previousDetailedChargeState;
     this.previousDetailedChargeState = value;
     this.update("evcharger_charging", ACTIVE_CHARGE_STATES.has(value));
+    this.updateEvChargingState();
     // ACChargingPower is delta-gated (a 0.6 -> 0 kW drop is never sent), so
     // the final draw would otherwise linger after unplugging. Only
     // Disconnected guarantees no draw: a Complete car still pulls power.
@@ -1504,6 +1528,24 @@ export default class VehicleDevice extends TeslemetryDevice {
     } else if (previous === "DetailedChargeStateDisconnected") {
       this.triggerFlow("plugged_in");
     }
+  }
+
+  /**
+   * Derives ev_charging_state from the latest DetailedChargeState, with an
+   * enabled Powershare session reported as plugged_in_discharging. Writes
+   * nothing until a mapped DetailedChargeState arrives. Homey fires the
+   * system ev_charging_state_changed card itself.
+   */
+  private updateEvChargingState(): void {
+    const detailed = this.previousDetailedChargeState;
+    if (detailed === undefined) return;
+    const state =
+      this.powershareStatus === "PowershareStateEnabled" &&
+      detailed !== "DetailedChargeStateDisconnected"
+        ? "plugged_in_discharging"
+        : evChargingStateMap.get(detailed);
+    if (state === undefined) return;
+    this.update("ev_charging_state", state);
   }
 
   /**
