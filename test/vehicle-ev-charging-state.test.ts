@@ -223,3 +223,16 @@ test("ensureCapabilities adds ev_charging_state to an already-paired vehicle", a
   assert.deepEqual(addedCapabilities, ["ev_charging_state"]);
   assert.ok("evcharger_charging" in capabilities);
 });
+
+test("DetailedChargeState Unknown during an enabled Powershare session keeps the prior ev_charging_state", async () => {
+  const { stub, sse, capabilities } = createDeviceStub(
+    { ev_charging_state: "plugged_in", powershare_status: undefined },
+    CYBERTRUCK_VIN,
+  );
+  await stub.onInit();
+
+  sse.data.emit("DetailedChargeState", "DetailedChargeStateUnknown");
+  sse.data.emit("PowershareStatus", "PowershareStateEnabled");
+
+  assert.equal(capabilities["ev_charging_state"], "plugged_in");
+});

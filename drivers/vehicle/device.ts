@@ -1539,12 +1539,13 @@ export default class VehicleDevice extends TeslemetryDevice {
   private updateEvChargingState(): void {
     const detailed = this.previousDetailedChargeState;
     if (detailed === undefined) return;
+    const pluggedState = evChargingStateMap.get(detailed);
+    if (pluggedState === undefined) return;
     const state =
       this.powershareStatus === "PowershareStateEnabled" &&
-      detailed !== "DetailedChargeStateDisconnected"
+      pluggedState !== "plugged_out"
         ? "plugged_in_discharging"
-        : evChargingStateMap.get(detailed);
-    if (state === undefined) return;
+        : pluggedState;
     this.update("ev_charging_state", state);
   }
 
