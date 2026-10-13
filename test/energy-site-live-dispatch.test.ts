@@ -207,11 +207,30 @@ test("an energy_totals event carrying the wire's numeric id reaches the bound Po
   stream._dispatch({
     createdAt: "2026-09-23T05:30:00.000Z",
     id: SITE_ID,
-    totals: { total_battery_charge: 4000, total_battery_discharge: 1500 },
+    totals: { total_home_usage: null, total_battery_charge: 4000, total_battery_discharge: 1500 },
   });
   // handleEnergyTotals is async and the emitter doesn't await it.
   await new Promise((resolve) => setImmediate(resolve));
 
   assert.equal(capabilities.battery_charged_today, 4);
   assert.equal(capabilities.battery_discharged_today, 1.5);
+});
+
+test("a wall_connector_totals event carrying the wire's numeric id reaches the site's wall_connector_totals listener, not energy_totals", () => {
+  const stream = createStream();
+  const siteStream = stream.getEnergySite(SITE_KEY);
+  const wallConnector: unknown[] = [];
+  const energy: unknown[] = [];
+  siteStream.on("wall_connector_totals", (event: unknown) => wallConnector.push(event));
+  siteStream.on("energy_totals", (event: unknown) => energy.push(event));
+
+  stream._dispatch({
+    createdAt: "2026-10-12T05:30:00.000Z",
+    date: "2026-10-12",
+    id: SITE_ID,
+    totals: { "din-1": 4000 },
+  });
+
+  assert.equal(wallConnector.length, 1);
+  assert.equal(energy.length, 0);
 });

@@ -44,6 +44,7 @@ const SSE_TOPICS = [
   'site_info',
   'tariff_content_v2',
   'energy_totals',
+  'wall_connector_totals',
 ] as const;
 
 /**

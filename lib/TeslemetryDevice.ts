@@ -557,7 +557,9 @@ export default class TeslemetryDevice extends Homey.Device {
    * event or it flashes yesterday's total after its reset; the cumulative
    * meters take every event and order days themselves.
    */
-  protected energyTotalsDay(event: SseEnergyTotals): {
+  protected energyTotalsDay(
+    event: Pick<SseEnergyTotals, "date" | "createdAt">,
+  ): {
     date: string;
     current: boolean;
   } {

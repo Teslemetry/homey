@@ -1,4 +1,8 @@
-import { EnergyDetails, SseLiveStatus } from "@teslemetry/api";
+import {
+  EnergyDetails,
+  SseLiveStatus,
+  SseWallConnectorTotals,
+} from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 import { isEnergySiteEligible } from "../../lib/TeslemetryDriver.js";
 
@@ -158,43 +162,27 @@ export default class WallConnecter extends TeslemetryDevice {
       this.handleFaultState(data.wall_connector_fault_state);
     };
 
-    const handleChargeHistory = async (
-      chargeHistory: NonNullable<typeof this.site.api.cache.chargeHistory>,
-    ) => {
-      if (!chargeHistory.response?.charge_history?.length) return;
+    // Daily Wh totals keyed by DIN; a connector with no session that day is
+    // absent, not 0. Replays the cached snapshot on registration.
+    const handleWallConnectorTotals = async (event: SseWallConnectorTotals) => {
+      const wh = event.totals?.[this.din];
+      if (typeof wh !== "number" || !Number.isFinite(wh)) return;
 
-      let charged = 0;
-      let hasCharged = false;
-
-      for (const event of chargeHistory.response.charge_history) {
-        if (event.din !== this.din || event.energy_added_wh === undefined) {
-          continue;
-        }
-        charged += event.energy_added_wh;
-        hasCharged = true;
-      }
-
-      if (hasCharged) {
-        const now = new Date();
-        const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-        await this.updateCumulativeMeter("meter_power", charged / 1000, dateKey);
-      }
+      const { date } = this.energyTotalsDay(event);
+      await this.updateCumulativeMeter("meter_power", wh / 1000, date);
     };
     // EventEmitter doesn't await listeners, so an unhandled rejection here
     // would otherwise crash the app instead of just failing this update.
-    const onChargeHistory = (
-      chargeHistory: NonNullable<typeof this.site.api.cache.chargeHistory>,
-    ) => {
-      return handleChargeHistory(chargeHistory).catch(this.error);
+    const onWallConnectorTotals = (event: SseWallConnectorTotals) => {
+      return handleWallConnectorTotals(event).catch(this.error);
     };
 
     this.site.sse.on("live_status", onLiveStatus);
-    this.site.api.on("chargeHistory", onChargeHistory);
+    this.site.sse.on("wall_connector_totals", onWallConnectorTotals);
 
     this.pollingCleanup = [
-      site.api.requestPolling("chargeHistory"),
       () => site.sse.off("live_status", onLiveStatus),
-      () => site.api.off("chargeHistory", onChargeHistory),
+      () => site.sse.off("wall_connector_totals", onWallConnectorTotals),
     ];
   }
 
