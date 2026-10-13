@@ -345,7 +345,7 @@ test("a device whose product disappeared keeps saying 'not found' across a strea
   assert.equal(powerwall.message(), "error.energy_site_not_found", "the actionable message survives the blip");
 });
 
-test("Disconnect stops the Wall Connector's charge-history polling", async (t) => {
+test("Disconnect leaves the Wall Connector making no requests, and it no longer polls telemetry_history", async (t) => {
   const world = await createWorld(t, { tokenExpiresInMs: 3_600_000 });
   world.server.metadata.energy_sites = { [SITE]: { access: true, name: "Home" } };
 
@@ -353,7 +353,7 @@ test("Disconnect stops the Wall Connector's charge-history polling", async (t) =
   const wallConnector = world.addDevice("wall-connector", WallConnecter, { site: Number(SITE), din: DIN });
   await wallConnector.onInit();
   await world.advance(120_000);
-  assert.ok(world.server.count(/telemetry_history$/) >= 4, "precondition: polling every 30 s while connected");
+  assert.equal(world.server.count(/telemetry_history$/), 0, "wall connector totals arrive over the stream, not by polling");
 
   world.app.disconnectAccount();
   await flush();
@@ -404,19 +404,19 @@ test("a rebuild landing while a device is still in onInit() binds it once", asyn
   const vehicle = world.app.products!.vehicles[VIN];
   const count = () => ({
     siteLiveStatusListeners: site.sse.listenerCount("live_status"),
-    chargeHistoryPollers: site.api.refreshClients.chargeHistory.size,
+    wallConnectorTotalsListeners: site.sse.listenerCount("wall_connector_totals"),
     vehicleStateListeners: vehicle.sse.listenerCount("state"),
   });
   assert.deepEqual(
     count(),
-    { siteLiveStatusListeners: 2, chargeHistoryPollers: 1, vehicleStateListeners: 1 },
-    "Powerwall + Wall Connector, one poller, one car - each bound exactly once",
+    { siteLiveStatusListeners: 2, wallConnectorTotalsListeners: 1, vehicleStateListeners: 1 },
+    "Powerwall + Wall Connector, one totals listener, one car - each bound exactly once",
   );
 
   for (const device of devices) await world.deleteDevice(device);
   assert.deepEqual(
     count(),
-    { siteLiveStatusListeners: 0, chargeHistoryPollers: 0, vehicleStateListeners: 0 },
+    { siteLiveStatusListeners: 0, wallConnectorTotalsListeners: 0, vehicleStateListeners: 0 },
     "nothing outlives the deleted devices",
   );
   const before = world.server.count(/telemetry_history$/);

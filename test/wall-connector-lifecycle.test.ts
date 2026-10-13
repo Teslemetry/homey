@@ -177,8 +177,8 @@ test("findVin falls back to the raw VIN when the vehicle isn't a paired product"
   assert.equal(capabilities["connected_vehicle"], "UNKNOWNVIN");
 });
 
-test("onChargeHistory accumulates energy_added_wh for this DIN into the cumulative meter", async () => {
-  const { stub, apiHandlers, capabilities } = createDeviceStub({
+test("wall_connector_totals feeds this DIN's Wh total into the cumulative meter in kWh", async () => {
+  const { stub, handlers, capabilities } = createDeviceStub({
     meter_power: 0,
   });
   await stub.onInit();
@@ -186,70 +186,92 @@ test("onChargeHistory accumulates energy_added_wh for this DIN into the cumulati
   // The first reading only anchors the monotonic offset to the existing
   // capability value (see updateCumulativeMeter); the running total only
   // reflects new energy from the second reading onward.
-  await apiHandlers["chargeHistory"]({
-    response: {
-      charge_history: [
-        { din: "din-1", energy_added_wh: 1000 },
-        { din: "some-other-din", energy_added_wh: 9999 },
-      ],
-    },
+  await handlers["wall_connector_totals"]({
+    id: "site-1",
+    date: "2026-10-12",
+    createdAt: "2026-10-12T10:00:00Z",
+    totals: { "din-1": 1000, "some-other-din": 9999 },
   });
-  await apiHandlers["chargeHistory"]({
-    response: {
-      charge_history: [
-        { din: "din-1", energy_added_wh: 1000 },
-        { din: "din-1", energy_added_wh: 500 },
-        { din: "some-other-din", energy_added_wh: 9999 },
-      ],
-    },
+  await handlers["wall_connector_totals"]({
+    id: "site-1",
+    date: "2026-10-12",
+    createdAt: "2026-10-12T11:00:00Z",
+    totals: { "din-1": 1500, "some-other-din": 9999 },
   });
 
   assert.equal(capabilities["meter_power"], 0.5);
 });
 
-test("onChargeHistory skips events missing energy_added_wh and no-ops when the response is empty", async () => {
-  const { stub, apiHandlers, capabilities } = createDeviceStub({
+test("wall_connector_totals keys the cumulative meter on the event's date, so a new day continues upward", async () => {
+  const { stub, handlers, capabilities } = createDeviceStub({
     meter_power: 0,
   });
   await stub.onInit();
 
-  await apiHandlers["chargeHistory"]({ response: { charge_history: [] } });
-  assert.equal(capabilities["meter_power"], 0);
+  const send = (date: string, wh: number) =>
+    handlers["wall_connector_totals"]({
+      id: "site-1",
+      date,
+      createdAt: `${date}T23:00:00Z`,
+      totals: { "din-1": wh },
+    });
+  await send("2026-10-12", 1000);
+  await send("2026-10-12", 4000);
+  assert.equal(capabilities["meter_power"], 3);
+  // The daily total resets to a lower number on the new day; the meter must
+  // keep the prior day's energy and add the new day's on top.
+  await send("2026-10-13", 500);
+  assert.equal(capabilities["meter_power"], 3.5);
+  await send("2026-10-13", 1500);
+  assert.equal(capabilities["meter_power"], 4.5);
+});
 
-  await apiHandlers["chargeHistory"]({
-    response: { charge_history: [{ din: "din-1", energy_added_wh: undefined }] },
+test("wall_connector_totals ignores an event without this DIN or with a non-numeric total", async () => {
+  const { stub, handlers, capabilities } = createDeviceStub({
+    meter_power: 0,
+  });
+  await stub.onInit();
+
+  await handlers["wall_connector_totals"]({
+    id: "site-1",
+    date: "2026-10-12",
+    createdAt: "2026-10-12T10:00:00Z",
+    totals: { "some-other-din": 9999 },
+  });
+  await handlers["wall_connector_totals"]({
+    id: "site-1",
+    date: "2026-10-12",
+    createdAt: "2026-10-12T10:00:00Z",
+    totals: { "din-1": null },
   });
   assert.equal(capabilities["meter_power"], 0);
 });
 
-test("WallConnecter.onInit requests chargeHistory polling alongside live_status/chargeHistory listeners", async () => {
-  const { stub, site, isPollingRequested } = createDeviceStub({
+test("WallConnecter.onInit listens for live_status and wall_connector_totals and no longer polls chargeHistory", async () => {
+  const { stub, handlers, apiHandlers, isPollingRequested } = createDeviceStub({
     measure_power: undefined,
   });
 
   await stub.onInit();
 
-  assert.ok(isPollingRequested(), "chargeHistory polling requested");
-  assert.equal(typeof site.sse.on, "function");
+  assert.equal(typeof handlers["live_status"], "function");
+  assert.equal(typeof handlers["wall_connector_totals"], "function");
+  assert.equal(isPollingRequested(), false, "no chargeHistory polling");
+  assert.equal(apiHandlers["chargeHistory"], undefined);
 });
 
-test("WallConnecter.onUninit stops chargeHistory polling and removes both listeners", async () => {
+test("WallConnecter.onUninit removes the live_status and wall_connector_totals listeners", async () => {
   const { stub, site } = createDeviceStub({ measure_power: undefined });
   const offCalls: Array<string> = [];
   site.sse.off = (event: string) => {
     offCalls.push(`sse:${event}`);
   };
-  site.api.off = (event: string) => {
-    offCalls.push(`api:${event}`);
-  };
-  let pollingStopped = false;
-  site.api.requestPolling = () => () => {
-    pollingStopped = true;
-  };
   await stub.onInit();
 
   await stub.onUninit();
 
-  assert.ok(pollingStopped, "polling stop callback invoked");
-  assert.deepEqual(offCalls.sort(), ["api:chargeHistory", "sse:live_status"]);
+  assert.deepEqual(offCalls.sort(), [
+    "sse:live_status",
+    "sse:wall_connector_totals",
+  ]);
 });

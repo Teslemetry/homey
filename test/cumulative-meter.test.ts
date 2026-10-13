@@ -402,7 +402,7 @@ async function simulateSite(opts: {
       createdAt: new Date(bucketEnd - opts.offsetHours * 3_600_000).toISOString(),
       id: SITE_ID,
       date: new Date(bucketStart).toISOString().slice(0, 10),
-      totals: { [opts.totalsField]: dayTotalWh },
+      totals: { total_home_usage: null, [opts.totalsField]: dayTotalWh },
     });
     await flush();
     if (minuteOfDay === 1435) dayTotalWh = 0;
@@ -483,7 +483,7 @@ test("the prior-day final published after the local-midnight reset leaves solar_
     createdAt: "2026-09-29T13:55:00.000Z",
     id: SITE_ID,
     date: "2026-09-29",
-    totals: { total_solar_generation: 31000 },
+    totals: { total_home_usage: null, total_solar_generation: 31000 },
   });
   await flush();
   assert.equal(capabilities.solar_generation_today, 31);
@@ -497,7 +497,7 @@ test("the prior-day final published after the local-midnight reset leaves solar_
     createdAt: "2026-09-29T14:00:00.000Z",
     id: SITE_ID,
     date: "2026-09-29",
-    totals: { total_solar_generation: 31200 },
+    totals: { total_home_usage: null, total_solar_generation: 31200 },
   });
   await flush();
   assert.equal(capabilities.solar_generation_today, 0);
@@ -506,7 +506,7 @@ test("the prior-day final published after the local-midnight reset leaves solar_
     createdAt: "2026-09-29T14:05:00.000Z",
     id: SITE_ID,
     date: "2026-09-30",
-    totals: { total_solar_generation: 0 },
+    totals: { total_home_usage: null, total_solar_generation: 0 },
   });
   await flush();
   assert.equal(capabilities.solar_generation_today, 0);
@@ -515,7 +515,7 @@ test("the prior-day final published after the local-midnight reset leaves solar_
     createdAt: "2026-09-29T22:00:00.000Z",
     id: SITE_ID,
     date: "2026-09-30",
-    totals: { total_solar_generation: 1500 },
+    totals: { total_home_usage: null, total_solar_generation: 1500 },
   });
   await flush();
   assert.equal(capabilities.solar_generation_today, 1.5);
