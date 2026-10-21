@@ -19,6 +19,10 @@
     "account_disconnected": "Teslemetry-kontoen er afbrudt. Godkend venligst igen for at genforbinde denne enhed.",
     "frunk_cannot_close": "Frunken kan ikke lukkes via fjernbetjening. Luk den manuelt.",
     "command_no_result": "Kommandoen gav intet resultat.",
-    "request_failed": "Teslemetry-anmodningen mislykkedes."
+    "request_failed": "Teslemetry-anmodningen mislykkedes.",
+    "product_silent": "Ingen nye data fra Tesla."
+  },
+  "warning": {
+    "no_data_since": "Ingen data siden __time__"
   }
 }

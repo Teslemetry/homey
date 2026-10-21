@@ -19,6 +19,10 @@
     "account_disconnected": "Teslemetry-kontoen er frakoblet. Vennligst logg inn på nytt for å koble til denne enheten igjen.",
     "frunk_cannot_close": "Frunken kan ikke lukkes eksternt. Lukk den for hånd.",
     "command_no_result": "Kommandoen ga ikke noe resultat.",
-    "request_failed": "Teslemetry-forespørselen mislyktes."
+    "request_failed": "Teslemetry-forespørselen mislyktes.",
+    "product_silent": "Ingen nye data fra Tesla."
+  },
+  "warning": {
+    "no_data_since": "Ingen data siden __time__"
   }
 }

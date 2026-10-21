@@ -48,6 +48,10 @@ function createFakeTimers() {
     timers,
     setTimeout: (callback: () => void, delay: number) => {
       const id = nextId++;
+      // The app's 30 s product-silence sweep (see product-silence.test.ts)
+      // reschedules itself for as long as a generation is published; keep
+      // it out of the timers these tests count.
+      if (delay === 30_000) return id;
       timers.push({ id, callback, delay });
       return id;
     },

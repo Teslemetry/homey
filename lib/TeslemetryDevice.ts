@@ -25,6 +25,10 @@ import toError from "./toError.js";
  * - "auth": credentials are revoked/disconnected or the subscription has
  *   lapsed; clears only when this device's own product receives a genuine
  *   data event after reauth/renewal.
+ * - "silent": energy sites only - the stream is healthy but this product
+ *   has sent no genuine data past TeslemetryApp's product-silence threshold
+ *   (vehicles get a warning instead, see VehicleDevice.markProductSilent());
+ *   clears on this product's next genuine data event.
  * - "connector": Wall Connector only - the site itself resolves, but its
  *   saved DIN hasn't appeared in that site's live_status past the miss
  *   grace period; clears once a live_status event reports that DIN again.
@@ -35,6 +39,7 @@ export type AvailabilityReason =
   | "eligibility"
   | "stream"
   | "auth"
+  | "silent"
   | "connector";
 
 /**
@@ -119,6 +124,23 @@ export default class TeslemetryDevice extends Homey.Device {
 
   protected getAvailabilityReason(): AvailabilityReason | undefined {
     return this.availabilityReason;
+  }
+
+  /**
+   * Called by TeslemetryApp's product-silence sweep while this device's
+   * product has sent no genuine data past its threshold on a stream that is
+   * still up. Energy devices go unavailable, but never over another reason:
+   * that cause (a dropped stream, auth, a missing binding) is the one the
+   * user has to act on. `lastEventAt` is the last genuine event's epoch ms.
+   */
+  public markProductSilent(_lastEventAt: number): void {
+    if (this.availabilityReason !== undefined) return;
+    this.markUnavailable("silent", this.homey.__("error.product_silent"));
+  }
+
+  /** Called on every genuine data event for this device's product. */
+  public clearProductSilence(): void {
+    this.clearAvailabilityReason("silent");
   }
 
   /**

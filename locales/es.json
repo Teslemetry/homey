@@ -19,6 +19,10 @@
     "account_disconnected": "Cuenta de Teslemetry desconectada. Por favor, vuelve a autenticarte para reconectar este dispositivo.",
     "frunk_cannot_close": "El maletero delantero no se puede cerrar a distancia. Ciérralo a mano.",
     "command_no_result": "El comando no devolvió ningún resultado.",
-    "request_failed": "La solicitud a Teslemetry ha fallado."
+    "request_failed": "La solicitud a Teslemetry ha fallado.",
+    "product_silent": "No hay datos recientes de Tesla."
+  },
+  "warning": {
+    "no_data_since": "Sin datos desde las __time__"
   }
 }

@@ -66,7 +66,9 @@ function createApp(initialToken: unknown) {
   const app = Object.assign(new TeslemetryApp(), {
     homey: {
       __: (key: string) => key,
-      setTimeout: (callback: () => void, delay: number) => setTimeout(callback, delay),
+      // unref: the app's self-rescheduling product-silence sweep must not
+      // keep the test process alive.
+      setTimeout: (callback: () => void, delay: number) => setTimeout(callback, delay).unref(),
       clearTimeout: (id: NodeJS.Timeout) => clearTimeout(id),
       drivers: { getDrivers: () => drivers },
       flow: createFlowStub(),

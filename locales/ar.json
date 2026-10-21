@@ -19,6 +19,10 @@
     "account_disconnected": "تم قطع اتصال حساب Teslemetry. يرجى إعادة المصادقة لإعادة توصيل هذا الجهاز.",
     "frunk_cannot_close": "لا يمكن إغلاق صندوق الأمتعة الأمامي عن بُعد. أغلقه يدويًا.",
     "command_no_result": "لم يُرجع الأمر أي نتيجة.",
-    "request_failed": "فشل طلب Teslemetry."
+    "request_failed": "فشل طلب Teslemetry.",
+    "product_silent": "لا توجد بيانات حديثة من Tesla."
+  },
+  "warning": {
+    "no_data_since": "لا توجد بيانات منذ __time__"
   }
 }

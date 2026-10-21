@@ -119,6 +119,19 @@ const centerDisplayMap = new Map<SseData["data"]["CenterDisplay"], boolean>([
 ]);
 
 /**
+ * An epoch-ms instant as a 24-hour "HH:mm" in `timeZone` (Homey's own
+ * timezone), falling back to the process timezone if that name is invalid.
+ */
+function formatClockTime(epochMs: number, timeZone: string): string {
+  const options: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit", hourCycle: "h23" };
+  try {
+    return new Intl.DateTimeFormat("en-GB", { ...options, timeZone }).format(epochMs);
+  } catch {
+    return new Intl.DateTimeFormat("en-GB", options).format(epochMs);
+  }
+}
+
+/**
  * Homey's "time" Flow argument resolves to a 24-hour "HH:mm" string.
  * setScheduledCharging()/setScheduledDeparture() take Tesla's own
  * minutes-into-the-day encoding instead (the SDK's doc comment gives
@@ -236,6 +249,7 @@ const evChargingStateMap = new Map<
 
 export default class VehicleDevice extends TeslemetryDevice {
   private vehicle!: VehicleDetails;
+  private silenceWarningShown = false;
   private volumeMax: number = 10.333;
   /** Tesla's default step until MediaAudioVolumeIncrement is reported. */
   private volumeIncrement: number = 0.333;
@@ -420,6 +434,25 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   public getProductKey(): string | undefined {
     return this.vehicle ? `vehicle:${this.vehicle.vin}` : undefined;
+  }
+
+  /**
+   * A car's state publishes depend on server-side conditions, so silence is
+   * not proof its values are wrong: the device stays available and shows a
+   * warning naming when data last arrived. See
+   * TeslemetryDevice.markProductSilent().
+   */
+  public markProductSilent(lastEventAt: number): void {
+    if (this.silenceWarningShown || this.destroyed) return;
+    this.silenceWarningShown = true;
+    const time = formatClockTime(lastEventAt, this.homey.clock.getTimezone());
+    this.setWarning(this.homey.__("warning.no_data_since", { time })).catch(this.error);
+  }
+
+  public clearProductSilence(): void {
+    if (!this.silenceWarningShown || this.destroyed) return;
+    this.silenceWarningShown = false;
+    this.unsetWarning().catch(this.error);
   }
 
   public getVin(): string {

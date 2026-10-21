@@ -19,6 +19,10 @@
     "account_disconnected": "Teslemetry account disconnected. Please re-authenticate to reconnect this device.",
     "frunk_cannot_close": "The frunk can't be closed remotely. Close it by hand.",
     "command_no_result": "Command had no result.",
-    "request_failed": "Teslemetry request failed."
+    "request_failed": "Teslemetry request failed.",
+    "product_silent": "No recent data from Tesla."
+  },
+  "warning": {
+    "no_data_since": "No data since __time__"
   }
 }
