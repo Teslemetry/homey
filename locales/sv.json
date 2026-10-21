@@ -19,6 +19,10 @@
     "account_disconnected": "Teslemetry-kontot har kopplats bort. Vänligen autentisera om för att återansluta denna enhet.",
     "frunk_cannot_close": "Frunken kan inte stängas på distans. Stäng den för hand.",
     "command_no_result": "Kommandot gav inget resultat.",
-    "request_failed": "Teslemetry-begäran misslyckades."
+    "request_failed": "Teslemetry-begäran misslyckades.",
+    "product_silent": "Inga nya data från Tesla."
+  },
+  "warning": {
+    "no_data_since": "Inga data sedan __time__"
   }
 }

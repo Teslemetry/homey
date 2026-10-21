@@ -114,6 +114,19 @@ export default class TeslemetryApp extends Homey.App {
   // was lost; 150 s covers one lost publish without hiding a real outage.
   private static readonly STREAM_STALE_GRACE_MS = 150_000;
 
+  // A product can go silent while the stream itself stays healthy
+  // (keepalives flow, so no disconnect ever arms the watchdog above), e.g.
+  // when Tesla's energy API is down. A sweep every SILENCE_SWEEP_MS compares
+  // each bound product's last genuine event against its threshold: an energy
+  // site after 10 missed 30 s live_status publishes, a vehicle after about 6
+  // missed 90 s state publishes. See sweepSilentProducts().
+  private silenceSweepTimer?: NodeJS.Timeout;
+  private generationReadyAt = 0;
+  private silentProducts = new Set<string>();
+  private static readonly SILENCE_SWEEP_MS = 30_000;
+  private static readonly SITE_SILENCE_MS = 300_000;
+  private static readonly VEHICLE_SILENCE_MS = 600_000;
+
   private logger = {
     info: (...args: unknown[]) => this.log(...args),
     error: (...args: unknown[]) => this.error(...args),
@@ -969,6 +982,9 @@ export default class TeslemetryApp extends Homey.App {
     this.teslemetry = sdk;
     this.products = products;
     this.ready = true;
+    this.generationReadyAt = Date.now();
+    this.cancelSilenceSweep();
+    this.scheduleSilenceSweep(generation);
     this.subscriptionRequired = false;
     this.startupRetryAttempt = 0;
     if (this.startupRetryTimer !== undefined) {
@@ -1097,7 +1113,9 @@ export default class TeslemetryApp extends Homey.App {
   cleanup(): void {
     this.generation++;
     this.cancelAllProductStaleChecks();
+    this.cancelSilenceSweep();
     this.lastProductEventAt.clear();
+    this.silentProducts.clear();
     this.ready = false;
     if (this.teslemetry) {
       this.teslemetry.sse.close();
@@ -1200,9 +1218,69 @@ export default class TeslemetryApp extends Homey.App {
     this.lastProductEventAt.set(key, Date.now());
     this.subscriptionRequired = false;
     this.cancelProductStaleCheck(key);
+    if (this.silentProducts.delete(key)) {
+      this.log(`Product silence: ${key} sent genuine data again (generation ${generation})`);
+    }
     for (const device of this.getDevicesForProductKey(key)) {
       device.clearAvailabilityReason('stream');
       device.clearAvailabilityReason('auth');
+      device.clearProductSilence();
+    }
+  }
+
+  private scheduleSilenceSweep(generation: number): void {
+    this.silenceSweepTimer = this.homey.setTimeout(() => {
+      this.silenceSweepTimer = undefined;
+      try {
+        this.sweepSilentProducts(generation);
+      } catch (error) {
+        this.error('Product silence sweep failed:', error);
+      }
+      if (generation === this.generation && this.ready) this.scheduleSilenceSweep(generation);
+    }, TeslemetryApp.SILENCE_SWEEP_MS);
+  }
+
+  private cancelSilenceSweep(): void {
+    if (this.silenceSweepTimer === undefined) return;
+    this.homey.clearTimeout(this.silenceSweepTimer);
+    this.silenceSweepTimer = undefined;
+  }
+
+  /**
+   * Hands every bound product with no genuine event past its threshold to
+   * its devices' markProductSilent() - an energy site goes unavailable, a
+   * vehicle shows a warning - and logs the transition once per silent
+   * period. A product with no genuine event yet in this app run is measured
+   * from when the current generation was published. The next genuine event
+   * reverses it (handleGenuineStreamEvent).
+   */
+  private sweepSilentProducts(generation: number): void {
+    if (generation !== this.generation || !this.ready) return;
+    // A lapsed subscription is why data stopped; keep saying so.
+    if (this.subscriptionRequired) return;
+    const now = Date.now();
+    const keys = new Set<string>();
+    this.forEachTeslemetryDevice((device) => {
+      const key = device.getProductKey();
+      if (key !== undefined) keys.add(key);
+    });
+    for (const key of keys) {
+      const lastEventAt = this.lastProductEventAt.get(key) ?? this.generationReadyAt;
+      const threshold = key.startsWith('vehicle:')
+        ? TeslemetryApp.VEHICLE_SILENCE_MS
+        : TeslemetryApp.SITE_SILENCE_MS;
+      if (now - lastEventAt < threshold) continue;
+      // A dropped stream is the disconnect watchdog's to report.
+      if (this.productStaleTimers.has(key)) continue;
+      if (!this.silentProducts.has(key)) {
+        this.silentProducts.add(key);
+        this.log(
+          `Product silence: ${key} has sent no genuine data for ${now - lastEventAt}ms (threshold ${threshold}ms, generation ${generation})`,
+        );
+      }
+      for (const device of this.getDevicesForProductKey(key)) {
+        device.markProductSilent(lastEventAt);
+      }
     }
   }
 

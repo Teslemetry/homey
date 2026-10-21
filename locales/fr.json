@@ -19,6 +19,10 @@
     "account_disconnected": "Compte Teslemetry déconnecté. Veuillez vous ré-authentifier pour reconnecter cet appareil.",
     "frunk_cannot_close": "Le coffre avant ne peut pas être fermé à distance. Fermez-le à la main.",
     "command_no_result": "La commande n'a renvoyé aucun résultat.",
-    "request_failed": "La requête Teslemetry a échoué."
+    "request_failed": "La requête Teslemetry a échoué.",
+    "product_silent": "Aucune donnée récente de Tesla."
+  },
+  "warning": {
+    "no_data_since": "Aucune donnée depuis __time__"
   }
 }

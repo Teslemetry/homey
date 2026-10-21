@@ -19,6 +19,10 @@
     "account_disconnected": "Konto Teslemetry zostało odłączone. Proszę ponownie uwierzytelnić się, aby ponownie połączyć to urządzenie.",
     "frunk_cannot_close": "Przedniego bagażnika nie można zamknąć zdalnie. Zamknij go ręcznie.",
     "command_no_result": "Polecenie nie zwróciło wyniku.",
-    "request_failed": "Żądanie do Teslemetry nie powiodło się."
+    "request_failed": "Żądanie do Teslemetry nie powiodło się.",
+    "product_silent": "Brak aktualnych danych z Tesli."
+  },
+  "warning": {
+    "no_data_since": "Brak danych od __time__"
   }
 }
