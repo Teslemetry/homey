@@ -1,0 +1,17 @@
+{
+  "_comment": "Throwaway HW-0 probe (ENG-5 / BLE-00). Never publish. Run with `homey app run`.",
+  "id": "com.teslemetry.bleprobe",
+  "version": "0.0.1",
+  "compatibility": ">=12.0.0",
+  "sdk": 3,
+  "platforms": ["local"],
+  "name": { "en": "Teslemetry BLE probe" },
+  "description": { "en": "HW-0 Bluetooth probe for Tesla vehicles. Development only." },
+  "category": ["tools"],
+  "permissions": ["homey:wireless:ble"],
+  "author": { "name": "Teslemetry", "email": "hello@teslemetry.com" },
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png"
+  }
+}

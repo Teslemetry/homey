@@ -1,0 +1,14 @@
+{
+  "name": "teslemetry-ble-probe",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Throwaway HW-0 Homey Bluetooth probe (BLE-00). Never merged, never published.",
+  "main": "app.js",
+  "scripts": {
+    "selftest": "node selftest.js",
+    "run": "homey app run"
+  },
+  "dependencies": {
+    "@teslemetry/tesla-protocol": "6.0.0"
+  }
+}
