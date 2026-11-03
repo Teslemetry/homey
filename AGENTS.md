@@ -20,23 +20,30 @@ Always run `npm run app:validate` before committing.
 
 - `npm test` runs against the **compiled output** in `.homeybuild/`, not the TS
   sources. Tests import `../.homeybuild/...`.
+- Run one file (build first; `--import` in place of `--experimental-loader`
+  fails every file):
+
+  ```bash
+  npm run build && node --experimental-loader ./test/support/loader.mjs --test test/<name>.test.ts
+  ```
+
 - `test/support/loader.mjs` redirects `homey` and `@teslemetry/api` to stubs in
   `test/support/`. Drive the SDK via `configureTeslemetryStub(factory)`.
 - `npm test` resolves from the repo root `node_modules`, so it cannot catch a
   dependency missing from the packaged bundle. `smoke:packaged-build` does.
-- `app.json` is generated but committed. Rebuild it on every compose change;
-  `npm test` does not regenerate it.
+- `app.json` is generated but committed. `npm run app:validate` regenerates it
+  from the compose files; commit the result. `npm test` and `npm run build`
+  do not regenerate it.
 
 ## Homey Compose
 
 - Edit `.homeycompose/app.json`, never the root `app.json`.
-- `.homeycompose/capabilities/` holds base capabilities only. Never create a
-  file such as `alarm_generic.off_grid.json`: `.` in a capability name is
-  reserved and fails validation.
 - Consult the vendored Homey SDK reference in `docs/` before inventing a
   capability shape.
 
 ### Flow cards
+
+Use the `homey-flow-card` skill for any Flow card change.
 
 - Homey does **not** generate flow cards for subcapabilities
   (`alarm_generic.off_grid`, `onoff.charge_grid`). Define them in
@@ -49,10 +56,7 @@ Always run `npm run app:validate` before committing.
   App-level cards (`.homeycompose/flow/`) are only for IDs unique to one
   driver, and **must** declare a `device` arg with a `filter`.
 - Driver-scoped cards get an auto-injected `device` arg: do **not** declare
-  one, use `"$filter": "capabilities=<cap>"` instead, and do **not** reference
-  `[[device]]` in `titleFormatted` (validation rejects it).
-- The verified level requires `titleFormatted` on any card with args beyond
-  `device`.
+  one, use `"$filter": "capabilities=<cap>"` instead.
 - Capability-gated cards use `drivers/vehicle/capabilityGating.ts`, the same
   predicate as the device capabilities.
 
@@ -82,14 +86,17 @@ list; do not invent a Homey-only shape.
 
 - `update()` and `updateWithThresholdTriggers()` **must never reject**: SSE
   handlers discard their Promise. Keep the single top-level `try`/`catch`.
-- Fire every trigger card explicitly, and only on a real change from a known
-  prior value. Never fire without a baseline or on a repeated value.
+- Except for the cards under **Exception** below, fire every trigger card
+  explicitly, and only on a real change from a known prior value. Never fire
+  without a baseline or on a repeated value.
 - Simple `<capability>_changed` cards: add the capability to
   `CHANGE_TRIGGER_CAPABILITIES` (and `NUMERIC_CHANGE_TRIGGER_CAPABILITIES` for
   numeric tokens). Threshold cards: use `updateWithThresholdTriggers()` and
   `registerThresholdCards()` in `app.ts`.
-- **Exception:** Homey auto-fires `alarm_*` system capabilities. Firing one
-  manually double-runs every flow. Subcapabilities still need manual cards.
+- **Exception:** Homey fires the `_true`/`_false` cards of base `alarm_*`
+  capabilities and of every subcapability card named
+  `<capability>.<sub>_true`/`_false`. Firing one manually double-runs every
+  flow.
 - Check `isLive()` immediately before every `.trigger(this, ...)`. `destroyed`
   alone is not enough: the SDK drops a deleted device before `onUninit()`.
 - When a trigger depends on the previous value, track it in a private field.
