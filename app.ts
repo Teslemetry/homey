@@ -1114,6 +1114,18 @@ export default class TeslemetryApp extends Homey.App {
     this.rebindSiteDevices(siteId);
   }
 
+  /**
+   * A site's local link just read its gateway: the devices it feeds have
+   * live data whatever the cloud stream is doing.
+   */
+  public handleLocalPowerwallRead(siteId: string): void {
+    for (const device of this.getDevicesForProductKey(`site:${siteId}`)) {
+      if (!device.isLocallyLive()) continue;
+      device.clearAvailabilityReason('stream');
+      device.clearProductSilence();
+    }
+  }
+
   private rebindSiteDevices(siteId: string): void {
     for (const device of this.getDevicesForProductKey(`site:${siteId}`)) device.rebindProduct();
   }
@@ -1310,7 +1322,7 @@ export default class TeslemetryApp extends Homey.App {
         );
       }
       for (const device of this.getDevicesForProductKey(key)) {
-        device.markProductSilent(lastEventAt);
+        if (!device.isLocallyLive()) device.markProductSilent(lastEventAt);
       }
     }
   }
@@ -1364,7 +1376,7 @@ export default class TeslemetryApp extends Homey.App {
     );
     const message = this.homey.__('error.stream_disconnected');
     for (const device of this.getDevicesForProductKey(key)) {
-      device.markUnavailable('stream', message);
+      if (!device.isLocallyLive()) device.markUnavailable('stream', message);
     }
   }
 

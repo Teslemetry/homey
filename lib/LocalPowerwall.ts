@@ -37,7 +37,8 @@ export class LocalPowerwallSite extends EventEmitter {
   private cloud?: TeslemetryEnergySiteStream;
   private cloudEvent?: SseLiveStatus;
   private latest?: SseLiveStatus;
-  private healthy: boolean | null = null;
+  private lastHealth: boolean | null = null;
+  private stopped = false;
   private readonly timer: NodeJS.Timeout;
 
   /** Loads `tesla-fleet-api/powerwall` only now, so a site that never enrols costs nothing. */
@@ -90,7 +91,13 @@ export class LocalPowerwallSite extends EventEmitter {
     return this;
   }
 
+  /** Whether the last gateway read succeeded. */
+  get healthy(): boolean {
+    return !this.stopped && this.merge.healthy === true;
+  }
+
   stop(): void {
+    this.stopped = true;
     this.app.homey.clearInterval(this.timer);
     this.cloud?.off("live_status", this.onCloud);
     this.cloud = undefined;
@@ -106,15 +113,16 @@ export class LocalPowerwallSite extends EventEmitter {
   private async poll(): Promise<void> {
     const merged = await this.merge.poll();
     if (merged === null) return;
-    if (this.merge.healthy !== this.healthy) {
-      this.healthy = this.merge.healthy;
+    if (this.merge.healthy !== this.lastHealth) {
+      this.lastHealth = this.merge.healthy;
       this.app.log(
-        this.healthy
+        this.lastHealth
           ? `Local Powerwall ${this.siteId}: reading the gateway at ${this.client.host}`
           : `Local Powerwall ${this.siteId}: gateway read failed, using cloud values: ${this.merge.last_error?.message}`,
       );
     }
     this.publish(merged);
+    if (this.lastHealth) this.app.handleLocalPowerwallRead(this.siteId);
   }
 
   private publish(liveStatus: unknown): void {
