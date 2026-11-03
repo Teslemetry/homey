@@ -72,6 +72,7 @@ function createFeed() {
   const app = {
     homey: { setInterval: timers.setInterval, clearInterval: timers.clearInterval },
     handleLocalPowerwallRead: () => {},
+    oauth: { getAccessToken: async () => "token" },
     log: () => {},
     error: () => {},
   };
@@ -82,7 +83,9 @@ test.beforeEach(() => {
   fakeGateway.clients.length = 0;
   fakeGateway.liveStatus = async () => ({ response: {} });
   fakeGateway.verify = async () => {};
-  fakeCloud.site = null;
+  fakeGateway.command = async () => {};
+  fakeGateway.commands.length = 0;
+  fakeCloud.site = {} as never;
   fakeCloud.created.length = 0;
 });
 
@@ -193,6 +196,7 @@ test("enabling a site's local link moves its Gateway device onto the merged live
       clearInterval: timers.clearInterval,
       drivers: { getDrivers: () => ({ gateway: { getDevices: () => [gateway] } }) },
     },
+    oauth: { getAccessToken: async () => "token" },
     log: () => {},
     error: () => {},
   });
@@ -353,4 +357,77 @@ test("turning local off stops the link this device started, and a restart resume
     ["enable", SITE_ID, GATEWAY, KEY_PEM],
     ["disable", SITE_ID],
   ]);
+});
+
+/** A Powerwall device on an enrolled site whose gateway has answered (or not) one poll. */
+async function createEnrolledPowerwall(gatewayAnswers: boolean) {
+  const { app, timers } = createFeed();
+  const cloudCalls: unknown[][] = [];
+  fakeCloud.site = {
+    backup: async (...args: unknown[]) => cloudCalls.push(["backup", ...args]),
+    operation: async (...args: unknown[]) => cloudCalls.push(["operation", ...args]),
+    grid_import_export: async (...args: unknown[]) => cloudCalls.push(["grid_import_export", ...args]),
+  } as never;
+  const site = await LocalPowerwallSite.start(app as never, SITE_ID, GATEWAY, KEY_PEM);
+  fakeGateway.liveStatus = gatewayAnswers
+    ? async () => ({ response: {} })
+    : async () => {
+      throw new PowerwallConnectionError("unreachable");
+    };
+  await timers.tick();
+  const cloudApi = new Proxy({}, { get: (_target, method) => async () => cloudCalls.push(["teslemetry-api", method]) });
+  const device = Object.assign(Object.create(PowerwallDevice.prototype), {
+    homey: {
+      app: { localPowerwallSites: new Map([[SITE_ID, site]]), products: {} },
+      __: (key: string) => key,
+    },
+    site: { api: cloudApi },
+    getData: () => ({ id: SITE_ID }),
+    getName: () => "Powerwall",
+    log: () => {},
+    error: () => {},
+  });
+  return { device, cloudCalls, site };
+}
+
+test("an enrolled Powerwall sends backup reserve, operation mode and grid settings to its gateway", async () => {
+  const { device, cloudCalls, site } = await createEnrolledPowerwall(true);
+
+  await device.flowSetBackupReserve(30);
+  await device.flowSetOperationMode("backup");
+  await device.flowSetAllowExport("never");
+
+  assert.deepEqual(fakeGateway.commands, [
+    ["backup", 30],
+    ["operation", "backup"],
+    ["grid_import_export", null, "never"],
+  ]);
+  assert.deepEqual(cloudCalls, []);
+  site.stop();
+});
+
+test("a gateway that is not answering, or fails mid-command, leaves the command to the cloud", async () => {
+  const down = await createEnrolledPowerwall(false);
+  await down.device.flowSetBackupReserve(30);
+  assert.deepEqual(fakeGateway.commands, [], "an unhealthy gateway is not tried at all");
+  assert.deepEqual(down.cloudCalls, [["backup", 30]]);
+  down.site.stop();
+
+  const flaky = await createEnrolledPowerwall(true);
+  fakeGateway.command = async () => {
+    throw new PowerwallConnectionError("reset");
+  };
+  await flaky.device.flowSetOperationMode("self_consumption");
+  assert.deepEqual(flaky.cloudCalls, [["operation", "self_consumption"]]);
+  flaky.site.stop();
+});
+
+test("a Powerwall on a site without a local link keeps every command on the Teslemetry client", async () => {
+  const { device, cloudCalls, site } = await createEnrolledPowerwall(true);
+  device.homey.app.localPowerwallSites = undefined;
+
+  await device.flowSetBackupReserve(30);
+  assert.deepEqual(cloudCalls, [["teslemetry-api", "setBackupReserve"]]);
+  assert.deepEqual(fakeGateway.commands, []);
+  site.stop();
 });

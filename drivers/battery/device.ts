@@ -420,9 +420,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.log(
         `Setting backup reserve to ${Math.round(value * 100)} (from ${value})`,
       );
-      return this.action(
-        this.site.api.setBackupReserve(Math.round(value * 100)),
-      );
+      return this.action(this.sendBackupReserve(Math.round(value * 100)));
     });
 
     this.registerCommandListener(
@@ -446,7 +444,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
 
     this.registerCommandListener("operation_mode", async (value) => {
       this.log(`Setting operation mode to ${value}`);
-      return this.action(this.site.api.setOperationMode(value));
+      return this.action(this.sendOperationMode(value));
     });
 
     this.registerCommandListener("onoff.charge_grid", async (value) => {
@@ -455,15 +453,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
         throw new Error(`Invalid charge from grid value: ${value}`);
       }
       this.log(`Setting charge from grid to ${value}`);
-      // Send only this setting: the export rule is dropped from the JSON
-      // body when undefined, so it is never rewritten from a derived value.
-      // The SDK types the rule as required, hence the cast.
-      return this.action(
-        this.site.api.gridImportExport(
-          undefined as never,
-          !value, // Not Allow
-        ),
-      );
+      return this.action(this.sendDisallowChargeFromGrid(!value));
     });
 
     this.registerCommandListener("onoff.storm", async (value) => {
@@ -623,10 +613,44 @@ export default class PowerwallDevice extends TeslemetryDevice {
     }).catch(this.error);
   }
 
+  /**
+   * The site's local-first command router once its local Powerwall link is
+   * enrolled. Only backup reserve, operation mode and grid import/export have
+   * a local mapping; everything else stays on `this.site.api`.
+   */
+  private localCommands() {
+    return this.homey.app.localPowerwallSites?.get(this.getSiteId())?.commands;
+  }
+
+  private sendBackupReserve(percent: number): Promise<unknown> {
+    const local = this.localCommands();
+    return local ? local.backup(percent) : this.site.api.setBackupReserve(percent);
+  }
+
+  private sendOperationMode(mode: string): Promise<unknown> {
+    const local = this.localCommands();
+    return local ? local.operation(mode) : this.site.api.setOperationMode(mode as never);
+  }
+
+  // The two grid settings are sent one at a time, so the other is never
+  // rewritten from a derived value: both clients drop an absent one.
+  private sendExportRule(rule: "battery_ok" | "pv_only" | "never"): Promise<unknown> {
+    const local = this.localCommands();
+    return local ? local.grid_import_export(null, rule) : this.site.api.gridImportExport(rule);
+  }
+
+  private sendDisallowChargeFromGrid(disallow: boolean): Promise<unknown> {
+    const local = this.localCommands();
+    // The SDK types the rule as required, hence the cast.
+    return local
+      ? local.grid_import_export(disallow, null)
+      : this.site.api.gridImportExport(undefined as never, disallow);
+  }
+
   // Public action methods for Flow cards
   public async flowSetBackupReserve(percentage: number): Promise<void> {
     this.log(`Setting backup reserve to ${percentage}%`);
-    await this.action(this.site.api.setBackupReserve(percentage));
+    await this.action(this.sendBackupReserve(percentage));
   }
 
   public async flowSetOffGridVehicleChargingReserve(
@@ -657,13 +681,13 @@ export default class PowerwallDevice extends TeslemetryDevice {
     }
     this.assertCapabilitySupported("allow_export");
     this.log(`Setting allow export to ${mode}`);
-    await this.action(this.site.api.gridImportExport(mode));
+    await this.action(this.sendExportRule(mode));
   }
 
   public async flowSetOperationMode(
     mode: "self_consumption" | "backup" | "autonomous",
   ): Promise<void> {
     this.log(`Setting operation mode to ${mode}`);
-    await this.action(this.site.api.setOperationMode(mode));
+    await this.action(this.sendOperationMode(mode));
   }
 }
