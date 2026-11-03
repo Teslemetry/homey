@@ -71,6 +71,7 @@ function createFeed() {
   const timers = createIntervals();
   const app = {
     homey: { setInterval: timers.setInterval, clearInterval: timers.clearInterval },
+    handleLocalPowerwallRead: () => {},
     log: () => {},
     error: () => {},
   };

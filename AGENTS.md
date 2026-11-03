@@ -148,7 +148,9 @@ list; do not invent a Homey-only shape.
   `this.app.homey` never reaches the app; use a direct callback.
 - A device recovers from `"stream"`/`"auth"` unavailability only on its own
   product's next genuine (non-`isCache`) event, never on a reconnect or the
-  SDK's `connect` event.
+  SDK's `connect` event. A device its site's local Powerwall link feeds is
+  never marked `"stream"`/`"silent"` while that link reads, and recovers from
+  either on its next good read (`isLocallyLive()`).
 - `SSE_TOPICS` in `app.ts` is an exact allowlist. A wire event from a new
   topic needs an entry.
 - `site_id` arrives on the wire as a JSON number but sites are keyed by string.

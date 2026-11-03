@@ -6,6 +6,7 @@ import TeslemetryApp from "../.homeybuild/app.js";
 import PowerwallDevice from "../.homeybuild/drivers/battery/device.js";
 import VehicleDevice from "../.homeybuild/drivers/vehicle/device.js";
 import { configureTeslemetryStub } from "./support/teslemetry-api-stub.js";
+import { fakeGateway, PowerwallConnectionError } from "./support/tesla-fleet-api-powerwall-stub.js";
 
 /**
  * Issue #98's symptom class: one product's data stops while the SSE stream
@@ -49,6 +50,7 @@ function createHarness(t: { after: (fn: () => void) => void }) {
 
   const drivers: Record<string, { getDevices: () => unknown[] }> = {};
   const timers: Array<{ id: number; callback: () => void; delay: number }> = [];
+  const intervals = new Map<number, () => void>();
   let nextId = 1;
   const logs: string[] = [];
   const app = Object.assign(new TeslemetryApp(), {
@@ -62,6 +64,14 @@ function createHarness(t: { after: (fn: () => void) => void }) {
       clearTimeout: (id: number) => {
         const index = timers.findIndex((timer) => timer.id === id);
         if (index !== -1) timers.splice(index, 1);
+      },
+      setInterval: (callback: () => void) => {
+        const id = nextId++;
+        intervals.set(id, callback);
+        return id;
+      },
+      clearInterval: (id: number) => {
+        intervals.delete(id);
       },
       drivers: { getDrivers: () => drivers },
       flow: createFlowStub(),
@@ -93,7 +103,12 @@ function createHarness(t: { after: (fn: () => void) => void }) {
     }
     now = end;
   };
-  return { app, drivers, timers, logs, advance };
+  /** Runs one 5 s local Powerwall poll and lets it settle. */
+  const pollLocal = async () => {
+    for (const callback of intervals.values()) callback();
+    await new Promise((resolve) => setImmediate(resolve));
+  };
+  return { app, drivers, timers, logs, advance, pollLocal };
 }
 
 function createDeviceHomey(app: InstanceType<typeof TeslemetryApp>) {
@@ -312,4 +327,61 @@ test("credential teardown stops the silence sweep", async (t) => {
     0,
     "no sweep left scheduled after teardown",
   );
+});
+
+async function setupLocalPowerwall(t: { after: (fn: () => void) => void }) {
+  const setup = await setupPowerwall(t);
+  fakeGateway.liveStatus = async () => ({ response: { percentage_charged: 80 } });
+  await setup.app.enableLocalPowerwall(SITE_ID, { host: "192.168.1.50", password: "ABCDE" }, "pem");
+  t.after(() => setup.app.disableLocalPowerwall(SITE_ID));
+  await setup.pollLocal();
+  return setup;
+}
+
+test("a site its local link reads stays available through a silent cloud, until the link fails too", async (t) => {
+  const { state, advance, pollLocal } = await setupLocalPowerwall(t);
+
+  advance(10 * MINUTE);
+  assert.equal(state.available, true, "the gateway is still answering");
+
+  fakeGateway.liveStatus = async () => {
+    throw new PowerwallConnectionError("unreachable");
+  };
+  await pollLocal();
+  advance(SWEEP_MS);
+  assert.equal(state.available, false);
+  assert.equal(state.message, "error.product_silent");
+
+  fakeGateway.liveStatus = async () => ({ response: { percentage_charged: 80 } });
+  await pollLocal(); // skipped: the merge backs off after a failure
+  await pollLocal();
+  assert.equal(state.available, true, "the next good gateway read restores it");
+});
+
+test("a dropped stream does not mark a site its local link reads unavailable", async (t) => {
+  const { state, advance, sdk, timers } = await setupLocalPowerwall(t);
+
+  sdk().sse.emit("disconnect");
+  timers.find((timer) => timer.delay === 150_000)!.callback();
+  advance(10 * MINUTE);
+  assert.equal(state.available, true);
+});
+
+test("a rejected credential stays the reason through a dropped stream and a later good gateway read", async (t) => {
+  const { state, sdk, timers, pollLocal, drivers } = await setupLocalPowerwall(t);
+  const [device] = drivers.battery.getDevices() as Array<{ markUnavailable(reason: string, message: string): void }>;
+  fakeGateway.liveStatus = async () => {
+    throw new PowerwallConnectionError("unreachable");
+  };
+  await pollLocal();
+  device.markUnavailable("auth", "error.invalid_token");
+
+  sdk().sse.emit("disconnect");
+  timers.find((timer) => timer.delay === 150_000)!.callback();
+  fakeGateway.liveStatus = async () => ({ response: { percentage_charged: 80 } });
+  await pollLocal(); // skipped: the merge backs off after a failure
+  await pollLocal();
+
+  assert.equal(state.available, false);
+  assert.equal(state.message, "error.invalid_token");
 });

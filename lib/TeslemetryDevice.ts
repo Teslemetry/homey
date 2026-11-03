@@ -4,7 +4,7 @@ import type { EnergyDetails, SseEnergyTotals } from "@teslemetry/api";
 import type TeslemetryApp from "../app.js";
 import type TeslemetryDriver from "./TeslemetryDriver.js";
 import toError from "./toError.js";
-import type { LiveStatusSource } from "./LocalPowerwall.js";
+import type { LiveStatusSource, LocalPowerwallSite } from "./LocalPowerwall.js";
 
 /**
  * Every reason a device can be unavailable, each with its own recovery
@@ -30,6 +30,8 @@ import type { LiveStatusSource } from "./LocalPowerwall.js";
  *   has sent no genuine data past TeslemetryApp's product-silence threshold
  *   (vehicles get a warning instead, see VehicleDevice.markProductSilent());
  *   clears on this product's next genuine data event.
+ * A device fed by a healthy local Powerwall link (isLocallyLive()) is never
+ *   marked "stream" or "silent", and its link's next good read clears both.
  * - "connector": Wall Connector only - the site itself resolves, but its
  *   saved DIN hasn't appeared in that site's live_status past the miss
  *   grace period; clears once a live_status event reports that DIN again.
@@ -98,6 +100,9 @@ export default class TeslemetryDevice extends Homey.Device {
    * any previously tracked reason - the newest cause of unavailability wins.
    */
   public markUnavailable(reason: AvailabilityReason, message: string): void {
+    // A dropped stream must not hide a rejected credential, which only the
+    // product's own genuine event clears.
+    if (reason === "stream" && this.availabilityReason === "auth") return;
     this.availabilityReason = reason;
     this.setUnavailable(message).catch(this.error);
   }
@@ -161,7 +166,20 @@ export default class TeslemetryDevice extends Homey.Device {
    * cloud stream.
    */
   protected liveStatusSource(site: EnergyDetails): LiveStatusSource {
-    return this.homey.app.localPowerwallSites?.get(String(site.id))?.attach(site.sse) ?? site.sse;
+    this.localPowerwall = this.homey.app.localPowerwallSites?.get(String(site.id))?.attach(site.sse);
+    return this.localPowerwall ?? site.sse;
+  }
+
+  /** The local Powerwall link this device last bound its live_status to, if any. */
+  private localPowerwall?: LocalPowerwallSite;
+
+  /**
+   * Whether this device's live data is reaching it from a healthy local
+   * Powerwall link, so a silent or dropped cloud stream must not mark it
+   * unavailable.
+   */
+  public isLocallyLive(): boolean {
+    return this.localPowerwall?.healthy === true;
   }
 
   /**
