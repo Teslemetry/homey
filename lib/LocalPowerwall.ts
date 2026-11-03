@@ -12,6 +12,17 @@ export interface LocalGateway {
   password: string;
 }
 
+/**
+ * Backup reserve, operation mode and grid import/export, local first and on
+ * the cloud when the gateway is unhealthy or unreachable. Every other command
+ * has no local mapping and stays on the app's own cloud client.
+ */
+export interface LocalPowerwallCommands {
+  backup(percent: number): Promise<unknown>;
+  operation(mode: string): Promise<unknown>;
+  grid_import_export(disallowChargeFromGrid: boolean | null, exportRule: string | null): Promise<unknown>;
+}
+
 /** What a Powerwall, Gateway or Solar device needs from its live_status source. */
 export interface LiveStatusSource {
   on(event: "live_status", listener: (event: SseLiveStatus) => void): unknown;
@@ -41,20 +52,28 @@ export class LocalPowerwallSite extends EventEmitter {
   private stopped = false;
   private readonly timer: NodeJS.Timeout;
 
-  /** Loads `tesla-fleet-api/powerwall` only now, so a site that never enrols costs nothing. */
+  /** Loads `tesla-fleet-api` only now, so a site that never enrols costs nothing. */
   static async start(app: TeslemetryApp, siteId: string, gateway: LocalGateway, keyPem: string) {
     const { LiveStatusMerge, PowerwallClient, PowerwallEnergySite, ENERGY_LIVE_INTERVAL_MS } =
       await import("tesla-fleet-api/powerwall");
-    const { LOCAL_LIVE_STATUS_KEYS } = await import("tesla-fleet-api/router");
+    const { EnergySiteRouter, LOCAL_LIVE_STATUS_KEYS } = await import("tesla-fleet-api/router");
+    const { Teslemetry } = await import("tesla-fleet-api");
     const client = new PowerwallClient({
       host: gateway.host,
       gatewayPassword: gateway.password,
       rsaPrivateKeyPem: keyPem,
     });
-    const merge = new LiveStatusMerge(new PowerwallEnergySite(client), {}, {
+    const local = new PowerwallEnergySite(client);
+    const merge = new LiveStatusMerge(local, {}, {
       owned_keys: LOCAL_LIVE_STATUS_KEYS.filter((key) => key !== "island_status"),
     });
-    return new LocalPowerwallSite(app, siteId, client, merge, ENERGY_LIVE_INTERVAL_MS);
+    const cloud = new Teslemetry(app.oauth.getAccessToken).energySites!.create(Number(siteId));
+    const commands = new EnergySiteRouter([local, cloud], {
+      // A gateway that is not answering costs a command no wait at all.
+      health: () => merge.healthy === true,
+      logger: { debug: (message) => app.log(`Local Powerwall ${siteId}: ${message}`) },
+    });
+    return new LocalPowerwallSite(app, siteId, client, merge, commands, ENERGY_LIVE_INTERVAL_MS);
   }
 
   private constructor(
@@ -62,6 +81,7 @@ export class LocalPowerwallSite extends EventEmitter {
     readonly siteId: string,
     private readonly client: PowerwallClient,
     private readonly merge: LiveStatusMerge,
+    readonly commands: LocalPowerwallCommands,
     intervalMs: number,
   ) {
     super();

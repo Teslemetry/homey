@@ -7,6 +7,7 @@ export {
   ENERGY_LIVE_INTERVAL_MS,
   LiveStatusMerge,
   PowerwallAuthenticationError,
+  PowerwallCommandError,
   PowerwallConnectionError,
   PowerwallError,
   PowerwallKeyRejectedError,
@@ -17,6 +18,9 @@ export const fakeGateway = {
   liveStatus: async () => ({ response: {} }),
   /** Answers verify_local_gateway(client). */
   verify: async () => {},
+  /** Answers each local command; every call is recorded in `commands`. */
+  command: async () => {},
+  commands: [],
   /** Every client constructed, newest last. */
   clients: [],
 };
@@ -44,6 +48,24 @@ export class PowerwallEnergySite {
 
   live_status() {
     return fakeGateway.liveStatus(this.client);
+  }
+
+  backup(...args) {
+    return this.#command("backup", args);
+  }
+
+  operation(...args) {
+    return this.#command("operation", args);
+  }
+
+  grid_import_export(...args) {
+    return this.#command("grid_import_export", args);
+  }
+
+  async #command(name, args) {
+    fakeGateway.commands.push([name, ...args]);
+    await fakeGateway.command(name, args);
+    return { response: { code: 201, message: "", result: true } };
   }
 }
 
