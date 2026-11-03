@@ -10,6 +10,7 @@ import { LocalPowerwallSite } from "../.homeybuild/lib/LocalPowerwall.js";
 import {
   fakeGateway,
   PowerwallAuthenticationError,
+  PowerwallCommandError,
   PowerwallConnectionError,
   PowerwallKeyRejectedError,
 } from "./support/tesla-fleet-api-powerwall-stub.js";
@@ -420,6 +421,17 @@ test("a gateway that is not answering, or fails mid-command, leaves the command 
   await flaky.device.flowSetOperationMode("self_consumption");
   assert.deepEqual(flaky.cloudCalls, [["operation", "self_consumption"]]);
   flaky.site.stop();
+});
+
+test("a command the gateway refuses is not retried on the cloud", async () => {
+  const { device, cloudCalls, site } = await createEnrolledPowerwall(true);
+  fakeGateway.command = async () => {
+    throw new PowerwallCommandError("refused");
+  };
+  await assert.rejects(device.flowSetBackupReserve(30), PowerwallCommandError);
+  assert.deepEqual(fakeGateway.commands, [["backup", 30]]);
+  assert.deepEqual(cloudCalls, []);
+  site.stop();
 });
 
 test("a Powerwall on a site without a local link keeps every command on the Teslemetry client", async () => {

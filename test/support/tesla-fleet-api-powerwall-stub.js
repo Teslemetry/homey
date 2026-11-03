@@ -7,6 +7,7 @@ export {
   ENERGY_LIVE_INTERVAL_MS,
   LiveStatusMerge,
   PowerwallAuthenticationError,
+  PowerwallCommandError,
   PowerwallConnectionError,
   PowerwallError,
   PowerwallKeyRejectedError,
