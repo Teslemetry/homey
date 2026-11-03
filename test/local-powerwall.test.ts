@@ -545,3 +545,34 @@ test("an enrolled Powerwall device shows the gateway's backup reserve, and goes 
   assert.equal(capabilities.backup_reserve, 0.2);
   assert.equal(capabilities.operation_mode, "self_consumption");
 });
+
+test("a command's held value survives a tariff update, but a refused command is never held", async () => {
+  const { app, timers } = createFeed();
+  fakeCloud.site = { backup: async () => ({ response: { result: false, reason: "refused" } }) } as never;
+  const site = await LocalPowerwallSite.start(app as never, SITE_ID, GATEWAY, KEY_PEM);
+  await timers.tick();
+  const cloud = new FakeEnergySiteStream();
+  cloud.siteInfoDocument = { backup_reserve_percent: 20, tariff_content_v2: { code: "OLD" } };
+  cloud.cacheAndEmit("site_info", {});
+  site.attach(cloud as never);
+
+  await site.backup(30);
+  fakeGateway.localConfig = async () => {
+    throw new PowerwallConnectionError("unreachable");
+  };
+  await timers.tickEvery(30_000);
+  cloud.siteInfoDocument = { backup_reserve_percent: 20, tariff_content_v2: { code: "NEW" } };
+  cloud.cacheAndEmit("tariff_content_v2", {});
+  assert.equal(site.siteInfoDocument?.backup_reserve_percent, 30, "a tariff event is not a reserve report");
+  assert.deepEqual(site.siteInfoDocument?.tariff_content_v2, { code: "NEW" });
+
+  // The gateway stops answering, so the next command goes to the cloud, which refuses it.
+  fakeGateway.liveStatus = async () => {
+    throw new PowerwallConnectionError("unreachable");
+  };
+  await timers.tick();
+  cloud.cacheAndEmit("site_info", {});
+  await site.backup(50);
+  assert.equal(site.siteInfoDocument?.backup_reserve_percent, 20);
+  site.stop();
+});

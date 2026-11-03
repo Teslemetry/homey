@@ -34,6 +34,11 @@ export function isLocalGateway(value: unknown): value is LocalGateway {
   return typeof gateway?.host === "string" && typeof gateway.password === "string";
 }
 
+/** A device's refusal resolves as `{ response: { result: false } }` instead of throwing. */
+function refused(result: unknown): boolean {
+  return (result as { response?: { result?: unknown } } | null)?.response?.result === false;
+}
+
 /**
  * One enrolled site's local Powerwall link. It reads the gateway's
  * live_status every 5 s and overlays the keys the gateway owns on the latest
@@ -123,13 +128,13 @@ export class LocalPowerwallSite extends EventEmitter implements LocalPowerwallCo
 
   async backup(percent: number): Promise<unknown> {
     const result = await this.router.backup(percent);
-    this.hold("backup_reserve_percent", percent);
+    if (!refused(result)) this.hold("backup_reserve_percent", percent);
     return result;
   }
 
   async operation(mode: string): Promise<unknown> {
     const result = await this.router.operation(mode);
-    this.hold("default_real_mode", mode);
+    if (!refused(result)) this.hold("default_real_mode", mode);
     return result;
   }
 
@@ -143,7 +148,11 @@ export class LocalPowerwallSite extends EventEmitter implements LocalPowerwallCo
    * gateway alone cannot fill the rest of it.
    */
   get siteInfoDocument(): Record<string, unknown> | undefined {
-    return this.cloudInfo && (this.info.merged as Record<string, unknown>);
+    if (!this.cloudInfo) return undefined;
+    const { tariff_content_v2: _held, ...merged } = this.info.merged as Record<string, unknown>;
+    return "tariff_content_v2" in this.cloudInfo
+      ? { ...merged, tariff_content_v2: this.cloudInfo.tariff_content_v2 }
+      : merged;
   }
 
   /**
@@ -157,8 +166,8 @@ export class LocalPowerwallSite extends EventEmitter implements LocalPowerwallCo
     this.cloud = cloud;
     // Each replays the stream's cached payload synchronously.
     cloud.on("live_status", this.onCloud);
-    cloud.on("site_info", this.onCloudInfo);
-    cloud.on("tariff_content_v2", this.onCloudInfo);
+    cloud.on("site_info", this.onCloudSiteInfo);
+    cloud.on("tariff_content_v2", this.onCloudTariff);
     return this;
   }
 
@@ -186,16 +195,25 @@ export class LocalPowerwallSite extends EventEmitter implements LocalPowerwallCo
 
   private detach(): void {
     this.cloud?.off("live_status", this.onCloud);
-    this.cloud?.off("site_info", this.onCloudInfo);
-    this.cloud?.off("tariff_content_v2", this.onCloudInfo);
+    this.cloud?.off("site_info", this.onCloudSiteInfo);
+    this.cloud?.off("tariff_content_v2", this.onCloudTariff);
     this.cloud = undefined;
   }
 
-  private onCloudInfo = () => {
+  /** A site_info report covers every held command value. */
+  private onCloudSiteInfo = () => {
     const document = this.cloud?.siteInfoDocument;
     if (!document) return;
     this.cloudInfo = document;
     this.info.set_cloud(document as SiteInfoResponse);
+    this.emit("site_info");
+  };
+
+  /** A tariff change says nothing of the reserve or mode, so held values stay. */
+  private onCloudTariff = () => {
+    const document = this.cloud?.siteInfoDocument;
+    if (!document) return;
+    this.cloudInfo = document;
     this.emit("site_info");
   };
 
