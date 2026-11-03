@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import TeslemetryApp from "../.homeybuild/app.js";
 import PowerwallDevice from "../.homeybuild/drivers/battery/device.js";
 import GatewayDevice from "../.homeybuild/drivers/gateway/device.js";
+import SolarDevice from "../.homeybuild/drivers/solar/device.js";
 import { configureTeslemetryStub } from "./support/teslemetry-api-stub.js";
 import { fakeGateway, PowerwallConnectionError } from "./support/tesla-fleet-api-powerwall-stub.js";
 import { fakeCloud } from "./support/tesla-fleet-api-stub.js";
@@ -21,7 +22,7 @@ function createFlowStub() {
 }
 
 function createDevice(
-  Device: typeof PowerwallDevice | typeof GatewayDevice,
+  Device: typeof PowerwallDevice | typeof GatewayDevice | typeof SolarDevice,
   homey: Record<string, unknown>,
   capabilities: Record<string, unknown>,
   extra: Record<string, unknown> = {},
@@ -94,7 +95,7 @@ async function setupOfflineBoot(t: { after: (fn: () => void) => void }) {
   }));
   fakeCloud.site = {} as never;
   fakeGateway.commands.length = 0;
-  fakeGateway.liveStatus = async () => ({ response: { percentage_charged: 64, grid_power: -300 } });
+  fakeGateway.liveStatus = async () => ({ response: { percentage_charged: 64, grid_power: -300, solar_power: 4200 } });
   await app.onInit();
   assert.equal(app.isReady(), false, "no Products generation could be built");
 
@@ -109,6 +110,9 @@ async function setupOfflineBoot(t: { after: (fn: () => void) => void }) {
   const gateway = createDevice(GatewayDevice, deviceHomey, { measure_power: null });
   drivers.gateway = { getDevices: () => [gateway.device] };
   await gateway.device.onInit();
+  const solar = createDevice(SolarDevice, deviceHomey, { measure_power: null });
+  drivers.solar = { getDevices: () => [solar.device] };
+  await solar.device.onInit();
 
   const store: Record<string, unknown> = {
     local_gateway: { host: "192.168.1.50", password: "ABCDE" },
@@ -126,19 +130,22 @@ async function setupOfflineBoot(t: { after: (fn: () => void) => void }) {
     for (const callback of intervals.values()) callback();
     await new Promise((resolve) => setImmediate(resolve));
   };
-  return { app, gateway, powerwall, pollLocal };
+  return { app, gateway, solar, powerwall, pollLocal };
 }
 
 test("after a restart with no internet, an enrolled site's devices read the gateway and are available while it answers", async (t) => {
-  const { gateway, powerwall, pollLocal } = await setupOfflineBoot(t);
+  const { gateway, solar, powerwall, pollLocal } = await setupOfflineBoot(t);
   assert.equal(powerwall.state.available, false, "nothing read yet");
   assert.equal(gateway.state.available, false);
+  assert.equal(solar.state.available, false);
 
   await pollLocal();
   assert.equal(powerwall.state.available, true);
   assert.equal(gateway.state.available, true, "the Gateway device bound to the link once it started");
   assert.equal(powerwall.device.getCapabilityValue("measure_battery"), 64);
   assert.equal(gateway.device.getCapabilityValue("measure_power"), -300);
+  assert.equal(solar.state.available, true);
+  assert.equal(solar.device.getCapabilityValue("measure_power"), 4200);
 
   fakeGateway.liveStatus = async () => {
     throw new PowerwallConnectionError("unreachable");
@@ -147,6 +154,8 @@ test("after a restart with no internet, an enrolled site's devices read the gate
   assert.equal(powerwall.state.available, false);
   assert.equal(powerwall.state.message, "error.teslemetry_connecting");
   assert.equal(gateway.state.available, false);
+  assert.equal(solar.state.available, false);
+  assert.equal(solar.state.message, "error.teslemetry_connecting");
 });
 
 test("offline, local commands still reach the gateway and cloud-only ones say Teslemetry is not connected", async (t) => {
