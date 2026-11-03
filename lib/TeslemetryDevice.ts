@@ -100,6 +100,9 @@ export default class TeslemetryDevice extends Homey.Device {
    * any previously tracked reason - the newest cause of unavailability wins.
    */
   public markUnavailable(reason: AvailabilityReason, message: string): void {
+    // A dropped stream must not hide a rejected credential, which only the
+    // product's own genuine event clears.
+    if (reason === "stream" && this.availabilityReason === "auth") return;
     this.availabilityReason = reason;
     this.setUnavailable(message).catch(this.error);
   }

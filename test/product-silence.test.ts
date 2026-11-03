@@ -366,3 +366,22 @@ test("a dropped stream does not mark a site its local link reads unavailable", a
   advance(10 * MINUTE);
   assert.equal(state.available, true);
 });
+
+test("a rejected credential stays the reason through a dropped stream and a later good gateway read", async (t) => {
+  const { state, sdk, timers, pollLocal, drivers } = await setupLocalPowerwall(t);
+  const [device] = drivers.battery.getDevices() as Array<{ markUnavailable(reason: string, message: string): void }>;
+  fakeGateway.liveStatus = async () => {
+    throw new PowerwallConnectionError("unreachable");
+  };
+  await pollLocal();
+  device.markUnavailable("auth", "error.invalid_token");
+
+  sdk().sse.emit("disconnect");
+  timers.find((timer) => timer.delay === 150_000)!.callback();
+  fakeGateway.liveStatus = async () => ({ response: { percentage_charged: 80 } });
+  await pollLocal(); // skipped: the merge backs off after a failure
+  await pollLocal();
+
+  assert.equal(state.available, false);
+  assert.equal(state.message, "error.invalid_token");
+});
