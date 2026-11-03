@@ -31,7 +31,8 @@ import type { LiveStatusSource, LocalPowerwallSite } from "./LocalPowerwall.js";
  *   (vehicles get a warning instead, see VehicleDevice.markProductSilent());
  *   clears on this product's next genuine data event.
  * A device fed by a healthy local Powerwall link (isLocallyLive()) is never
- *   marked "stream" or "silent", and its link's next good read clears both.
+ *   marked "stream" or "silent", and its link's next good read clears both
+ *   (and "startup", while there is no Products generation).
  * - "connector": Wall Connector only - the site itself resolves, but its
  *   saved DIN hasn't appeared in that site's live_status past the miss
  *   grace period; clears once a live_status event reports that DIN again.
@@ -167,7 +168,24 @@ export default class TeslemetryDevice extends Homey.Device {
    */
   protected liveStatusSource(site: EnergyDetails): LiveStatusSource {
     this.localPowerwall = this.homey.app.localPowerwallSites?.get(String(site.id))?.attach(site.sse);
+    // Bound to the link alone, the device is available only while it reads.
+    if (site === this.localPowerwall?.standIn && !this.localPowerwall.healthy) this.markAppNotReady();
     return this.localPowerwall ?? site.sse;
+  }
+
+  /** The energy site this device belongs to, for an energy device. */
+  public getSiteId(): string | undefined {
+    return undefined;
+  }
+
+  /**
+   * With no Products generation to bind to, such as after a restart during an
+   * internet outage, a Powerwall, Gateway or Solar device on an enrolled site
+   * binds to its local Powerwall link alone.
+   */
+  protected localOnlySite(siteId: string): EnergyDetails | undefined {
+    if (this.homey.app.isReady?.() ?? true) return undefined;
+    return this.homey.app.localPowerwallSites?.get(siteId)?.standIn;
   }
 
   /** The local Powerwall link this device last bound its live_status to, if any. */

@@ -73,6 +73,7 @@ function createFeed() {
   const app = {
     homey: { setInterval: timers.setInterval, clearInterval: timers.clearInterval },
     handleLocalPowerwallRead: () => {},
+    handleLocalPowerwallLost: () => {},
     oauth: { getAccessToken: async () => "token" },
     log: () => {},
     error: () => {},

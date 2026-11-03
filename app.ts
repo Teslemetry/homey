@@ -1123,11 +1123,28 @@ export default class TeslemetryApp extends Homey.App {
       if (!device.isLocallyLive()) continue;
       device.clearAvailabilityReason('stream');
       device.clearProductSilence();
+      if (!this.ready) device.clearAvailabilityReason('startup');
     }
   }
 
+  /**
+   * A site's local link stopped reading its gateway. With no Products
+   * generation the devices bound to it alone have nothing left; otherwise
+   * the cloud's own watchdogs take over.
+   */
+  public handleLocalPowerwallLost(siteId: string): void {
+    if (this.ready) return;
+    const { reason, message } = this.notReadyAvailability();
+    for (const device of this.getDevicesForProductKey(`site:${siteId}`)) {
+      device.markUnavailable(reason, message);
+    }
+  }
+
+  /** Every device of the site, bound or not, so an unbound one can bind to the link. */
   private rebindSiteDevices(siteId: string): void {
-    for (const device of this.getDevicesForProductKey(`site:${siteId}`)) device.rebindProduct();
+    this.forEachTeslemetryDevice((device) => {
+      if (device.getSiteId() === siteId) device.rebindProduct();
+    });
   }
 
   private forEachTeslemetryDevice(callback: (device: TeslemetryDevice) => void): void {

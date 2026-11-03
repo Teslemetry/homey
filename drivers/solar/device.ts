@@ -79,7 +79,7 @@ export default class SolarDevice extends TeslemetryDevice {
 
   private resolveAndBindSite(): void {
     const siteId = this.getSiteId();
-    const site = this.homey.app.products?.energySites?.[siteId];
+    const site = this.homey.app.products?.energySites?.[siteId] ?? this.localOnlySite(siteId);
     if (!site) {
       if (!(this.homey.app.isReady?.() ?? true)) {
         this.markAppNotReady();
