@@ -7,6 +7,8 @@ import TeslemetryOAuth2Client from './lib/TeslemetryOAuth2Client.js';
 import toError from './lib/toError.js';
 import TeslemetryDevice from './lib/TeslemetryDevice.js';
 import type { AvailabilityReason } from './lib/TeslemetryDevice.js';
+import { LocalPowerwallSite } from './lib/LocalPowerwall.js';
+import type { LocalGateway } from './lib/LocalPowerwall.js';
 import type { TeslemetryApiError } from './@types/error.d.ts';
 import type VehicleDevice from './drivers/vehicle/device.js';
 import type PowerwallDevice from './drivers/battery/device.js';
@@ -65,6 +67,9 @@ export default class TeslemetryApp extends Homey.App {
   public oauth!: TeslemetryOAuth2Client;
   public teslemetry?: Teslemetry;
   public products?: Products;
+
+  /** Each enrolled site's local Powerwall link, by site id. Undefined until a site enrols. */
+  public localPowerwallSites?: Map<string, LocalPowerwallSite>;
 
   // Every attempt to build/rebuild teslemetry/products is chained onto this
   // promise, so overlapping callers (concurrent getProducts()/getTeslemetry()
@@ -1085,6 +1090,32 @@ export default class TeslemetryApp extends Homey.App {
    */
   private rebindAllDeviceProducts(): void {
     this.forEachTeslemetryDevice((device) => device.rebindProduct());
+  }
+
+  /**
+   * Starts (or restarts, with new credentials) a site's local Powerwall link
+   * and rebinds the site's devices, so its Gateway and Solar devices move
+   * onto the merged live_status too. Called by the Powerwall device.
+   */
+  public async enableLocalPowerwall(siteId: string, gateway: LocalGateway, keyPem: string): Promise<void> {
+    const site = await LocalPowerwallSite.start(this, siteId, gateway, keyPem);
+    this.localPowerwallSites ??= new Map();
+    this.localPowerwallSites.get(siteId)?.stop();
+    this.localPowerwallSites.set(siteId, site);
+    this.rebindSiteDevices(siteId);
+  }
+
+  /** Stops a site's local Powerwall link and puts its devices back on the cloud stream. */
+  public disableLocalPowerwall(siteId: string): void {
+    const site = this.localPowerwallSites?.get(siteId);
+    if (!site) return;
+    site.stop();
+    this.localPowerwallSites?.delete(siteId);
+    this.rebindSiteDevices(siteId);
+  }
+
+  private rebindSiteDevices(siteId: string): void {
+    for (const device of this.getDevicesForProductKey(`site:${siteId}`)) device.rebindProduct();
   }
 
   private forEachTeslemetryDevice(callback: (device: TeslemetryDevice) => void): void {

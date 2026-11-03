@@ -27,7 +27,7 @@ Always run `npm run app:validate` before committing.
   npm run build && node --experimental-loader ./test/support/loader.mjs --test test/<name>.test.ts
   ```
 
-- `test/support/loader.mjs` redirects `homey` and `@teslemetry/api` to stubs in
+- `test/support/loader.mjs` redirects `homey`, `@teslemetry/api` and `tesla-fleet-api` to stubs in
   `test/support/`. Drive the SDK via `configureTeslemetryStub(factory)`.
 - `npm test` resolves from the repo root `node_modules`, so it cannot catch a
   dependency missing from the packaged bundle. `smoke:packaged-build` does.

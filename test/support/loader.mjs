@@ -18,5 +18,18 @@ export async function resolve(specifier, context, nextResolve) {
       context,
     );
   }
+  // The local Powerwall path: the real library, minus its network edges.
+  if (specifier === "tesla-fleet-api") {
+    return nextResolve(
+      new URL("./tesla-fleet-api-stub.js", import.meta.url).href,
+      context,
+    );
+  }
+  if (specifier === "tesla-fleet-api/powerwall") {
+    return nextResolve(
+      new URL("./tesla-fleet-api-powerwall-stub.js", import.meta.url).href,
+      context,
+    );
+  }
   return nextResolve(specifier, context);
 }

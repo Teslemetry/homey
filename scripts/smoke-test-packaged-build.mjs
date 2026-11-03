@@ -35,9 +35,13 @@ try {
     }
   }
 
+  // Loaded with a dynamic import() only once a Powerwall enrols for local
+  // control (lib/LocalPowerwall.ts), so no entry point above pulls them in.
+  const lazyImports = ["tesla-fleet-api", "tesla-fleet-api/powerwall", "tesla-fleet-api/router"];
+
   const failures = [];
-  for (const entryPoint of entryPoints) {
-    const fullPath = path.join(isolatedDir, entryPoint);
+  for (const entryPoint of [...entryPoints, ...lazyImports]) {
+    const fullPath = lazyImports.includes(entryPoint) ? entryPoint : path.join(isolatedDir, entryPoint);
     try {
       execFileSync(
         process.execPath,
@@ -65,7 +69,7 @@ try {
     process.exit(1);
   }
 
-  console.log(`\nPackaged build smoke test passed: ${entryPoints.length} entry points load cleanly from an isolated .homeybuild copy.`);
+  console.log(`\nPackaged build smoke test passed: ${entryPoints.length} entry points and ${lazyImports.length} lazy imports load cleanly from an isolated .homeybuild copy.`);
 } finally {
   rmSync(isolatedDir, { recursive: true, force: true });
 }

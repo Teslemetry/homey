@@ -24,5 +24,14 @@
   },
   "warning": {
     "no_data_since": "Aucune donnée depuis __time__"
+  },
+  "local_powerwall": {
+    "password_required": "Saisissez le mot de passe de la passerelle.",
+    "approve": "Basculez l'interrupteur marche/arrêt de votre Powerwall principal sur arrêt puis sur marche pour approuver Homey, puis enregistrez à nouveau. Ce n'est nécessaire qu'une fois.",
+    "host_not_found": "Teslemetry n'a pas trouvé l'adresse de la passerelle. Saisissez-la, puis enregistrez à nouveau.",
+    "wrong_password": "La passerelle n'a pas accepté ce mot de passe.",
+    "gateway_unreachable": "Homey n'a pas pu joindre la passerelle. Vérifiez son adresse et qu'elle est sur le même réseau que Homey, puis enregistrez à nouveau.",
+    "cloud_unreachable": "Tesla ne peut pas joindre votre Powerwall pour le moment. Réessayez plus tard.",
+    "connected": "Connecté à la passerelle à l'adresse __host__."
   }
 }

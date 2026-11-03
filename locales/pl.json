@@ -24,5 +24,14 @@
   },
   "warning": {
     "no_data_since": "Brak danych od __time__"
+  },
+  "local_powerwall": {
+    "password_required": "Wpisz hasło bramy.",
+    "approve": "Wyłącz i ponownie włącz przełącznik głównego Powerwalla, aby zatwierdzić Homey, a potem zapisz ponownie. Wystarczy zrobić to raz.",
+    "host_not_found": "Teslemetry nie znalazło adresu bramy. Wpisz go i zapisz ponownie.",
+    "wrong_password": "Brama nie przyjęła tego hasła.",
+    "gateway_unreachable": "Homey nie może połączyć się z bramą. Sprawdź jej adres i czy jest w tej samej sieci co Homey, a potem zapisz ponownie.",
+    "cloud_unreachable": "Tesla nie może teraz połączyć się z Powerwallem. Spróbuj później.",
+    "connected": "Połączono z bramą pod adresem __host__."
   }
 }

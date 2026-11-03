@@ -156,11 +156,12 @@ export default class SolarDevice extends TeslemetryDevice {
     // Essential behavior: live data and the today/cumulative totals.
     // Registered before the optional site-info timezone lookup below so a
     // malformed cached timezone can never leave this device without them.
-    this.site.sse.on("live_status", onLiveStatus);
+    const live = this.liveStatusSource(site);
+    live.on("live_status", onLiveStatus);
     this.site.sse.on("energy_totals", onEnergyTotals);
 
     this.pollingCleanup = [
-      () => site.sse.off("live_status", onLiveStatus),
+      () => live.off("live_status", onLiveStatus),
       () => site.sse.off("energy_totals", onEnergyTotals),
       () => {
         if (this.midnightTimer !== undefined) {
