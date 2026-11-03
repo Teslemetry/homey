@@ -1,3 +1,4 @@
+import type { EventEmitter } from "node:events";
 import {
   EnergyDetails,
   getTariffPeriods,
@@ -320,10 +321,11 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.update("alarm_generic.storm", data.storm_mode_active);
     };
 
+    // An enrolled site's link overlays the gateway's reserve and mode.
+    const info: Pick<EventEmitter, "on" | "off"> & { siteInfoDocument?: unknown } =
+      this.localCommands() ?? site.sse;
     const applySiteInfo = () => {
-      const data = this.site.sse.siteInfoDocument as
-        | SiteInfoDocument
-        | undefined;
+      const data = info.siteInfoDocument as SiteInfoDocument | undefined;
       if (!data) return;
 
       this.reconcileGatedCapabilities();
@@ -481,13 +483,13 @@ export default class PowerwallDevice extends TeslemetryDevice {
     // synchronously from `site.sse.on`, and `applySiteInfo` itself never
     // throws (its only fallible step, tariff resolution, is caught above),
     // so this can't undo the essential registration above.
-    this.site.sse.on("site_info", applySiteInfo);
-    this.site.sse.on("tariff_content_v2", applySiteInfo);
+    info.on("site_info", applySiteInfo);
+    info.on("tariff_content_v2", applySiteInfo);
     this.site.sse.on("energy_totals", onEnergyTotals);
 
     this.pollingCleanup.push(
-      () => site.sse.off("site_info", applySiteInfo),
-      () => site.sse.off("tariff_content_v2", applySiteInfo),
+      () => info.off("site_info", applySiteInfo),
+      () => info.off("tariff_content_v2", applySiteInfo),
       () => site.sse.off("energy_totals", onEnergyTotals),
     );
 
@@ -614,12 +616,12 @@ export default class PowerwallDevice extends TeslemetryDevice {
   }
 
   /**
-   * The site's local-first command router once its local Powerwall link is
-   * enrolled. Only backup reserve, operation mode and grid import/export have
-   * a local mapping; everything else stays on `this.site.api`.
+   * The site's local Powerwall link once enrolled, which routes backup
+   * reserve, operation mode and grid import/export local first. Everything
+   * else stays on `this.site.api`.
    */
   private localCommands() {
-    return this.homey.app.localPowerwallSites?.get(this.getSiteId())?.commands;
+    return this.homey.app.localPowerwallSites?.get(this.getSiteId());
   }
 
   private sendBackupReserve(percent: number): Promise<unknown> {

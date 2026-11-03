@@ -4,6 +4,7 @@
 // replaced, with each read answered by fakeGateway.
 // oxlint-disable max-classes-per-file -- one fake per library class the app constructs
 export {
+  ENERGY_CONFIG_INTERVAL_MS,
   ENERGY_LIVE_INTERVAL_MS,
   LiveStatusMerge,
   PowerwallAuthenticationError,
@@ -11,11 +12,14 @@ export {
   PowerwallConnectionError,
   PowerwallError,
   PowerwallKeyRejectedError,
+  SiteInfoMerge,
 } from "../../node_modules/tesla-fleet-api/dist/powerwall.mjs";
 
 export const fakeGateway = {
   /** Answers PowerwallEnergySite.live_status() for every client. */
   liveStatus: async () => ({ response: {} }),
+  /** Answers PowerwallEnergySite.local_config(). */
+  localConfig: async () => ({}),
   /** Answers verify_local_gateway(client). */
   verify: async () => {},
   /** Answers each local command; every call is recorded in `commands`. */
@@ -48,6 +52,10 @@ export class PowerwallEnergySite {
 
   live_status() {
     return fakeGateway.liveStatus(this.client);
+  }
+
+  local_config() {
+    return fakeGateway.localConfig(this.client);
   }
 
   backup(...args) {

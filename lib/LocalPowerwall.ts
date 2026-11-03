@@ -2,8 +2,8 @@ import { createPublicKey, generateKeyPair } from "node:crypto";
 import { EventEmitter } from "node:events";
 import { promisify } from "node:util";
 import type { EnergyDetails, SseLiveStatus, TeslemetryEnergySiteStream } from "@teslemetry/api";
-import type { LiveStatusMerge, PowerwallClient } from "tesla-fleet-api/powerwall";
-import type { LiveStatusResponse } from "tesla-fleet-api/types";
+import type { LiveStatusMerge, PowerwallClient, SiteInfoMerge } from "tesla-fleet-api/powerwall";
+import type { LiveStatusResponse, SiteInfoResponse } from "tesla-fleet-api/types";
 import type TeslemetryApp from "../app.js";
 
 /** A verified gateway, as the Powerwall device stores it once enrolment succeeds. */
@@ -34,18 +34,26 @@ export function isLocalGateway(value: unknown): value is LocalGateway {
   return typeof gateway?.host === "string" && typeof gateway.password === "string";
 }
 
+/** A device's refusal resolves as `{ response: { result: false } }` instead of throwing. */
+function refused(result: unknown): boolean {
+  return (result as { response?: { result?: unknown } } | null)?.response?.result === false;
+}
+
 /**
  * One enrolled site's local Powerwall link. It reads the gateway's
  * live_status every 5 s and overlays the keys the gateway owns on the latest
  * cloud live_status, so the site's Powerwall, Gateway and Solar devices get
  * one merged view. Every other key keeps its cloud value, and a failed read
- * falls back to the cloud values (LiveStatusMerge).
+ * falls back to the cloud values (LiveStatusMerge). Every 30 s it does the
+ * same for the backup reserve and operation mode in site_info (SiteInfoMerge).
  *
  * `island_status` is never overlaid: the gateway only knows "off grid", and
  * the grid outage and island test Flow cards need the cloud's reason.
  */
-export class LocalPowerwallSite extends EventEmitter {
+export class LocalPowerwallSite extends EventEmitter implements LocalPowerwallCommands {
   private cloud?: TeslemetryEnergySiteStream;
+  private cloudInfo?: Record<string, unknown>;
+  private readonly configTimer: NodeJS.Timeout;
   private cloudEvent?: SseLiveStatus;
   private latest?: SseLiveStatus;
   private lastHealth: boolean | null = null;
@@ -60,8 +68,14 @@ export class LocalPowerwallSite extends EventEmitter {
 
   /** Loads `tesla-fleet-api` only now, so a site that never enrols costs nothing. */
   static async start(app: TeslemetryApp, siteId: string, gateway: LocalGateway, keyPem: string) {
-    const { LiveStatusMerge, PowerwallClient, PowerwallEnergySite, ENERGY_LIVE_INTERVAL_MS } =
-      await import("tesla-fleet-api/powerwall");
+    const {
+      ENERGY_CONFIG_INTERVAL_MS,
+      ENERGY_LIVE_INTERVAL_MS,
+      LiveStatusMerge,
+      PowerwallClient,
+      PowerwallEnergySite,
+      SiteInfoMerge,
+    } = await import("tesla-fleet-api/powerwall");
     const { EnergySiteRouter, LOCAL_LIVE_STATUS_KEYS } = await import("tesla-fleet-api/router");
     const { Teslemetry } = await import("tesla-fleet-api");
     const client = new PowerwallClient({
@@ -79,7 +93,11 @@ export class LocalPowerwallSite extends EventEmitter {
       health: () => merge.healthy === true,
       logger: { debug: (message) => app.log(`Local Powerwall ${siteId}: ${message}`) },
     });
-    return new LocalPowerwallSite(app, siteId, client, merge, commands, ENERGY_LIVE_INTERVAL_MS);
+    const info = new SiteInfoMerge(local, {} as SiteInfoResponse);
+    return new LocalPowerwallSite(app, siteId, client, merge, info, commands, {
+      live: ENERGY_LIVE_INTERVAL_MS,
+      config: ENERGY_CONFIG_INTERVAL_MS,
+    });
   }
 
   private constructor(
@@ -87,8 +105,9 @@ export class LocalPowerwallSite extends EventEmitter {
     readonly siteId: string,
     private readonly client: PowerwallClient,
     private readonly merge: LiveStatusMerge,
-    readonly commands: LocalPowerwallCommands,
-    intervalMs: number,
+    private readonly info: SiteInfoMerge,
+    private readonly router: LocalPowerwallCommands,
+    intervalMs: { live: number; config: number },
   ) {
     super();
     const offline = () => Promise.reject(new Error(app.homey.__("error.teslemetry_connecting")));
@@ -101,7 +120,39 @@ export class LocalPowerwallSite extends EventEmitter {
     } as unknown as EnergyDetails;
     this.timer = app.homey.setInterval(() => {
       this.poll().catch((error) => this.app.error(`Local Powerwall ${siteId}: poll failed`, error));
-    }, intervalMs);
+    }, intervalMs.live);
+    this.configTimer = app.homey.setInterval(() => {
+      this.pollConfig().catch((error) => this.app.error(`Local Powerwall ${siteId}: config poll failed`, error));
+    }, intervalMs.config);
+  }
+
+  async backup(percent: number): Promise<unknown> {
+    const result = await this.router.backup(percent);
+    if (!refused(result)) this.hold("backup_reserve_percent", percent);
+    return result;
+  }
+
+  async operation(mode: string): Promise<unknown> {
+    const result = await this.router.operation(mode);
+    if (!refused(result)) this.hold("default_real_mode", mode);
+    return result;
+  }
+
+  grid_import_export(disallowChargeFromGrid: boolean | null, exportRule: string | null): Promise<unknown> {
+    return this.router.grid_import_export(disallowChargeFromGrid, exportRule);
+  }
+
+  /**
+   * The cloud's site_info document with the gateway's backup reserve and
+   * operation mode overlaid. Undefined until the cloud has sent one: the
+   * gateway alone cannot fill the rest of it.
+   */
+  get siteInfoDocument(): Record<string, unknown> | undefined {
+    if (!this.cloudInfo) return undefined;
+    const { tariff_content_v2: _held, ...merged } = this.info.merged as Record<string, unknown>;
+    return "tariff_content_v2" in this.cloudInfo
+      ? { ...merged, tariff_content_v2: this.cloudInfo.tariff_content_v2 }
+      : merged;
   }
 
   /**
@@ -111,17 +162,20 @@ export class LocalPowerwallSite extends EventEmitter {
    */
   attach(cloud: TeslemetryEnergySiteStream): this {
     if (this.cloud === cloud) return this;
-    this.cloud?.off("live_status", this.onCloud);
+    this.detach();
     this.cloud = cloud;
-    // Replays the stream's cached live_status synchronously.
+    // Each replays the stream's cached payload synchronously.
     cloud.on("live_status", this.onCloud);
+    cloud.on("site_info", this.onCloudSiteInfo);
+    cloud.on("tariff_content_v2", this.onCloudTariff);
     return this;
   }
 
-  /** Replays the latest merged live_status to a new listener, as the cloud stream does. */
+  /** Replays the latest merged view to a new listener, as the cloud stream does. */
   on(event: string | symbol, listener: (...args: any[]) => void): this {
     super.on(event, listener);
     if (event === "live_status" && this.latest) listener(this.latest);
+    if (event === "site_info" && this.cloudInfo) listener();
     return this;
   }
 
@@ -133,10 +187,44 @@ export class LocalPowerwallSite extends EventEmitter {
   stop(): void {
     this.stopped = true;
     this.app.homey.clearInterval(this.timer);
-    this.cloud?.off("live_status", this.onCloud);
-    this.cloud = undefined;
+    this.app.homey.clearInterval(this.configTimer);
+    this.detach();
     this.client.close();
     this.removeAllListeners();
+  }
+
+  private detach(): void {
+    this.cloud?.off("live_status", this.onCloud);
+    this.cloud?.off("site_info", this.onCloudSiteInfo);
+    this.cloud?.off("tariff_content_v2", this.onCloudTariff);
+    this.cloud = undefined;
+  }
+
+  /** A site_info report covers every held command value. */
+  private onCloudSiteInfo = () => {
+    const document = this.cloud?.siteInfoDocument;
+    if (!document) return;
+    this.cloudInfo = document;
+    this.info.set_cloud(document as SiteInfoResponse);
+    this.emit("site_info");
+  };
+
+  /** A tariff change says nothing of the reserve or mode, so held values stay. */
+  private onCloudTariff = () => {
+    const document = this.cloud?.siteInfoDocument;
+    if (!document) return;
+    this.cloudInfo = document;
+    this.emit("site_info");
+  };
+
+  private async pollConfig(): Promise<void> {
+    if ((await this.info.poll()) !== null && this.cloudInfo) this.emit("site_info");
+  }
+
+  /** Keeps a command's value through a config read that started before it. */
+  private hold(key: string, value: unknown): void {
+    this.info.hold_command_value(key, value);
+    if (this.cloudInfo) this.emit("site_info");
   }
 
   private onCloud = (event: SseLiveStatus) => {

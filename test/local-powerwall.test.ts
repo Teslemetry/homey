@@ -49,13 +49,20 @@ class FakeEnergySiteStream extends EventEmitter {
 
 function createIntervals() {
   const intervals = new Map<number, () => void>();
+  const delays = new Map<number, number>();
   let nextId = 1;
   return {
     intervals,
-    setInterval: (callback: () => void) => {
+    setInterval: (callback: () => void, delay: number) => {
       const id = nextId++;
       intervals.set(id, callback);
+      delays.set(id, delay);
       return id;
+    },
+    /** Runs the intervals of one period once and lets them settle. */
+    tickEvery: async (delay: number) => {
+      for (const [id, callback] of intervals) if (delays.get(id) === delay) callback();
+      await new Promise((resolve) => setImmediate(resolve));
     },
     clearInterval: (id: number) => {
       intervals.delete(id);
@@ -85,6 +92,7 @@ test.beforeEach(() => {
   fakeGateway.clients.length = 0;
   fakeGateway.liveStatus = async () => ({ response: {} });
   fakeGateway.verify = async () => {};
+  fakeGateway.localConfig = async () => ({});
   fakeGateway.command = async () => {};
   fakeGateway.commands.length = 0;
   fakeCloud.site = {} as never;
@@ -442,5 +450,129 @@ test("a Powerwall on a site without a local link keeps every command on the Tesl
   await device.flowSetBackupReserve(30);
   assert.deepEqual(cloudCalls, [["teslemetry-api", "setBackupReserve"]]);
   assert.deepEqual(fakeGateway.commands, []);
+  site.stop();
+});
+
+test("an enrolled site's backup reserve and operation mode come from its gateway, over the cloud's site_info", async () => {
+  const { app, timers } = createFeed();
+  const site = await LocalPowerwallSite.start(app as never, SITE_ID, GATEWAY, KEY_PEM);
+  const cloud = new FakeEnergySiteStream();
+  site.attach(cloud as never);
+  fakeGateway.localConfig = async () => ({ backup_reserve_percent: 45, default_real_mode: "backup" });
+  await timers.tickEvery(30_000);
+  assert.equal(site.siteInfoDocument, undefined, "the gateway alone cannot fill site_info");
+
+  let updates = 0;
+  site.on("site_info", () => updates++);
+  cloud.siteInfoDocument = { backup_reserve_percent: 20, default_real_mode: "self_consumption", installation_time_zone: "Australia/Brisbane" };
+  cloud.cacheAndEmit("site_info", {});
+  await timers.tickEvery(30_000);
+
+  assert.deepEqual(site.siteInfoDocument, {
+    backup_reserve_percent: 45,
+    default_real_mode: "backup",
+    installation_time_zone: "Australia/Brisbane",
+  });
+  assert.equal(updates, 2);
+  site.stop();
+});
+
+test("a command's value survives a config read that started before it", async () => {
+  const { app, timers } = createFeed();
+  const site = await LocalPowerwallSite.start(app as never, SITE_ID, GATEWAY, KEY_PEM);
+  await timers.tick();
+  const cloud = new FakeEnergySiteStream();
+  cloud.siteInfoDocument = { backup_reserve_percent: 20 };
+  cloud.cacheAndEmit("site_info", {});
+  site.attach(cloud as never);
+
+  let answer: (config: unknown) => void = () => {};
+  fakeGateway.localConfig = () => new Promise((resolve) => {
+    answer = resolve;
+  });
+  await timers.tickEvery(30_000);
+  await site.backup(30);
+  answer({ backup_reserve_percent: 20 });
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.deepEqual(fakeGateway.commands, [["backup", 30]]);
+  assert.equal(site.siteInfoDocument?.backup_reserve_percent, 30);
+  site.stop();
+});
+
+test("an enrolled Powerwall device shows the gateway's backup reserve, and goes back to the cloud's when local is off", async () => {
+  const timers = createIntervals();
+  const sse = new FakeEnergySiteStream();
+  sse.siteInfoDocument = { backup_reserve_percent: 20, default_real_mode: "self_consumption", components: {} };
+  sse.cacheAndEmit("site_info", {});
+  const site = { id: Number(SITE_ID), sse, metadata: { access: true }, api: {} };
+  const capabilities: Record<string, unknown> = { backup_reserve: null, operation_mode: null };
+  const powerwall = Object.assign(Object.create(PowerwallDevice.prototype), {
+    homey: {} as Record<string, unknown>,
+    driver: { manifest: { capabilities: Object.keys(capabilities), capabilitiesOptions: {} }, getDevices: () => [powerwall] },
+    getData: () => ({ id: SITE_ID }),
+    getCapabilities: () => Object.keys(capabilities),
+    getCapabilityValue: (capability: string) => capabilities[capability],
+    setCapabilityValue: async (capability: string, value: unknown) => {
+      capabilities[capability] = value;
+    },
+    setCapabilityOptions: async () => {},
+    registerCapabilityListener: () => {},
+    log: () => {},
+    error: () => {},
+    destroyed: false,
+  });
+  const app = Object.assign(Object.create(TeslemetryApp.prototype), {
+    products: { energySites: { [SITE_ID]: site } },
+    homey: {
+      setInterval: timers.setInterval,
+      clearInterval: timers.clearInterval,
+      drivers: { getDrivers: () => ({ battery: { getDevices: () => [powerwall] } }) },
+    },
+    oauth: { getAccessToken: async () => "token" },
+    log: () => {},
+    error: () => {},
+  });
+  powerwall.homey = { app, __: (key: string) => key, setTimeout: () => 0, clearTimeout: () => {} };
+
+  fakeGateway.localConfig = async () => ({ backup_reserve_percent: 45, default_real_mode: "backup" });
+  await app.enableLocalPowerwall(SITE_ID, GATEWAY, KEY_PEM);
+  await timers.tickEvery(30_000);
+  assert.equal(capabilities.backup_reserve, 0.45);
+  assert.equal(capabilities.operation_mode, "backup");
+
+  app.disableLocalPowerwall(SITE_ID);
+  assert.equal(capabilities.backup_reserve, 0.2);
+  assert.equal(capabilities.operation_mode, "self_consumption");
+});
+
+test("a command's held value survives a tariff update, but a refused command is never held", async () => {
+  const { app, timers } = createFeed();
+  fakeCloud.site = { backup: async () => ({ response: { result: false, reason: "refused" } }) } as never;
+  const site = await LocalPowerwallSite.start(app as never, SITE_ID, GATEWAY, KEY_PEM);
+  await timers.tick();
+  const cloud = new FakeEnergySiteStream();
+  cloud.siteInfoDocument = { backup_reserve_percent: 20, tariff_content_v2: { code: "OLD" } };
+  cloud.cacheAndEmit("site_info", {});
+  site.attach(cloud as never);
+
+  await site.backup(30);
+  fakeGateway.localConfig = async () => {
+    throw new PowerwallConnectionError("unreachable");
+  };
+  await timers.tickEvery(30_000);
+  cloud.siteInfoDocument = { backup_reserve_percent: 20, tariff_content_v2: { code: "NEW" } };
+  cloud.cacheAndEmit("tariff_content_v2", {});
+  assert.equal(site.siteInfoDocument?.backup_reserve_percent, 30, "a tariff event is not a reserve report");
+  assert.deepEqual(site.siteInfoDocument?.tariff_content_v2, { code: "NEW" });
+
+  // The gateway stops answering, so the next command goes to the cloud, which refuses it.
+  fakeGateway.liveStatus = async () => {
+    throw new PowerwallConnectionError("unreachable");
+  };
+  await timers.tick();
+  cloud.cacheAndEmit("site_info", {});
+  await site.backup(50);
+  assert.equal(site.siteInfoDocument?.backup_reserve_percent, 20);
   site.stop();
 });
