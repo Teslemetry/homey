@@ -1,7 +1,7 @@
 import { createPublicKey, generateKeyPair } from "node:crypto";
 import { EventEmitter } from "node:events";
 import { promisify } from "node:util";
-import type { SseLiveStatus, TeslemetryEnergySiteStream } from "@teslemetry/api";
+import type { EnergyDetails, SseLiveStatus, TeslemetryEnergySiteStream } from "@teslemetry/api";
 import type { LiveStatusMerge, PowerwallClient } from "tesla-fleet-api/powerwall";
 import type { LiveStatusResponse } from "tesla-fleet-api/types";
 import type TeslemetryApp from "../app.js";
@@ -52,6 +52,12 @@ export class LocalPowerwallSite extends EventEmitter {
   private stopped = false;
   private readonly timer: NodeJS.Timeout;
 
+  /**
+   * The site a device binds to while there is no Products generation: no
+   * cloud events, and a Teslemetry API that refuses until the cloud is back.
+   */
+  readonly standIn: EnergyDetails;
+
   /** Loads `tesla-fleet-api` only now, so a site that never enrols costs nothing. */
   static async start(app: TeslemetryApp, siteId: string, gateway: LocalGateway, keyPem: string) {
     const { LiveStatusMerge, PowerwallClient, PowerwallEnergySite, ENERGY_LIVE_INTERVAL_MS } =
@@ -85,6 +91,14 @@ export class LocalPowerwallSite extends EventEmitter {
     intervalMs: number,
   ) {
     super();
+    const offline = () => Promise.reject(new Error(app.homey.__("error.teslemetry_connecting")));
+    this.standIn = {
+      id: Number(siteId),
+      name: "",
+      api: new Proxy({}, { get: (_api, method) => (method === "then" ? undefined : offline) }),
+      sse: new EventEmitter(),
+      metadata: { access: true },
+    } as unknown as EnergyDetails;
     this.timer = app.homey.setInterval(() => {
       this.poll().catch((error) => this.app.error(`Local Powerwall ${siteId}: poll failed`, error));
     }, intervalMs);
@@ -133,6 +147,7 @@ export class LocalPowerwallSite extends EventEmitter {
   private async poll(): Promise<void> {
     const merged = await this.merge.poll();
     if (merged === null) return;
+    this.publish(merged);
     if (this.merge.healthy !== this.lastHealth) {
       this.lastHealth = this.merge.healthy;
       this.app.log(
@@ -140,8 +155,8 @@ export class LocalPowerwallSite extends EventEmitter {
           ? `Local Powerwall ${this.siteId}: reading the gateway at ${this.client.host}`
           : `Local Powerwall ${this.siteId}: gateway read failed, using cloud values: ${this.merge.last_error?.message}`,
       );
+      if (!this.lastHealth) this.app.handleLocalPowerwallLost(this.siteId);
     }
-    this.publish(merged);
     if (this.lastHealth) this.app.handleLocalPowerwallRead(this.siteId);
   }
 
