@@ -1,9 +1,10 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import Homey from "homey";
-import type { SseEnergyTotals } from "@teslemetry/api";
+import type { EnergyDetails, SseEnergyTotals } from "@teslemetry/api";
 import type TeslemetryApp from "../app.js";
 import type TeslemetryDriver from "./TeslemetryDriver.js";
 import toError from "./toError.js";
+import type { LiveStatusSource } from "./LocalPowerwall.js";
 
 /**
  * Every reason a device can be unavailable, each with its own recovery
@@ -152,6 +153,15 @@ export default class TeslemetryDevice extends Homey.Device {
    */
   public getProductKey(): string | undefined {
     return undefined;
+  }
+
+  /**
+   * Where a Powerwall, Gateway or Solar device reads `site`'s live_status:
+   * the site's local Powerwall link once it is enrolled, otherwise the
+   * cloud stream.
+   */
+  protected liveStatusSource(site: EnergyDetails): LiveStatusSource {
+    return this.homey.app.localPowerwallSites?.get(String(site.id))?.attach(site.sse) ?? site.sse;
   }
 
   /**

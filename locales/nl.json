@@ -24,5 +24,14 @@
   },
   "warning": {
     "no_data_since": "Geen gegevens sinds __time__"
+  },
+  "local_powerwall": {
+    "password_required": "Voer het gateway-wachtwoord in.",
+    "approve": "Zet de aan/uit-schakelaar van je primaire Powerwall uit en weer aan om Homey goed te keuren, en sla daarna opnieuw op. Dit is maar één keer nodig.",
+    "host_not_found": "Teslemetry kon het adres van de gateway niet vinden. Voer het in en sla opnieuw op.",
+    "wrong_password": "De gateway accepteerde dit wachtwoord niet.",
+    "gateway_unreachable": "Homey kon de gateway niet bereiken. Controleer het adres en of de gateway op hetzelfde netwerk zit als Homey, en sla opnieuw op.",
+    "cloud_unreachable": "Tesla kan je Powerwall nu niet bereiken. Probeer het later opnieuw.",
+    "connected": "Verbonden met de gateway op __host__."
   }
 }

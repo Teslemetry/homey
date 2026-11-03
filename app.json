@@ -13,7 +13,7 @@
   },
   "brandColor": "#3D6DB5",
   "version": "1.6.0",
-  "compatibility": ">=12.4.5",
+  "compatibility": ">=12.9.0",
   "sdk": 3,
   "platforms": [
     "local",
@@ -10212,6 +10212,133 @@
           }
         }
       },
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Local connection",
+            "nl": "Lokale verbinding",
+            "da": "Lokal forbindelse",
+            "de": "Lokale Verbindung",
+            "es": "Conexión local",
+            "fr": "Connexion locale",
+            "it": "Connessione locale",
+            "no": "Lokal tilkobling",
+            "sv": "Lokal anslutning",
+            "pl": "Połączenie lokalne",
+            "ru": "Локальное подключение",
+            "ko": "로컬 연결",
+            "ar": "الاتصال المحلي"
+          },
+          "children": [
+            {
+              "id": "local_enabled",
+              "type": "checkbox",
+              "value": false,
+              "label": {
+                "en": "Connect over the local network",
+                "nl": "Verbinden via het lokale netwerk",
+                "da": "Forbind via det lokale netværk",
+                "de": "Über das lokale Netzwerk verbinden",
+                "es": "Conectar por la red local",
+                "fr": "Se connecter via le réseau local",
+                "it": "Connetti tramite la rete locale",
+                "no": "Koble til via det lokale nettverket",
+                "sv": "Anslut via det lokala nätverket",
+                "pl": "Połącz przez sieć lokalną",
+                "ru": "Подключаться через локальную сеть",
+                "ko": "로컬 네트워크로 연결",
+                "ar": "الاتصال عبر الشبكة المحلية"
+              },
+              "hint": {
+                "en": "Read this Powerwall straight from its gateway on your home network, as well as through Teslemetry. The first save registers Homey with your Powerwall: flick the On/Off switch on your primary Powerwall off and back on to approve it, then save again.",
+                "nl": "Lees deze Powerwall rechtstreeks uit via de gateway op je thuisnetwerk, naast Teslemetry. De eerste keer opslaan registreert Homey bij je Powerwall: zet de aan/uit-schakelaar van je primaire Powerwall uit en weer aan om dit goed te keuren, en sla daarna opnieuw op.",
+                "da": "Læs denne Powerwall direkte fra dens gateway på dit hjemmenetværk, ud over via Teslemetry. Første gemning registrerer Homey hos din Powerwall: slå tænd/sluk-kontakten på din primære Powerwall fra og til igen for at godkende det, og gem derefter igen.",
+                "de": "Liest diese Powerwall direkt über ihr Gateway in deinem Heimnetzwerk, zusätzlich zu Teslemetry. Beim ersten Speichern wird Homey bei deiner Powerwall registriert: Schalte den Ein/Aus-Schalter deiner primären Powerwall aus und wieder ein, um es zu bestätigen, und speichere dann erneut.",
+                "es": "Lee este Powerwall directamente desde su gateway en tu red doméstica, además de a través de Teslemetry. Al guardar por primera vez, Homey se registra en tu Powerwall: apaga y vuelve a encender el interruptor de tu Powerwall principal para aprobarlo y luego guarda de nuevo.",
+                "fr": "Lit ce Powerwall directement depuis sa passerelle sur votre réseau domestique, en plus de Teslemetry. Le premier enregistrement inscrit Homey auprès de votre Powerwall : basculez l'interrupteur marche/arrêt de votre Powerwall principal sur arrêt puis sur marche pour l'approuver, puis enregistrez à nouveau.",
+                "it": "Legge questo Powerwall direttamente dal suo gateway sulla rete domestica, oltre che tramite Teslemetry. Il primo salvataggio registra Homey sul Powerwall: spegni e riaccendi l'interruttore del Powerwall principale per approvarlo, poi salva di nuovo.",
+                "no": "Les denne Powerwall direkte fra gatewayen på hjemmenettverket ditt, i tillegg til via Teslemetry. Første lagring registrerer Homey hos Powerwall: slå av/på-bryteren på din primære Powerwall av og på igjen for å godkjenne det, og lagre deretter på nytt.",
+                "sv": "Läser denna Powerwall direkt från dess gateway i ditt hemnätverk, utöver via Teslemetry. Första sparningen registrerar Homey hos din Powerwall: slå av och på strömbrytaren på din primära Powerwall för att godkänna det och spara sedan igen.",
+                "pl": "Odczytuje tego Powerwalla bezpośrednio z jego bramy w sieci domowej, oprócz Teslemetry. Pierwsze zapisanie rejestruje Homey w Powerwallu: wyłącz i ponownie włącz przełącznik głównego Powerwalla, aby to zatwierdzić, a potem zapisz ponownie.",
+                "ru": "Считывает этот Powerwall напрямую с его шлюза в домашней сети, в дополнение к Teslemetry. При первом сохранении Homey регистрируется в Powerwall: выключите и снова включите выключатель основного Powerwall, чтобы подтвердить это, затем сохраните ещё раз.",
+                "ko": "Teslemetry와 함께 홈 네트워크의 게이트웨이에서 이 Powerwall을 직접 읽습니다. 처음 저장하면 Homey가 Powerwall에 등록됩니다. 기본 Powerwall의 전원 스위치를 껐다가 다시 켜서 승인한 다음 다시 저장하세요.",
+                "ar": "يقرأ جهاز Powerwall هذا مباشرة من البوابة على شبكتك المنزلية، إضافة إلى Teslemetry. يسجل الحفظ الأول Homey لدى Powerwall: أطفئ مفتاح التشغيل في جهاز Powerwall الرئيسي ثم أعد تشغيله للموافقة، ثم احفظ مرة أخرى."
+              }
+            },
+            {
+              "id": "local_host",
+              "type": "text",
+              "value": "",
+              "label": {
+                "en": "Gateway address",
+                "nl": "Gateway-adres",
+                "da": "Gateway-adresse",
+                "de": "Gateway-Adresse",
+                "es": "Dirección del gateway",
+                "fr": "Adresse de la passerelle",
+                "it": "Indirizzo del gateway",
+                "no": "Gateway-adresse",
+                "sv": "Gateway-adress",
+                "pl": "Adres bramy",
+                "ru": "Адрес шлюза",
+                "ko": "게이트웨이 주소",
+                "ar": "عنوان البوابة"
+              },
+              "hint": {
+                "en": "The gateway's IP address on your home network. Leave it empty to have Teslemetry look it up.",
+                "nl": "Het IP-adres van de gateway op je thuisnetwerk. Laat leeg om het via Teslemetry op te zoeken.",
+                "da": "Gatewayens IP-adresse på dit hjemmenetværk. Lad feltet stå tomt for at lade Teslemetry finde den.",
+                "de": "Die IP-Adresse des Gateways in deinem Heimnetzwerk. Leer lassen, um sie über Teslemetry zu ermitteln.",
+                "es": "La dirección IP del gateway en tu red doméstica. Déjala vacía para que Teslemetry la busque.",
+                "fr": "L'adresse IP de la passerelle sur votre réseau domestique. Laissez vide pour que Teslemetry la trouve.",
+                "it": "L'indirizzo IP del gateway sulla rete domestica. Lascia vuoto per farlo cercare a Teslemetry.",
+                "no": "Gatewayens IP-adresse på hjemmenettverket. La feltet stå tomt for å la Teslemetry finne den.",
+                "sv": "Gatewayens IP-adress i ditt hemnätverk. Lämna tomt för att låta Teslemetry hitta den.",
+                "pl": "Adres IP bramy w sieci domowej. Pozostaw puste, aby Teslemetry go wyszukało.",
+                "ru": "IP-адрес шлюза в домашней сети. Оставьте пустым, чтобы Teslemetry нашёл его сам.",
+                "ko": "홈 네트워크에서 게이트웨이의 IP 주소입니다. 비워 두면 Teslemetry가 찾아봅니다.",
+                "ar": "عنوان IP للبوابة على شبكتك المنزلية. اتركه فارغًا ليبحث عنه Teslemetry."
+              }
+            },
+            {
+              "id": "local_password",
+              "type": "password",
+              "value": "",
+              "label": {
+                "en": "Gateway password",
+                "nl": "Gateway-wachtwoord",
+                "da": "Gateway-adgangskode",
+                "de": "Gateway-Passwort",
+                "es": "Contraseña del gateway",
+                "fr": "Mot de passe de la passerelle",
+                "it": "Password del gateway",
+                "no": "Gateway-passord",
+                "sv": "Gateway-lösenord",
+                "pl": "Hasło bramy",
+                "ru": "Пароль шлюза",
+                "ko": "게이트웨이 비밀번호",
+                "ar": "كلمة مرور البوابة"
+              },
+              "hint": {
+                "en": "The last 5 characters of your Powerwall's Wi-Fi password, on the QR label behind the front cover of a Powerwall 3 or behind the Backup Gateway door on a Powerwall 2.",
+                "nl": "De laatste 5 tekens van het wifi-wachtwoord van je Powerwall, op het QR-label achter de voorklep van een Powerwall 3 of achter het deurtje van de Backup Gateway bij een Powerwall 2.",
+                "da": "De sidste 5 tegn i din Powerwalls Wi-Fi-adgangskode, på QR-mærkatet bag frontdækslet på en Powerwall 3 eller bag Backup Gateway-lågen på en Powerwall 2.",
+                "de": "Die letzten 5 Zeichen des WLAN-Passworts deiner Powerwall, auf dem QR-Etikett hinter der Frontabdeckung einer Powerwall 3 oder hinter der Klappe des Backup Gateways bei einer Powerwall 2.",
+                "es": "Los últimos 5 caracteres de la contraseña Wi-Fi de tu Powerwall, en la etiqueta QR detrás de la tapa frontal de un Powerwall 3 o detrás de la puerta del Backup Gateway en un Powerwall 2.",
+                "fr": "Les 5 derniers caractères du mot de passe Wi-Fi de votre Powerwall, sur l'étiquette QR derrière le capot avant d'un Powerwall 3 ou derrière la porte du Backup Gateway d'un Powerwall 2.",
+                "it": "Gli ultimi 5 caratteri della password Wi-Fi del Powerwall, sull'etichetta QR dietro il coperchio frontale di un Powerwall 3 o dietro lo sportello del Backup Gateway di un Powerwall 2.",
+                "no": "De siste 5 tegnene i Powerwalls Wi-Fi-passord, på QR-etiketten bak frontdekselet på en Powerwall 3 eller bak Backup Gateway-luken på en Powerwall 2.",
+                "sv": "De sista 5 tecknen i din Powerwalls Wi-Fi-lösenord, på QR-etiketten bakom frontluckan på en Powerwall 3 eller bakom Backup Gateway-luckan på en Powerwall 2.",
+                "pl": "Ostatnie 5 znaków hasła Wi-Fi Powerwalla, na etykiecie QR za przednią pokrywą Powerwalla 3 lub za drzwiczkami Backup Gateway w Powerwallu 2.",
+                "ru": "Последние 5 символов пароля Wi-Fi вашего Powerwall, на QR-наклейке за передней крышкой Powerwall 3 или за дверцей Backup Gateway у Powerwall 2.",
+                "ko": "Powerwall Wi-Fi 비밀번호의 마지막 5자로, Powerwall 3는 전면 커버 뒤, Powerwall 2는 Backup Gateway 문 뒤의 QR 라벨에 있습니다.",
+                "ar": "آخر 5 أحرف من كلمة مرور Wi-Fi الخاصة بجهاز Powerwall، على ملصق QR خلف الغطاء الأمامي لجهاز Powerwall 3 أو خلف باب Backup Gateway في Powerwall 2."
+              }
+            }
+          ]
+        }
+      ],
       "energy": {
         "homeBattery": true,
         "meterPowerImportedCapability": "meter_power.charged",

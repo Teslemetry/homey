@@ -13,6 +13,16 @@ import {
   isPowerwallCapabilitySupported,
 } from "./driver.js";
 import msUntilNextLocalMidnight from "../../lib/localMidnight.js";
+import {
+  enrolLocalGateway,
+  generateGatewayKey,
+  isLocalGateway,
+} from "../../lib/LocalPowerwall.js";
+
+/** The RSA key this device registered with its gateway, kept even while local is off. */
+const LOCAL_KEY_STORE_KEY = "local_gateway_key";
+/** The last gateway enrolment verified, which the local link starts from. */
+const LOCAL_GATEWAY_STORE_KEY = "local_gateway";
 
 const TODAY_TOTAL_CAPABILITIES = [
   "battery_charged_today",
@@ -92,9 +102,72 @@ export default class PowerwallDevice extends TeslemetryDevice {
     this.midnightTimer = midnightTimer;
   }
 
+  /** Whether this device started its site's local Powerwall link. */
+  private localLink = false;
+
   async onInit() {
     await super.onInit();
+    await this.startLocalLink();
     this.rebindProduct();
+  }
+
+  /** Resumes a verified enrolment. A failure leaves the site on the cloud. */
+  private async startLocalLink(): Promise<void> {
+    const gateway = this.getStoreValue(LOCAL_GATEWAY_STORE_KEY) as unknown;
+    const keyPem = this.getStoreValue(LOCAL_KEY_STORE_KEY) as unknown;
+    if (!isLocalGateway(gateway) || typeof keyPem !== "string") return;
+    if (!this.getSetting("local_enabled")) return;
+    try {
+      await this.homey.app.enableLocalPowerwall(this.getSiteId(), gateway, keyPem);
+      this.localLink = true;
+    } catch (error) {
+      this.error("Failed to start the local Powerwall link", error);
+    }
+  }
+
+  /**
+   * The "Local connection" settings. Turning it on runs one enrolment pass
+   * (lib/LocalPowerwall.ts): a key the gateway has not approved yet rejects
+   * the save with what to do, so the owner saves again afterwards.
+   */
+  async onSettings({
+    newSettings,
+    changedKeys,
+  }: {
+    newSettings: Record<string, unknown>;
+    changedKeys: string[];
+  }): Promise<string | void> {
+    if (!changedKeys.some((key) => key.startsWith("local_"))) return;
+    const siteId = this.getSiteId();
+    if (!newSettings.local_enabled) {
+      if (this.localLink) this.homey.app.disableLocalPowerwall(siteId);
+      this.localLink = false;
+      return;
+    }
+
+    const password = String(newSettings.local_password ?? "").trim();
+    if (!password) throw new Error(this.homey.__("local_powerwall.password_required"));
+    let keyPem = this.getStoreValue(LOCAL_KEY_STORE_KEY) as unknown;
+    if (typeof keyPem !== "string") {
+      keyPem = await generateGatewayKey();
+      await this.setStoreValue(LOCAL_KEY_STORE_KEY, keyPem);
+    }
+    const result = await enrolLocalGateway({
+      app: this.homey.app,
+      siteId,
+      host: String(newSettings.local_host ?? "").trim(),
+      password,
+      keyPem: keyPem as string,
+    });
+    if ("failure" in result) {
+      throw new Error(this.homey.__(`local_powerwall.${result.failure}`));
+    }
+
+    const gateway = { host: result.host, password };
+    await this.setStoreValue(LOCAL_GATEWAY_STORE_KEY, gateway);
+    await this.homey.app.enableLocalPowerwall(siteId, gateway, keyPem as string);
+    this.localLink = true;
+    return this.homey.__("local_powerwall.connected", { host: result.host });
   }
 
   /** See TeslemetryDevice.rebindProduct(). */
@@ -340,7 +413,8 @@ export default class PowerwallDevice extends TeslemetryDevice {
     // Essential behavior: live data and commands. Registered before the
     // optional site-info/tariff enrichment below so a malformed cached
     // tariff/timezone can never leave this device without them.
-    this.site.sse.on("live_status", onLiveStatus);
+    const live = this.liveStatusSource(site);
+    live.on("live_status", onLiveStatus);
 
     this.registerCommandListener("backup_reserve", async (value) => {
       this.log(
@@ -398,7 +472,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
     });
 
     this.pollingCleanup = [
-      () => site.sse.off("live_status", onLiveStatus),
+      () => live.off("live_status", onLiveStatus),
       () => {
         if (this.tariffTimer !== undefined) {
           this.homey.clearTimeout(this.tariffTimer);
@@ -433,6 +507,8 @@ export default class PowerwallDevice extends TeslemetryDevice {
   async onUninit(): Promise<void> {
     await super.onUninit();
     this.unbindProduct();
+    if (this.localLink) this.homey.app.disableLocalPowerwall(this.getSiteId());
+    this.localLink = false;
   }
 
   /**
