@@ -150,7 +150,9 @@ list; do not invent a Homey-only shape.
   product's next genuine (non-`isCache`) event, never on a reconnect or the
   SDK's `connect` event. A device its site's local Powerwall link feeds is
   never marked `"stream"`/`"silent"` while that link reads, and recovers from
-  either on its next good read (`isLocallyLive()`).
+  either on its next good read (`isLocallyLive()`). A car with a Bluetooth link
+  is marked `"stream"` only if it does not answer over Bluetooth, and recovers
+  when it does (`VehicleDevice.markStreamStale()`).
 - `SSE_TOPICS` in `app.ts` is an exact allowlist. A wire event from a new
   topic needs an entry.
 - `site_id` arrives on the wire as a JSON number but sites are keyed by string.

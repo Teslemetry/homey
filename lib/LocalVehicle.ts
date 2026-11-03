@@ -107,6 +107,13 @@ export interface VehicleCommands {
   wake_up(): Promise<any>;
 }
 
+export interface VehicleLink {
+  commands: VehicleCommands;
+  /** Whether the car answers over Bluetooth. Reads its security controller, which never wakes it. */
+  reach(): Promise<boolean>;
+  close(): Promise<unknown>;
+}
+
 /**
  * A paired car's commands, over Bluetooth while `inRange()` and on the cloud
  * otherwise or when the Bluetooth link fails before the car judged the
@@ -122,7 +129,7 @@ export async function createVehicleLink(options: {
   accessToken: () => Promise<string>;
   inRange: () => boolean;
   log: (message: string) => void;
-}): Promise<{ commands: VehicleCommands; close(): Promise<unknown> }> {
+}): Promise<VehicleLink> {
   const { TeslaBluetooth } = await import("tesla-fleet-api/bluetooth");
   const { HOMEY_VEHICLE_OPTIONS, HomeyBleTransport } = await import("tesla-fleet-api/bluetooth/homey");
   const { Teslemetry } = await import("tesla-fleet-api");
@@ -144,5 +151,16 @@ export async function createVehicleLink(options: {
     health: options.inRange,
     logger: { debug: (message) => options.log(`Bluetooth: ${message}`) },
   });
-  return { commands, close: () => bluetooth.disconnect() };
+  return {
+    commands,
+    reach: () =>
+      bluetooth.vehicle_state().then(
+        () => true,
+        (error: Error) => {
+          options.log(`Bluetooth: the car did not answer: ${error.name}: ${error.message}`);
+          return false;
+        },
+      ),
+    close: () => bluetooth.disconnect(),
+  };
 }

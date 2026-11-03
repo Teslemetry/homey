@@ -28,7 +28,8 @@ function backend(name: string, calls: string[], fail: Set<string> = new Set(), r
  */
 const COMMANDS = ["door_lock", "door_unlock", "charge_start", "charge_stop", "set_charge_limit",
   "set_charging_amps", "charge_port_door_open", "charge_port_door_close", "actuate_trunk",
-  "auto_conditioning_start", "auto_conditioning_stop", "flash_lights", "honk_horn", "wake_up", "disconnect"];
+  "auto_conditioning_start", "auto_conditioning_stop", "flash_lights", "honk_horn", "wake_up", "disconnect",
+  "vehicle_state"];
 function fake(name: string, calls: string[], fail?: Set<string>, refuse?: Set<string>) {
   const proxy = backend(name, calls, fail, refuse) as Record<string, unknown>;
   return Object.fromEntries(COMMANDS.map((command) => [command, proxy[command]]));
@@ -45,11 +46,14 @@ async function createPairedVehicle(
     ble_device: { id: "ble-uuid", name: "S1a87a5a75f3df858C" },
   };
   const capabilities: Record<string, unknown> = { "measure_distance.home": opts.distanceKm ?? null };
+  const availability = { available: true, message: null as string | null };
+  const timers: Array<{ callback: () => void; delay: number }> = [];
   const device = Object.assign(new VehicleDevice(), {
     homey: {
       app: { oauth: { getAccessToken: async () => "token" } },
       ble: {},
-      setTimeout: (callback: () => void) => setImmediate(callback),
+      setTimeout: (callback: () => void, delay: number) => timers.push({ callback, delay }),
+      clearTimeout: () => {},
       __: (key: string) => key,
     },
     vehicle: { api: backend("teslemetry-api", calls) },
@@ -62,11 +66,19 @@ async function createPairedVehicle(
     },
     hasCapability: (capability: string) => capability in capabilities,
     getCapabilityValue: (capability: string) => capabilities[capability],
+    setAvailable: async () => {
+      availability.available = true;
+      availability.message = null;
+    },
+    setUnavailable: async (message: string) => {
+      availability.available = false;
+      availability.message = message;
+    },
     log: () => {},
     error: () => {},
   });
   await device.startBluetooth();
-  return { device, calls };
+  return { device, calls, availability, timers };
 }
 
 test.beforeEach(() => {
@@ -129,4 +141,37 @@ test("turning Bluetooth off while the link is still starting never installs it",
 
   await device.flowFlashLights();
   assert.deepEqual(calls, ["ble.disconnect", "teslemetry-api.flashLights"]);
+});
+
+const settle = () => new Promise((resolve) => setImmediate(resolve));
+
+test("a paired car that still answers over Bluetooth stays available when the cloud stream drops", async () => {
+  const { device, calls, availability, timers } = await createPairedVehicle();
+  device.markStreamStale("error.stream_disconnected");
+  await settle();
+  assert.deepEqual(calls, ["ble.vehicle_state"]);
+  assert.equal(availability.available, true);
+  assert.equal(timers.length, 0);
+});
+
+test("a paired car out of reach goes unavailable, and is asked again until it answers", async () => {
+  const { device, calls, availability, timers } = await createPairedVehicle({ bluetoothFails: ["vehicle_state"] });
+  device.markStreamStale("error.stream_disconnected");
+  await settle();
+  assert.equal(availability.available, false);
+  assert.equal(availability.message, "error.stream_disconnected");
+  assert.deepEqual(timers.map(({ delay }) => delay), [300_000]);
+
+  fakeBluetooth.vehicle = { ...(fakeBluetooth.vehicle as object), vehicle_state: async () => ({}) } as never;
+  await device.startBluetooth();
+  timers.shift()!.callback();
+  await settle();
+  assert.equal(availability.available, true, "the car came back in reach");
+  assert.deepEqual(calls, ["ble.vehicle_state"]);
+});
+
+test("a car without Bluetooth goes unavailable when the cloud stream drops, as before", async () => {
+  const { device, availability } = await createPairedVehicle({ paired: false });
+  device.markStreamStale("error.stream_disconnected");
+  assert.equal(availability.available, false);
 });
