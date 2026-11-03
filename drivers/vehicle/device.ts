@@ -414,7 +414,26 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   async onInit() {
     await super.onInit();
+    await this.settleInterruptedPairing();
     this.rebindProduct();
+  }
+
+  /**
+   * A key with no car stored means a pairing never finished, as when the
+   * app restarted while the car waited for a key card. Turn the setting back
+   * off so it does not claim a link that does not exist.
+   */
+  private async settleInterruptedPairing(): Promise<void> {
+    if (!this.getStoreValue(BLE_KEY_STORE_KEY) || this.getStoreValue(BLE_DEVICE_STORE_KEY)) return;
+    if (!this.getSetting("ble_enabled")) return;
+    try {
+      await this.setSettings({ ble_enabled: false });
+      await this.homey.notifications.createNotification({
+        excerpt: this.homey.__("local_vehicle.failed", { name: this.getName() }),
+      });
+    } catch (error) {
+      this.error("Failed to settle an interrupted Bluetooth pairing", error);
+    }
   }
 
   /**
@@ -1454,6 +1473,8 @@ export default class VehicleDevice extends TeslemetryDevice {
    * The "Bluetooth" setting. Turning it on adds Homey's key to the car in the
    * background, as it waits up to minutes for a key card tap; the result
    * arrives as a notification, and a failure turns the setting off again.
+   * Turning it off forgets the car, so turning it on again always checks the
+   * key is still on it (a key already there needs no key card).
    */
   async onSettings({
     newSettings,
@@ -1465,7 +1486,10 @@ export default class VehicleDevice extends TeslemetryDevice {
     if (!changedKeys.includes("ble_enabled")) return;
     this.blePairing?.abort();
     this.blePairing = undefined;
-    if (!newSettings.ble_enabled || this.getStoreValue(BLE_DEVICE_STORE_KEY)) return;
+    if (!newSettings.ble_enabled) {
+      await this.unsetStoreValue(BLE_DEVICE_STORE_KEY);
+      return;
+    }
 
     let keyHex = this.getStoreValue(BLE_KEY_STORE_KEY) as unknown;
     if (typeof keyHex !== "string") {
@@ -1493,6 +1517,7 @@ export default class VehicleDevice extends TeslemetryDevice {
         outcome = result.failure;
       } else {
         await this.setStoreValue(BLE_DEVICE_STORE_KEY, result.device);
+        if (signal.aborted || this.destroyed) return;
         outcome = "paired";
       }
     } catch (error) {

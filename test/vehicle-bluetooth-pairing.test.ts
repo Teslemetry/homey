@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import VehicleDevice from "../.homeybuild/drivers/vehicle/device.js";
 import { fakeBluetooth } from "./support/tesla-fleet-api-bluetooth-stub.js";
 import {
+  BluetoothTimeout,
   BluetoothTransportError,
   NotOnWhitelistFault,
   WhitelistOperationLocalEntityAuthFailedTimedOutWaitingForTap,
@@ -55,8 +56,12 @@ function createVehicle(store: Record<string, unknown> = {}) {
     getData: () => ({ vin: VIN }),
     getName: () => "Model 3",
     getStoreValue: (key: string) => (key in store ? store[key] : null),
+    getSetting: (key: string) => key === "ble_enabled",
     setStoreValue: async (key: string, value: unknown) => {
       store[key] = value;
+    },
+    unsetStoreValue: async (key: string) => {
+      delete store[key];
     },
     setSettings: async (values: Record<string, unknown>) => {
       settings.push(values);
@@ -107,6 +112,7 @@ test("a pairing that fails turns the setting back off and says why", async () =>
   const cases: Array<[Parameters<typeof createFakeVehicle>[0], string]> = [
     [{ find: async () => { throw new BluetoothTransportError(); } }, "local_vehicle.not_found"],
     [{ pair: async () => { throw new WhitelistOperationLocalEntityAuthFailedTimedOutWaitingForTap(); } }, "local_vehicle.tap_timeout"],
+    [{ pair: async () => { throw new BluetoothTimeout(); } }, "local_vehicle.tap_timeout"],
   ];
   for (const [steps, message] of cases) {
     createFakeVehicle(steps);
@@ -135,5 +141,51 @@ test("turning Bluetooth off while the car waits for a key card stops the pairing
 
   assert.equal(notified, false);
   assert.equal(store.ble_device, undefined);
+  assert.deepEqual(settings, []);
+});
+
+test("turning Bluetooth off forgets the car, so turning it on again checks the key is still on it", async () => {
+  const calls = createFakeVehicle({ onCar: true });
+  const { device, store, notification } = createVehicle({ ble_key: "ab".repeat(32), ble_device: DEVICE });
+
+  await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+  assert.equal(store.ble_device, undefined);
+
+  await device.onSettings(turnOn);
+  assert.equal(await notification, "Model 3: local_vehicle.paired");
+  assert.deepEqual(calls, ["find_vehicle", "connect", "handshake", "disconnect"]);
+  assert.deepEqual(store.ble_device, DEVICE);
+});
+
+test("a pairing a restart interrupted turns the setting back off and says so", async () => {
+  const { device, settings, notification } = createVehicle({ ble_key: "ab".repeat(32) });
+  await device.settleInterruptedPairing();
+  assert.deepEqual(settings, [{ ble_enabled: false }]);
+  assert.equal(await notification, "Model 3: local_vehicle.failed");
+
+  const paired = createVehicle({ ble_key: "ab".repeat(32), ble_device: DEVICE });
+  await paired.device.settleInterruptedPairing();
+  assert.deepEqual(paired.settings, [], "a paired car is left alone");
+});
+
+test("turning Bluetooth off while the paired car is being stored reports nothing", async () => {
+  createFakeVehicle({ onCar: true });
+  const { device, settings } = createVehicle();
+  let notified = false;
+  device.homey.notifications.createNotification = async () => {
+    notified = true;
+  };
+  const store = device.setStoreValue;
+  device.setStoreValue = async (key: string, value: unknown) => {
+    await store(key, value);
+    if (key === "ble_device") {
+      await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+    }
+  };
+
+  await device.onSettings(turnOn);
+  await new Promise((resolve) => setImmediate(resolve));
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(notified, false);
   assert.deepEqual(settings, []);
 });

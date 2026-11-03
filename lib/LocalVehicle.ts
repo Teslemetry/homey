@@ -42,6 +42,8 @@ export async function pairVehicleKey(options: {
     // Keepalive reads would keep the car awake.
     { transport: new HomeyBleTransport(options.ble), keepalive_interval_ms: null },
   );
+  // A timeout once the car is waiting for the key card is the tap timing out.
+  let waitingForTap = false;
   try {
     const device = await vehicle.find_vehicle();
     await vehicle.connect();
@@ -53,6 +55,7 @@ export async function pairVehicleKey(options: {
       if (!(error instanceof NotOnWhitelistFault)) throw error;
     }
     options.log("Bluetooth: asking the car to add Homey's key");
+    waitingForTap = true;
     try {
       await vehicle.pair({ signal: options.signal });
     } catch (error) {
@@ -62,11 +65,14 @@ export async function pairVehicleKey(options: {
   } catch (error) {
     if (!(error instanceof TeslaFleetError)) throw error;
     options.log(`Bluetooth: pairing stopped: ${error.name}: ${error.message}`);
+    if (
+      error instanceof WhitelistOperationLocalEntityAuthFailedTimedOutWaitingForTap ||
+      (waitingForTap && error instanceof BluetoothTimeout)
+    ) {
+      return { failure: "tap_timeout" };
+    }
     if (error instanceof BluetoothTransportError || error instanceof BluetoothTimeout) {
       return { failure: "not_found" };
-    }
-    if (error instanceof WhitelistOperationLocalEntityAuthFailedTimedOutWaitingForTap) {
-      return { failure: "tap_timeout" };
     }
     if (
       error instanceof WhitelistOperationLocalEntityAuthFailedUIDenied ||
