@@ -33,5 +33,13 @@
     "gateway_unreachable": "Homey nådde inte gatewayen. Kontrollera adressen och att den finns i samma nätverk som Homey, och spara igen.",
     "cloud_unreachable": "Tesla når inte din Powerwall just nu. Försök igen senare.",
     "connected": "Ansluten till gatewayen på __host__."
+  },
+  "local_vehicle": {
+    "tap_key_card": "Homey ber bilen att lägga till sin nyckel. Håll ditt nyckelkort mot mittkonsolen när bilen ber om det.",
+    "paired": "__name__: Homeys nyckel finns på bilen, så Homey kan nå den via Bluetooth.",
+    "not_found": "__name__: Homey nådde inte bilen via Bluetooth. Parkera den nära Homey och slå på Bluetooth igen.",
+    "tap_timeout": "__name__: Inget nyckelkort hölls mot konsolen i tid. Slå på Bluetooth igen för att försöka på nytt.",
+    "declined": "__name__: Bilen avböjde Homeys nyckel.",
+    "failed": "__name__: Bilen lade inte till Homeys nyckel. Slå på Bluetooth igen för att försöka på nytt."
   }
 }

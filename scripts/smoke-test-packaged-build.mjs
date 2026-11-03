@@ -35,9 +35,16 @@ try {
     }
   }
 
-  // Loaded with a dynamic import() only once a Powerwall enrols for local
-  // control (lib/LocalPowerwall.ts), so no entry point above pulls them in.
-  const lazyImports = ["tesla-fleet-api", "tesla-fleet-api/powerwall", "tesla-fleet-api/router"];
+  // Loaded with a dynamic import() only once a Powerwall or a car is set up
+  // for local control (lib/LocalPowerwall.ts, lib/LocalVehicle.ts), so no
+  // entry point above pulls them in.
+  const lazyImports = [
+    "tesla-fleet-api",
+    "tesla-fleet-api/bluetooth",
+    "tesla-fleet-api/bluetooth/homey",
+    "tesla-fleet-api/powerwall",
+    "tesla-fleet-api/router",
+  ];
 
   const failures = [];
   for (const entryPoint of [...entryPoints, ...lazyImports]) {

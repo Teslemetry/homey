@@ -33,5 +33,13 @@
     "gateway_unreachable": "Homey n'a pas pu joindre la passerelle. Vérifiez son adresse et qu'elle est sur le même réseau que Homey, puis enregistrez à nouveau.",
     "cloud_unreachable": "Tesla ne peut pas joindre votre Powerwall pour le moment. Réessayez plus tard.",
     "connected": "Connecté à la passerelle à l'adresse __host__."
+  },
+  "local_vehicle": {
+    "tap_key_card": "Homey demande à la voiture d'ajouter sa clé. Posez votre carte-clé sur la console centrale quand la voiture le demande.",
+    "paired": "__name__ : la clé de Homey est sur la voiture, Homey peut donc la joindre en Bluetooth.",
+    "not_found": "__name__ : Homey n'a pas pu joindre la voiture en Bluetooth. Garez-la près de Homey et réactivez le Bluetooth.",
+    "tap_timeout": "__name__ : aucune carte-clé n'a été posée à temps. Réactivez le Bluetooth pour réessayer.",
+    "declined": "__name__ : la voiture a refusé la clé de Homey.",
+    "failed": "__name__ : la voiture n'a pas ajouté la clé de Homey. Réactivez le Bluetooth pour réessayer."
   }
 }

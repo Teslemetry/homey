@@ -25,6 +25,18 @@ export async function resolve(specifier, context, nextResolve) {
       context,
     );
   }
+  if (specifier === "tesla-fleet-api/bluetooth") {
+    return nextResolve(
+      new URL("./tesla-fleet-api-bluetooth-stub.js", import.meta.url).href,
+      context,
+    );
+  }
+  if (specifier === "tesla-fleet-api/bluetooth/homey") {
+    return nextResolve(
+      new URL("./tesla-fleet-api-bluetooth-homey-stub.js", import.meta.url).href,
+      context,
+    );
+  }
   if (specifier === "tesla-fleet-api/powerwall") {
     return nextResolve(
       new URL("./tesla-fleet-api-powerwall-stub.js", import.meta.url).href,

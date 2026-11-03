@@ -33,5 +33,13 @@
     "gateway_unreachable": "Homey no pudo conectar con el gateway. Comprueba su dirección y que esté en la misma red que Homey, y guarda de nuevo.",
     "cloud_unreachable": "Tesla no puede conectar con tu Powerwall ahora mismo. Inténtalo más tarde.",
     "connected": "Conectado al gateway en __host__."
+  },
+  "local_vehicle": {
+    "tap_key_card": "Homey está pidiendo al coche que añada su llave. Acerca tu tarjeta llave a la consola central cuando el coche lo pida.",
+    "paired": "__name__: la llave de Homey está en el coche, así que Homey puede llegar a él por Bluetooth.",
+    "not_found": "__name__: Homey no pudo llegar al coche por Bluetooth. Apárcalo cerca de Homey y vuelve a activar Bluetooth.",
+    "tap_timeout": "__name__: no se acercó ninguna tarjeta llave a tiempo. Vuelve a activar Bluetooth para intentarlo de nuevo.",
+    "declined": "__name__: el coche rechazó la llave de Homey.",
+    "failed": "__name__: el coche no añadió la llave de Homey. Vuelve a activar Bluetooth para intentarlo de nuevo."
   }
 }

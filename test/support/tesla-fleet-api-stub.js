@@ -7,7 +7,15 @@ export {
   AuthorizedClientKeyType,
   AuthorizedClientState,
   AuthorizedClientType,
+  BluetoothTimeout,
+  BluetoothTransportError,
   EnergyGatewayUnreachable,
+  NotOnWhitelistFault,
+  TeslaFleetError,
+  WhitelistOperationAttemptingToAddExistingKey,
+  WhitelistOperationLocalEntityAuthFailedCancelled,
+  WhitelistOperationLocalEntityAuthFailedTimedOutWaitingForTap,
+  WhitelistOperationLocalEntityAuthFailedUIDenied,
 } from "../../node_modules/tesla-fleet-api/dist/index.mjs";
 
 export const fakeCloud = {

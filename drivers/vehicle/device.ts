@@ -11,10 +11,16 @@ import {
   VEHICLE_INELIGIBILITY_MESSAGE_KEY,
 } from "../../lib/TeslemetryDriver.js";
 import haversineDistanceKm from "../../lib/haversineDistance.js";
+import { generateVehicleKey, pairVehicleKey } from "../../lib/LocalVehicle.js";
 import {
   isCapabilitySupported,
   isCapabilitySupportUnknown,
 } from "./capabilityGating.js";
+
+/** The key Homey adds to the car, kept even while Bluetooth is off. */
+const BLE_KEY_STORE_KEY = "ble_key";
+/** The car's Bluetooth device, stored once Homey's key is on the car. */
+const BLE_DEVICE_STORE_KEY = "ble_device";
 
 const isBool = (x: any) => typeof x === "boolean";
 
@@ -1438,6 +1444,67 @@ export default class VehicleDevice extends TeslemetryDevice {
   async onUninit() {
     await super.onUninit();
     this.unbindProduct();
+    this.blePairing?.abort();
+  }
+
+  /** The Bluetooth pairing in progress, which turning Bluetooth off stops. */
+  private blePairing?: AbortController;
+
+  /**
+   * The "Bluetooth" setting. Turning it on adds Homey's key to the car in the
+   * background, as it waits up to minutes for a key card tap; the result
+   * arrives as a notification, and a failure turns the setting off again.
+   */
+  async onSettings({
+    newSettings,
+    changedKeys,
+  }: {
+    newSettings: Record<string, unknown>;
+    changedKeys: string[];
+  }): Promise<string | void> {
+    if (!changedKeys.includes("ble_enabled")) return;
+    this.blePairing?.abort();
+    this.blePairing = undefined;
+    if (!newSettings.ble_enabled || this.getStoreValue(BLE_DEVICE_STORE_KEY)) return;
+
+    let keyHex = this.getStoreValue(BLE_KEY_STORE_KEY) as unknown;
+    if (typeof keyHex !== "string") {
+      keyHex = generateVehicleKey();
+      await this.setStoreValue(BLE_KEY_STORE_KEY, keyHex);
+    }
+    const pairing = new AbortController();
+    this.blePairing = pairing;
+    this.pairBluetooth(keyHex as string, pairing.signal).catch(this.error);
+    return this.homey.__("local_vehicle.tap_key_card");
+  }
+
+  private async pairBluetooth(keyHex: string, signal: AbortSignal): Promise<void> {
+    let outcome: string;
+    try {
+      const result = await pairVehicleKey({
+        ble: this.homey.ble as never,
+        vin: this.getVin(),
+        keyHex,
+        signal,
+        log: (message) => this.log(message),
+      });
+      if (signal.aborted || this.destroyed) return;
+      if ("failure" in result) {
+        outcome = result.failure;
+      } else {
+        await this.setStoreValue(BLE_DEVICE_STORE_KEY, result.device);
+        outcome = "paired";
+      }
+    } catch (error) {
+      if (signal.aborted || this.destroyed) return;
+      this.error("Bluetooth pairing failed", error);
+      outcome = "failed";
+    }
+    if (this.blePairing?.signal === signal) this.blePairing = undefined;
+    if (outcome !== "paired") await this.setSettings({ ble_enabled: false });
+    await this.homey.notifications.createNotification({
+      excerpt: this.homey.__(`local_vehicle.${outcome}`, { name: this.getName() }),
+    });
   }
 
   /**

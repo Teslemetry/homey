@@ -52,7 +52,8 @@
     "energy"
   ],
   "permissions": [
-    "homey:manager:geolocation"
+    "homey:manager:geolocation",
+    "homey:wireless:ble"
   ],
   "images": {
     "small": "/assets/images/small.png",
