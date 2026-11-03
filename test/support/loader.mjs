@@ -37,6 +37,15 @@ export async function resolve(specifier, context, nextResolve) {
       context,
     );
   }
+  // The real router, but always the repository's copy: a packaged build
+  // leaves its own copy under .homeybuild/node_modules, and the router's
+  // instanceof checks must see the same error classes the stubs export.
+  if (specifier === "tesla-fleet-api/router") {
+    return nextResolve(
+      new URL("../../node_modules/tesla-fleet-api/dist/router.mjs", import.meta.url).href,
+      context,
+    );
+  }
   if (specifier === "tesla-fleet-api/powerwall") {
     return nextResolve(
       new URL("./tesla-fleet-api-powerwall-stub.js", import.meta.url).href,
