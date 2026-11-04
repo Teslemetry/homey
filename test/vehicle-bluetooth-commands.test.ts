@@ -260,13 +260,15 @@ async function createVehicleAwaitingReach(opts: Parameters<typeof createPairedVe
 }
 
 test("a reach check still waiting when Bluetooth turns off is ignored, and schedules no retry", async () => {
-  const { device, availability, timers, answer } = await createVehicleAwaitingReach();
-  device.markStreamStale("error.stream_disconnected");
-  await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
-  answer(false);
-  await settle();
-  assert.equal(availability.available, true);
-  assert.equal(timers.length, 0);
+  for (const reached of [false, true]) {
+    const { device, availability, timers, answer } = await createVehicleAwaitingReach();
+    device.markStreamStale("error.stream_disconnected");
+    await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+    answer(reached);
+    await settle();
+    assert.equal(availability.message, "error.stream_disconnected", "the stream is still down");
+    assert.equal(timers.length, 0);
+  }
 });
 
 test("a reach check still waiting when cloud data resumes cannot mark the car unavailable", async () => {
@@ -371,4 +373,26 @@ test("turning Bluetooth on with no internet binds the car to its link once Homey
 
   await device.flowFlashLights();
   assert.deepEqual(calls.filter((call) => call !== "ble.disconnect"), ["ble.vehicle_state", "ble.flash_lights"]);
+});
+
+test("turning Bluetooth off while the cloud stream is down leaves the car unavailable, whether or not it answered", async () => {
+  for (const bluetoothFails of [[], ["vehicle_state"]]) {
+    const { device, availability, timers } = await createPairedVehicle({ bluetoothFails });
+    device.markStreamStale("error.stream_disconnected");
+    await settle();
+    assert.equal(availability.available, true);
+    await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+    assert.equal(availability.available, false);
+    assert.equal(availability.message, "error.stream_disconnected");
+    timers.length = 0;
+  }
+});
+
+test("turning Bluetooth off after cloud data resumed leaves the car available", async () => {
+  const { device, availability } = await createPairedVehicle();
+  device.markStreamStale("error.stream_disconnected");
+  await settle();
+  device.clearProductSilence();
+  await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+  assert.equal(availability.available, true);
 });

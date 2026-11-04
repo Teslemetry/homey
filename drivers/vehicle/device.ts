@@ -445,8 +445,12 @@ export default class VehicleDevice extends TeslemetryDevice {
       super.markStreamStale(message);
       return;
     }
+    this.streamStaleMessage = message;
     this.checkBluetoothReach("stream", message).catch(this.error);
   }
+
+  /** Set while the cloud stream is down, so turning Bluetooth off cannot leave the car available. */
+  private streamStaleMessage?: string;
 
   /**
    * Bumped by genuine cloud data, by stopping Bluetooth and by a rebind, so a
@@ -587,6 +591,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   public clearProductSilence(): void {
     this.bluetoothCheck++;
+    this.streamStaleMessage = undefined;
     if (!this.silenceWarningShown || this.destroyed) return;
     this.silenceWarningShown = false;
     this.unsetWarning().catch(this.error);
@@ -1619,6 +1624,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.blePairing?.abort();
     this.blePairing = undefined;
     this.stopBluetooth();
+    if (this.streamStaleMessage !== undefined) super.markStreamStale(this.streamStaleMessage);
     // With no Products generation, the car was bound to the link that just closed.
     if (!(this.homey.app.isReady?.() ?? true)) this.rebindProduct();
     if (!newSettings.ble_enabled) {
