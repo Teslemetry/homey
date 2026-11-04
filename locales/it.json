@@ -38,7 +38,7 @@
     "registration_failed": "Homey non è riuscito a registrare la sua chiave sul Powerwall. Salva di nuovo le impostazioni della connessione locale per riprovare."
   },
   "local_vehicle": {
-    "tap_key_card": "Homey sta chiedendo all'auto di aggiungere la sua chiave. Appoggia la tessera chiave sulla console centrale quando l'auto lo chiede.",
+    "tap_key_card": "Homey sta verificando la sua chiave con l'auto. Se l'auto chiede una tessera chiave, appoggiala sulla console centrale.",
     "paired": "__name__: la chiave di Homey è sull'auto, quindi Homey può raggiungerla tramite Bluetooth.",
     "not_found": "__name__: Homey non è riuscito a raggiungere l'auto tramite Bluetooth. Parcheggiala vicino a Homey e riattiva il Bluetooth.",
     "tap_timeout": "__name__: nessuna tessera chiave è stata appoggiata in tempo. Riattiva il Bluetooth per riprovare.",

@@ -38,7 +38,7 @@
     "registration_failed": "Homey kon zijn sleutel niet registreren bij je Powerwall. Sla de instellingen voor de lokale verbinding opnieuw op om het nog eens te proberen."
   },
   "local_vehicle": {
-    "tap_key_card": "Homey vraagt de auto om zijn sleutel toe te voegen. Houd je sleutelkaart tegen de middenconsole als de auto daarom vraagt.",
+    "tap_key_card": "Homey controleert zijn sleutel bij de auto. Als de auto om een sleutelkaart vraagt, houd die dan tegen de middenconsole.",
     "paired": "__name__: de sleutel van Homey staat op de auto, dus Homey kan hem via Bluetooth bereiken.",
     "not_found": "__name__: Homey kon de auto niet via Bluetooth bereiken. Parkeer hem dicht bij Homey en zet Bluetooth opnieuw aan.",
     "tap_timeout": "__name__: er werd niet op tijd een sleutelkaart aangeboden. Zet Bluetooth opnieuw aan om het nog eens te proberen.",
