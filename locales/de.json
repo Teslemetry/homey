@@ -35,7 +35,8 @@
     "connected": "Mit dem Gateway unter __host__ verbunden.",
     "preparing": "Homey bereitet seinen Schlüssel für deine Powerwall vor. Eine Benachrichtigung sagt dir, wann du ihn bestätigen kannst; schalte dann den Ein/Aus-Schalter deiner primären Powerwall aus und wieder ein und speichere erneut.",
     "key_ready": "Homeys Schlüssel ist bei deiner Powerwall registriert. Schalte den Ein/Aus-Schalter deiner primären Powerwall aus und wieder ein und speichere dann die Einstellungen der lokalen Verbindung erneut.",
-    "registration_failed": "Homey konnte seinen Schlüssel nicht bei deiner Powerwall registrieren. Speichere die Einstellungen der lokalen Verbindung erneut, um es noch einmal zu versuchen."
+    "registration_failed": "Homey konnte seinen Schlüssel nicht bei deiner Powerwall registrieren. Speichere die Einstellungen der lokalen Verbindung erneut, um es noch einmal zu versuchen.",
+    "needs_homey_pro": "Die lokale Verbindung braucht einen Homey Pro im selben Netzwerk wie deine Powerwall. Homey Cloud kann dein Heimnetzwerk nicht erreichen."
   },
   "local_vehicle": {
     "tap_key_card": "Homey prüft seinen Schlüssel beim Auto. Wenn das Auto nach einer Schlüsselkarte fragt, halte sie an die Mittelkonsole.",
@@ -43,6 +44,7 @@
     "not_found": "__name__: Homey konnte das Auto über Bluetooth nicht erreichen. Park es nah an Homey und schalte Bluetooth erneut ein.",
     "tap_timeout": "__name__: Es wurde nicht rechtzeitig eine Schlüsselkarte aufgelegt. Schalte Bluetooth erneut ein, um es noch einmal zu versuchen.",
     "declined": "__name__: Das Auto hat Homeys Schlüssel abgelehnt.",
-    "failed": "__name__: Das Auto hat Homeys Schlüssel nicht hinzugefügt. Schalte Bluetooth erneut ein, um es noch einmal zu versuchen."
+    "failed": "__name__: Das Auto hat Homeys Schlüssel nicht hinzugefügt. Schalte Bluetooth erneut ein, um es noch einmal zu versuchen.",
+    "needs_homey_pro": "Bluetooth zum Auto braucht einen Homey Pro in Reichweite des Ortes, an dem dein Auto parkt. Auf Homey Cloud ist es nicht verfügbar."
   }
 }

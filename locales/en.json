@@ -35,7 +35,8 @@
     "connected": "Connected to the gateway at __host__.",
     "preparing": "Homey is preparing its key for your Powerwall. A notification will say when to approve it; then flick the On/Off switch on your primary Powerwall off and back on, and save again.",
     "key_ready": "Homey's key is registered with your Powerwall. Flick the On/Off switch on your primary Powerwall off and back on, then save the Local connection settings again.",
-    "registration_failed": "Homey could not register its key with your Powerwall. Save the Local connection settings again to retry."
+    "registration_failed": "Homey could not register its key with your Powerwall. Save the Local connection settings again to retry.",
+    "needs_homey_pro": "The local connection needs a Homey Pro on the same network as your Powerwall. Homey Cloud cannot reach your home network."
   },
   "local_vehicle": {
     "tap_key_card": "Homey is checking its key with the car. If the car asks for a key card, tap it on the center console.",
@@ -43,6 +44,7 @@
     "not_found": "__name__: Homey could not reach the car over Bluetooth. Park it close to Homey and turn Bluetooth on again.",
     "tap_timeout": "__name__: No key card was tapped in time. Turn Bluetooth on again to retry.",
     "declined": "__name__: The car declined Homey's key.",
-    "failed": "__name__: The car did not add Homey's key. Turn Bluetooth on again to retry."
+    "failed": "__name__: The car did not add Homey's key. Turn Bluetooth on again to retry.",
+    "needs_homey_pro": "Bluetooth to the car needs a Homey Pro within range of where your car parks. It is not available on Homey Cloud."
   }
 }

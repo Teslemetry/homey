@@ -35,7 +35,8 @@
     "connected": "__host__의 게이트웨이에 연결되었습니다.",
     "preparing": "Homey가 Powerwall용 키를 준비하고 있습니다. 승인할 때가 되면 알림이 옵니다. 그러면 기본 Powerwall의 전원 스위치를 껐다가 다시 켠 다음 다시 저장하세요.",
     "key_ready": "Homey의 키가 Powerwall에 등록되었습니다. 기본 Powerwall의 전원 스위치를 껐다가 다시 켠 다음 로컬 연결 설정을 다시 저장하세요.",
-    "registration_failed": "Homey가 Powerwall에 키를 등록하지 못했습니다. 다시 시도하려면 로컬 연결 설정을 다시 저장하세요."
+    "registration_failed": "Homey가 Powerwall에 키를 등록하지 못했습니다. 다시 시도하려면 로컬 연결 설정을 다시 저장하세요.",
+    "needs_homey_pro": "로컬 연결을 사용하려면 Powerwall과 같은 네트워크에 Homey Pro가 있어야 합니다. Homey Cloud는 홈 네트워크에 연결할 수 없습니다."
   },
   "local_vehicle": {
     "tap_key_card": "Homey가 차량에서 키를 확인하고 있습니다. 차량이 키 카드를 요청하면 센터 콘솔에 대세요.",
@@ -43,6 +44,7 @@
     "not_found": "__name__: Homey가 블루투스로 차량에 연결하지 못했습니다. Homey 가까이에 주차한 다음 블루투스를 다시 켜세요.",
     "tap_timeout": "__name__: 시간 안에 키 카드를 대지 않았습니다. 다시 시도하려면 블루투스를 다시 켜세요.",
     "declined": "__name__: 차량이 Homey의 키를 거부했습니다.",
-    "failed": "__name__: 차량이 Homey의 키를 추가하지 않았습니다. 다시 시도하려면 블루투스를 다시 켜세요."
+    "failed": "__name__: 차량이 Homey의 키를 추가하지 않았습니다. 다시 시도하려면 블루투스를 다시 켜세요.",
+    "needs_homey_pro": "차량 블루투스 연결을 사용하려면 차량을 주차하는 곳 가까이에 Homey Pro가 있어야 합니다. Homey Cloud에서는 사용할 수 없습니다."
   }
 }

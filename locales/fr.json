@@ -35,7 +35,8 @@
     "connected": "Connecté à la passerelle à l'adresse __host__.",
     "preparing": "Homey prépare sa clé pour votre Powerwall. Une notification indiquera quand l'approuver ; basculez alors l'interrupteur marche/arrêt de votre Powerwall principal sur arrêt puis sur marche, et enregistrez à nouveau.",
     "key_ready": "La clé de Homey est enregistrée auprès de votre Powerwall. Basculez l'interrupteur marche/arrêt de votre Powerwall principal sur arrêt puis sur marche, puis enregistrez à nouveau les paramètres de connexion locale.",
-    "registration_failed": "Homey n'a pas pu enregistrer sa clé auprès de votre Powerwall. Enregistrez à nouveau les paramètres de connexion locale pour réessayer."
+    "registration_failed": "Homey n'a pas pu enregistrer sa clé auprès de votre Powerwall. Enregistrez à nouveau les paramètres de connexion locale pour réessayer.",
+    "needs_homey_pro": "La connexion locale nécessite un Homey Pro sur le même réseau que votre Powerwall. Homey Cloud ne peut pas joindre votre réseau domestique."
   },
   "local_vehicle": {
     "tap_key_card": "Homey vérifie sa clé auprès de la voiture. Si la voiture demande une carte-clé, posez-la sur la console centrale.",
@@ -43,6 +44,7 @@
     "not_found": "__name__ : Homey n'a pas pu joindre la voiture en Bluetooth. Garez-la près de Homey et réactivez le Bluetooth.",
     "tap_timeout": "__name__ : aucune carte-clé n'a été posée à temps. Réactivez le Bluetooth pour réessayer.",
     "declined": "__name__ : la voiture a refusé la clé de Homey.",
-    "failed": "__name__ : la voiture n'a pas ajouté la clé de Homey. Réactivez le Bluetooth pour réessayer."
+    "failed": "__name__ : la voiture n'a pas ajouté la clé de Homey. Réactivez le Bluetooth pour réessayer.",
+    "needs_homey_pro": "Le Bluetooth avec la voiture nécessite un Homey Pro à portée de l'endroit où vous la garez. Il n'est pas disponible sur Homey Cloud."
   }
 }
