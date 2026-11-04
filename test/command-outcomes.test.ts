@@ -167,7 +167,7 @@ test("every failure shape surfaces a non-empty Error message", async () => {
 });
 
 test("a command that fails after the 9s timeout restores the pre-command value", async (t) => {
-  const { listeners, errors, capabilities } = await vehicleDevice({ locked: false });
+  const { device, listeners, errors, capabilities } = await vehicleDevice({ locked: false });
   let requested: () => void = () => {};
   const received = new Promise<void>((resolve) => {
     requested = resolve;
@@ -183,23 +183,36 @@ test("a command that fails after the 9s timeout restores the pre-command value",
   // Fake setTimeout drives both the 9 s action timeout and the server's late
   // reply; the request and response still travel over a real socket.
   t.mock.timers.enable({ apis: ["setTimeout"] });
-  const turns = async (until: () => boolean) => {
-    for (let i = 0; i < 1_000 && !until(); i++) await new Promise((resolve) => setImmediate(resolve));
+  const turn = () => new Promise((resolve) => setImmediate(resolve));
+  // Bounded by real time, not turns: the loopback reply is real I/O, and a
+  // regression must fail an assertion rather than hang the run.
+  const waitFor = async (done: () => boolean) => {
+    const deadline = performance.now() + 5_000;
+    while (!done() && performance.now() < deadline) await turn();
+  };
+  let restored = false;
+  const write = device.setCapabilityValue;
+  device.setCapabilityValue = async (capability: string, value: unknown) => {
+    await write(capability, value);
+    if (capability === "locked" && value === false) restored = true;
   };
   let resolved = false;
-  const set = setFromHomey(listeners, capabilities, "locked", true).then(() => {
+  setFromHomey(listeners, capabilities, "locked", true).then(() => {
     resolved = true;
   });
   await received;
   t.mock.timers.tick(8_999);
-  await turns(() => resolved);
+  // Only the fake clock can settle it now, so a few turns are enough.
+  for (let i = 0; i < 10; i++) await turn();
   assert.equal(resolved, false, "still inside the 9 s window");
   t.mock.timers.tick(1);
-  await set;
+  await waitFor(() => resolved);
+  assert.equal(resolved, true, "the 9 s action timeout resolves the command");
   assert.equal(capabilities.locked, true, "Homey committed the optimistic value");
 
   t.mock.timers.tick(600);
-  await turns(() => capabilities.locked === false);
+  await waitFor(() => restored);
+  assert.equal(restored, true, "the late failure restores the pre-command value");
   assert.ok(
     errors.some((args) => /failed after the 9000ms action timeout/.test(String(args[0]))),
     "the late failure is still logged",
