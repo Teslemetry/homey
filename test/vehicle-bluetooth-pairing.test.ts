@@ -45,7 +45,7 @@ function createVehicle(store: Record<string, unknown> = {}) {
   const notification = new Promise<string>((resolve) => {
     notified = resolve;
   });
-  const device = Object.assign(Object.create(VehicleDevice.prototype), {
+  const device = Object.assign(new VehicleDevice(), {
     homey: {
       app: { oauth: { getAccessToken: async () => "token" } },
       ble: { name: "homey-ble" },
