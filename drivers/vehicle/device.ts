@@ -449,9 +449,18 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.checkBluetoothReach(message).catch(this.error);
   }
 
+  /**
+   * Bumped by genuine cloud data and by stopping Bluetooth, so a reach check
+   * that was still waiting on the car when either happened is ignored.
+   */
+  private bluetoothCheck = 0;
+
   private async checkBluetoothReach(message: string): Promise<void> {
-    const reached = await this.bluetooth?.reach();
-    if (this.destroyed) return;
+    const link = this.bluetooth;
+    if (!link) return;
+    const check = this.bluetoothCheck;
+    const reached = await link.reach();
+    if (this.destroyed || check !== this.bluetoothCheck) return;
     if (reached) {
       this.clearAvailabilityReason("stream");
       return;
@@ -498,6 +507,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   private stopBluetooth(): void {
     this.bluetoothGeneration++;
+    this.bluetoothCheck++;
     this.bluetooth?.close().catch(this.error);
     this.bluetooth = undefined;
     if (this.bluetoothRecheck !== undefined) this.homey.clearTimeout(this.bluetoothRecheck);
@@ -568,6 +578,7 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   public clearProductSilence(): void {
+    this.bluetoothCheck++;
     if (!this.silenceWarningShown || this.destroyed) return;
     this.silenceWarningShown = false;
     this.unsetWarning().catch(this.error);

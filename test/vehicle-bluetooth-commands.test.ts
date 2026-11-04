@@ -175,3 +175,37 @@ test("a car without Bluetooth goes unavailable when the cloud stream drops, as b
   device.markStreamStale("error.stream_disconnected");
   assert.equal(availability.available, false);
 });
+
+/** A paired car whose reach check waits until the test answers it. */
+async function createVehicleAwaitingReach() {
+  const setup = await createPairedVehicle();
+  let answer: (reached: boolean) => void = () => {};
+  fakeBluetooth.vehicle = {
+    ...(fakeBluetooth.vehicle as object),
+    vehicle_state: () => new Promise((resolve, reject) => {
+      answer = (reached) => (reached ? resolve({}) : reject(new BluetoothTransportError()));
+    }),
+  } as never;
+  await setup.device.startBluetooth();
+  return { ...setup, answer: (reached: boolean) => answer(reached) };
+}
+
+test("a reach check still waiting when Bluetooth turns off is ignored, and schedules no retry", async () => {
+  const { device, availability, timers, answer } = await createVehicleAwaitingReach();
+  device.markStreamStale("error.stream_disconnected");
+  await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+  answer(false);
+  await settle();
+  assert.equal(availability.available, true);
+  assert.equal(timers.length, 0);
+});
+
+test("a reach check still waiting when cloud data resumes cannot mark the car unavailable", async () => {
+  const { device, availability, timers, answer } = await createVehicleAwaitingReach();
+  device.markStreamStale("error.stream_disconnected");
+  device.clearProductSilence();
+  answer(false);
+  await settle();
+  assert.equal(availability.available, true);
+  assert.equal(timers.length, 0);
+});
