@@ -66,12 +66,12 @@ async function createPairedVehicle(
     heard: opts.heard ?? true,
     calls: [] as string[],
     hold: false,
-    pending: undefined as ((heard: boolean) => void) | undefined,
+    pending: [] as Array<(heard: boolean) => void>,
     find: async (uuid: string) => {
       ble.calls.push(`find ${uuid}`);
       const heard = ble.hold
         ? await new Promise<boolean>((resolve) => {
-          ble.pending = resolve;
+          ble.pending.push(resolve);
         })
         : ble.heard;
       if (!heard) throw new Error(`Peripheral Not Found: ${uuid}`);
@@ -317,7 +317,7 @@ test("a car without Bluetooth goes unavailable when the cloud stream drops, as b
 async function createVehicleAwaitingPresence(opts: Parameters<typeof createPairedVehicle>[0] = {}) {
   const setup = await createPairedVehicle(opts);
   setup.ble.hold = true;
-  return { ...setup, answer: (heard: boolean) => setup.ble.pending?.(heard) };
+  return { ...setup, answer: (heard: boolean) => setup.ble.pending.splice(0).forEach((resolve) => resolve(heard)) };
 }
 
 test("a presence check still waiting when Bluetooth turns off is ignored, and schedules no other", async () => {
@@ -340,6 +340,17 @@ test("on a Homey that has to scan, a car keeps its state while the check after a
   answer(true);
   await settle();
   assert.equal(availability.available, true);
+});
+
+test("overlapping presence checks leave one timer, which turning Bluetooth off clears", async () => {
+  const { device, timers, answer } = await createVehicleAwaitingPresence();
+  device.markStreamStale("error.stream_disconnected");
+  device.markStreamStale("error.stream_disconnected");
+  answer(true);
+  await settle();
+  assert.deepEqual(timers.map(({ delay }) => delay), [300_000]);
+  await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+  assert.equal(timers.length, 0);
 });
 
 test("a presence check still waiting when cloud data resumes cannot mark the car unavailable", async () => {

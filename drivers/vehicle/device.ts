@@ -502,6 +502,9 @@ export default class VehicleDevice extends TeslemetryDevice {
     if (this.destroyed || presence !== this.presence) return;
     this.followPresence();
     const listening = this.hearsAdvertisements();
+    // Another check may have finished while this one waited.
+    if (this.presenceTimer !== undefined) this.homey.clearTimeout(this.presenceTimer);
+    this.presenceTimer = undefined;
     if (!listening && this.presenceReason() === undefined) return;
     this.presenceTimer = this.homey.setTimeout(() => {
       this.presenceTimer = undefined;
