@@ -36,7 +36,13 @@ function fake(name: string, calls: string[], fail?: Set<string>, refuse?: Set<st
 }
 
 async function createPairedVehicle(
-  opts: { distanceKm?: number | null; paired?: boolean; bluetoothFails?: string[]; carRefuses?: string[] } = {},
+  opts: {
+    atHome?: boolean;
+    distanceKm?: number | null;
+    paired?: boolean;
+    bluetoothFails?: string[];
+    carRefuses?: string[];
+  } = {},
 ) {
   const calls: string[] = [];
   fakeBluetooth.vehicle = fake("ble", calls, new Set(opts.bluetoothFails), new Set(opts.carRefuses)) as never;
@@ -77,6 +83,8 @@ async function createPairedVehicle(
     log: () => {},
     error: () => {},
   });
+  // The car's own LocatedAtHome, as handleLocatedAtHome() records it.
+  device.previousLocatedAtHome = opts.atHome;
   await device.startBluetooth();
   return { device, calls, availability, timers };
 }
@@ -86,7 +94,7 @@ test.beforeEach(() => {
 });
 
 test("a paired car near Homey takes its commands over Bluetooth, with one short connect attempt", async () => {
-  const { device, calls } = await createPairedVehicle({ distanceKm: 0.02 });
+  const { device, calls } = await createPairedVehicle({ atHome: true });
 
   await device.flowFlashLights();
   await device.flowSetChargeLimit(80);
@@ -100,9 +108,15 @@ test("a paired car near Homey takes its commands over Bluetooth, with one short 
 });
 
 test("a paired car away from home goes straight to the cloud", async () => {
-  const { device, calls } = await createPairedVehicle({ distanceKm: 3 });
+  const { device, calls } = await createPairedVehicle({ atHome: false });
   await device.flowStartCharging();
   assert.deepEqual(calls, ["cloud.charge_start"]);
+});
+
+test("a car at home uses Bluetooth even when Homey's own location is kilometres off", async () => {
+  const { device, calls } = await createPairedVehicle({ atHome: true, distanceKm: 3.89 });
+  await device.flowFlashLights();
+  assert.deepEqual(calls, ["ble.flash_lights"]);
 });
 
 test("a Bluetooth link that fails before the car judged the command falls back to the cloud", async () => {
@@ -112,7 +126,7 @@ test("a Bluetooth link that fails before the car judged the command falls back t
 });
 
 test("turning Bluetooth off closes the link, and an unpaired car keeps the Teslemetry client", async () => {
-  const paired = await createPairedVehicle({ distanceKm: 0 });
+  const paired = await createPairedVehicle({ atHome: true });
   await paired.device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
   await paired.device.flowFlashLights();
   assert.deepEqual(paired.calls, ["ble.disconnect", "teslemetry-api.flashLights"]);
