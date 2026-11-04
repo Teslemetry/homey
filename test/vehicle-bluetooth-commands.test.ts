@@ -57,7 +57,10 @@ async function createPairedVehicle(
   const capabilities: Record<string, unknown> = { "measure_distance.home": opts.distanceKm ?? null };
   const availability = { available: true, message: null as string | null };
   const timers: Array<{ callback: () => void; delay: number }> = [];
-  const notifications: string[] = [];
+  let notified: (excerpt: string) => void = () => {};
+  const notification = new Promise<string>((resolve) => {
+    notified = resolve;
+  });
   const app = {
     oauth: { getAccessToken: async () => "token" },
     ready: !opts.offline,
@@ -69,7 +72,7 @@ async function createPairedVehicle(
     homey: {
       app,
       ble: {},
-      notifications: { createNotification: async ({ excerpt }: { excerpt: string }) => notifications.push(excerpt) },
+      notifications: { createNotification: async ({ excerpt }: { excerpt: string }) => notified(excerpt) },
       setTimeout: (callback: () => void, delay: number) => timers.push({ callback, delay }),
       clearTimeout: () => {},
       __: (key: string) => key,
@@ -104,7 +107,7 @@ async function createPairedVehicle(
   // The car's own LocatedAtHome, as handleLocatedAtHome() records it.
   device.previousLocatedAtHome = opts.atHome;
   await device.startBluetooth();
-  return { device, calls, availability, timers, app, notifications };
+  return { device, calls, availability, timers, app, notification };
 }
 
 test.beforeEach(() => {
@@ -314,8 +317,8 @@ test("a startup reach check still waiting when the subscription lapses keeps the
   assert.equal(timers.length, 0);
 });
 
-test("turning Bluetooth on with no internet binds the car to its link once Homey's key is on it", async () => {
-  const { device, calls, availability, notifications } = await createPairedVehicle({ offline: true, paired: false });
+test("turning Bluetooth on with no internet binds the car to its link once Homey's key is on it", { timeout: 10_000 }, async () => {
+  const { device, calls, availability, notification } = await createPairedVehicle({ offline: true, paired: false });
   device.rebindProduct();
   fakeBluetooth.vehicle = {
     ...(fakeBluetooth.vehicle as object),
@@ -324,9 +327,8 @@ test("turning Bluetooth on with no internet binds the car to its link once Homey
     handshakeVehicleSecurity: async () => {},
   } as never;
   await device.onSettings({ newSettings: { ble_enabled: true }, changedKeys: ["ble_enabled"] });
-  for (let i = 0; i < 50 && notifications.length === 0; i++) await settle();
+  assert.equal(await notification, "local_vehicle.paired");
   await settle();
-  assert.deepEqual(notifications, ["local_vehicle.paired"]);
   assert.equal(availability.available, true);
 
   await device.flowFlashLights();
