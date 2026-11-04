@@ -54,7 +54,7 @@ jobs:
           git commit -m "Update Homey App Version to v${VERSION}"
           git push --force origin "$BRANCH"
 
-          if ! gh pr view "$BRANCH" >/dev/null 2>&1; then
+          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
             gh pr create --base main --head "$BRANCH" \
               --title "Update Homey App Version to v${VERSION}" \
               --body "Merging this tags v${VERSION} and publishes it to Athom as a draft."
