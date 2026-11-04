@@ -118,8 +118,8 @@ export interface VehicleLink {
  * A paired car's commands, over Bluetooth while `inRange()` and on the cloud
  * otherwise or when the Bluetooth link fails before the car judged the
  * command (VehicleRouter). The cloud backend is `tesla-fleet-api`'s
- * TeslemetryVehicle. One 4 s connect attempt (HOMEY_VEHICLE_OPTIONS) keeps a
- * Flow action inside its window when the car turns out to be out of reach.
+ * TeslemetryVehicle. A connect is one attempt (HOMEY_VEHICLE_OPTIONS), and
+ * `inRange()` skips Bluetooth altogether for a car away from Homey.
  */
 export async function createVehicleLink(options: {
   ble: HomeyBleManagerLike;

@@ -94,7 +94,7 @@ test("a paired car near Homey takes its commands over Bluetooth, with one short 
   assert.deepEqual(calls, ["ble.flash_lights", "ble.set_charge_limit"]);
   const [{ options }] = fakeBluetooth.created as Array<{ options: Record<string, unknown> }>;
   assert.equal(options.max_connect_attempts, 1);
-  assert.equal(options.connect_timeout_ms, 4000);
+  assert.equal(options.connect_timeout_ms, 15_000);
   assert.equal(options.keepalive_interval_ms, null);
   assert.deepEqual(options.device, { id: "ble-uuid", name: "S1a87a5a75f3df858C" });
 });
