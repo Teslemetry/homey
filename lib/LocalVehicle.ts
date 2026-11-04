@@ -210,8 +210,11 @@ export class VehiclePresence {
   /** Asks Homey whether it hears the car, then answers `present`. */
   async check(): Promise<boolean> {
     try {
-      await this.ble.find(this.peripheralUuid);
-      this.heardAt = this.now();
+      const advertisement = (await this.ble.find(this.peripheralUuid)) as { timestamp?: unknown } | undefined;
+      // Homey's own time for the advertisement, so a cached one ages out; never one ahead of this clock.
+      const now = this.now();
+      const { timestamp } = advertisement ?? {};
+      this.heardAt = typeof timestamp === "number" && timestamp <= now ? timestamp : now;
     } catch {
       // Homey has not heard it: "Peripheral Not Found".
     }

@@ -64,6 +64,8 @@ async function createPairedVehicle(
   // Homey's BLE manager: find() answers from its advertisement cache; nothing here reaches the car.
   const ble = {
     heard: opts.heard ?? true,
+    /** The advertisement's own timestamp, when the test gives one. */
+    timestamp: undefined as number | undefined,
     calls: [] as string[],
     hold: false,
     pending: [] as Array<(heard: boolean) => void>,
@@ -75,7 +77,7 @@ async function createPairedVehicle(
         })
         : ble.heard;
       if (!heard) throw new Error(`Peripheral Not Found: ${uuid}`);
-      return { uuid, rssi: -60 };
+      return { uuid, rssi: -60, timestamp: ble.timestamp };
     },
     subscribeToAdvertisements: async (uuid: string) => {
       ble.calls.push(`subscribe ${uuid}`);
@@ -293,6 +295,20 @@ test("with advertisement subscriptions, commands go over Bluetooth only while Ho
   t.mock.timers.tick(196_000);
   await device.flowHonkHorn();
   assert.deepEqual(calls, ["ble.flash_lights", "cloud.honk_horn"]);
+});
+
+test("a cached advertisement Homey heard over 195 s ago does not count as present", async (t) => {
+  t.mock.timers.enable({ apis: ["Date"], now: 1_000_000 });
+  const { device, ble, availability } = await createPairedVehicle();
+  ble.timestamp = 1_000_000 - 200_000;
+  device.markStreamStale("error.stream_disconnected");
+  await settle();
+  assert.equal(availability.available, false);
+
+  ble.timestamp = 1_000_000 - 1_000;
+  device.markStreamStale("error.stream_disconnected");
+  await settle();
+  assert.equal(availability.available, true, "heard a second ago by Homey's own clock");
 });
 
 test("cloud data arriving while the car is unavailable on a stream drop stops the checks", async () => {
