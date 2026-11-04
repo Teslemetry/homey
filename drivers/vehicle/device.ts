@@ -26,11 +26,6 @@ import {
 const BLE_KEY_STORE_KEY = "ble_key";
 /** The car's Bluetooth device, stored once Homey's key is on the car. */
 const BLE_DEVICE_STORE_KEY = "ble_device";
-/**
- * How far from Homey, by its last reported location, a paired car is still
- * worth trying over Bluetooth. Beyond it a command goes straight to the cloud.
- */
-const BLUETOOTH_RANGE_KM = 0.1;
 /** How often a car the cloud stream lost is asked again over Bluetooth. */
 const BLUETOOTH_RECHECK_MS = 300_000;
 
@@ -514,11 +509,14 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.bluetoothRecheck = undefined;
   }
 
-  /** Unknown counts as in range: with the cloud down, its location may be all there is. */
+  /**
+   * A car away from home goes straight to the cloud. This is the car's own
+   * LocatedAtHome, not the distance to Homey's configured location, which can
+   * be kilometres off. Unknown counts as in range: with the cloud down, the
+   * last report may be all there is.
+   */
   private mayBeInBluetoothRange(): boolean {
-    if (!this.hasCapability("measure_distance.home")) return true;
-    const km = this.getCapabilityValue("measure_distance.home") as number | null;
-    return typeof km !== "number" || km <= BLUETOOTH_RANGE_KM;
+    return this.previousLocatedAtHome !== false;
   }
 
   /**
