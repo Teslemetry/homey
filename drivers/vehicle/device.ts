@@ -460,6 +460,8 @@ export default class VehicleDevice extends TeslemetryDevice {
       this.clearAvailabilityReason(reason);
       return;
     }
+    // A newer cause, such as a lapsed subscription, keeps its own message.
+    if (reason === "startup" && this.getAvailabilityReason() !== "startup") return;
     this.markUnavailable(reason, message);
     if (this.bluetoothRecheck !== undefined) this.homey.clearTimeout(this.bluetoothRecheck);
     this.bluetoothRecheck = this.homey.setTimeout(() => {

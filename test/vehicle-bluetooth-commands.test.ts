@@ -298,3 +298,13 @@ test("turning Bluetooth off with no internet unbinds a car that was bound to its
   assert.equal(availability.available, false);
   assert.equal(availability.message, "error.teslemetry_connecting");
 });
+
+test("a startup reach check still waiting when the subscription lapses keeps the account message", async () => {
+  const { device, availability, timers, answer } = await createVehicleAwaitingReach({ offline: true });
+  device.rebindProduct();
+  device.markUnavailable("auth", "error.subscription_required");
+  answer(false);
+  await settle();
+  assert.equal(availability.message, "error.subscription_required");
+  assert.equal(timers.length, 0);
+});
