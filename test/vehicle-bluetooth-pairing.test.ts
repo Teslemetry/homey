@@ -178,23 +178,30 @@ test("a pairing a restart interrupted turns the setting back off and says so", a
 });
 
 test("turning Bluetooth off while the paired car is being stored reports nothing", async () => {
-  createFakeVehicle({ onCar: true });
+  const calls = createFakeVehicle({ onCar: true });
   const { device, settings } = createVehicle();
   let notified = false;
   device.homey.notifications.createNotification = async () => {
     notified = true;
   };
+  // Waits for this pairing's own end, so it can never run on the next test's fake car.
+  let turnedOff: () => void = () => {};
+  const off = new Promise<void>((resolve) => {
+    turnedOff = resolve;
+  });
   const store = device.setStoreValue;
   device.setStoreValue = async (key: string, value: unknown) => {
     await store(key, value);
     if (key === "ble_device") {
       await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+      turnedOff();
     }
   };
 
   await device.onSettings(turnOn);
+  await off;
   await new Promise((resolve) => setImmediate(resolve));
-  await new Promise((resolve) => setImmediate(resolve));
+  assert.deepEqual(calls, ["find_vehicle", "connect", "handshake", "disconnect"]);
   assert.equal(notified, false);
   assert.deepEqual(settings, []);
 });
