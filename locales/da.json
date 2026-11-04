@@ -38,7 +38,7 @@
     "registration_failed": "Homey kunne ikke registrere sin nøgle hos din Powerwall. Gem indstillingerne for lokal forbindelse igen for at prøve igen."
   },
   "local_vehicle": {
-    "tap_key_card": "Homey beder bilen om at tilføje sin nøgle. Hold dit nøglekort mod midterkonsollen, når bilen beder om det.",
+    "tap_key_card": "Homey tjekker sin nøgle hos bilen. Hvis bilen beder om et nøglekort, så hold det mod midterkonsollen.",
     "paired": "__name__: Homeys nøgle er på bilen, så Homey kan nå den via Bluetooth.",
     "not_found": "__name__: Homey kunne ikke nå bilen via Bluetooth. Parkér den tæt på Homey, og slå Bluetooth til igen.",
     "tap_timeout": "__name__: Der blev ikke holdt et nøglekort mod konsollen i tide. Slå Bluetooth til igen for at prøve igen.",

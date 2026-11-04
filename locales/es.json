@@ -38,7 +38,7 @@
     "registration_failed": "Homey no pudo registrar su llave en tu Powerwall. Guarda de nuevo los ajustes de conexión local para volver a intentarlo."
   },
   "local_vehicle": {
-    "tap_key_card": "Homey está pidiendo al coche que añada su llave. Acerca tu tarjeta llave a la consola central cuando el coche lo pida.",
+    "tap_key_card": "Homey está comprobando su llave con el coche. Si el coche pide una tarjeta llave, acércala a la consola central.",
     "paired": "__name__: la llave de Homey está en el coche, así que Homey puede llegar a él por Bluetooth.",
     "not_found": "__name__: Homey no pudo llegar al coche por Bluetooth. Apárcalo cerca de Homey y vuelve a activar Bluetooth.",
     "tap_timeout": "__name__: no se acercó ninguna tarjeta llave a tiempo. Vuelve a activar Bluetooth para intentarlo de nuevo.",
