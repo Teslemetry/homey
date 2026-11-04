@@ -32,7 +32,10 @@
     "wrong_password": "Gatewayen accepterede ikke denne adgangskode.",
     "gateway_unreachable": "Homey kunne ikke nå gatewayen. Tjek adressen, og at den er på samme netværk som Homey, og gem igen.",
     "cloud_unreachable": "Tesla kan ikke nå din Powerwall lige nu. Prøv igen senere.",
-    "connected": "Forbundet til gatewayen på __host__."
+    "connected": "Forbundet til gatewayen på __host__.",
+    "preparing": "Homey gør sin nøgle til din Powerwall klar. En notifikation fortæller, hvornår du kan godkende den; slå så tænd/sluk-kontakten på din primære Powerwall fra og til igen, og gem igen.",
+    "key_ready": "Homeys nøgle er registreret hos din Powerwall. Slå tænd/sluk-kontakten på din primære Powerwall fra og til igen, og gem derefter indstillingerne for lokal forbindelse igen.",
+    "registration_failed": "Homey kunne ikke registrere sin nøgle hos din Powerwall. Gem indstillingerne for lokal forbindelse igen for at prøve igen."
   },
   "local_vehicle": {
     "tap_key_card": "Homey beder bilen om at tilføje sin nøgle. Hold dit nøglekort mod midterkonsollen, når bilen beder om det.",

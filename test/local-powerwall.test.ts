@@ -238,6 +238,12 @@ test("enabling a site's local link moves its Gateway device onto the merged live
 
 function createPowerwall(opts: { store?: Record<string, unknown>; settings?: Record<string, unknown> } = {}) {
   const store: Record<string, unknown> = { local_gateway_key: KEY_PEM, ...opts.store };
+  if (store.local_gateway_key === undefined) delete store.local_gateway_key;
+  const notifications: string[] = [];
+  let notified: (excerpt: string) => void = () => {};
+  const notification = new Promise<string>((resolve) => {
+    notified = resolve;
+  });
   const calls: Array<[string, ...unknown[]]> = [];
   const app = {
     oauth: { getAccessToken: async () => "token" },
@@ -250,8 +256,18 @@ function createPowerwall(opts: { store?: Record<string, unknown>; settings?: Rec
     log: () => {},
   };
   const device = Object.assign(Object.create(PowerwallDevice.prototype), {
-    homey: { app, __: (key: string, tokens?: { host?: string }) => (tokens?.host ? `${key} ${tokens.host}` : key) },
+    homey: {
+      app,
+      __: (key: string, tokens?: { host?: string }) => (tokens?.host ? `${key} ${tokens.host}` : key),
+      notifications: {
+        createNotification: async ({ excerpt }: { excerpt: string }) => {
+          notifications.push(excerpt);
+          notified(excerpt);
+        },
+      },
+    },
     getData: () => ({ id: SITE_ID }),
+    getName: () => "Powerwall",
     getSetting: (key: string) => opts.settings?.[key],
     getStoreValue: (key: string) => (key in store ? store[key] : null),
     setStoreValue: async (key: string, value: unknown) => {
@@ -260,7 +276,7 @@ function createPowerwall(opts: { store?: Record<string, unknown>; settings?: Rec
     log: () => {},
     error: () => {},
   });
-  return { device, store, calls };
+  return { device, store, calls, notifications, notification };
 }
 
 function createCloudSite(states: Array<number | null>, address: string | null = GATEWAY.host) {
@@ -575,4 +591,61 @@ test("a command's held value survives a tariff update, but a refused command is 
   await site.backup(50);
   assert.equal(site.siteInfoDocument?.backup_reserve_percent, 20);
   site.stop();
+});
+
+test("the first save does not wait for Homey's new key: it registers it in the background and says when to approve", { timeout: 30_000 }, async () => {
+  const { device, store, calls, notifications, notification } = createPowerwall({ store: { local_gateway_key: undefined } });
+  const { registered } = createCloudSite([null]);
+  // Hold the registration's first cloud read, so a save can land after the key is stored.
+  const lookUp = (fakeCloud.site as { find_authorized_clients: () => Promise<unknown> }).find_authorized_clients;
+  let release: () => void = () => {};
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let lookups = 0;
+  (fakeCloud.site as { find_authorized_clients: () => Promise<unknown> }).find_authorized_clients = async () => {
+    lookups++;
+    await held;
+    return lookUp();
+  };
+
+  await assert.rejects(device.onSettings(enable()), { message: "local_powerwall.preparing" });
+  const deadline = performance.now() + 30_000;
+  while (lookups === 0 && performance.now() < deadline) await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(typeof store.local_gateway_key, "string", "the key is stored before it is registered");
+  // Saving again while the key is still registering starts no second pass. Not
+  // awaited first: a second pass would wait on the held read and never settle.
+  const second = device.onSettings(enable()).then(
+    () => "saved",
+    (error: Error) => error.message,
+  );
+  let outcome: string | undefined;
+  second.then((value) => {
+    outcome = value;
+  });
+  const settled = performance.now() + 2_000;
+  while (outcome === undefined && lookups === 1 && performance.now() < settled) {
+    await new Promise((resolve) => setImmediate(resolve));
+  }
+  assert.equal(lookups, 1);
+  assert.equal(outcome, "local_powerwall.preparing");
+  release();
+
+  assert.equal(await notification, "Powerwall: local_powerwall.key_ready");
+  assert.match(store.local_gateway_key as string, /^-----BEGIN RSA PRIVATE KEY-----/);
+  assert.equal(registered.length, 1);
+  assert.deepEqual(notifications, ["Powerwall: local_powerwall.key_ready"]);
+  assert.deepEqual(calls, [], "nothing is enabled before the owner approves");
+});
+
+test("a background registration that fails says why", async () => {
+  const { device, notification } = createPowerwall({ store: { local_gateway_key: undefined } });
+  fakeCloud.site = {
+    find_authorized_clients: async () => {
+      throw new EnergyGatewayUnreachable();
+    },
+  } as never;
+
+  await assert.rejects(device.onSettings(enable()), { message: "local_powerwall.preparing" });
+  assert.equal(await notification, "Powerwall: local_powerwall.cloud_unreachable");
 });

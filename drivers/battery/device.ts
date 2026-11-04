@@ -129,7 +129,9 @@ export default class PowerwallDevice extends TeslemetryDevice {
   /**
    * The "Local connection" settings. Turning it on runs one enrolment pass
    * (lib/LocalPowerwall.ts): a key the gateway has not approved yet rejects
-   * the save with what to do, so the owner saves again afterwards.
+   * the save with what to do, so the owner saves again afterwards. The very
+   * first pass outlasts a save, since Homey takes a while to generate the
+   * key, so it runs on in the background and ends with a notification.
    */
   async onSettings({
     newSettings,
@@ -148,27 +150,47 @@ export default class PowerwallDevice extends TeslemetryDevice {
 
     const password = String(newSettings.local_password ?? "").trim();
     if (!password) throw new Error(this.homey.__("local_powerwall.password_required"));
-    let keyPem = this.getStoreValue(LOCAL_KEY_STORE_KEY) as unknown;
-    if (typeof keyPem !== "string") {
-      keyPem = await generateGatewayKey();
-      await this.setStoreValue(LOCAL_KEY_STORE_KEY, keyPem);
+    const host = String(newSettings.local_host ?? "").trim();
+    const keyPem = this.getStoreValue(LOCAL_KEY_STORE_KEY) as unknown;
+    // Also while one is still registering, so a key is never registered twice.
+    if (this.keyRegistration || typeof keyPem !== "string") {
+      this.keyRegistration ??= this.registerNewKey(siteId, host, password).finally(() => {
+        this.keyRegistration = undefined;
+      });
+      throw new Error(this.homey.__("local_powerwall.preparing"));
     }
-    const result = await enrolLocalGateway({
-      app: this.homey.app,
-      siteId,
-      host: String(newSettings.local_host ?? "").trim(),
-      password,
-      keyPem: keyPem as string,
-    });
+    const result = await enrolLocalGateway({ app: this.homey.app, siteId, host, password, keyPem });
     if ("failure" in result) {
       throw new Error(this.homey.__(`local_powerwall.${result.failure}`));
     }
 
     const gateway = { host: result.host, password };
     await this.setStoreValue(LOCAL_GATEWAY_STORE_KEY, gateway);
-    await this.homey.app.enableLocalPowerwall(siteId, gateway, keyPem as string);
+    await this.homey.app.enableLocalPowerwall(siteId, gateway, keyPem);
     this.localLink = true;
     return this.homey.__("local_powerwall.connected", { host: result.host });
+  }
+
+  /** The first enrolment's key generation and registration, while it runs. */
+  private keyRegistration?: Promise<void>;
+
+  private async registerNewKey(siteId: string, host: string, password: string): Promise<void> {
+    let outcome: string;
+    try {
+      const keyPem = await generateGatewayKey();
+      if (this.destroyed) return;
+      await this.setStoreValue(LOCAL_KEY_STORE_KEY, keyPem);
+      const result = await enrolLocalGateway({ app: this.homey.app, siteId, host, password, keyPem });
+      // A key generated just now cannot be approved yet, so "approve" is the success here.
+      outcome = "failure" in result && result.failure !== "approve" ? result.failure : "key_ready";
+    } catch (error) {
+      this.error("Failed to register Homey's key with the gateway", error);
+      outcome = "registration_failed";
+    }
+    if (this.destroyed) return;
+    await this.homey.notifications.createNotification({
+      excerpt: `${this.getName()}: ${this.homey.__(`local_powerwall.${outcome}`)}`,
+    });
   }
 
   /** See TeslemetryDevice.rebindProduct(). */
