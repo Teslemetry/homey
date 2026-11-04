@@ -187,9 +187,11 @@ list; do not invent a Homey-only shape.
   `socket.io-client`/`engine.io-client`/`parseuri` findings alone (upstream
   Athom gap; `npm audit fix --force` downgrades `homey`). Verify any new
   `overrides` pin with build, test, lint and `app:validate`.
-- Releases run only via `workflow_dispatch` on
-  `.github/workflows/homey-app-release.yml`. Athom's publish lands a draft;
-  promoting it in Athom's dashboard is a separate manual step.
+- Releases start only via `workflow_dispatch` on
+  `.github/workflows/homey-app-release.yml`, which opens the version PR
+  (`main` takes no direct push). Merging that PR tags the version and
+  publishes it. Athom's publish lands a draft; releasing it to Test or Live
+  is a separate step.
 
 ## Maintaining this file
 
