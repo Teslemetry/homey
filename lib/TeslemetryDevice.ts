@@ -145,6 +145,14 @@ export default class TeslemetryDevice extends Homey.Device {
     this.markUnavailable("silent", this.homey.__("error.product_silent"));
   }
 
+  /**
+   * Called by TeslemetryApp's stream freshness watchdog once a dropped
+   * stream has delivered nothing for this product past its grace period.
+   */
+  public markStreamStale(message: string): void {
+    if (!this.isLocallyLive()) this.markUnavailable("stream", message);
+  }
+
   /** Called on every genuine data event for this device's product. */
   public clearProductSilence(): void {
     this.clearAvailabilityReason("silent");

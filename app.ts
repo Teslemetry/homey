@@ -1393,7 +1393,7 @@ export default class TeslemetryApp extends Homey.App {
     );
     const message = this.homey.__('error.stream_disconnected');
     for (const device of this.getDevicesForProductKey(key)) {
-      if (!device.isLocallyLive()) device.markUnavailable('stream', message);
+      device.markStreamStale(message);
     }
   }
 

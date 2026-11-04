@@ -15,7 +15,7 @@ import {
   createVehicleLink,
   generateVehicleKey,
   pairVehicleKey,
-  type VehicleCommands,
+  type VehicleLink,
 } from "../../lib/LocalVehicle.js";
 import {
   isCapabilitySupported,
@@ -31,6 +31,8 @@ const BLE_DEVICE_STORE_KEY = "ble_device";
  * worth trying over Bluetooth. Beyond it a command goes straight to the cloud.
  */
 const BLUETOOTH_RANGE_KM = 0.1;
+/** How often a car the cloud stream lost is asked again over Bluetooth. */
+const BLUETOOTH_RECHECK_MS = 300_000;
 
 const isBool = (x: any) => typeof x === "boolean";
 
@@ -430,7 +432,50 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   /** A paired car's Bluetooth link, while its "Bluetooth" setting is on. */
-  private bluetooth?: { commands: VehicleCommands; close(): Promise<unknown> };
+  private bluetooth?: VehicleLink;
+  private bluetoothRecheck?: NodeJS.Timeout;
+
+  /**
+   * A car Homey can still reach over Bluetooth stays available when the
+   * cloud stream drops. While it does not answer it is unavailable as
+   * before, and is asked again every BLUETOOTH_RECHECK_MS, so a car that
+   * comes home during an outage recovers.
+   */
+  public markStreamStale(message: string): void {
+    if (!this.bluetooth) {
+      super.markStreamStale(message);
+      return;
+    }
+    this.checkBluetoothReach(message).catch(this.error);
+  }
+
+  /**
+   * Bumped by genuine cloud data and by stopping Bluetooth, so a reach check
+   * that was still waiting on the car when either happened is ignored.
+   */
+  private bluetoothCheck = 0;
+
+  private async checkBluetoothReach(message: string): Promise<void> {
+    const link = this.bluetooth;
+    if (!link) return;
+    const check = this.bluetoothCheck;
+    const reached = await link.reach();
+    if (this.destroyed || check !== this.bluetoothCheck) return;
+    if (reached) {
+      this.clearAvailabilityReason("stream");
+      return;
+    }
+    this.markUnavailable("stream", message);
+    if (this.bluetoothRecheck !== undefined) this.homey.clearTimeout(this.bluetoothRecheck);
+    this.bluetoothRecheck = this.homey.setTimeout(() => {
+      this.bluetoothRecheck = undefined;
+      try {
+        if (this.getAvailabilityReason() === "stream") this.checkBluetoothReach(message).catch(this.error);
+      } catch (error) {
+        this.error(error);
+      }
+    }, BLUETOOTH_RECHECK_MS);
+  }
 
   /** Bumped by every stop, so a start still loading when Bluetooth turns off cannot install its link. */
   private bluetoothGeneration = 0;
@@ -462,8 +507,11 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   private stopBluetooth(): void {
     this.bluetoothGeneration++;
+    this.bluetoothCheck++;
     this.bluetooth?.close().catch(this.error);
     this.bluetooth = undefined;
+    if (this.bluetoothRecheck !== undefined) this.homey.clearTimeout(this.bluetoothRecheck);
+    this.bluetoothRecheck = undefined;
   }
 
   /** Unknown counts as in range: with the cloud down, its location may be all there is. */
@@ -530,6 +578,7 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   public clearProductSilence(): void {
+    this.bluetoothCheck++;
     if (!this.silenceWarningShown || this.destroyed) return;
     this.silenceWarningShown = false;
     this.unsetWarning().catch(this.error);
