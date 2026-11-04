@@ -5,6 +5,7 @@ import {
   TeslemetryVehicleStream,
   VehicleDetails,
 } from "@teslemetry/api";
+import type { BleDeviceRef } from "tesla-fleet-api/bluetooth";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 import {
   checkVehicleEligibility,
@@ -16,6 +17,7 @@ import {
   generateVehicleKey,
   pairVehicleKey,
   type VehicleLink,
+  VehiclePresence,
 } from "../../lib/LocalVehicle.js";
 import {
   isCapabilitySupported,
@@ -26,10 +28,10 @@ import {
 const BLE_KEY_STORE_KEY = "ble_key";
 /** The car's Bluetooth device, stored once Homey's key is on the car. */
 const BLE_DEVICE_STORE_KEY = "ble_device";
-/** How often a car the cloud stream lost is asked again over Bluetooth. */
-const BLUETOOTH_RECHECK_MS = 300_000;
-/** When a car that missed one Bluetooth check is asked once more, before it goes unavailable. */
-const BLUETOOTH_RETRY_MS = 30_000;
+/** How often presence is checked while the cloud is down, where each check is a 10 s scan. */
+const PRESENCE_SCAN_MS = 300_000;
+/** How often presence is checked where an open advertisement subscription keeps each check instant. */
+const PRESENCE_CHECK_MS = 60_000;
 
 const isBool = (x: any) => typeof x === "boolean";
 
@@ -430,23 +432,22 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   /** A paired car's Bluetooth link, while its "Bluetooth" setting is on. */
   private bluetooth?: VehicleLink;
-  private bluetoothRecheck?: NodeJS.Timeout;
+  /** Whether Homey hears that car's advertisements, while the link exists. */
+  private presence?: VehiclePresence;
+  private presenceTimer?: NodeJS.Timeout;
 
   /**
-   * A car Homey can still reach over Bluetooth stays available when the
-   * cloud stream drops. One miss can be a slow connect, so a car that does
-   * not answer is asked once more after BLUETOOTH_RETRY_MS; commands do not
-   * wait on that. If it still does not answer it is unavailable as before,
-   * and is asked again every BLUETOOTH_RECHECK_MS, so a car that comes home
-   * during an outage recovers.
+   * A paired car Homey hears over Bluetooth stays available when the cloud
+   * stream drops, and goes unavailable as before once Homey stops hearing it.
+   * Nothing connects to the car to find out: see VehiclePresence.
    */
   public markStreamStale(message: string): void {
     this.streamStaleMessage = message;
-    if (!this.bluetooth) {
+    if (!this.presence) {
       super.markStreamStale(message);
       return;
     }
-    this.checkBluetoothReach("stream", message).catch(this.error);
+    this.followPresenceNow();
   }
 
   /**
@@ -456,35 +457,60 @@ export default class VehicleDevice extends TeslemetryDevice {
   private streamStaleMessage?: string;
 
   /**
-   * Bumped by genuine cloud data, by stopping Bluetooth and by a rebind, so a
-   * reach check that was still waiting on the car when one happened is ignored.
+   * Homeys with advertisement subscriptions answer a presence check from a
+   * cache the subscription keeps warm. On others each check is a 10 s scan,
+   * so it runs only while the cloud is down.
    */
-  private bluetoothCheck = 0;
+  private hearsAdvertisements(): boolean {
+    // `hasFeature` is newer than the SDK's typings.
+    const homey = this.homey as { hasFeature?: (feature: string) => boolean };
+    return homey.hasFeature?.("ble-advertisements") === true;
+  }
 
-  private async checkBluetoothReach(reason: "stream" | "startup", message: string, retried = false): Promise<void> {
-    const link = this.bluetooth;
-    if (!link) return;
-    const check = this.bluetoothCheck;
-    const reached = await link.reach();
-    if (this.destroyed || check !== this.bluetoothCheck) return;
-    if (reached) {
+  /** Why the car's availability follows its presence right now, if it does. */
+  private presenceReason(): "stream" | "startup" | undefined {
+    if (this.vehicle !== undefined && this.vehicle === this.bluetooth?.standIn) return "startup";
+    return this.streamStaleMessage === undefined ? undefined : "stream";
+  }
+
+  /** Where a check is instant it has just run; elsewhere one starts now, and the car keeps its state until it answers. */
+  private followPresenceNow(): void {
+    if (this.hearsAdvertisements()) this.followPresence();
+    else this.checkPresence().catch(this.error);
+  }
+
+  /** Applies the last presence result. Another reason, such as a lapsed subscription, keeps its own message. */
+  private followPresence(): void {
+    const reason = this.presenceReason();
+    if (!this.presence || !reason) return;
+    if (this.presence.present) {
       this.clearAvailabilityReason(reason);
       return;
     }
-    // A newer cause, such as a lapsed subscription, keeps its own message.
-    if (reason === "startup" && this.getAvailabilityReason() !== "startup") return;
-    if (retried) this.markUnavailable(reason, message);
-    if (this.bluetoothRecheck !== undefined) this.homey.clearTimeout(this.bluetoothRecheck);
-    this.bluetoothRecheck = this.homey.setTimeout(() => {
-      this.bluetoothRecheck = undefined;
+    const current = this.getAvailabilityReason();
+    if (reason === "stream" && (current === undefined || current === "stream")) {
+      this.markUnavailable("stream", this.streamStaleMessage!);
+    }
+  }
+
+  private async checkPresence(): Promise<void> {
+    const { presence } = this;
+    if (!presence) return;
+    if (this.presenceTimer !== undefined) this.homey.clearTimeout(this.presenceTimer);
+    this.presenceTimer = undefined;
+    await presence.check();
+    if (this.destroyed || presence !== this.presence) return;
+    this.followPresence();
+    const listening = this.hearsAdvertisements();
+    if (!listening && this.presenceReason() === undefined) return;
+    this.presenceTimer = this.homey.setTimeout(() => {
+      this.presenceTimer = undefined;
       try {
-        // A retry is dropped once anything bumped the check, a recheck once this reason has cleared.
-        if (retried ? this.getAvailabilityReason() !== reason : check !== this.bluetoothCheck) return;
-        this.checkBluetoothReach(reason, message, true).catch(this.error);
+        this.checkPresence().catch(this.error);
       } catch (error) {
         this.error(error);
       }
-    }, retried ? BLUETOOTH_RECHECK_MS : BLUETOOTH_RETRY_MS);
+    }, listening ? PRESENCE_CHECK_MS : PRESENCE_SCAN_MS);
   }
 
   /** Bumped by every stop, so a start still loading when Bluetooth turns off cannot install its link. */
@@ -511,6 +537,11 @@ export default class VehicleDevice extends TeslemetryDevice {
         return;
       }
       this.bluetooth = link;
+      this.presence = new VehiclePresence(this.homey.ble as never, (device as BleDeviceRef).id);
+      if (this.hearsAdvertisements()) {
+        this.presence.keepCacheWarm().catch(this.error);
+        this.checkPresence().catch(this.error);
+      }
     } catch (error) {
       this.error("Failed to start the Bluetooth link", error);
     }
@@ -518,20 +549,23 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   private stopBluetooth(): void {
     this.bluetoothGeneration++;
-    this.bluetoothCheck++;
     this.bluetooth?.close().catch(this.error);
     this.bluetooth = undefined;
-    if (this.bluetoothRecheck !== undefined) this.homey.clearTimeout(this.bluetoothRecheck);
-    this.bluetoothRecheck = undefined;
+    this.presence?.close().catch(this.error);
+    this.presence = undefined;
+    if (this.presenceTimer !== undefined) this.homey.clearTimeout(this.presenceTimer);
+    this.presenceTimer = undefined;
   }
 
   /**
-   * A car away from home goes straight to the cloud. This is the car's own
-   * LocatedAtHome, not the distance to Homey's configured location, which can
-   * be kilometres off. Unknown counts as in range: with the cloud down, the
-   * last report may be all there is.
+   * As Home Assistant: Bluetooth first while Homey hears the car. A Homey that
+   * would have to scan for that uses the car's own LocatedAtHome instead, not
+   * the distance to Homey's configured location, which can be kilometres off;
+   * unknown counts as in range, since with the cloud down the last report may
+   * be all there is.
    */
   private mayBeInBluetoothRange(): boolean {
+    if (this.hearsAdvertisements()) return this.presence?.present === true;
     return this.previousLocatedAtHome !== false;
   }
 
@@ -566,7 +600,6 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   /** See TeslemetryDevice.unbindProduct(). */
   public unbindProduct(): void {
-    this.bluetoothCheck++;
     this.vehicle?.sse.off("state", this.handleVehicleState);
     this.vehicle?.sse.off("connectivity", this.handleConnectivity);
     const sseCleanup = this.sseCleanup ?? [];
@@ -593,7 +626,6 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   public clearProductSilence(): void {
-    this.bluetoothCheck++;
     this.streamStaleMessage = undefined;
     if (!this.silenceWarningShown || this.destroyed) return;
     this.silenceWarningShown = false;
@@ -650,10 +682,9 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     this.vehicle = vehicle;
     if (vehicle === standIn) {
-      // Bound to the link alone, the car is available only while it answers over Bluetooth.
-      const { message } = this.homey.app.notReadyAvailability();
-      this.markUnavailable("startup", message);
-      this.checkBluetoothReach("startup", message).catch(this.error);
+      // Bound to the link alone, the car is available only while Homey hears it over Bluetooth.
+      this.markUnavailable("startup", this.homey.app.notReadyAvailability().message);
+      this.followPresenceNow();
     } else {
       this.clearAvailabilityReason("startup");
     }

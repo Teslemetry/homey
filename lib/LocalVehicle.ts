@@ -111,8 +111,6 @@ export interface VehicleCommands {
 
 export interface VehicleLink {
   commands: VehicleCommands;
-  /** Whether the car answers over Bluetooth. Reads its security controller, which never wakes it. */
-  reach(): Promise<boolean>;
   close(): Promise<unknown>;
   /**
    * The car a device binds to while there is no Products generation: no
@@ -163,14 +161,6 @@ export async function createVehicleLink(options: {
   const offline = () => Promise.reject(new Error(options.offlineMessage));
   return {
     commands,
-    reach: () =>
-      bluetooth.vehicle_state().then(
-        () => true,
-        (error: Error) => {
-          options.log(`Bluetooth: the car did not answer: ${error.name}: ${error.message}`);
-          return false;
-        },
-      ),
     close: () => bluetooth.disconnect(),
     standIn: {
       vin: options.vin,
@@ -180,4 +170,59 @@ export async function createVehicleLink(options: {
       metadata: {},
     } as unknown as VehicleDetails,
   };
+}
+
+/**
+ * How long a car counts as near Homey after Homey last heard its Bluetooth
+ * advertisement: Home Assistant's window for a connectable device.
+ */
+export const PRESENCE_WINDOW_MS = 195_000;
+
+/** What presence needs of `this.homey.ble`. */
+export interface HomeyPresenceBleLike {
+  find(peripheralUuid: string): Promise<unknown>;
+  subscribeToAdvertisements?(peripheralUuid: string, callback: () => void): Promise<unknown>;
+  unsubscribeFromAdvertisements?(peripheralUuid: string): Promise<unknown>;
+}
+
+/**
+ * Whether a paired car is near Homey, from its Bluetooth advertisements alone,
+ * as Home Assistant decides: nothing connects to the car or wakes it.
+ * `find()` answers from Homey's advertisement cache in milliseconds, and scans
+ * for about 10 s once that cache is cold, which it is within 40 s unless an
+ * advertisement subscription is open. That subscription never calls back for
+ * a car, so it is held only to keep `find()` instant.
+ */
+export class VehiclePresence {
+  private heardAt?: number;
+
+  constructor(
+    private readonly ble: HomeyPresenceBleLike,
+    private readonly peripheralUuid: string,
+    private readonly now: () => number = Date.now,
+  ) {}
+
+  /** Whether Homey heard the car within PRESENCE_WINDOW_MS. */
+  get present(): boolean {
+    return this.heardAt !== undefined && this.now() - this.heardAt <= PRESENCE_WINDOW_MS;
+  }
+
+  /** Asks Homey whether it hears the car, then answers `present`. */
+  async check(): Promise<boolean> {
+    try {
+      await this.ble.find(this.peripheralUuid);
+      this.heardAt = this.now();
+    } catch {
+      // Homey has not heard it: "Peripheral Not Found".
+    }
+    return this.present;
+  }
+
+  async keepCacheWarm(): Promise<void> {
+    await this.ble.subscribeToAdvertisements?.(this.peripheralUuid, () => {});
+  }
+
+  async close(): Promise<void> {
+    await this.ble.unsubscribeFromAdvertisements?.(this.peripheralUuid);
+  }
 }
