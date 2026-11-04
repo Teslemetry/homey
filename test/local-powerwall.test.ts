@@ -649,3 +649,21 @@ test("a background registration that fails says why", async () => {
   await assert.rejects(device.onSettings(enable()), { message: "local_powerwall.preparing" });
   assert.equal(await notification, "Powerwall: local_powerwall.cloud_unreachable");
 });
+
+test("a notification that fails ends the background registration quietly, and the next save carries on", async () => {
+  const { device } = createPowerwall({ store: { local_gateway_key: undefined } });
+  createCloudSite([null, AuthorizedClientState.PENDING_VERIFICATION]);
+  let attempted: () => void = () => {};
+  const notifying = new Promise<void>((resolve) => {
+    attempted = resolve;
+  });
+  device.homey.notifications.createNotification = async () => {
+    attempted();
+    throw new Error("notifications unavailable");
+  };
+
+  await assert.rejects(device.onSettings(enable()), { message: "local_powerwall.preparing" });
+  await notifying;
+  for (let i = 0; i < 5; i++) await new Promise((resolve) => setImmediate(resolve));
+  await assert.rejects(device.onSettings(enable()), { message: "local_powerwall.approve" });
+});

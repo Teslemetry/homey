@@ -154,9 +154,11 @@ export default class PowerwallDevice extends TeslemetryDevice {
     const keyPem = this.getStoreValue(LOCAL_KEY_STORE_KEY) as unknown;
     // Also while one is still registering, so a key is never registered twice.
     if (this.keyRegistration || typeof keyPem !== "string") {
-      this.keyRegistration ??= this.registerNewKey(siteId, host, password).finally(() => {
-        this.keyRegistration = undefined;
-      });
+      this.keyRegistration ??= this.registerNewKey(siteId, host, password)
+        .catch(this.error)
+        .finally(() => {
+          this.keyRegistration = undefined;
+        });
       throw new Error(this.homey.__("local_powerwall.preparing"));
     }
     const result = await enrolLocalGateway({ app: this.homey.app, siteId, host, password, keyPem });
