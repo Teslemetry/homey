@@ -214,7 +214,9 @@ export class VehiclePresence {
       // Homey's own time for the advertisement, so a cached one ages out; never one ahead of this clock.
       const now = this.now();
       const { timestamp } = advertisement ?? {};
-      this.heardAt = typeof timestamp === "number" && timestamp <= now ? timestamp : now;
+      const heardAt = typeof timestamp === "number" && timestamp <= now ? timestamp : now;
+      // An older check that answers last must not move it back.
+      this.heardAt = Math.max(this.heardAt ?? heardAt, heardAt);
     } catch {
       // Homey has not heard it: "Peripheral Not Found".
     }

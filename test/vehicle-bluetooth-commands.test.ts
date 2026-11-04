@@ -71,13 +71,14 @@ async function createPairedVehicle(
     pending: [] as Array<(heard: boolean) => void>,
     find: async (uuid: string) => {
       ble.calls.push(`find ${uuid}`);
+      const { timestamp } = ble;
       const heard = ble.hold
         ? await new Promise<boolean>((resolve) => {
           ble.pending.push(resolve);
         })
         : ble.heard;
       if (!heard) throw new Error(`Peripheral Not Found: ${uuid}`);
-      return { uuid, rssi: -60, timestamp: ble.timestamp };
+      return { uuid, rssi: -60, timestamp };
     },
     subscribeToAdvertisements: async (uuid: string) => {
       ble.calls.push(`subscribe ${uuid}`);
@@ -309,6 +310,22 @@ test("a cached advertisement Homey heard over 195 s ago does not count as presen
   device.markStreamStale("error.stream_disconnected");
   await settle();
   assert.equal(availability.available, true, "heard a second ago by Homey's own clock");
+});
+
+test("an older presence check that answers last does not move Homey's last-heard time back", async (t) => {
+  t.mock.timers.enable({ apis: ["Date"], now: 1_000_000 });
+  const { device, ble, availability } = await createPairedVehicle();
+  ble.hold = true;
+  ble.timestamp = 1_000_000 - 200_000;
+  device.markStreamStale("error.stream_disconnected");
+  ble.timestamp = 1_000_000 - 1_000;
+  device.markStreamStale("error.stream_disconnected");
+  const [older, newer] = ble.pending.splice(0);
+  newer(true);
+  await settle();
+  older(true);
+  await settle();
+  assert.equal(availability.available, true);
 });
 
 test("cloud data arriving while the car is unavailable on a stream drop stops the checks", async () => {
