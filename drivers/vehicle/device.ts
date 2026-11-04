@@ -1624,7 +1624,10 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.blePairing?.abort();
     this.blePairing = undefined;
     this.stopBluetooth();
-    if (this.streamStaleMessage !== undefined) super.markStreamStale(this.streamStaleMessage);
+    // Only a car Bluetooth was keeping available; any other reason keeps its own message.
+    if (this.streamStaleMessage !== undefined && this.getAvailabilityReason() === undefined) {
+      super.markStreamStale(this.streamStaleMessage);
+    }
     // With no Products generation, the car was bound to the link that just closed.
     if (!(this.homey.app.isReady?.() ?? true)) this.rebindProduct();
     if (!newSettings.ble_enabled) {
@@ -1666,6 +1669,10 @@ export default class VehicleDevice extends TeslemetryDevice {
         outcome = "paired";
         await this.startBluetooth();
         if (!(this.homey.app.isReady?.() ?? true)) this.rebindProduct();
+        // Still waiting on the cloud stream: the new link may reach the car.
+        if (this.streamStaleMessage !== undefined && this.getAvailabilityReason() === "stream") {
+          this.markStreamStale(this.streamStaleMessage);
+        }
       }
     } catch (error) {
       if (signal.aborted || this.destroyed) return;
