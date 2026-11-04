@@ -100,5 +100,8 @@
   },
   "1.6.0": {
     "en": "The car's charged-energy meter now counts up across all charging sessions instead of resetting at each charge. Powerwall controls your site's hardware doesn't support (storm watch, charge from grid, export rule, off-grid EV reserve) are removed from already-paired Powerwalls, and the sunroof opened/closed triggers and condition, which never fired, are removed. Flows that used any of these need updating."
+  },
+  "1.7.0": {
+    "en": "New: local control. Powerwall: turn on “Connect over the local network” in the Powerwall's settings and Homey reads your gateway directly every 5 seconds, sends backup reserve, operation mode and grid settings to it first, and keeps your Powerwall, Gateway and Solar working when your internet or Teslemetry is unavailable, even after a restart. The Powerwall local connection needs a Homey Pro. Vehicles: turn on “Connect over Bluetooth” in the car's settings and Homey adds its own key to the car; when the car is parked at home, locks, charging, charge port, trunks, climate, lights, horn and wake go straight to it over Bluetooth, and the car stays usable during an internet outage. Also new: an EV charging state for Homey Energy, Wall Connector energy from live data, and devices that say when Tesla stops sending data."
   }
 }
