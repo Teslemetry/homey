@@ -28,6 +28,8 @@ const BLE_KEY_STORE_KEY = "ble_key";
 const BLE_DEVICE_STORE_KEY = "ble_device";
 /** How often a car the cloud stream lost is asked again over Bluetooth. */
 const BLUETOOTH_RECHECK_MS = 300_000;
+/** When a car that missed one Bluetooth check is asked once more, before it goes unavailable. */
+const BLUETOOTH_RETRY_MS = 30_000;
 
 const isBool = (x: any) => typeof x === "boolean";
 
@@ -432,11 +434,14 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   /**
    * A car Homey can still reach over Bluetooth stays available when the
-   * cloud stream drops. While it does not answer it is unavailable as
-   * before, and is asked again every BLUETOOTH_RECHECK_MS, so a car that
-   * comes home during an outage recovers.
+   * cloud stream drops. One miss can be a slow connect, so a car that does
+   * not answer is asked once more after BLUETOOTH_RETRY_MS; commands do not
+   * wait on that. If it still does not answer it is unavailable as before,
+   * and is asked again every BLUETOOTH_RECHECK_MS, so a car that comes home
+   * during an outage recovers.
    */
   public markStreamStale(message: string): void {
+    this.streamStaleMessage = message;
     if (!this.bluetooth) {
       super.markStreamStale(message);
       return;
@@ -445,12 +450,18 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   /**
+   * Set while the cloud stream is down: turning Bluetooth off then makes the
+   * car unavailable, and turning it on checks the car over the new link.
+   */
+  private streamStaleMessage?: string;
+
+  /**
    * Bumped by genuine cloud data, by stopping Bluetooth and by a rebind, so a
    * reach check that was still waiting on the car when one happened is ignored.
    */
   private bluetoothCheck = 0;
 
-  private async checkBluetoothReach(reason: "stream" | "startup", message: string): Promise<void> {
+  private async checkBluetoothReach(reason: "stream" | "startup", message: string, retried = false): Promise<void> {
     const link = this.bluetooth;
     if (!link) return;
     const check = this.bluetoothCheck;
@@ -462,16 +473,18 @@ export default class VehicleDevice extends TeslemetryDevice {
     }
     // A newer cause, such as a lapsed subscription, keeps its own message.
     if (reason === "startup" && this.getAvailabilityReason() !== "startup") return;
-    this.markUnavailable(reason, message);
+    if (retried) this.markUnavailable(reason, message);
     if (this.bluetoothRecheck !== undefined) this.homey.clearTimeout(this.bluetoothRecheck);
     this.bluetoothRecheck = this.homey.setTimeout(() => {
       this.bluetoothRecheck = undefined;
       try {
-        if (this.getAvailabilityReason() === reason) this.checkBluetoothReach(reason, message).catch(this.error);
+        // A retry is dropped once anything bumped the check, a recheck once this reason has cleared.
+        if (retried ? this.getAvailabilityReason() !== reason : check !== this.bluetoothCheck) return;
+        this.checkBluetoothReach(reason, message, true).catch(this.error);
       } catch (error) {
         this.error(error);
       }
-    }, BLUETOOTH_RECHECK_MS);
+    }, retried ? BLUETOOTH_RECHECK_MS : BLUETOOTH_RETRY_MS);
   }
 
   /** Bumped by every stop, so a start still loading when Bluetooth turns off cannot install its link. */
@@ -581,6 +594,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   public clearProductSilence(): void {
     this.bluetoothCheck++;
+    this.streamStaleMessage = undefined;
     if (!this.silenceWarningShown || this.destroyed) return;
     this.silenceWarningShown = false;
     this.unsetWarning().catch(this.error);
@@ -1613,6 +1627,10 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.blePairing?.abort();
     this.blePairing = undefined;
     this.stopBluetooth();
+    // Only a car Bluetooth was keeping available; any other reason keeps its own message.
+    if (this.streamStaleMessage !== undefined && this.getAvailabilityReason() === undefined) {
+      super.markStreamStale(this.streamStaleMessage);
+    }
     // With no Products generation, the car was bound to the link that just closed.
     if (!(this.homey.app.isReady?.() ?? true)) this.rebindProduct();
     if (!newSettings.ble_enabled) {
@@ -1654,6 +1672,10 @@ export default class VehicleDevice extends TeslemetryDevice {
         outcome = "paired";
         await this.startBluetooth();
         if (!(this.homey.app.isReady?.() ?? true)) this.rebindProduct();
+        // Still waiting on the cloud stream: the new link may reach the car.
+        if (this.streamStaleMessage !== undefined && this.getAvailabilityReason() === "stream") {
+          this.markStreamStale(this.streamStaleMessage);
+        }
       }
     } catch (error) {
       if (signal.aborted || this.destroyed) return;
