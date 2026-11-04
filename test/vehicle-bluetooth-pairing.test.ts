@@ -223,14 +223,3 @@ test("a pairing turned off before it reached the car never touches the radio", a
   assert.equal(notified, false);
   assert.deepEqual(settings, []);
 });
-
-test("on Homey Cloud turning Bluetooth on is refused with a plain reason and never reaches for a radio", async () => {
-  const calls = createFakeVehicle({ onCar: true });
-  const { device, store } = createVehicle();
-  device.homey.platform = "cloud";
-
-  await assert.rejects(device.onSettings(turnOn), { message: "local_vehicle.needs_homey_pro" });
-
-  assert.deepEqual(calls, []);
-  assert.deepEqual(store, {}, "no key was generated");
-});

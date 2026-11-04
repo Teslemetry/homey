@@ -44,7 +44,6 @@
     "not_found": "__name__: Homey konnte das Auto über Bluetooth nicht erreichen. Park es nah an Homey und schalte Bluetooth erneut ein.",
     "tap_timeout": "__name__: Es wurde nicht rechtzeitig eine Schlüsselkarte aufgelegt. Schalte Bluetooth erneut ein, um es noch einmal zu versuchen.",
     "declined": "__name__: Das Auto hat Homeys Schlüssel abgelehnt.",
-    "failed": "__name__: Das Auto hat Homeys Schlüssel nicht hinzugefügt. Schalte Bluetooth erneut ein, um es noch einmal zu versuchen.",
-    "needs_homey_pro": "Bluetooth zum Auto braucht einen Homey Pro in Reichweite des Ortes, an dem dein Auto parkt. Auf Homey Cloud ist es nicht verfügbar."
+    "failed": "__name__: Das Auto hat Homeys Schlüssel nicht hinzugefügt. Schalte Bluetooth erneut ein, um es noch einmal zu versuchen."
   }
 }

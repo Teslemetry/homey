@@ -44,7 +44,6 @@
     "not_found": "__name__: Homey could not reach the car over Bluetooth. Park it close to Homey and turn Bluetooth on again.",
     "tap_timeout": "__name__: No key card was tapped in time. Turn Bluetooth on again to retry.",
     "declined": "__name__: The car declined Homey's key.",
-    "failed": "__name__: The car did not add Homey's key. Turn Bluetooth on again to retry.",
-    "needs_homey_pro": "Bluetooth to the car needs a Homey Pro within range of where your car parks. It is not available on Homey Cloud."
+    "failed": "__name__: The car did not add Homey's key. Turn Bluetooth on again to retry."
   }
 }

@@ -44,7 +44,6 @@
     "not_found": "__name__: Homey kunne ikke nå bilen via Bluetooth. Parkér den tæt på Homey, og slå Bluetooth til igen.",
     "tap_timeout": "__name__: Der blev ikke holdt et nøglekort mod konsollen i tide. Slå Bluetooth til igen for at prøve igen.",
     "declined": "__name__: Bilen afviste Homeys nøgle.",
-    "failed": "__name__: Bilen tilføjede ikke Homeys nøgle. Slå Bluetooth til igen for at prøve igen.",
-    "needs_homey_pro": "Bluetooth til bilen kræver en Homey Pro inden for rækkevidde af det sted, hvor din bil parkerer. Det er ikke tilgængeligt på Homey Cloud."
+    "failed": "__name__: Bilen tilføjede ikke Homeys nøgle. Slå Bluetooth til igen for at prøve igen."
   }
 }
