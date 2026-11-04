@@ -44,7 +44,6 @@
     "not_found": "__name__: Homey no pudo llegar al coche por Bluetooth. Apárcalo cerca de Homey y vuelve a activar Bluetooth.",
     "tap_timeout": "__name__: no se acercó ninguna tarjeta llave a tiempo. Vuelve a activar Bluetooth para intentarlo de nuevo.",
     "declined": "__name__: el coche rechazó la llave de Homey.",
-    "failed": "__name__: el coche no añadió la llave de Homey. Vuelve a activar Bluetooth para intentarlo de nuevo.",
-    "needs_homey_pro": "El Bluetooth con el coche necesita un Homey Pro al alcance del lugar donde aparcas. No está disponible en Homey Cloud."
+    "failed": "__name__: el coche no añadió la llave de Homey. Vuelve a activar Bluetooth para intentarlo de nuevo."
   }
 }
