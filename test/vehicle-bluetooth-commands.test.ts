@@ -189,9 +189,14 @@ test("a paired car that still answers over Bluetooth stays available when the cl
   assert.equal(timers.length, 0);
 });
 
-test("a paired car out of reach goes unavailable, and is asked again until it answers", async () => {
+test("a paired car out of reach goes unavailable on a second miss, and is asked again until it answers", async () => {
   const { device, calls, availability, timers } = await createPairedVehicle({ bluetoothFails: ["vehicle_state"] });
   device.markStreamStale("error.stream_disconnected");
+  await settle();
+  assert.equal(availability.available, true, "one miss is asked again first");
+  assert.deepEqual(timers.map(({ delay }) => delay), [30_000]);
+
+  timers.shift()!.callback();
   await settle();
   assert.equal(availability.available, false);
   assert.equal(availability.message, "error.stream_disconnected");
@@ -202,6 +207,35 @@ test("a paired car out of reach goes unavailable, and is asked again until it an
   timers.shift()!.callback();
   await settle();
   assert.equal(availability.available, true, "the car came back in reach");
+  assert.deepEqual(calls, ["ble.vehicle_state", "ble.vehicle_state"]);
+});
+
+test("a car that misses one Bluetooth check stays available and takes commands while it is asked again", async () => {
+  const { device, calls, availability, timers } = await createPairedVehicle({ atHome: true, bluetoothFails: ["vehicle_state"] });
+  device.markStreamStale("error.stream_disconnected");
+  await settle();
+  assert.equal(availability.available, true, "Homey still sends it commands");
+  assert.deepEqual(timers.map(({ delay }) => delay), [30_000]);
+  await device.flowFlashLights();
+
+  fakeBluetooth.vehicle = { ...(fakeBluetooth.vehicle as object), vehicle_state: async () => ({}) } as never;
+  await device.startBluetooth();
+  timers.shift()!.callback();
+  await settle();
+  assert.equal(availability.available, true);
+  assert.equal(timers.length, 0);
+  assert.deepEqual(calls, ["ble.vehicle_state", "ble.flash_lights"]);
+});
+
+test("cloud data arriving before the second Bluetooth check drops it", async () => {
+  const { device, calls, availability, timers } = await createPairedVehicle({ bluetoothFails: ["vehicle_state"] });
+  device.markStreamStale("error.stream_disconnected");
+  await settle();
+  device.clearProductSilence();
+  timers.shift()!.callback();
+  await settle();
+  assert.equal(availability.available, true);
+  assert.equal(timers.length, 0);
   assert.deepEqual(calls, ["ble.vehicle_state"]);
 });
 
@@ -265,6 +299,10 @@ test("after a restart with no internet, a paired car out of reach is asked again
   await settle();
   assert.equal(availability.available, false);
   assert.equal(availability.message, "error.teslemetry_connecting");
+  assert.deepEqual(timers.map(({ delay }) => delay), [30_000]);
+  timers.shift()!.callback();
+  await settle();
+  assert.equal(availability.available, false);
   assert.deepEqual(timers.map(({ delay }) => delay), [300_000]);
 
   fakeBluetooth.vehicle = { ...(fakeBluetooth.vehicle as object), vehicle_state: async () => ({}) } as never;
