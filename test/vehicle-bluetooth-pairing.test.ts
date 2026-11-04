@@ -126,7 +126,16 @@ test("a pairing that fails turns the setting back off and says why", async () =>
 
 test("turning Bluetooth off while the car waits for a key card stops the pairing quietly", async () => {
   let release: () => void = () => {};
-  createFakeVehicle({ pair: () => new Promise((resolve) => { release = resolve; }) });
+  let waiting: () => void = () => {};
+  const tapRequested = new Promise<void>((resolve) => {
+    waiting = resolve;
+  });
+  createFakeVehicle({
+    pair: () => new Promise((resolve) => {
+      release = resolve;
+      waiting();
+    }),
+  });
   const { device, store, settings } = createVehicle();
   let notified = false;
   device.homey.notifications.createNotification = async () => {
@@ -134,7 +143,7 @@ test("turning Bluetooth off while the car waits for a key card stops the pairing
   };
 
   await device.onSettings(turnOn);
-  await new Promise((resolve) => setImmediate(resolve));
+  await tapRequested;
   await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
   release();
   await new Promise((resolve) => setImmediate(resolve));
@@ -186,6 +195,23 @@ test("turning Bluetooth off while the paired car is being stored reports nothing
   await device.onSettings(turnOn);
   await new Promise((resolve) => setImmediate(resolve));
   await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(notified, false);
+  assert.deepEqual(settings, []);
+});
+
+test("a pairing turned off before it reached the car never touches the radio", async () => {
+  const calls = createFakeVehicle({ onCar: true });
+  const { device, settings } = createVehicle();
+  let notified = false;
+  device.homey.notifications.createNotification = async () => {
+    notified = true;
+  };
+
+  await device.onSettings(turnOn);
+  await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+  for (let i = 0; i < 5; i++) await new Promise((resolve) => setImmediate(resolve));
+
+  assert.deepEqual(calls, []);
   assert.equal(notified, false);
   assert.deepEqual(settings, []);
 });

@@ -37,6 +37,8 @@ export async function pairVehicleKey(options: {
     WhitelistOperationLocalEntityAuthFailedUIDenied,
   } = await import("tesla-fleet-api");
 
+  // A pairing turned off already must not reach for the car; the caller ignores this result.
+  if (options.signal.aborted) return { failure: "failed" };
   const vehicle = new TeslaBluetooth({ privateKey: Buffer.from(options.keyHex, "hex") }).vehicles.createBluetooth(
     options.vin,
     // Keepalive reads would keep the car awake.
@@ -46,6 +48,7 @@ export async function pairVehicleKey(options: {
   let waitingForTap = false;
   try {
     const device = await vehicle.find_vehicle();
+    if (options.signal.aborted) return { failure: "failed" };
     await vehicle.connect();
     try {
       await vehicle.handshakeVehicleSecurity();
