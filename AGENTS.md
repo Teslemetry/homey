@@ -151,8 +151,10 @@ list; do not invent a Homey-only shape.
   SDK's `connect` event. A device its site's local Powerwall link feeds is
   never marked `"stream"`/`"silent"` while that link reads, and recovers from
   either on its next good read (`isLocallyLive()`). A car with a Bluetooth link
-  is marked `"stream"` only if it does not answer over Bluetooth, and recovers
-  when it does (`VehicleDevice.markStreamStale()`).
+  is marked `"stream"` only once Homey has not heard its Bluetooth advertisement
+  for 195 s, and recovers when it does (`VehiclePresence`). As in Home
+  Assistant, Bluetooth only sends commands: never connect to the car to read
+  it or decide its availability, and never wake it except for a command.
 - `SSE_TOPICS` in `app.ts` is an exact allowlist. A wire event from a new
   topic needs an entry.
 - `site_id` arrives on the wire as a JSON number but sites are keyed by string.

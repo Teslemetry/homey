@@ -45,6 +45,10 @@ async function createPairedVehicle(
     carRefuses?: string[];
     /** Restarted with no internet: no Products generation, and no product bound yet. */
     offline?: boolean;
+    /** Whether Homey hears the car's Bluetooth advertisement (default: it does). */
+    heard?: boolean;
+    /** A Homey with advertisement subscriptions (`ble-advertisements`). */
+    listens?: boolean;
   } = {},
 ) {
   const calls: string[] = [];
@@ -57,6 +61,32 @@ async function createPairedVehicle(
   const capabilities: Record<string, unknown> = { "measure_distance.home": opts.distanceKm ?? null };
   const availability = { available: true, message: null as string | null };
   const timers: Array<{ callback: () => void; delay: number }> = [];
+  // Homey's BLE manager: find() answers from its advertisement cache; nothing here reaches the car.
+  const ble = {
+    heard: opts.heard ?? true,
+    /** The advertisement's own timestamp, when the test gives one. */
+    timestamp: undefined as number | undefined,
+    calls: [] as string[],
+    hold: false,
+    pending: [] as Array<(heard: boolean) => void>,
+    find: async (uuid: string) => {
+      ble.calls.push(`find ${uuid}`);
+      const { timestamp } = ble;
+      const heard = ble.hold
+        ? await new Promise<boolean>((resolve) => {
+          ble.pending.push(resolve);
+        })
+        : ble.heard;
+      if (!heard) throw new Error(`Peripheral Not Found: ${uuid}`);
+      return { uuid, rssi: -60, timestamp };
+    },
+    subscribeToAdvertisements: async (uuid: string) => {
+      ble.calls.push(`subscribe ${uuid}`);
+    },
+    unsubscribeFromAdvertisements: async (uuid: string) => {
+      ble.calls.push(`unsubscribe ${uuid}`);
+    },
+  };
   let notified: (excerpt: string) => void = () => {};
   const notification = new Promise<string>((resolve) => {
     notified = resolve;
@@ -71,10 +101,18 @@ async function createPairedVehicle(
   const device = Object.assign(new VehicleDevice(), {
     homey: {
       app,
-      ble: {},
+      ble,
+      hasFeature: (feature: string) => opts.listens === true && feature === "ble-advertisements",
       notifications: { createNotification: async ({ excerpt }: { excerpt: string }) => notified(excerpt) },
-      setTimeout: (callback: () => void, delay: number) => timers.push({ callback, delay }),
-      clearTimeout: () => {},
+      setTimeout: (callback: () => void, delay: number) => {
+        const timer = { callback, delay };
+        timers.push(timer);
+        return timer;
+      },
+      clearTimeout: (timer: unknown) => {
+        const index = timers.indexOf(timer as never);
+        if (index >= 0) timers.splice(index, 1);
+      },
       __: (key: string) => key,
     },
     vehicle: opts.offline ? undefined : { api: backend("teslemetry-api", calls) },
@@ -107,7 +145,7 @@ async function createPairedVehicle(
   // The car's own LocatedAtHome, as handleLocatedAtHome() records it.
   device.previousLocatedAtHome = opts.atHome;
   await device.startBluetooth();
-  return { device, calls, availability, timers, app, notification };
+  return { device, calls, ble, availability, timers, app, notification };
 }
 
 test.beforeEach(() => {
@@ -179,64 +217,127 @@ test("turning Bluetooth off while the link is still starting never installs it",
 });
 
 const settle = () => new Promise((resolve) => setImmediate(resolve));
+const pairingOnCar = () => {
+  fakeBluetooth.vehicle = {
+    ...(fakeBluetooth.vehicle as object),
+    find_vehicle: async () => ({ id: "ble-uuid", name: "S1a87a5a75f3df858C" }),
+    connect: async () => {},
+    handshakeVehicleSecurity: async () => {},
+  } as never;
+};
 
-test("a paired car that still answers over Bluetooth stays available when the cloud stream drops", async () => {
-  const { device, calls, availability, timers } = await createPairedVehicle();
+test("a paired car Homey hears stays available when the cloud stream drops, and nothing connects to it", async () => {
+  const { device, calls, ble, availability, timers } = await createPairedVehicle();
   device.markStreamStale("error.stream_disconnected");
   await settle();
-  assert.deepEqual(calls, ["ble.vehicle_state"]);
   assert.equal(availability.available, true);
-  assert.equal(timers.length, 0);
+  assert.deepEqual(ble.calls, ["find ble-uuid"]);
+  assert.deepEqual(calls, [], "no link to the car");
+  assert.deepEqual(timers.map(({ delay }) => delay), [300_000], "a Homey that has to scan checks again in 5 minutes");
 });
 
-test("a paired car out of reach goes unavailable on a second miss, and is asked again until it answers", async () => {
-  const { device, calls, availability, timers } = await createPairedVehicle({ bluetoothFails: ["vehicle_state"] });
+test("a paired car Homey does not hear goes unavailable when the cloud stream drops, and recovers once heard", async () => {
+  const { device, calls, ble, availability, timers } = await createPairedVehicle({ heard: false });
   device.markStreamStale("error.stream_disconnected");
-  await settle();
-  assert.equal(availability.available, true, "one miss is asked again first");
-  assert.deepEqual(timers.map(({ delay }) => delay), [30_000]);
-
-  timers.shift()!.callback();
   await settle();
   assert.equal(availability.available, false);
   assert.equal(availability.message, "error.stream_disconnected");
   assert.deepEqual(timers.map(({ delay }) => delay), [300_000]);
 
-  fakeBluetooth.vehicle = { ...(fakeBluetooth.vehicle as object), vehicle_state: async () => ({}) } as never;
-  await device.startBluetooth();
+  ble.heard = true;
   timers.shift()!.callback();
   await settle();
   assert.equal(availability.available, true, "the car came back in reach");
-  assert.deepEqual(calls, ["ble.vehicle_state", "ble.vehicle_state"]);
+  assert.deepEqual(calls, []);
 });
 
-test("a car that misses one Bluetooth check stays available and takes commands while it is asked again", async () => {
-  const { device, calls, availability, timers } = await createPairedVehicle({ atHome: true, bluetoothFails: ["vehicle_state"] });
-  device.markStreamStale("error.stream_disconnected");
+test("a Homey with advertisement subscriptions keeps its cache warm, checks every minute, and follows the car within 195 s", async (t) => {
+  t.mock.timers.enable({ apis: ["Date"], now: 1_000_000 });
+  const { device, calls, ble, availability, timers } = await createPairedVehicle({ listens: true });
   await settle();
-  assert.equal(availability.available, true, "Homey still sends it commands");
-  assert.deepEqual(timers.map(({ delay }) => delay), [30_000]);
-  await device.flowFlashLights();
+  assert.deepEqual(ble.calls, ["subscribe ble-uuid", "find ble-uuid"]);
+  assert.deepEqual(timers.map(({ delay }) => delay), [60_000]);
 
-  fakeBluetooth.vehicle = { ...(fakeBluetooth.vehicle as object), vehicle_state: async () => ({}) } as never;
-  await device.startBluetooth();
+  device.markStreamStale("error.stream_disconnected");
+  assert.equal(availability.available, true, "heard a moment ago, so nothing to scan");
+  assert.equal(ble.calls.length, 2);
+
+  ble.heard = false;
+  for (let minute = 1; minute <= 3; minute++) {
+    t.mock.timers.tick(60_000);
+    timers.shift()!.callback();
+    await settle();
+  }
+  assert.equal(availability.available, true, "still inside 195 s of the last advertisement");
+  t.mock.timers.tick(60_000);
+  timers.shift()!.callback();
+  await settle();
+  assert.equal(availability.available, false, "not heard for 240 s");
+  assert.equal(availability.message, "error.stream_disconnected");
+
+  ble.heard = true;
+  t.mock.timers.tick(60_000);
   timers.shift()!.callback();
   await settle();
   assert.equal(availability.available, true);
+
+  await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+  assert.equal(ble.calls.at(-1), "unsubscribe ble-uuid");
   assert.equal(timers.length, 0);
-  assert.deepEqual(calls, ["ble.vehicle_state", "ble.flash_lights"]);
+  assert.deepEqual(calls, ["ble.disconnect"], "nothing but closing the link it never opened");
 });
 
-test("cloud data arriving before the second Bluetooth check drops it", async () => {
-  const { device, calls, availability, timers } = await createPairedVehicle({ bluetoothFails: ["vehicle_state"] });
+test("with advertisement subscriptions, commands go over Bluetooth only while Homey hears the car, whatever LocatedAtHome says", async (t) => {
+  t.mock.timers.enable({ apis: ["Date"], now: 1_000_000 });
+  const { device, calls, ble } = await createPairedVehicle({ listens: true, atHome: false });
+  await settle();
+  await device.flowFlashLights();
+  ble.heard = false;
+  t.mock.timers.tick(196_000);
+  await device.flowHonkHorn();
+  assert.deepEqual(calls, ["ble.flash_lights", "cloud.honk_horn"]);
+});
+
+test("a cached advertisement Homey heard over 195 s ago does not count as present", async (t) => {
+  t.mock.timers.enable({ apis: ["Date"], now: 1_000_000 });
+  const { device, ble, availability } = await createPairedVehicle();
+  ble.timestamp = 1_000_000 - 200_000;
+  device.markStreamStale("error.stream_disconnected");
+  await settle();
+  assert.equal(availability.available, false);
+
+  ble.timestamp = 1_000_000 - 1_000;
+  device.markStreamStale("error.stream_disconnected");
+  await settle();
+  assert.equal(availability.available, true, "heard a second ago by Homey's own clock");
+});
+
+test("an older presence check that answers last does not move Homey's last-heard time back", async (t) => {
+  t.mock.timers.enable({ apis: ["Date"], now: 1_000_000 });
+  const { device, ble, availability } = await createPairedVehicle();
+  ble.hold = true;
+  ble.timestamp = 1_000_000 - 200_000;
+  device.markStreamStale("error.stream_disconnected");
+  ble.timestamp = 1_000_000 - 1_000;
+  device.markStreamStale("error.stream_disconnected");
+  const [older, newer] = ble.pending.splice(0);
+  newer(true);
+  await settle();
+  older(true);
+  await settle();
+  assert.equal(availability.available, true);
+});
+
+test("cloud data arriving while the car is unavailable on a stream drop stops the checks", async () => {
+  const { device, availability, timers } = await createPairedVehicle({ heard: false });
   device.markStreamStale("error.stream_disconnected");
   await settle();
   device.clearProductSilence();
+  device.clearAvailabilityReason("stream");
   timers.shift()!.callback();
   await settle();
   assert.equal(availability.available, true);
-  assert.equal(timers.length, 0);
-  assert.deepEqual(calls, ["ble.vehicle_state"]);
+  assert.equal(timers.length, 0, "a Homey that has to scan stops once the cloud is back");
 });
 
 test("a car without Bluetooth goes unavailable when the cloud stream drops, as before", async () => {
@@ -245,34 +346,48 @@ test("a car without Bluetooth goes unavailable when the cloud stream drops, as b
   assert.equal(availability.available, false);
 });
 
-/** A paired car whose reach check waits until the test answers it. */
-async function createVehicleAwaitingReach(opts: Parameters<typeof createPairedVehicle>[0] = {}) {
+/** A paired car whose presence check waits until the test answers it. */
+async function createVehicleAwaitingPresence(opts: Parameters<typeof createPairedVehicle>[0] = {}) {
   const setup = await createPairedVehicle(opts);
-  let answer: (reached: boolean) => void = () => {};
-  fakeBluetooth.vehicle = {
-    ...(fakeBluetooth.vehicle as object),
-    vehicle_state: () => new Promise((resolve, reject) => {
-      answer = (reached) => (reached ? resolve({}) : reject(new BluetoothTransportError()));
-    }),
-  } as never;
-  await setup.device.startBluetooth();
-  return { ...setup, answer: (reached: boolean) => answer(reached) };
+  setup.ble.hold = true;
+  return { ...setup, answer: (heard: boolean) => setup.ble.pending.splice(0).forEach((resolve) => resolve(heard)) };
 }
 
-test("a reach check still waiting when Bluetooth turns off is ignored, and schedules no retry", async () => {
-  for (const reached of [false, true]) {
-    const { device, availability, timers, answer } = await createVehicleAwaitingReach();
+test("a presence check still waiting when Bluetooth turns off is ignored, and schedules no other", async () => {
+  for (const heard of [false, true]) {
+    const { device, availability, timers, answer } = await createVehicleAwaitingPresence();
     device.markStreamStale("error.stream_disconnected");
     await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
-    answer(reached);
+    answer(heard);
     await settle();
     assert.equal(availability.message, "error.stream_disconnected", "the stream is still down");
     assert.equal(timers.length, 0);
   }
 });
 
-test("a reach check still waiting when cloud data resumes cannot mark the car unavailable", async () => {
-  const { device, availability, timers, answer } = await createVehicleAwaitingReach();
+test("on a Homey that has to scan, a car keeps its state while the check after a stream drop runs", async () => {
+  const { device, availability, answer } = await createVehicleAwaitingPresence();
+  device.markStreamStale("error.stream_disconnected");
+  await settle();
+  assert.equal(availability.available, true, "no 10 s blink to unavailable");
+  answer(true);
+  await settle();
+  assert.equal(availability.available, true);
+});
+
+test("overlapping presence checks leave one timer, which turning Bluetooth off clears", async () => {
+  const { device, timers, answer } = await createVehicleAwaitingPresence();
+  device.markStreamStale("error.stream_disconnected");
+  device.markStreamStale("error.stream_disconnected");
+  answer(true);
+  await settle();
+  assert.deepEqual(timers.map(({ delay }) => delay), [300_000]);
+  await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+  assert.equal(timers.length, 0);
+});
+
+test("a presence check still waiting when cloud data resumes cannot mark the car unavailable", async () => {
+  const { device, availability, timers, answer } = await createVehicleAwaitingPresence();
   device.markStreamStale("error.stream_disconnected");
   device.clearProductSilence();
   answer(false);
@@ -281,34 +396,29 @@ test("a reach check still waiting when cloud data resumes cannot mark the car un
   assert.equal(timers.length, 0);
 });
 
-test("after a restart with no internet, a paired car that answers over Bluetooth binds to its link alone", async () => {
+test("after a restart with no internet, a paired car Homey hears binds to its link alone", async () => {
   const { device, calls, availability, timers } = await createPairedVehicle({ offline: true });
   device.rebindProduct();
-  assert.equal(availability.available, false, "unavailable until the car answers");
+  assert.equal(availability.available, false, "unavailable until Homey hears the car");
   assert.equal(availability.message, "error.teslemetry_connecting");
   await settle();
   assert.equal(availability.available, true);
-  assert.equal(timers.length, 0);
+  assert.deepEqual(timers.map(({ delay }) => delay), [300_000], "checked again while the cloud is down");
 
   await device.flowFlashLights();
   await assert.rejects(device.flowStartKeylessDriving(), { message: "error.teslemetry_connecting" });
-  assert.deepEqual(calls, ["ble.vehicle_state", "ble.flash_lights"]);
+  assert.deepEqual(calls, ["ble.flash_lights"]);
 });
 
-test("after a restart with no internet, a paired car out of reach is asked again until it answers", async () => {
-  const { device, availability, timers } = await createPairedVehicle({ offline: true, bluetoothFails: ["vehicle_state"] });
+test("after a restart with no internet, a paired car Homey does not hear is checked again until it does", async () => {
+  const { device, ble, availability, timers } = await createPairedVehicle({ offline: true, heard: false });
   device.rebindProduct();
   await settle();
   assert.equal(availability.available, false);
   assert.equal(availability.message, "error.teslemetry_connecting");
-  assert.deepEqual(timers.map(({ delay }) => delay), [30_000]);
-  timers.shift()!.callback();
-  await settle();
-  assert.equal(availability.available, false);
   assert.deepEqual(timers.map(({ delay }) => delay), [300_000]);
 
-  fakeBluetooth.vehicle = { ...(fakeBluetooth.vehicle as object), vehicle_state: async () => ({}) } as never;
-  await device.startBluetooth();
+  ble.heard = true;
   timers.shift()!.callback();
   await settle();
   assert.equal(availability.available, true, "the car came back in reach");
@@ -323,8 +433,8 @@ test("after a restart with no internet, a car without Bluetooth waits for the cl
   assert.deepEqual(calls, []);
 });
 
-test("a car bound to its Bluetooth link alone moves onto the cloud when it is back, ignoring a late reach check", async () => {
-  const { device, availability, timers, app, answer } = await createVehicleAwaitingReach({ offline: true });
+test("a car bound to its Bluetooth link alone moves onto the cloud when it is back, ignoring a late presence check", async () => {
+  const { device, availability, timers, app, answer } = await createVehicleAwaitingPresence({ offline: true });
   device.rebindProduct();
   const cloudVehicle = { vin: VIN, api: {}, sse: Object.assign(new EventEmitter(), { cache: {}, onSignal: () => () => {} }), metadata: { access: true, fleet_telemetry: "1", polling: false } };
   app.ready = true;
@@ -347,44 +457,37 @@ test("turning Bluetooth off with no internet unbinds a car that was bound to its
   assert.equal(availability.message, "error.teslemetry_connecting");
 });
 
-test("a startup reach check still waiting when the subscription lapses keeps the account message", async () => {
-  const { device, availability, timers, answer } = await createVehicleAwaitingReach({ offline: true });
+test("a startup presence check still waiting when the subscription lapses keeps the account message", async () => {
+  const { device, availability, answer } = await createVehicleAwaitingPresence({ offline: true });
   device.rebindProduct();
   device.markUnavailable("auth", "error.subscription_required");
   answer(false);
   await settle();
   assert.equal(availability.message, "error.subscription_required");
-  assert.equal(timers.length, 0);
 });
 
 test("turning Bluetooth on with no internet binds the car to its link once Homey's key is on it", { timeout: 10_000 }, async () => {
   const { device, calls, availability, notification } = await createPairedVehicle({ offline: true, paired: false });
   device.rebindProduct();
-  fakeBluetooth.vehicle = {
-    ...(fakeBluetooth.vehicle as object),
-    find_vehicle: async () => ({ id: "ble-uuid", name: "S1a87a5a75f3df858C" }),
-    connect: async () => {},
-    handshakeVehicleSecurity: async () => {},
-  } as never;
+  pairingOnCar();
   await device.onSettings({ newSettings: { ble_enabled: true }, changedKeys: ["ble_enabled"] });
   assert.equal(await notification, "local_vehicle.paired");
   await settle();
   assert.equal(availability.available, true);
 
   await device.flowFlashLights();
-  assert.deepEqual(calls.filter((call) => call !== "ble.disconnect"), ["ble.vehicle_state", "ble.flash_lights"]);
+  assert.deepEqual(calls.filter((call) => call !== "ble.disconnect"), ["ble.flash_lights"]);
 });
 
-test("turning Bluetooth off while the cloud stream is down leaves the car unavailable, whether or not it answered", async () => {
-  for (const bluetoothFails of [[], ["vehicle_state"]]) {
-    const { device, availability, timers } = await createPairedVehicle({ bluetoothFails });
+test("turning Bluetooth off while the cloud stream is down leaves the car unavailable, whether or not Homey heard it", async () => {
+  for (const heard of [true, false]) {
+    const { device, availability } = await createPairedVehicle({ heard });
     device.markStreamStale("error.stream_disconnected");
     await settle();
-    assert.equal(availability.available, true);
+    assert.equal(availability.available, heard);
     await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
     assert.equal(availability.available, false);
     assert.equal(availability.message, "error.stream_disconnected");
-    timers.length = 0;
   }
 });
 
@@ -407,19 +510,14 @@ test("turning Bluetooth off while the cloud stream is down keeps a binding error
 });
 
 for (const [when, paired] of [["back on", true], ["on after the stream dropped", false]] as const) {
-  test(`turning Bluetooth ${when} while the cloud stream is down makes the car available once it answers`, { timeout: 10_000 }, async () => {
+  test(`turning Bluetooth ${when} while the cloud stream is down makes the car available once Homey hears it`, { timeout: 10_000 }, async () => {
     const { device, availability, notification } = await createPairedVehicle({ paired });
     device.markStreamStale("error.stream_disconnected");
     await settle();
     if (paired) await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
     assert.equal(availability.available, false);
 
-    fakeBluetooth.vehicle = {
-      ...(fakeBluetooth.vehicle as object),
-      find_vehicle: async () => ({ id: "ble-uuid", name: "S1a87a5a75f3df858C" }),
-      connect: async () => {},
-      handshakeVehicleSecurity: async () => {},
-    } as never;
+    pairingOnCar();
     await device.onSettings({ newSettings: { ble_enabled: true }, changedKeys: ["ble_enabled"] });
     assert.equal(await notification, "local_vehicle.paired");
     await settle();
