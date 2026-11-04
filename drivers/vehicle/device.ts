@@ -1624,7 +1624,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     changedKeys: string[];
   }): Promise<string | void> {
     if (!changedKeys.includes("ble_enabled")) return;
-    // Homey Cloud has no Bluetooth radio near the car.
+    // The Bluetooth link to the car needs a Homey Pro; Homey Cloud does not offer it.
     if (newSettings.ble_enabled && this.homey.platform === "cloud") {
       throw new Error(this.homey.__("local_vehicle.needs_homey_pro"));
     }

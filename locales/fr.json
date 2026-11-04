@@ -45,6 +45,6 @@
     "tap_timeout": "__name__ : aucune carte-clé n'a été posée à temps. Réactivez le Bluetooth pour réessayer.",
     "declined": "__name__ : la voiture a refusé la clé de Homey.",
     "failed": "__name__ : la voiture n'a pas ajouté la clé de Homey. Réactivez le Bluetooth pour réessayer.",
-    "needs_homey_pro": "Le Bluetooth nécessite un Homey Pro à portée de l'endroit où vous garez votre voiture. Homey Cloud n'a pas de Bluetooth."
+    "needs_homey_pro": "Le Bluetooth avec la voiture nécessite un Homey Pro à portée de l'endroit où vous la garez. Il n'est pas disponible sur Homey Cloud."
   }
 }

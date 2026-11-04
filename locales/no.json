@@ -45,6 +45,6 @@
     "tap_timeout": "__name__: Ingen nøkkelkort ble holdt mot konsollen i tide. Slå på Bluetooth igjen for å prøve på nytt.",
     "declined": "__name__: Bilen avviste Homeys nøkkel.",
     "failed": "__name__: Bilen la ikke til Homeys nøkkel. Slå på Bluetooth igjen for å prøve på nytt.",
-    "needs_homey_pro": "Bluetooth krever en Homey Pro innen rekkevidde av der bilen din parkerer. Homey Cloud har ikke Bluetooth."
+    "needs_homey_pro": "Bluetooth til bilen krever en Homey Pro innen rekkevidde av der bilen din parkerer. Det er ikke tilgjengelig på Homey Cloud."
   }
 }

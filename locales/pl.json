@@ -45,6 +45,6 @@
     "tap_timeout": "__name__: nie przyłożono karty-klucza na czas. Włącz Bluetooth ponownie, aby spróbować jeszcze raz.",
     "declined": "__name__: auto odrzuciło klucz Homey.",
     "failed": "__name__: auto nie dodało klucza Homey. Włącz Bluetooth ponownie, aby spróbować jeszcze raz.",
-    "needs_homey_pro": "Bluetooth wymaga Homey Pro w zasięgu miejsca, w którym parkuje auto. Homey Cloud nie ma Bluetooth."
+    "needs_homey_pro": "Bluetooth z autem wymaga Homey Pro w zasięgu miejsca, w którym parkuje auto. Nie jest dostępny w Homey Cloud."
   }
 }

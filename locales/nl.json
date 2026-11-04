@@ -45,6 +45,6 @@
     "tap_timeout": "__name__: er werd niet op tijd een sleutelkaart aangeboden. Zet Bluetooth opnieuw aan om het nog eens te proberen.",
     "declined": "__name__: de auto heeft de sleutel van Homey geweigerd.",
     "failed": "__name__: de auto heeft de sleutel van Homey niet toegevoegd. Zet Bluetooth opnieuw aan om het nog eens te proberen.",
-    "needs_homey_pro": "Bluetooth heeft een Homey Pro nodig binnen bereik van de plek waar je auto parkeert. Homey Cloud heeft geen Bluetooth."
+    "needs_homey_pro": "Bluetooth naar de auto heeft een Homey Pro nodig binnen bereik van de plek waar je auto parkeert. Op Homey Cloud is dit niet beschikbaar."
   }
 }
