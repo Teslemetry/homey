@@ -189,9 +189,11 @@ list; do not invent a Homey-only shape.
   `overrides` pin with build, test, lint and `app:validate`.
 - Releases start only via `workflow_dispatch` on
   `.github/workflows/homey-app-release.yml`, which opens the version PR
-  (`main` takes no direct push). Merging that PR tags the version and
-  publishes it. Athom's publish lands a draft; releasing it to Test or Live
-  is a separate step.
+  (`main` takes no direct push). GitHub holds that PR's required Validate
+  Homey App run until someone approves it, once per release, because GitHub
+  Actions opened the PR. Merging the PR tags the version and publishes it.
+  Athom's publish lands a draft; releasing it to Test or Live is a separate
+  step.
 
 ## Maintaining this file
 
