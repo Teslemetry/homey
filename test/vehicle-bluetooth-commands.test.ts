@@ -57,6 +57,7 @@ async function createPairedVehicle(
   const capabilities: Record<string, unknown> = { "measure_distance.home": opts.distanceKm ?? null };
   const availability = { available: true, message: null as string | null };
   const timers: Array<{ callback: () => void; delay: number }> = [];
+  const notifications: string[] = [];
   const app = {
     oauth: { getAccessToken: async () => "token" },
     ready: !opts.offline,
@@ -68,6 +69,7 @@ async function createPairedVehicle(
     homey: {
       app,
       ble: {},
+      notifications: { createNotification: async ({ excerpt }: { excerpt: string }) => notifications.push(excerpt) },
       setTimeout: (callback: () => void, delay: number) => timers.push({ callback, delay }),
       clearTimeout: () => {},
       __: (key: string) => key,
@@ -80,6 +82,9 @@ async function createPairedVehicle(
     getName: () => "Model 3",
     getSetting: (key: string) => key === "ble_enabled",
     getStoreValue: (key: string) => (key in store ? store[key] : null),
+    setStoreValue: async (key: string, value: unknown) => {
+      store[key] = value;
+    },
     unsetStoreValue: async (key: string) => {
       delete store[key];
     },
@@ -99,7 +104,7 @@ async function createPairedVehicle(
   // The car's own LocatedAtHome, as handleLocatedAtHome() records it.
   device.previousLocatedAtHome = opts.atHome;
   await device.startBluetooth();
-  return { device, calls, availability, timers, app };
+  return { device, calls, availability, timers, app, notifications };
 }
 
 test.beforeEach(() => {
@@ -307,4 +312,23 @@ test("a startup reach check still waiting when the subscription lapses keeps the
   await settle();
   assert.equal(availability.message, "error.subscription_required");
   assert.equal(timers.length, 0);
+});
+
+test("turning Bluetooth on with no internet binds the car to its link once Homey's key is on it", async () => {
+  const { device, calls, availability, notifications } = await createPairedVehicle({ offline: true, paired: false });
+  device.rebindProduct();
+  fakeBluetooth.vehicle = {
+    ...(fakeBluetooth.vehicle as object),
+    find_vehicle: async () => ({ id: "ble-uuid", name: "S1a87a5a75f3df858C" }),
+    connect: async () => {},
+    handshakeVehicleSecurity: async () => {},
+  } as never;
+  await device.onSettings({ newSettings: { ble_enabled: true }, changedKeys: ["ble_enabled"] });
+  for (let i = 0; i < 50 && notifications.length === 0; i++) await settle();
+  await settle();
+  assert.deepEqual(notifications, ["local_vehicle.paired"]);
+  assert.equal(availability.available, true);
+
+  await device.flowFlashLights();
+  assert.deepEqual(calls.filter((call) => call !== "ble.disconnect"), ["ble.vehicle_state", "ble.flash_lights"]);
 });

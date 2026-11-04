@@ -1653,6 +1653,7 @@ export default class VehicleDevice extends TeslemetryDevice {
         if (signal.aborted || this.destroyed) return;
         outcome = "paired";
         await this.startBluetooth();
+        if (!(this.homey.app.isReady?.() ?? true)) this.rebindProduct();
       }
     } catch (error) {
       if (signal.aborted || this.destroyed) return;
