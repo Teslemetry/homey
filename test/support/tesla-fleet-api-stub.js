@@ -1,6 +1,6 @@
 // Test-only ESM redirect target for "tesla-fleet-api" (see loader.mjs).
-// Teslemetry's energy sites are the cloud site a test hands to fakeCloud, so
-// enrolment never reaches the network. The enums and error classes are the
+// Teslemetry's energy sites and vehicles are the ones a test hands to
+// fakeCloud, so nothing reaches the network. The enums and error classes are the
 // real library's, so the app's state comparisons and instanceof checks see
 // the values the library would produce.
 export {
@@ -23,6 +23,8 @@ export const fakeCloud = {
   site: null,
   /** Each site id `energySites.create()` was called with. */
   created: [],
+  /** The cloud vehicle every `vehicles.create()` returns. */
+  vehicle: {},
 };
 
 export class Teslemetry {
@@ -34,5 +36,6 @@ export class Teslemetry {
         return fakeCloud.site;
       },
     };
+    this.vehicles = { create: () => fakeCloud.vehicle };
   }
 }

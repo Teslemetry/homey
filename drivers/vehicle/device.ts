@@ -11,7 +11,12 @@ import {
   VEHICLE_INELIGIBILITY_MESSAGE_KEY,
 } from "../../lib/TeslemetryDriver.js";
 import haversineDistanceKm from "../../lib/haversineDistance.js";
-import { generateVehicleKey, pairVehicleKey } from "../../lib/LocalVehicle.js";
+import {
+  createVehicleLink,
+  generateVehicleKey,
+  pairVehicleKey,
+  type VehicleCommands,
+} from "../../lib/LocalVehicle.js";
 import {
   isCapabilitySupported,
   isCapabilitySupportUnknown,
@@ -21,6 +26,11 @@ import {
 const BLE_KEY_STORE_KEY = "ble_key";
 /** The car's Bluetooth device, stored once Homey's key is on the car. */
 const BLE_DEVICE_STORE_KEY = "ble_device";
+/**
+ * How far from Homey, by its last reported location, a paired car is still
+ * worth trying over Bluetooth. Beyond it a command goes straight to the cloud.
+ */
+const BLUETOOTH_RANGE_KM = 0.1;
 
 const isBool = (x: any) => typeof x === "boolean";
 
@@ -415,7 +425,52 @@ export default class VehicleDevice extends TeslemetryDevice {
   async onInit() {
     await super.onInit();
     await this.settleInterruptedPairing();
+    await this.startBluetooth();
     this.rebindProduct();
+  }
+
+  /** A paired car's Bluetooth link, while its "Bluetooth" setting is on. */
+  private bluetooth?: { commands: VehicleCommands; close(): Promise<unknown> };
+
+  /** Bumped by every stop, so a start still loading when Bluetooth turns off cannot install its link. */
+  private bluetoothGeneration = 0;
+
+  private async startBluetooth(): Promise<void> {
+    const device = this.getStoreValue(BLE_DEVICE_STORE_KEY) as unknown;
+    const keyHex = this.getStoreValue(BLE_KEY_STORE_KEY) as unknown;
+    if (!device || typeof keyHex !== "string" || !this.getSetting("ble_enabled")) return;
+    const generation = this.bluetoothGeneration;
+    try {
+      const link = await createVehicleLink({
+        ble: this.homey.ble as never,
+        vin: this.getVin(),
+        keyHex,
+        device: device as never,
+        accessToken: this.homey.app.oauth.getAccessToken,
+        inRange: () => this.mayBeInBluetoothRange(),
+        log: (message) => this.log(message),
+      });
+      if (generation !== this.bluetoothGeneration || this.destroyed) {
+        link.close().catch(this.error);
+        return;
+      }
+      this.bluetooth = link;
+    } catch (error) {
+      this.error("Failed to start the Bluetooth link", error);
+    }
+  }
+
+  private stopBluetooth(): void {
+    this.bluetoothGeneration++;
+    this.bluetooth?.close().catch(this.error);
+    this.bluetooth = undefined;
+  }
+
+  /** Unknown counts as in range: with the cloud down, its location may be all there is. */
+  private mayBeInBluetoothRange(): boolean {
+    if (!this.hasCapability("measure_distance.home")) return true;
+    const km = this.getCapabilityValue("measure_distance.home") as number | null;
+    return typeof km !== "number" || km <= BLUETOOTH_RANGE_KM;
   }
 
   /**
@@ -1161,8 +1216,8 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.registerCommandListener("locked", async (value) => {
       return this.vehicleAction(
         value
-          ? this.vehicle.api.lockDoors()
-          : this.vehicle.api.unlockDoors(),
+          ? (this.bluetooth?.commands.door_lock() ?? this.vehicle.api.lockDoors())
+          : (this.bluetooth?.commands.door_unlock() ?? this.vehicle.api.unlockDoors()),
       );
     });
 
@@ -1251,26 +1306,26 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.registerCommandListener("evcharger_charging", async (value) => {
       return this.vehicleAction(
         value
-          ? this.vehicle.api.startCharging()
-          : this.vehicle.api.stopCharging(),
+          ? (this.bluetooth?.commands.charge_start() ?? this.vehicle.api.startCharging())
+          : (this.bluetooth?.commands.charge_stop() ?? this.vehicle.api.stopCharging()),
       );
     });
 
     this.registerCommandListener("charge_limit", async (value: number) => {
       return this.vehicleAction(
-        this.vehicle.api.setChargeLimit(Math.round(value * 100)),
+        this.sendChargeLimit(Math.round(value * 100)),
       );
     });
 
     this.registerCommandListener("charging_amps", async (value: number) => {
-      return this.vehicleAction(this.vehicle.api.setChargingAmps(value));
+      return this.vehicleAction((this.bluetooth?.commands.set_charging_amps(value) ?? this.vehicle.api.setChargingAmps(value)));
     });
 
     this.registerCommandListener("onoff.charge_port", async (value) => {
       return this.vehicleAction(
         value
-          ? this.vehicle.api.openChargePort()
-          : this.vehicle.api.closeChargePort(),
+          ? (this.bluetooth?.commands.charge_port_door_open() ?? this.vehicle.api.openChargePort())
+          : (this.bluetooth?.commands.charge_port_door_close() ?? this.vehicle.api.closeChargePort()),
       );
     });
 
@@ -1315,14 +1370,14 @@ export default class VehicleDevice extends TeslemetryDevice {
     // from committing "closed" while the frunk is still physically open.
     this.registerCommandListener("onoff.frunk", async (value) => {
       if (!value) throw new Error(this.homey.__("error.frunk_cannot_close"));
-      return this.vehicleAction(this.vehicle.api.actuateTrunk("front"));
+      return this.vehicleAction((this.bluetooth?.commands.actuate_trunk("front") ?? this.vehicle.api.actuateTrunk("front")));
     });
 
     // actuate_trunk is a toggle, so only send it when the rear trunk is not
     // already in the requested state. An unknown state still sends it.
     this.registerCommandListener("onoff.trunk", async (value) => {
       if (this.vehicle.sse.cache?.data?.DoorState?.TrunkRear === value) return;
-      return this.vehicleAction(this.vehicle.api.actuateTrunk("rear"));
+      return this.vehicleAction((this.bluetooth?.commands.actuate_trunk("rear") ?? this.vehicle.api.actuateTrunk("rear")));
     });
 
     this.registerCommandListener("windowcoverings_closed", async (value) => {
@@ -1360,11 +1415,11 @@ export default class VehicleDevice extends TeslemetryDevice {
 
     // Buttons
     this.registerCommandListener("button.flash", async () => {
-      return this.vehicleAction(this.vehicle.api.flashLights());
+      return this.vehicleAction((this.bluetooth?.commands.flash_lights() ?? this.vehicle.api.flashLights()));
     });
 
     this.registerCommandListener("button.honk", async () => {
-      return this.vehicleAction(this.vehicle.api.honkHorn());
+      return this.vehicleAction((this.bluetooth?.commands.honk_horn() ?? this.vehicle.api.honkHorn()));
     });
 
     this.registerCommandListener("button.keyless", async () => {
@@ -1378,7 +1433,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     // wakeUp()'s response shape is the vehicle's own state payload, not a
     // { result, reason } envelope - route it through action() directly.
     this.registerCommandListener("button.wakeup", async () => {
-      return this.action(this.vehicle.api.wakeUp());
+      return this.action((this.bluetooth?.commands.wake_up() ?? this.vehicle.api.wakeUp()));
     });
 
     this.registerCommandListener("button.bioweapon", async () => {
@@ -1464,6 +1519,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     await super.onUninit();
     this.unbindProduct();
     this.blePairing?.abort();
+    this.stopBluetooth();
   }
 
   /** The Bluetooth pairing in progress, which turning Bluetooth off stops. */
@@ -1486,6 +1542,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     if (!changedKeys.includes("ble_enabled")) return;
     this.blePairing?.abort();
     this.blePairing = undefined;
+    this.stopBluetooth();
     if (!newSettings.ble_enabled) {
       await this.unsetStoreValue(BLE_DEVICE_STORE_KEY);
       return;
@@ -1500,6 +1557,10 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.blePairing = pairing;
     this.pairBluetooth(keyHex as string, pairing.signal).catch(this.error);
     return this.homey.__("local_vehicle.tap_key_card");
+  }
+
+  private sendChargeLimit(percent: number) {
+    return this.bluetooth?.commands.set_charge_limit(percent) ?? this.vehicle.api.setChargeLimit(percent);
   }
 
   private async pairBluetooth(keyHex: string, signal: AbortSignal): Promise<void> {
@@ -1519,6 +1580,7 @@ export default class VehicleDevice extends TeslemetryDevice {
         await this.setStoreValue(BLE_DEVICE_STORE_KEY, result.device);
         if (signal.aborted || this.destroyed) return;
         outcome = "paired";
+        await this.startBluetooth();
       }
     } catch (error) {
       if (signal.aborted || this.destroyed) return;
@@ -1900,11 +1962,11 @@ export default class VehicleDevice extends TeslemetryDevice {
     const climateState =
       this.vehicle.sse.cache.data?.HvacPower === "HvacPowerStateOn";
     if (value === "off") {
-      await this.vehicleAction(this.vehicle.api.stopAutoConditioning());
+      await this.vehicleAction((this.bluetooth?.commands.auto_conditioning_stop() ?? this.vehicle.api.stopAutoConditioning()));
       return;
     }
     if (value === "auto" && !climateState) {
-      await this.vehicleAction(this.vehicle.api.startAutoConditioning());
+      await this.vehicleAction((this.bluetooth?.commands.auto_conditioning_start() ?? this.vehicle.api.startAutoConditioning()));
       return;
     } // else climates on, so we need to check which other state to turn off
 
@@ -2068,11 +2130,11 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   // Public action methods for Flow cards
   public async flowFlashLights(): Promise<void> {
-    await this.vehicleAction(this.vehicle.api.flashLights());
+    await this.vehicleAction((this.bluetooth?.commands.flash_lights() ?? this.vehicle.api.flashLights()));
   }
 
   public async flowHonkHorn(): Promise<void> {
-    await this.vehicleAction(this.vehicle.api.honkHorn());
+    await this.vehicleAction((this.bluetooth?.commands.honk_horn() ?? this.vehicle.api.honkHorn()));
   }
 
   public async flowStartKeylessDriving(): Promise<void> {
@@ -2106,7 +2168,7 @@ export default class VehicleDevice extends TeslemetryDevice {
   // wakeUp()'s response shape is the vehicle's own state payload, not a
   // { result, reason } envelope - route it through action() directly.
   public async flowWakeUp(): Promise<void> {
-    await this.action(this.vehicle.api.wakeUp());
+    await this.action((this.bluetooth?.commands.wake_up() ?? this.vehicle.api.wakeUp()));
   }
 
   public async flowSetSteeringWheelHeater(level: string): Promise<void> {
@@ -2132,21 +2194,21 @@ export default class VehicleDevice extends TeslemetryDevice {
   }
 
   public async flowStartCharging(): Promise<void> {
-    await this.vehicleAction(this.vehicle.api.startCharging());
+    await this.vehicleAction((this.bluetooth?.commands.charge_start() ?? this.vehicle.api.startCharging()));
   }
 
   public async flowStopCharging(): Promise<void> {
-    await this.vehicleAction(this.vehicle.api.stopCharging());
+    await this.vehicleAction((this.bluetooth?.commands.charge_stop() ?? this.vehicle.api.stopCharging()));
   }
 
   public async flowSetChargeLimit(percentage: number): Promise<void> {
     await this.vehicleAction(
-      this.vehicle.api.setChargeLimit(Math.round(percentage)),
+      this.sendChargeLimit(Math.round(percentage)),
     );
   }
 
   public async flowSetChargingAmps(amps: number): Promise<void> {
-    await this.vehicleAction(this.vehicle.api.setChargingAmps(amps));
+    await this.vehicleAction((this.bluetooth?.commands.set_charging_amps(amps) ?? this.vehicle.api.setChargingAmps(amps)));
   }
 
   public async flowEnableScheduledCharging(time: string): Promise<void> {

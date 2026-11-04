@@ -88,3 +88,61 @@ export async function pairVehicleKey(options: {
     await vehicle.disconnect().catch(() => {});
   }
 }
+
+/** The commands a paired car near Homey takes over Bluetooth first. */
+export interface VehicleCommands {
+  door_lock(): Promise<any>;
+  door_unlock(): Promise<any>;
+  charge_start(): Promise<any>;
+  charge_stop(): Promise<any>;
+  set_charge_limit(percent: number): Promise<any>;
+  set_charging_amps(amps: number): Promise<any>;
+  charge_port_door_open(): Promise<any>;
+  charge_port_door_close(): Promise<any>;
+  actuate_trunk(which: "front" | "rear"): Promise<any>;
+  auto_conditioning_start(): Promise<any>;
+  auto_conditioning_stop(): Promise<any>;
+  flash_lights(): Promise<any>;
+  honk_horn(): Promise<any>;
+  wake_up(): Promise<any>;
+}
+
+/**
+ * A paired car's commands, over Bluetooth while `inRange()` and on the cloud
+ * otherwise or when the Bluetooth link fails before the car judged the
+ * command (VehicleRouter). The cloud backend is `tesla-fleet-api`'s
+ * TeslemetryVehicle. One 4 s connect attempt (HOMEY_VEHICLE_OPTIONS) keeps a
+ * Flow action inside its window when the car turns out to be out of reach.
+ */
+export async function createVehicleLink(options: {
+  ble: HomeyBleManagerLike;
+  vin: string;
+  keyHex: string;
+  device: BleDeviceRef;
+  accessToken: () => Promise<string>;
+  inRange: () => boolean;
+  log: (message: string) => void;
+}): Promise<{ commands: VehicleCommands; close(): Promise<unknown> }> {
+  const { TeslaBluetooth } = await import("tesla-fleet-api/bluetooth");
+  const { HOMEY_VEHICLE_OPTIONS, HomeyBleTransport } = await import("tesla-fleet-api/bluetooth/homey");
+  const { Teslemetry } = await import("tesla-fleet-api");
+  const { VehicleRouter } = await import("tesla-fleet-api/router");
+
+  const bluetooth = new TeslaBluetooth({ privateKey: Buffer.from(options.keyHex, "hex") }).vehicles.createBluetooth(
+    options.vin,
+    {
+      transport: new HomeyBleTransport(options.ble),
+      device: options.device,
+      ...HOMEY_VEHICLE_OPTIONS,
+      // As Home Assistant: let the car sleep, and settle a timed-out command by reading its state.
+      keepalive_interval_ms: null,
+      confirmation: "verify",
+    },
+  );
+  const cloud = new Teslemetry(options.accessToken).vehicles.create(options.vin);
+  const commands = new VehicleRouter([bluetooth, cloud], {
+    health: options.inRange,
+    logger: { debug: (message) => options.log(`Bluetooth: ${message}`) },
+  });
+  return { commands, close: () => bluetooth.disconnect() };
+}
