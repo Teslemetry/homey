@@ -31,7 +31,6 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      actions: write
     steps:
       - uses: actions/checkout@v4
 
@@ -54,14 +53,13 @@ jobs:
           git commit -m "Update Homey App Version to v${VERSION}"
           git push --force origin "$BRANCH"
 
+          # GitHub holds this PR's own Validate Homey App run, which main requires, until
+          # someone approves it, because GitHub Actions opened the PR.
           if [ -z "$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[].number')" ]; then
             gh pr create --base main --head "$BRANCH" \
               --title "Update Homey App Version to v${VERSION}" \
-              --body "Merging this tags v${VERSION} and publishes it to Athom as a draft."
+              --body "Approve this PR's waiting Validate Homey App run, then merge it. The merge tags v${VERSION} and publishes it to Athom as a draft."
           fi
-
-          # main requires this check, and a push made with GITHUB_TOKEN starts no workflow of its own.
-          gh workflow run homey-app-validate.yml --ref "$BRANCH"
         env:
           GH_TOKEN: ${{ github.token }}
 
