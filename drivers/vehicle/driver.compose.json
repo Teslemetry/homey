@@ -1270,5 +1270,62 @@
         "ar": "يتم التفعيل عندما يكون مقعد السائق مشغولاً وحزام الأمان غير مربوط. هذا إنذار وليس حالة 'الحزام مربوط' - يبقى متوقفًا سواء عند ربط الحزام أو عندما يكون المقعد فارغًا."
       }
     }
-  }
+  },
+  "settings": [
+    {
+      "type": "group",
+      "label": {
+        "en": "Bluetooth",
+        "nl": "Bluetooth",
+        "da": "Bluetooth",
+        "de": "Bluetooth",
+        "es": "Bluetooth",
+        "fr": "Bluetooth",
+        "it": "Bluetooth",
+        "no": "Bluetooth",
+        "sv": "Bluetooth",
+        "pl": "Bluetooth",
+        "ru": "Bluetooth",
+        "ko": "블루투스",
+        "ar": "بلوتوث"
+      },
+      "children": [
+        {
+          "id": "ble_enabled",
+          "type": "checkbox",
+          "value": false,
+          "label": {
+            "en": "Connect over Bluetooth",
+            "nl": "Verbinden via Bluetooth",
+            "da": "Forbind via Bluetooth",
+            "de": "Über Bluetooth verbinden",
+            "es": "Conectar por Bluetooth",
+            "fr": "Se connecter en Bluetooth",
+            "it": "Connetti tramite Bluetooth",
+            "no": "Koble til via Bluetooth",
+            "sv": "Anslut via Bluetooth",
+            "pl": "Połącz przez Bluetooth",
+            "ru": "Подключаться по Bluetooth",
+            "ko": "블루투스로 연결",
+            "ar": "الاتصال عبر بلوتوث"
+          },
+          "hint": {
+            "en": "Lets Homey reach this car directly over Bluetooth when it is parked nearby, as well as through Teslemetry. Turning it on adds Homey's key to the car: sit in the car and tap your key card on the center console when it asks.",
+            "nl": "Laat Homey deze auto rechtstreeks via Bluetooth bereiken als hij dichtbij geparkeerd staat, naast Teslemetry. Bij het inschakelen wordt de sleutel van Homey aan de auto toegevoegd: ga in de auto zitten en houd je sleutelkaart tegen de middenconsole als de auto daarom vraagt.",
+            "da": "Lader Homey nå denne bil direkte via Bluetooth, når den holder parkeret i nærheden, ud over via Teslemetry. Når det slås til, føjes Homeys nøgle til bilen: sæt dig i bilen, og hold dit nøglekort mod midterkonsollen, når bilen beder om det.",
+            "de": "Lässt Homey dieses Auto direkt über Bluetooth erreichen, wenn es in der Nähe geparkt ist, zusätzlich zu Teslemetry. Beim Einschalten wird Homeys Schlüssel zum Auto hinzugefügt: Setz dich ins Auto und halte deine Schlüsselkarte an die Mittelkonsole, wenn das Auto danach fragt.",
+            "es": "Permite que Homey llegue a este coche directamente por Bluetooth cuando está aparcado cerca, además de a través de Teslemetry. Al activarlo se añade la llave de Homey al coche: siéntate en el coche y acerca tu tarjeta llave a la consola central cuando lo pida.",
+            "fr": "Permet à Homey de joindre cette voiture directement en Bluetooth lorsqu'elle est garée à proximité, en plus de Teslemetry. L'activation ajoute la clé de Homey à la voiture : installez-vous dans la voiture et posez votre carte-clé sur la console centrale quand elle le demande.",
+            "it": "Consente a Homey di raggiungere quest'auto direttamente tramite Bluetooth quando è parcheggiata vicino, oltre che tramite Teslemetry. Attivandolo si aggiunge la chiave di Homey all'auto: siediti in auto e appoggia la tessera chiave sulla console centrale quando lo chiede.",
+            "no": "Lar Homey nå denne bilen direkte via Bluetooth når den står parkert i nærheten, i tillegg til via Teslemetry. Når det slås på, legges Homeys nøkkel til i bilen: sett deg i bilen og hold nøkkelkortet mot midtkonsollen når bilen ber om det.",
+            "sv": "Låter Homey nå bilen direkt via Bluetooth när den står parkerad i närheten, utöver via Teslemetry. När det slås på läggs Homeys nyckel till i bilen: sätt dig i bilen och håll ditt nyckelkort mot mittkonsolen när bilen ber om det.",
+            "pl": "Pozwala Homey łączyć się z tym autem bezpośrednio przez Bluetooth, gdy stoi zaparkowane w pobliżu, oprócz Teslemetry. Włączenie dodaje klucz Homey do auta: usiądź w aucie i przyłóż kartę-klucz do konsoli środkowej, gdy auto o to poprosi.",
+            "ru": "Позволяет Homey связываться с этим автомобилем напрямую по Bluetooth, когда он припаркован рядом, в дополнение к Teslemetry. При включении ключ Homey добавляется в автомобиль: сядьте в машину и приложите карту-ключ к центральной консоли, когда она попросит.",
+            "ko": "차량이 가까이 주차되어 있을 때 Teslemetry와 함께 블루투스로 Homey가 이 차량에 직접 연결할 수 있습니다. 켜면 Homey의 키가 차량에 추가됩니다. 차에 앉아 요청이 나오면 키 카드를 센터 콘솔에 대세요.",
+            "ar": "يتيح لـ Homey الوصول إلى هذه السيارة مباشرة عبر بلوتوث عندما تكون متوقفة بالقرب منه، إضافة إلى Teslemetry. يؤدي التشغيل إلى إضافة مفتاح Homey إلى السيارة: اجلس في السيارة وضع بطاقة المفتاح على الكونسول الأوسط عندما تطلب ذلك."
+          }
+        }
+      ]
+    }
+  ]
 }

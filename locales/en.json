@@ -33,5 +33,13 @@
     "gateway_unreachable": "Homey could not reach the gateway. Check its address and that it is on the same network as Homey, then save again.",
     "cloud_unreachable": "Tesla cannot reach your Powerwall right now. Try again later.",
     "connected": "Connected to the gateway at __host__."
+  },
+  "local_vehicle": {
+    "tap_key_card": "Homey is asking the car to add its key. Tap your key card on the center console when the car asks.",
+    "paired": "__name__: Homey's key is on the car, so Homey can reach it over Bluetooth.",
+    "not_found": "__name__: Homey could not reach the car over Bluetooth. Park it close to Homey and turn Bluetooth on again.",
+    "tap_timeout": "__name__: No key card was tapped in time. Turn Bluetooth on again to retry.",
+    "declined": "__name__: The car declined Homey's key.",
+    "failed": "__name__: The car did not add Homey's key. Turn Bluetooth on again to retry."
   }
 }

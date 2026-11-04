@@ -33,5 +33,13 @@
     "gateway_unreachable": "Homey kon de gateway niet bereiken. Controleer het adres en of de gateway op hetzelfde netwerk zit als Homey, en sla opnieuw op.",
     "cloud_unreachable": "Tesla kan je Powerwall nu niet bereiken. Probeer het later opnieuw.",
     "connected": "Verbonden met de gateway op __host__."
+  },
+  "local_vehicle": {
+    "tap_key_card": "Homey vraagt de auto om zijn sleutel toe te voegen. Houd je sleutelkaart tegen de middenconsole als de auto daarom vraagt.",
+    "paired": "__name__: de sleutel van Homey staat op de auto, dus Homey kan hem via Bluetooth bereiken.",
+    "not_found": "__name__: Homey kon de auto niet via Bluetooth bereiken. Parkeer hem dicht bij Homey en zet Bluetooth opnieuw aan.",
+    "tap_timeout": "__name__: er werd niet op tijd een sleutelkaart aangeboden. Zet Bluetooth opnieuw aan om het nog eens te proberen.",
+    "declined": "__name__: de auto heeft de sleutel van Homey geweigerd.",
+    "failed": "__name__: de auto heeft de sleutel van Homey niet toegevoegd. Zet Bluetooth opnieuw aan om het nog eens te proberen."
   }
 }

@@ -33,5 +33,13 @@
     "gateway_unreachable": "Homey nie może połączyć się z bramą. Sprawdź jej adres i czy jest w tej samej sieci co Homey, a potem zapisz ponownie.",
     "cloud_unreachable": "Tesla nie może teraz połączyć się z Powerwallem. Spróbuj później.",
     "connected": "Połączono z bramą pod adresem __host__."
+  },
+  "local_vehicle": {
+    "tap_key_card": "Homey prosi auto o dodanie swojego klucza. Przyłóż kartę-klucz do konsoli środkowej, gdy auto o to poprosi.",
+    "paired": "__name__: klucz Homey jest w aucie, więc Homey może się z nim łączyć przez Bluetooth.",
+    "not_found": "__name__: Homey nie mógł połączyć się z autem przez Bluetooth. Zaparkuj je blisko Homey i włącz Bluetooth ponownie.",
+    "tap_timeout": "__name__: nie przyłożono karty-klucza na czas. Włącz Bluetooth ponownie, aby spróbować jeszcze raz.",
+    "declined": "__name__: auto odrzuciło klucz Homey.",
+    "failed": "__name__: auto nie dodało klucza Homey. Włącz Bluetooth ponownie, aby spróbować jeszcze raz."
   }
 }
