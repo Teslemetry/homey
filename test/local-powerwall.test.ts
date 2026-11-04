@@ -385,6 +385,19 @@ test("turning local off stops the link this device started, and a restart resume
   ]);
 });
 
+test("on Homey Cloud the local connection is refused with a plain reason, and turning it off still works", async () => {
+  const { device, store, calls } = createPowerwall({ store: { local_gateway_key: undefined } });
+  device.homey.platform = "cloud";
+  const { registered } = createCloudSite([null]);
+
+  await assert.rejects(device.onSettings(enable()), { message: "local_powerwall.needs_homey_pro" });
+  await device.onSettings({ newSettings: { local_enabled: false }, changedKeys: ["local_enabled"] });
+
+  assert.equal(store.local_gateway_key, undefined, "no key was generated");
+  assert.equal(registered.length, 0);
+  assert.deepEqual(calls, []);
+});
+
 /** A Powerwall device on an enrolled site whose gateway has answered (or not) one poll. */
 async function createEnrolledPowerwall(gatewayAnswers: boolean) {
   const { app, timers } = createFeed();

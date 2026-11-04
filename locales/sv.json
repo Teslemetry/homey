@@ -35,7 +35,8 @@
     "connected": "Ansluten till gatewayen på __host__.",
     "preparing": "Homey förbereder sin nyckel för din Powerwall. En avisering säger när du kan godkänna den; slå då av och på strömbrytaren på din primära Powerwall och spara igen.",
     "key_ready": "Homeys nyckel är registrerad hos din Powerwall. Slå av och på strömbrytaren på din primära Powerwall och spara sedan inställningarna för lokal anslutning igen.",
-    "registration_failed": "Homey kunde inte registrera sin nyckel hos din Powerwall. Spara inställningarna för lokal anslutning igen för att försöka på nytt."
+    "registration_failed": "Homey kunde inte registrera sin nyckel hos din Powerwall. Spara inställningarna för lokal anslutning igen för att försöka på nytt.",
+    "needs_homey_pro": "Den lokala anslutningen kräver en Homey Pro i samma nätverk som din Powerwall. Homey Cloud når inte ditt hemnätverk."
   },
   "local_vehicle": {
     "tap_key_card": "Homey kontrollerar sin nyckel med bilen. Om bilen ber om ett nyckelkort, håll det mot mittkonsolen.",
@@ -43,6 +44,7 @@
     "not_found": "__name__: Homey nådde inte bilen via Bluetooth. Parkera den nära Homey och slå på Bluetooth igen.",
     "tap_timeout": "__name__: Inget nyckelkort hölls mot konsolen i tid. Slå på Bluetooth igen för att försöka på nytt.",
     "declined": "__name__: Bilen avböjde Homeys nyckel.",
-    "failed": "__name__: Bilen lade inte till Homeys nyckel. Slå på Bluetooth igen för att försöka på nytt."
+    "failed": "__name__: Bilen lade inte till Homeys nyckel. Slå på Bluetooth igen för att försöka på nytt.",
+    "needs_homey_pro": "Bluetooth kräver en Homey Pro inom räckhåll från platsen där din bil parkeras. Homey Cloud har inte Bluetooth."
   }
 }

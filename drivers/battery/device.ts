@@ -147,6 +147,8 @@ export default class PowerwallDevice extends TeslemetryDevice {
       this.localLink = false;
       return;
     }
+    // Homey Cloud is not on the home network, so it could never reach the gateway.
+    if (this.homey.platform === "cloud") throw new Error(this.homey.__("local_powerwall.needs_homey_pro"));
 
     const password = String(newSettings.local_password ?? "").trim();
     if (!password) throw new Error(this.homey.__("local_powerwall.password_required"));
