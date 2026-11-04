@@ -32,7 +32,10 @@
     "wrong_password": "Il gateway non ha accettato questa password.",
     "gateway_unreachable": "Homey non ha raggiunto il gateway. Controlla l'indirizzo e che sia sulla stessa rete di Homey, poi salva di nuovo.",
     "cloud_unreachable": "Tesla non riesce a raggiungere il Powerwall al momento. Riprova più tardi.",
-    "connected": "Connesso al gateway all'indirizzo __host__."
+    "connected": "Connesso al gateway all'indirizzo __host__.",
+    "preparing": "Homey sta preparando la sua chiave per il Powerwall. Una notifica ti dirà quando approvarla; poi spegni e riaccendi l'interruttore del Powerwall principale e salva di nuovo.",
+    "key_ready": "La chiave di Homey è registrata sul Powerwall. Spegni e riaccendi l'interruttore del Powerwall principale, poi salva di nuovo le impostazioni della connessione locale.",
+    "registration_failed": "Homey non è riuscito a registrare la sua chiave sul Powerwall. Salva di nuovo le impostazioni della connessione locale per riprovare."
   },
   "local_vehicle": {
     "tap_key_card": "Homey sta chiedendo all'auto di aggiungere la sua chiave. Appoggia la tessera chiave sulla console centrale quando l'auto lo chiede.",

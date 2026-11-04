@@ -32,7 +32,10 @@
     "wrong_password": "Brama nie przyjęła tego hasła.",
     "gateway_unreachable": "Homey nie może połączyć się z bramą. Sprawdź jej adres i czy jest w tej samej sieci co Homey, a potem zapisz ponownie.",
     "cloud_unreachable": "Tesla nie może teraz połączyć się z Powerwallem. Spróbuj później.",
-    "connected": "Połączono z bramą pod adresem __host__."
+    "connected": "Połączono z bramą pod adresem __host__.",
+    "preparing": "Homey przygotowuje swój klucz dla Powerwalla. Powiadomienie poinformuje, kiedy go zatwierdzić; wtedy wyłącz i ponownie włącz przełącznik głównego Powerwalla i zapisz ponownie.",
+    "key_ready": "Klucz Homey jest zarejestrowany w Powerwallu. Wyłącz i ponownie włącz przełącznik głównego Powerwalla, a potem ponownie zapisz ustawienia połączenia lokalnego.",
+    "registration_failed": "Homey nie mógł zarejestrować swojego klucza w Powerwallu. Zapisz ponownie ustawienia połączenia lokalnego, aby spróbować jeszcze raz."
   },
   "local_vehicle": {
     "tap_key_card": "Homey prosi auto o dodanie swojego klucza. Przyłóż kartę-klucz do konsoli środkowej, gdy auto o to poprosi.",

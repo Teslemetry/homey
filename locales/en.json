@@ -32,7 +32,10 @@
     "wrong_password": "The gateway did not accept this password.",
     "gateway_unreachable": "Homey could not reach the gateway. Check its address and that it is on the same network as Homey, then save again.",
     "cloud_unreachable": "Tesla cannot reach your Powerwall right now. Try again later.",
-    "connected": "Connected to the gateway at __host__."
+    "connected": "Connected to the gateway at __host__.",
+    "preparing": "Homey is preparing its key for your Powerwall. A notification will say when to approve it; then flick the On/Off switch on your primary Powerwall off and back on, and save again.",
+    "key_ready": "Homey's key is registered with your Powerwall. Flick the On/Off switch on your primary Powerwall off and back on, then save the Local connection settings again.",
+    "registration_failed": "Homey could not register its key with your Powerwall. Save the Local connection settings again to retry."
   },
   "local_vehicle": {
     "tap_key_card": "Homey is asking the car to add its key. Tap your key card on the center console when the car asks.",
