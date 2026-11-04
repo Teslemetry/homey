@@ -17,14 +17,15 @@ import VehicleDevice from "../.homeybuild/drivers/vehicle/device.js";
  * for a command that later fails.
  */
 
-type Route = { status: number; body: string; type?: string; delayMs?: number };
+type Route = { status: number; body: string; type?: string; delayMs?: number; onRequest?: () => void };
 let routes: Record<string, Route> = {};
 
 const server = http.createServer((req, res) => {
   req.resume();
   req.on("end", () => {
     const key = Object.keys(routes).find((k) => req.url?.includes(k));
-    const route = key ? routes[key] : { status: 404, body: "{}" };
+    const route: Route = key ? routes[key] : { status: 404, body: "{}" };
+    route.onRequest?.();
     setTimeout(() => {
       res.writeHead(route.status, { "content-type": route.type ?? "application/json" });
       res.end(route.body);
@@ -165,22 +166,40 @@ test("every failure shape surfaces a non-empty Error message", async () => {
   }
 });
 
-test("a command that fails after the 9s timeout restores the pre-command value", async () => {
+test("a command that fails after the 9s timeout restores the pre-command value", async (t) => {
   const { listeners, errors, capabilities } = await vehicleDevice({ locked: false });
+  let requested: () => void = () => {};
+  const received = new Promise<void>((resolve) => {
+    requested = resolve;
+  });
   routes = {
     "/command/door_lock": {
       status: 408,
       delayMs: 9_600,
       body: '{"response":null,"error":"could_not_wake_vehicle","error_description":"Could not wake vehicle"}',
+      onRequest: () => requested(),
     },
   };
-  const started = Date.now();
-  await setFromHomey(listeners, capabilities, "locked", true);
-  const resolvedAfter = Date.now() - started;
-  assert.ok(resolvedAfter >= 9_000 && resolvedAfter < 9_500, `resolved after ${resolvedAfter}ms`);
+  // Fake setTimeout drives both the 9 s action timeout and the server's late
+  // reply; the request and response still travel over a real socket.
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const turns = async (until: () => boolean) => {
+    for (let i = 0; i < 1_000 && !until(); i++) await new Promise((resolve) => setImmediate(resolve));
+  };
+  let resolved = false;
+  const set = setFromHomey(listeners, capabilities, "locked", true).then(() => {
+    resolved = true;
+  });
+  await received;
+  t.mock.timers.tick(8_999);
+  await turns(() => resolved);
+  assert.equal(resolved, false, "still inside the 9 s window");
+  t.mock.timers.tick(1);
+  await set;
   assert.equal(capabilities.locked, true, "Homey committed the optimistic value");
 
-  await new Promise((resolve) => setTimeout(resolve, 1_500));
+  t.mock.timers.tick(600);
+  await turns(() => capabilities.locked === false);
   assert.ok(
     errors.some((args) => /failed after the 9000ms action timeout/.test(String(args[0]))),
     "the late failure is still logged",
