@@ -58,7 +58,7 @@ jobs:
           if [ -z "$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[].number')" ]; then
             gh pr create --base main --head "$BRANCH" \
               --title "Update Homey App Version to v${VERSION}" \
-              --body "Approve this PR's waiting Validate Homey App run, then merge: merging tags v${VERSION} and publishes it to Athom as a draft."
+              --body "Approve this PR's waiting Validate Homey App run, then merge it. The merge tags v${VERSION} and publishes it to Athom as a draft."
           fi
         env:
           GH_TOKEN: ${{ github.token }}
