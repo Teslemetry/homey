@@ -1,4 +1,6 @@
 import { generateKeyPairSync } from "node:crypto";
+import { EventEmitter } from "node:events";
+import type { VehicleDetails } from "@teslemetry/api";
 import type { BleDeviceRef } from "tesla-fleet-api/bluetooth";
 import type { HomeyBleManagerLike } from "tesla-fleet-api/bluetooth/homey";
 
@@ -112,6 +114,11 @@ export interface VehicleLink {
   /** Whether the car answers over Bluetooth. Reads its security controller, which never wakes it. */
   reach(): Promise<boolean>;
   close(): Promise<unknown>;
+  /**
+   * The car a device binds to while there is no Products generation: no
+   * cloud events, and a Teslemetry API that refuses until the cloud is back.
+   */
+  standIn: VehicleDetails;
 }
 
 /**
@@ -128,6 +135,8 @@ export async function createVehicleLink(options: {
   device: BleDeviceRef;
   accessToken: () => Promise<string>;
   inRange: () => boolean;
+  /** What a command the stand-in sends to the cloud fails with. */
+  offlineMessage: string;
   log: (message: string) => void;
 }): Promise<VehicleLink> {
   const { TeslaBluetooth } = await import("tesla-fleet-api/bluetooth");
@@ -151,6 +160,7 @@ export async function createVehicleLink(options: {
     health: options.inRange,
     logger: { debug: (message) => options.log(`Bluetooth: ${message}`) },
   });
+  const offline = () => Promise.reject(new Error(options.offlineMessage));
   return {
     commands,
     reach: () =>
@@ -162,5 +172,12 @@ export async function createVehicleLink(options: {
         },
       ),
     close: () => bluetooth.disconnect(),
+    standIn: {
+      vin: options.vin,
+      name: "",
+      api: new Proxy({}, { get: (_api, method) => (method === "then" ? undefined : offline) }),
+      sse: Object.assign(new EventEmitter(), { cache: {}, onSignal: () => () => {} }),
+      metadata: {},
+    } as unknown as VehicleDetails,
   };
 }

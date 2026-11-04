@@ -441,31 +441,31 @@ export default class VehicleDevice extends TeslemetryDevice {
       super.markStreamStale(message);
       return;
     }
-    this.checkBluetoothReach(message).catch(this.error);
+    this.checkBluetoothReach("stream", message).catch(this.error);
   }
 
   /**
-   * Bumped by genuine cloud data and by stopping Bluetooth, so a reach check
-   * that was still waiting on the car when either happened is ignored.
+   * Bumped by genuine cloud data, by stopping Bluetooth and by a rebind, so a
+   * reach check that was still waiting on the car when one happened is ignored.
    */
   private bluetoothCheck = 0;
 
-  private async checkBluetoothReach(message: string): Promise<void> {
+  private async checkBluetoothReach(reason: "stream" | "startup", message: string): Promise<void> {
     const link = this.bluetooth;
     if (!link) return;
     const check = this.bluetoothCheck;
     const reached = await link.reach();
     if (this.destroyed || check !== this.bluetoothCheck) return;
     if (reached) {
-      this.clearAvailabilityReason("stream");
+      this.clearAvailabilityReason(reason);
       return;
     }
-    this.markUnavailable("stream", message);
+    this.markUnavailable(reason, message);
     if (this.bluetoothRecheck !== undefined) this.homey.clearTimeout(this.bluetoothRecheck);
     this.bluetoothRecheck = this.homey.setTimeout(() => {
       this.bluetoothRecheck = undefined;
       try {
-        if (this.getAvailabilityReason() === "stream") this.checkBluetoothReach(message).catch(this.error);
+        if (this.getAvailabilityReason() === reason) this.checkBluetoothReach(reason, message).catch(this.error);
       } catch (error) {
         this.error(error);
       }
@@ -488,6 +488,7 @@ export default class VehicleDevice extends TeslemetryDevice {
         device: device as never,
         accessToken: this.homey.app.oauth.getAccessToken,
         inRange: () => this.mayBeInBluetoothRange(),
+        offlineMessage: this.homey.__("error.teslemetry_connecting"),
         log: (message) => this.log(message),
       });
       if (generation !== this.bluetoothGeneration || this.destroyed) {
@@ -550,6 +551,7 @@ export default class VehicleDevice extends TeslemetryDevice {
 
   /** See TeslemetryDevice.unbindProduct(). */
   public unbindProduct(): void {
+    this.bluetoothCheck++;
     this.vehicle?.sse.off("state", this.handleVehicleState);
     this.vehicle?.sse.off("connectivity", this.handleConnectivity);
     const sseCleanup = this.sseCleanup ?? [];
@@ -586,10 +588,22 @@ export default class VehicleDevice extends TeslemetryDevice {
     return this.getData().vin;
   }
 
+  /**
+   * With no Products generation to bind to while the cloud is unreachable,
+   * such as after a restart during an internet outage, a car with a
+   * Bluetooth link binds to the link alone.
+   */
+  private localOnlyVehicle(): VehicleDetails | undefined {
+    if (this.homey.app.isReady?.() ?? true) return undefined;
+    if (this.homey.app.notReadyAvailability().reason !== "startup") return undefined;
+    return this.bluetooth?.standIn;
+  }
+
   private resolveAndBindVehicle(): void {
+    const standIn = this.localOnlyVehicle();
     let vehicle: VehicleDetails;
     try {
-      const found = this.homey.app.products?.vehicles?.[this.getVin()];
+      const found = this.homey.app.products?.vehicles?.[this.getVin()] ?? standIn;
       if (!found) throw new Error("No vehicle found");
       vehicle = found;
     } catch (e) {
@@ -606,7 +620,7 @@ export default class VehicleDevice extends TeslemetryDevice {
     // Present but ineligible (access/telemetry/polling): revalidated with
     // the exact predicate pairing uses, so an already-paired vehicle that
     // loses eligibility doesn't stay bound with a frozen last-known state.
-    const eligibility = checkVehicleEligibility(vehicle.metadata);
+    const eligibility = vehicle === standIn ? { eligible: true as const } : checkVehicleEligibility(vehicle.metadata);
     if (!eligibility.eligible) {
       this.log(
         `Vehicle ${this.getVin()} is present but not eligible (${eligibility.reason})`,
@@ -619,7 +633,14 @@ export default class VehicleDevice extends TeslemetryDevice {
     }
 
     this.vehicle = vehicle;
-    this.clearAvailabilityReason("startup");
+    if (vehicle === standIn) {
+      // Bound to the link alone, the car is available only while it answers over Bluetooth.
+      const { message } = this.homey.app.notReadyAvailability();
+      this.markUnavailable("startup", message);
+      this.checkBluetoothReach("startup", message).catch(this.error);
+    } else {
+      this.clearAvailabilityReason("startup");
+    }
     this.clearAvailabilityReason("binding");
     this.clearAvailabilityReason("eligibility");
 
@@ -1590,6 +1611,8 @@ export default class VehicleDevice extends TeslemetryDevice {
     this.blePairing?.abort();
     this.blePairing = undefined;
     this.stopBluetooth();
+    // With no Products generation, the car was bound to the link that just closed.
+    if (!(this.homey.app.isReady?.() ?? true)) this.rebindProduct();
     if (!newSettings.ble_enabled) {
       await this.unsetStoreValue(BLE_DEVICE_STORE_KEY);
       return;
