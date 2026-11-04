@@ -103,5 +103,8 @@
   },
   "1.7.0": {
     "en": "New: local control. Powerwall: turn on “Connect over the local network” in the Powerwall's settings and Homey reads your gateway directly every 5 seconds, sends backup reserve, operation mode and grid settings to it first, and keeps your Powerwall, Gateway and Solar working when your internet or Teslemetry is unavailable, even after a restart. The Powerwall local connection needs a Homey Pro. Vehicles: turn on “Connect over Bluetooth” in the car's settings and Homey adds its own key to the car; when the car is parked at home, locks, charging, charge port, trunks, climate, lights, horn and wake go straight to it over Bluetooth, and the car stays usable during an internet outage. Also new: an EV charging state for Homey Energy, Wall Connector energy from live data, and devices that say when Tesla stops sending data."
+  },
+  "1.7.1": {
+    "en": "Bluetooth: Homey now tells whether your car is nearby from its Bluetooth signal alone, and never connects to the car just to check. While Homey hears the car it stays available when your internet drops, and its commands go over Bluetooth first. Homey also closes its Bluetooth connection 30 seconds after a command, so it no longer holds one of the car's Bluetooth slots."
   }
 }
