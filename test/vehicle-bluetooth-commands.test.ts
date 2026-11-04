@@ -406,21 +406,23 @@ test("turning Bluetooth off while the cloud stream is down keeps a binding error
   assert.equal(availability.message, "error.vehicle_not_found");
 });
 
-test("turning Bluetooth back on while the cloud stream is down makes the car available once it answers", { timeout: 10_000 }, async () => {
-  const { device, availability, notification } = await createPairedVehicle();
-  device.markStreamStale("error.stream_disconnected");
-  await settle();
-  await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
-  assert.equal(availability.available, false);
+for (const [when, paired] of [["back on", true], ["on after the stream dropped", false]] as const) {
+  test(`turning Bluetooth ${when} while the cloud stream is down makes the car available once it answers`, { timeout: 10_000 }, async () => {
+    const { device, availability, notification } = await createPairedVehicle({ paired });
+    device.markStreamStale("error.stream_disconnected");
+    await settle();
+    if (paired) await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+    assert.equal(availability.available, false);
 
-  fakeBluetooth.vehicle = {
-    ...(fakeBluetooth.vehicle as object),
-    find_vehicle: async () => ({ id: "ble-uuid", name: "S1a87a5a75f3df858C" }),
-    connect: async () => {},
-    handshakeVehicleSecurity: async () => {},
-  } as never;
-  await device.onSettings({ newSettings: { ble_enabled: true }, changedKeys: ["ble_enabled"] });
-  assert.equal(await notification, "local_vehicle.paired");
-  await settle();
-  assert.equal(availability.available, true);
-});
+    fakeBluetooth.vehicle = {
+      ...(fakeBluetooth.vehicle as object),
+      find_vehicle: async () => ({ id: "ble-uuid", name: "S1a87a5a75f3df858C" }),
+      connect: async () => {},
+      handshakeVehicleSecurity: async () => {},
+    } as never;
+    await device.onSettings({ newSettings: { ble_enabled: true }, changedKeys: ["ble_enabled"] });
+    assert.equal(await notification, "local_vehicle.paired");
+    await settle();
+    assert.equal(availability.available, true);
+  });
+}

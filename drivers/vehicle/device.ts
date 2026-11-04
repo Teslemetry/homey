@@ -441,15 +441,18 @@ export default class VehicleDevice extends TeslemetryDevice {
    * during an outage recovers.
    */
   public markStreamStale(message: string): void {
+    this.streamStaleMessage = message;
     if (!this.bluetooth) {
       super.markStreamStale(message);
       return;
     }
-    this.streamStaleMessage = message;
     this.checkBluetoothReach("stream", message).catch(this.error);
   }
 
-  /** Set while the cloud stream is down, so turning Bluetooth off cannot leave the car available. */
+  /**
+   * Set while the cloud stream is down: turning Bluetooth off then makes the
+   * car unavailable, and turning it on checks the car over the new link.
+   */
   private streamStaleMessage?: string;
 
   /**
