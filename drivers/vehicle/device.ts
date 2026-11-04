@@ -432,12 +432,16 @@ export default class VehicleDevice extends TeslemetryDevice {
   /** A paired car's Bluetooth link, while its "Bluetooth" setting is on. */
   private bluetooth?: { commands: VehicleCommands; close(): Promise<unknown> };
 
+  /** Bumped by every stop, so a start still loading when Bluetooth turns off cannot install its link. */
+  private bluetoothGeneration = 0;
+
   private async startBluetooth(): Promise<void> {
     const device = this.getStoreValue(BLE_DEVICE_STORE_KEY) as unknown;
     const keyHex = this.getStoreValue(BLE_KEY_STORE_KEY) as unknown;
     if (!device || typeof keyHex !== "string" || !this.getSetting("ble_enabled")) return;
+    const generation = this.bluetoothGeneration;
     try {
-      this.bluetooth = await createVehicleLink({
+      const link = await createVehicleLink({
         ble: this.homey.ble as never,
         vin: this.getVin(),
         keyHex,
@@ -446,12 +450,18 @@ export default class VehicleDevice extends TeslemetryDevice {
         inRange: () => this.mayBeInBluetoothRange(),
         log: (message) => this.log(message),
       });
+      if (generation !== this.bluetoothGeneration || this.destroyed) {
+        link.close().catch(this.error);
+        return;
+      }
+      this.bluetooth = link;
     } catch (error) {
       this.error("Failed to start the Bluetooth link", error);
     }
   }
 
   private stopBluetooth(): void {
+    this.bluetoothGeneration++;
     this.bluetooth?.close().catch(this.error);
     this.bluetooth = undefined;
   }

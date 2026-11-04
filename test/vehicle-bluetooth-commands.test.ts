@@ -8,14 +8,15 @@ import { BluetoothTransportError, fakeCloud } from "./support/tesla-fleet-api-st
 const VIN = "5YJ3E1EA0PF000001";
 const OK = { response: { result: true, reason: "" } };
 
-/** Records every command on one backend, answering OK unless `fail` names it. */
-function backend(name: string, calls: string[], fail: Set<string> = new Set()) {
+/** Records every command on one backend, answering OK unless `fail` or `refuse` names it. */
+function backend(name: string, calls: string[], fail: Set<string> = new Set(), refuse: Set<string> = new Set()) {
   return new Proxy({}, {
     get: (_target, method) => (method === "then" || typeof method !== "string")
       ? undefined
       : async () => {
         calls.push(`${name}.${method}`);
         if (fail.has(method)) throw new BluetoothTransportError();
+        if (refuse.has(method)) return { response: { result: false, reason: "refused" } };
         return OK;
       },
   });
@@ -28,21 +29,23 @@ function backend(name: string, calls: string[], fail: Set<string> = new Set()) {
 const COMMANDS = ["door_lock", "door_unlock", "charge_start", "charge_stop", "set_charge_limit",
   "set_charging_amps", "charge_port_door_open", "charge_port_door_close", "actuate_trunk",
   "auto_conditioning_start", "auto_conditioning_stop", "flash_lights", "honk_horn", "wake_up", "disconnect"];
-function fake(name: string, calls: string[], fail?: Set<string>) {
-  const proxy = backend(name, calls, fail) as Record<string, unknown>;
+function fake(name: string, calls: string[], fail?: Set<string>, refuse?: Set<string>) {
+  const proxy = backend(name, calls, fail, refuse) as Record<string, unknown>;
   return Object.fromEntries(COMMANDS.map((command) => [command, proxy[command]]));
 }
 
-async function createPairedVehicle(opts: { distanceKm?: number | null; paired?: boolean; bluetoothFails?: string[] } = {}) {
+async function createPairedVehicle(
+  opts: { distanceKm?: number | null; paired?: boolean; bluetoothFails?: string[]; carRefuses?: string[] } = {},
+) {
   const calls: string[] = [];
-  fakeBluetooth.vehicle = fake("ble", calls, new Set(opts.bluetoothFails)) as never;
+  fakeBluetooth.vehicle = fake("ble", calls, new Set(opts.bluetoothFails), new Set(opts.carRefuses)) as never;
   fakeCloud.vehicle = fake("cloud", calls) as never;
   const store: Record<string, unknown> = opts.paired === false ? {} : {
     ble_key: "ab".repeat(32),
     ble_device: { id: "ble-uuid", name: "S1a87a5a75f3df858C" },
   };
   const capabilities: Record<string, unknown> = { "measure_distance.home": opts.distanceKm ?? null };
-  const device = Object.assign(Object.create(VehicleDevice.prototype), {
+  const device = Object.assign(new VehicleDevice(), {
     homey: {
       app: { oauth: { getAccessToken: async () => "token" } },
       ble: {},
@@ -106,4 +109,24 @@ test("turning Bluetooth off closes the link, and an unpaired car keeps the Tesle
   await unpaired.device.flowFlashLights();
   assert.deepEqual(unpaired.calls, ["teslemetry-api.flashLights"]);
   assert.equal(fakeBluetooth.created.length, 1, "only the paired car built a link");
+});
+
+test("a command the car refuses over Bluetooth fails and is not sent again on the cloud", async () => {
+  const { device, calls } = await createPairedVehicle({ carRefuses: ["honk_horn"] });
+  await assert.rejects(device.flowHonkHorn(), { message: "refused" });
+  assert.deepEqual(calls, ["ble.honk_horn"]);
+});
+
+test("turning Bluetooth off while the link is still starting never installs it", async () => {
+  const { device, calls } = await createPairedVehicle({ paired: false });
+  device.getStoreValue = (key: string) => ({
+    ble_key: "ab".repeat(32),
+    ble_device: { id: "ble-uuid", name: "S1a87a5a75f3df858C" },
+  })[key] ?? null;
+  const starting = device.startBluetooth();
+  await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+  await starting;
+
+  await device.flowFlashLights();
+  assert.deepEqual(calls, ["ble.disconnect", "teslemetry-api.flashLights"]);
 });
