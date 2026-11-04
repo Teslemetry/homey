@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { EventEmitter } from "node:events";
 // Imports the built output; see device-oninit-no-product.test.ts for why.
 import VehicleDevice from "../.homeybuild/drivers/vehicle/device.js";
 import { fakeBluetooth } from "./support/tesla-fleet-api-bluetooth-stub.js";
@@ -42,6 +43,8 @@ async function createPairedVehicle(
     paired?: boolean;
     bluetoothFails?: string[];
     carRefuses?: string[];
+    /** Restarted with no internet: no Products generation, and no product bound yet. */
+    offline?: boolean;
   } = {},
 ) {
   const calls: string[] = [];
@@ -54,19 +57,37 @@ async function createPairedVehicle(
   const capabilities: Record<string, unknown> = { "measure_distance.home": opts.distanceKm ?? null };
   const availability = { available: true, message: null as string | null };
   const timers: Array<{ callback: () => void; delay: number }> = [];
+  let notified: (excerpt: string) => void = () => {};
+  const notification = new Promise<string>((resolve) => {
+    notified = resolve;
+  });
+  const app = {
+    oauth: { getAccessToken: async () => "token" },
+    ready: !opts.offline,
+    products: undefined as unknown,
+    isReady: () => app.ready,
+    notReadyAvailability: () => ({ reason: "startup", message: "error.teslemetry_connecting" }),
+  };
   const device = Object.assign(new VehicleDevice(), {
     homey: {
-      app: { oauth: { getAccessToken: async () => "token" } },
+      app,
       ble: {},
+      notifications: { createNotification: async ({ excerpt }: { excerpt: string }) => notified(excerpt) },
       setTimeout: (callback: () => void, delay: number) => timers.push({ callback, delay }),
       clearTimeout: () => {},
       __: (key: string) => key,
     },
-    vehicle: { api: backend("teslemetry-api", calls) },
+    vehicle: opts.offline ? undefined : { api: backend("teslemetry-api", calls) },
+    driver: { manifest: { capabilitiesOptions: {} } },
+    setCapabilityOptions: async () => {},
+    registerCapabilityListener: () => {},
     getData: () => ({ vin: VIN }),
     getName: () => "Model 3",
     getSetting: (key: string) => key === "ble_enabled",
     getStoreValue: (key: string) => (key in store ? store[key] : null),
+    setStoreValue: async (key: string, value: unknown) => {
+      store[key] = value;
+    },
     unsetStoreValue: async (key: string) => {
       delete store[key];
     },
@@ -86,7 +107,7 @@ async function createPairedVehicle(
   // The car's own LocatedAtHome, as handleLocatedAtHome() records it.
   device.previousLocatedAtHome = opts.atHome;
   await device.startBluetooth();
-  return { device, calls, availability, timers };
+  return { device, calls, availability, timers, app, notification };
 }
 
 test.beforeEach(() => {
@@ -191,8 +212,8 @@ test("a car without Bluetooth goes unavailable when the cloud stream drops, as b
 });
 
 /** A paired car whose reach check waits until the test answers it. */
-async function createVehicleAwaitingReach() {
-  const setup = await createPairedVehicle();
+async function createVehicleAwaitingReach(opts: Parameters<typeof createPairedVehicle>[0] = {}) {
+  const setup = await createPairedVehicle(opts);
   let answer: (reached: boolean) => void = () => {};
   fakeBluetooth.vehicle = {
     ...(fakeBluetooth.vehicle as object),
@@ -222,4 +243,94 @@ test("a reach check still waiting when cloud data resumes cannot mark the car un
   await settle();
   assert.equal(availability.available, true);
   assert.equal(timers.length, 0);
+});
+
+test("after a restart with no internet, a paired car that answers over Bluetooth binds to its link alone", async () => {
+  const { device, calls, availability, timers } = await createPairedVehicle({ offline: true });
+  device.rebindProduct();
+  assert.equal(availability.available, false, "unavailable until the car answers");
+  assert.equal(availability.message, "error.teslemetry_connecting");
+  await settle();
+  assert.equal(availability.available, true);
+  assert.equal(timers.length, 0);
+
+  await device.flowFlashLights();
+  await assert.rejects(device.flowStartKeylessDriving(), { message: "error.teslemetry_connecting" });
+  assert.deepEqual(calls, ["ble.vehicle_state", "ble.flash_lights"]);
+});
+
+test("after a restart with no internet, a paired car out of reach is asked again until it answers", async () => {
+  const { device, availability, timers } = await createPairedVehicle({ offline: true, bluetoothFails: ["vehicle_state"] });
+  device.rebindProduct();
+  await settle();
+  assert.equal(availability.available, false);
+  assert.equal(availability.message, "error.teslemetry_connecting");
+  assert.deepEqual(timers.map(({ delay }) => delay), [300_000]);
+
+  fakeBluetooth.vehicle = { ...(fakeBluetooth.vehicle as object), vehicle_state: async () => ({}) } as never;
+  await device.startBluetooth();
+  timers.shift()!.callback();
+  await settle();
+  assert.equal(availability.available, true, "the car came back in reach");
+});
+
+test("after a restart with no internet, a car without Bluetooth waits for the cloud, as before", async () => {
+  const { device, calls, availability } = await createPairedVehicle({ offline: true, paired: false });
+  device.rebindProduct();
+  await settle();
+  assert.equal(availability.available, false);
+  assert.equal(availability.message, "error.teslemetry_connecting");
+  assert.deepEqual(calls, []);
+});
+
+test("a car bound to its Bluetooth link alone moves onto the cloud when it is back, ignoring a late reach check", async () => {
+  const { device, availability, timers, app, answer } = await createVehicleAwaitingReach({ offline: true });
+  device.rebindProduct();
+  const cloudVehicle = { vin: VIN, api: {}, sse: Object.assign(new EventEmitter(), { cache: {}, onSignal: () => () => {} }), metadata: { access: true, fleet_telemetry: "1", polling: false } };
+  app.ready = true;
+  app.products = { vehicles: { [VIN]: cloudVehicle } };
+  device.rebindProduct();
+  answer(false);
+  await settle();
+  assert.equal(device.vehicle, cloudVehicle);
+  assert.equal(availability.available, true);
+  assert.equal(timers.length, 0);
+});
+
+test("turning Bluetooth off with no internet unbinds a car that was bound to its link alone", async () => {
+  const { device, availability } = await createPairedVehicle({ offline: true });
+  device.rebindProduct();
+  await settle();
+  assert.equal(availability.available, true);
+  await device.onSettings({ newSettings: { ble_enabled: false }, changedKeys: ["ble_enabled"] });
+  assert.equal(availability.available, false);
+  assert.equal(availability.message, "error.teslemetry_connecting");
+});
+
+test("a startup reach check still waiting when the subscription lapses keeps the account message", async () => {
+  const { device, availability, timers, answer } = await createVehicleAwaitingReach({ offline: true });
+  device.rebindProduct();
+  device.markUnavailable("auth", "error.subscription_required");
+  answer(false);
+  await settle();
+  assert.equal(availability.message, "error.subscription_required");
+  assert.equal(timers.length, 0);
+});
+
+test("turning Bluetooth on with no internet binds the car to its link once Homey's key is on it", { timeout: 10_000 }, async () => {
+  const { device, calls, availability, notification } = await createPairedVehicle({ offline: true, paired: false });
+  device.rebindProduct();
+  fakeBluetooth.vehicle = {
+    ...(fakeBluetooth.vehicle as object),
+    find_vehicle: async () => ({ id: "ble-uuid", name: "S1a87a5a75f3df858C" }),
+    connect: async () => {},
+    handshakeVehicleSecurity: async () => {},
+  } as never;
+  await device.onSettings({ newSettings: { ble_enabled: true }, changedKeys: ["ble_enabled"] });
+  assert.equal(await notification, "local_vehicle.paired");
+  await settle();
+  assert.equal(availability.available, true);
+
+  await device.flowFlashLights();
+  assert.deepEqual(calls.filter((call) => call !== "ble.disconnect"), ["ble.vehicle_state", "ble.flash_lights"]);
 });
