@@ -223,3 +223,14 @@ test("a pairing turned off before it reached the car never touches the radio", a
   assert.equal(notified, false);
   assert.deepEqual(settings, []);
 });
+
+test("on Homey Cloud, where a Homey Bridge carries Bluetooth, turning Bluetooth on pairs the car as on a Homey Pro", async () => {
+  const calls = createFakeVehicle({ onCar: true });
+  const { device, store, notification } = createVehicle();
+  device.homey.platform = "cloud";
+
+  assert.equal(await device.onSettings(turnOn), "local_vehicle.tap_key_card");
+  assert.equal(await notification, "Model 3: local_vehicle.paired");
+  assert.deepEqual(calls, ["find_vehicle", "connect", "handshake", "disconnect"]);
+  assert.deepEqual(store.ble_device, DEVICE);
+});
