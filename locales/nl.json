@@ -22,7 +22,11 @@
     "request_failed": "Teslemetry-verzoek mislukt.",
     "product_silent": "Geen recente gegevens van Tesla.",
     "energy_site_not_paired": "Teslemetry is niet gekoppeld aan deze Powerwall en kan deze opdracht dus niet versturen. Koppel hem in de Teslemetry-console, of zet de lokale verbinding van deze Powerwall aan.",
-    "dispatch_out_of_range": "De Powerwall weigerde dit vermogen: het is meer dan de Powerwall kan laden of ontladen. Probeer een lager vermogen."
+    "dispatch_out_of_range": "De Powerwall weigerde dit vermogen: het is meer dan de Powerwall kan laden of ontladen. Probeer een lager vermogen.",
+    "island_not_ready_for_islanding": "De Powerwall weigerde: hij is nu niet klaar om van het net los te koppelen. Probeer het later opnieuw.",
+    "island_load_drop_expected": "De Powerwall weigerde: het huis verbruikt meer vermogen dan hij los van het net kan leveren. Verbruik minder en probeer het opnieuw.",
+    "island_low_energy": "De Powerwall weigerde: de lading is te laag om van het net los te koppelen.",
+    "island_excessive_solar": "De Powerwall weigerde: de zonnepanelen leveren meer vermogen dan hij los van het net kan opnemen. Probeer het opnieuw bij minder zonneproductie."
   },
   "warning": {
     "no_data_since": "Geen gegevens sinds __time__"

@@ -22,7 +22,11 @@
     "request_failed": "Teslemetry 요청에 실패했습니다.",
     "product_silent": "Tesla에서 최근 데이터가 없습니다.",
     "energy_site_not_paired": "Teslemetry가 이 Powerwall과 페어링되지 않아 이 명령을 보낼 수 없습니다. Teslemetry 콘솔에서 페어링하거나 이 Powerwall의 로컬 연결을 켜세요.",
-    "dispatch_out_of_range": "Powerwall가 이 전력을 거부했습니다. Powerwall이 충전하거나 방전할 수 있는 전력보다 큽니다. 더 낮은 전력을 시도하세요."
+    "dispatch_out_of_range": "Powerwall가 이 전력을 거부했습니다. Powerwall이 충전하거나 방전할 수 있는 전력보다 큽니다. 더 낮은 전력을 시도하세요.",
+    "island_not_ready_for_islanding": "Powerwall이 거부했습니다. 지금은 그리드에서 분리할 준비가 되지 않았습니다. 나중에 다시 시도하세요.",
+    "island_load_drop_expected": "Powerwall이 거부했습니다. 집이 그리드 없이 공급할 수 있는 것보다 많은 전력을 사용하고 있습니다. 사용량을 줄이고 다시 시도하세요.",
+    "island_low_energy": "Powerwall이 거부했습니다. 그리드에서 분리하기에는 충전량이 너무 낮습니다.",
+    "island_excessive_solar": "Powerwall이 거부했습니다. 태양광이 그리드 없이 받을 수 있는 것보다 많은 전력을 생산하고 있습니다. 태양광 발전량이 줄면 다시 시도하세요."
   },
   "warning": {
     "no_data_since": "__time__ 이후 데이터 없음"

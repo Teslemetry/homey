@@ -1,0 +1,22 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Off-grid control",
+    "nl": "Off-grid-bediening",
+    "da": "Off-grid-styring",
+    "de": "Netztrennungssteuerung",
+    "es": "Control de desconexión de la red",
+    "fr": "Contrôle du mode hors réseau",
+    "it": "Controllo off-grid",
+    "no": "Off-grid-styring",
+    "sv": "Off-grid-styrning",
+    "pl": "Sterowanie pracą poza siecią",
+    "ru": "Управление автономным режимом",
+    "ko": "오프그리드 제어",
+    "ar": "التحكم في الانفصال عن الشبكة"
+  },
+  "getable": false,
+  "setable": false,
+  "uiComponent": null,
+  "insights": false
+}

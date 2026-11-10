@@ -454,5 +454,75 @@
         "en": "Is above [[watts]] W"
       }
     }
+  ],
+  "actions": [
+    {
+      "id": "go_off_grid",
+      "$filter": "capabilities=island_control",
+      "title": {
+        "en": "Go off-grid",
+        "nl": "Loskoppelen van het net",
+        "da": "Gå off-grid",
+        "de": "Vom Netz trennen",
+        "es": "Desconectar de la red",
+        "fr": "Passer hors réseau",
+        "it": "Scollega dalla rete",
+        "no": "Koble fra nettet",
+        "sv": "Koppla från elnätet",
+        "pl": "Odłącz od sieci",
+        "ru": "Отключиться от сети",
+        "ko": "그리드에서 분리",
+        "ar": "الانفصال عن الشبكة"
+      },
+      "hint": {
+        "en": "Disconnects the home from the grid. The home then runs from the battery until it is reconnected to the grid. The Powerwall can refuse, for example when its charge is low.",
+        "nl": "Koppelt het huis los van het net. Het huis draait daarna op de batterij totdat het weer op het net wordt aangesloten. De Powerwall kan weigeren, bijvoorbeeld als de lading laag is.",
+        "da": "Kobler hjemmet fra elnettet. Hjemmet kører derefter på batteriet, indtil det tilsluttes nettet igen. Powerwall kan afvise, for eksempel når opladningen er lav.",
+        "de": "Trennt das Haus vom Netz. Das Haus läuft dann über die Batterie, bis es wieder mit dem Netz verbunden wird. Die Powerwall kann ablehnen, zum Beispiel bei niedrigem Ladestand.",
+        "es": "Desconecta la casa de la red. La casa funciona entonces con la batería hasta que se vuelva a conectar a la red. El Powerwall puede negarse, por ejemplo cuando su carga es baja.",
+        "fr": "Déconnecte la maison du réseau. La maison fonctionne alors sur la batterie jusqu'à sa reconnexion au réseau. Le Powerwall peut refuser, par exemple lorsque sa charge est faible.",
+        "it": "Scollega la casa dalla rete. La casa funziona quindi a batteria finché non viene ricollegata alla rete. Il Powerwall può rifiutare, ad esempio quando la carica è bassa.",
+        "no": "Kobler hjemmet fra strømnettet. Hjemmet går deretter på batteriet til det kobles til nettet igjen. Powerwall kan avslå, for eksempel når ladenivået er lavt.",
+        "sv": "Kopplar bort hemmet från elnätet. Hemmet drivs sedan av batteriet tills det ansluts till elnätet igen. Powerwall kan neka, till exempel när laddningen är låg.",
+        "pl": "Odłącza dom od sieci. Dom jest wtedy zasilany z baterii do czasu ponownego podłączenia do sieci. Powerwall może odmówić, na przykład gdy poziom naładowania jest niski.",
+        "ru": "Отключает дом от сети. После этого дом работает от батареи, пока его снова не подключат к сети. Powerwall может отказать, например при низком заряде.",
+        "ko": "집을 그리드에서 분리합니다. 그리드에 다시 연결할 때까지 집은 배터리로 작동합니다. 충전량이 낮을 때 등 Powerwall이 거부할 수 있습니다.",
+        "ar": "يفصل المنزل عن الشبكة. يعمل المنزل بعدها على البطارية إلى أن يُعاد توصيله بالشبكة. قد يرفض Powerwall ذلك، مثلًا عندما يكون شحنه منخفضًا."
+      }
+    },
+    {
+      "id": "reconnect_grid",
+      "$filter": "capabilities=island_control",
+      "title": {
+        "en": "Reconnect to the grid",
+        "nl": "Opnieuw op het net aansluiten",
+        "da": "Tilslut elnettet igen",
+        "de": "Wieder mit dem Netz verbinden",
+        "es": "Volver a conectar a la red",
+        "fr": "Reconnecter au réseau",
+        "it": "Ricollega alla rete",
+        "no": "Koble til nettet igjen",
+        "sv": "Återanslut till elnätet",
+        "pl": "Podłącz ponownie do sieci",
+        "ru": "Снова подключиться к сети",
+        "ko": "그리드에 다시 연결",
+        "ar": "إعادة الاتصال بالشبكة"
+      },
+      "hint": {
+        "en": "Reconnects the home to the grid after it went off-grid with the Go off-grid card or the Tesla app.",
+        "nl": "Sluit het huis weer op het net aan nadat het is losgekoppeld met de kaart Loskoppelen van het net of de Tesla-app.",
+        "da": "Tilslutter hjemmet til elnettet igen, efter at det er koblet fra med kortet Gå off-grid eller Tesla-appen.",
+        "de": "Verbindet das Haus wieder mit dem Netz, nachdem es über die Karte „Vom Netz trennen“ oder die Tesla-App getrennt wurde.",
+        "es": "Vuelve a conectar la casa a la red después de desconectarla con la tarjeta Desconectar de la red o la aplicación de Tesla.",
+        "fr": "Reconnecte la maison au réseau après sa déconnexion avec la carte Passer hors réseau ou l'application Tesla.",
+        "it": "Ricollega la casa alla rete dopo che è stata scollegata con la scheda Scollega dalla rete o con l'app Tesla.",
+        "no": "Kobler hjemmet til strømnettet igjen etter at det ble koblet fra med kortet Koble fra nettet eller Tesla-appen.",
+        "sv": "Ansluter hemmet till elnätet igen efter att det kopplats bort med kortet Koppla från elnätet eller Tesla-appen.",
+        "pl": "Podłącza dom ponownie do sieci po odłączeniu go kartą Odłącz od sieci lub w aplikacji Tesla.",
+        "ru": "Снова подключает дом к сети после отключения карточкой «Отключиться от сети» или в приложении Tesla.",
+        "ko": "그리드에서 분리 카드나 Tesla 앱으로 분리한 집을 그리드에 다시 연결합니다.",
+        "ar": "يعيد توصيل المنزل بالشبكة بعد فصله ببطاقة الانفصال عن الشبكة أو بتطبيق Tesla."
+      }
+    }
   ]
 }

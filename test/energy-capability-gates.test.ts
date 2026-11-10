@@ -8,6 +8,7 @@ import GatewayDriver from "../.homeybuild/drivers/gateway/driver.js";
 import SolarDriver from "../.homeybuild/drivers/solar/driver.js";
 import WallConnectorDriver from "../.homeybuild/drivers/wall-connector/driver.js";
 import PowerwallDevice from "../.homeybuild/drivers/battery/device.js";
+import GatewayDevice from "../.homeybuild/drivers/gateway/device.js";
 
 // app.json is the committed, generated manifest (see vehicle-model-gating.test.ts).
 const appManifest = JSON.parse(
@@ -86,7 +87,7 @@ function pair<T extends { onPairListDevices(): Promise<unknown[]> }>(
 }
 
 /** Homey's `$filter`: the card's driver matches and every listed capability is present. */
-function visibleBatteryCards(capabilities: string[]) {
+function visibleBatteryCards(capabilities: string[], driver = "battery") {
   const visible: string[] = [];
   for (const [kind, cards] of Object.entries(appManifest.flow) as Array<
     [string, Array<{ id: string; args?: Array<{ type: string; filter?: string }> }>]
@@ -96,7 +97,7 @@ function visibleBatteryCards(capabilities: string[]) {
       if (!filter) continue;
       const params = new URLSearchParams(filter);
       const driverId = params.get("driver_id");
-      if (driverId && driverId !== "battery") continue;
+      if (driverId && driverId !== driver) continue;
       const required = params.get("capabilities")?.split("|");
       if (!driverId && !required) continue;
       if (required && !required.every((cap) => capabilities.includes(cap))) continue;
@@ -186,6 +187,7 @@ function createDevice(
   initialCapabilities: string[],
   siteInfoDocument: Record<string, unknown> | undefined,
   metadata: Record<string, unknown> = { access: true, paired: true },
+  Device: { prototype: object } = PowerwallDevice,
 ) {
   const capabilities = new Set(initialCapabilities);
   const added: string[] = [];
@@ -203,7 +205,7 @@ function createDevice(
     },
   );
   const capabilityListeners: Record<string, (value: unknown) => Promise<void>> = {};
-  const device = Object.assign(Object.create(PowerwallDevice.prototype), {
+  const device = Object.assign(Object.create(Device.prototype), {
     homey: {
       app: {
         products: {
@@ -431,4 +433,47 @@ test("the dispatch cards stay as they are while there is no Products generation 
     assert.deepEqual(added.filter((cap: string) => cap === "battery_dispatch"), []);
     assert.deepEqual(removed.filter((cap: string) => cap === "battery_dispatch"), []);
   }
+});
+
+const ISLAND_CARDS = ["actions:go_off_grid", "actions:reconnect_grid"];
+const GATEWAY_MANIFEST = driverManifest("gateway");
+
+test("island cards are offered at pairing only for a gateway Teslemetry is paired with", async () => {
+  for (const [paired, offered] of [[true, true], [false, false], [null, false], [undefined, false]] as const) {
+    const [candidate] = await pair(GatewayDriver, "gateway", REAL_PW3_COMPONENTS, { access: true, paired });
+
+    assert.equal(candidate.capabilities!.includes("island_control"), offered, String(paired));
+    const cards = visibleBatteryCards(candidate.capabilities!, "gateway");
+    for (const card of ISLAND_CARDS) assert.equal(cards.includes(card), offered, `${card} ${paired}`);
+    assert.ok(cards.includes("conditions:island_status"));
+  }
+});
+
+test("an already-paired Gateway gains or loses the island cards as cloud pairing or its local link changes", async () => {
+  const unpaired = { access: true, paired: null };
+  const { device, added, removed } = createDevice(GATEWAY_MANIFEST.capabilities, undefined, unpaired, GatewayDevice);
+  device.driver.manifest = GATEWAY_MANIFEST;
+  await device.ensureCapabilities();
+  assert.deepEqual(removed, ["island_control"], "neither paired nor enrolled");
+
+  const link = Object.assign(new FakeEnergySiteStream(), { attach: () => link, healthy: true });
+  device.homey.app.localPowerwallSites = new Map([[device.getSiteId(), link]]);
+  device.rebindProduct();
+  await device.capabilityReconcile;
+  assert.deepEqual(added, ["island_control"]);
+
+  device.homey.app.localPowerwallSites = new Map();
+  device.rebindProduct();
+  await device.capabilityReconcile;
+  assert.deepEqual(removed, ["island_control", "island_control"]);
+
+  device.homey.app.products.energySites[device.getSiteId()].metadata = { access: true, paired: true };
+  device.rebindProduct();
+  await device.capabilityReconcile;
+  assert.deepEqual(added, ["island_control", "island_control"]);
+
+  // No Products generation says nothing either way.
+  device.homey.app.products = undefined;
+  await device.ensureCapabilities();
+  assert.equal(added.length + removed.length, 4);
 });

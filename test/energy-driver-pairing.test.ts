@@ -131,7 +131,7 @@ test("GatewayDriver.onPairListDevices isolates a per-site failure and still retu
     }),
   ]);
 
-  const result = await driver.onPairListDevices();
+  const result = withoutCapabilities(await driver.onPairListDevices());
 
   assert.deepEqual(result, [
     { name: "Home Gateway Gateway", data: { id: "site-1" }, class: "sensor" },
@@ -192,7 +192,7 @@ test("energy-site drivers keep pairing data.id as the SDK's real numeric type, n
   const { driver: gatewayDriver } = createDriverStub(GatewayDriver, [
     numericSite(async () => ({ response: { components: { battery: true } } })),
   ]);
-  const gatewayResult = await gatewayDriver.onPairListDevices();
+  const gatewayResult = withoutCapabilities(await gatewayDriver.onPairListDevices());
   assert.deepEqual(gatewayResult, [
     { name: "Numeric Site Gateway", data: { id: 123 }, class: "sensor" },
   ]);

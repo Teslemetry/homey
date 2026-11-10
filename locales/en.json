@@ -22,7 +22,11 @@
     "request_failed": "Teslemetry request failed.",
     "product_silent": "No recent data from Tesla.",
     "energy_site_not_paired": "Teslemetry is not paired with this Powerwall, so it cannot send this command. Pair it in the Teslemetry console, or turn on this Powerwall's local connection.",
-    "dispatch_out_of_range": "The Powerwall refused this power: it is more than the Powerwall can charge or discharge. Try a lower power."
+    "dispatch_out_of_range": "The Powerwall refused this power: it is more than the Powerwall can charge or discharge. Try a lower power.",
+    "island_not_ready_for_islanding": "The Powerwall refused: it is not ready to go off-grid right now. Try again later.",
+    "island_load_drop_expected": "The Powerwall refused: the home is using more power than it can supply off-grid. Use less power and try again.",
+    "island_low_energy": "The Powerwall refused: its charge is too low to go off-grid.",
+    "island_excessive_solar": "The Powerwall refused: solar is producing more power than it can take off-grid. Try again when solar production is lower."
   },
   "warning": {
     "no_data_since": "No data since __time__"

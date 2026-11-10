@@ -1,7 +1,9 @@
 import { EnergyDetails, SseEnergyTotals, SseLiveStatus } from "@teslemetry/api";
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 import { isEnergySiteEligible } from "../../lib/TeslemetryDriver.js";
+import { islandRefusal } from "../../lib/LocalPowerwall.js";
 import msUntilNextLocalMidnight from "../../lib/localMidnight.js";
+import { ISLAND_CAPABILITY } from "./driver.js";
 
 const gridStatusMap = new Map<any, boolean>([
   ["Active", false],
@@ -107,6 +109,19 @@ export default class GatewayDevice extends TeslemetryDevice {
   public rebindProduct(): void {
     this.unbindProduct();
     this.resolveAndBindSite();
+    // A rebind follows a new Products generation or a local link starting or stopping.
+    this.reconcileCapabilities();
+  }
+
+  protected getExpectedCapabilities(): string[] {
+    const reachable = this.gatewayCommandsReachable();
+    return super
+      .getExpectedCapabilities()
+      .filter(
+        (capability) =>
+          capability !== ISLAND_CAPABILITY ||
+          (reachable ?? this.hasCapability(capability)),
+      );
   }
 
   /** See TeslemetryDevice.unbindProduct(). */
@@ -340,6 +355,27 @@ export default class GatewayDevice extends TeslemetryDevice {
   private triggerFlow(cardId: string): void {
     if (!this.isLive()) return;
     this.homey.flow.getDeviceTriggerCard(cardId).trigger(this).catch(this.error);
+  }
+
+  /**
+   * Opens the grid contactor (off-grid) or closes it, through the site's
+   * local Powerwall link when it has one. The result shows in `island_status`
+   * once the cloud reports it.
+   */
+  public async flowSetIslandMode(offGrid: boolean): Promise<void> {
+    this.log(offGrid ? "Going off-grid" : "Reconnecting to the grid");
+    // As the libraries' go_off_grid and reconnect_grid send it.
+    const [mode, force] = offGrid ? ([6, true] as const) : ([1, undefined] as const);
+    const local = this.homey.app.localPowerwallSites?.get(this.getSiteId());
+    await this.action(
+      local
+        ? local.set_island_mode(mode, force)
+        : this.site.api.setIslandMode(mode, force).then((reply) => {
+            // The route resolves with the gateway's refusal instead of rejecting.
+            const key = islandRefusal(reply?.response?.result);
+            if (key) throw new Error(this.homey.__(key));
+          }),
+    );
   }
 
   async onUninit(): Promise<void> {
