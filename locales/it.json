@@ -4,6 +4,7 @@
     "invalid_refresh_token": "Token di refresh non valido. Per favore riautenticati.",
     "energy_site_not_found": "Sito energetico non trovato.",
     "vehicle_not_found": "Veicolo non trovato.",
+    "charge_limit_unknown": "Il limite di carica dell'auto non è ancora noto, quindi Charge on Solar non può essere impostato.",
     "wall_connector_not_found": "Wall Connector non trovato.",
     "subscription_required": "Abbonamento richiesto. Per favore controlla il tuo abbonamento a Teslemetry.",
     "vehicle_access_required": "Questo veicolo non ha più accesso a Teslemetry. Per favore controlla il tuo abbonamento a Teslemetry.",

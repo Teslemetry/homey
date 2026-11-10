@@ -268,6 +268,22 @@ export default class TeslemetryApp extends Homey.App {
       );
 
     this.homey.flow
+      .getActionCard('enable_charge_on_solar')
+      .registerRunListener(
+        async (args: { device?: VehicleDevice; lower_limit: number }) => {
+          await this.requireFlowDevice(args.device).flowEnableChargeOnSolar(
+            args.lower_limit,
+          );
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('disable_charge_on_solar')
+      .registerRunListener(async (args: { device?: VehicleDevice }) => {
+        await this.requireFlowDevice(args.device).flowDisableChargeOnSolar();
+      });
+
+    this.homey.flow
       .getActionCard('set_charging_amps')
       .registerRunListener(
         async (args: { device?: VehicleDevice; amps: number }) => {

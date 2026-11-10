@@ -4,6 +4,7 @@
     "invalid_refresh_token": "Token de actualización inválido. Por favor, vuelve a autenticarte.",
     "energy_site_not_found": "Sitio de energía no encontrado.",
     "vehicle_not_found": "Vehículo no encontrado.",
+    "charge_limit_unknown": "Aún no se conoce el límite de carga del coche, por lo que no se puede configurar Charge on Solar.",
     "wall_connector_not_found": "Wall Connector no encontrado.",
     "subscription_required": "Suscripción requerida. Por favor, verifica tu suscripción de Teslemetry.",
     "vehicle_access_required": "Este vehículo ya no tiene acceso a Teslemetry. Por favor, verifica tu suscripción de Teslemetry.",

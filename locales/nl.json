@@ -4,6 +4,7 @@
     "invalid_refresh_token": "Ongeldige vernieuw token. Gelieve opnieuw in te loggen.",
     "energy_site_not_found": "Energielocatie niet gevonden.",
     "vehicle_not_found": "Voertuig niet gevonden.",
+    "charge_limit_unknown": "De laadlimiet van de auto is nog niet bekend, dus Charge on Solar kan niet worden ingesteld.",
     "wall_connector_not_found": "Wall Connector niet gevonden.",
     "subscription_required": "Abonnement vereist. Controleer uw Teslemetry-abonnement.",
     "vehicle_access_required": "Dit voertuig heeft geen toegang meer tot Teslemetry. Controleer uw Teslemetry-abonnement.",

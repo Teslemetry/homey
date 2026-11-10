@@ -6753,6 +6753,61 @@
       },
       {
         "title": {
+          "en": "Turn off Charge on Solar",
+          "nl": "Charge on Solar uitschakelen",
+          "da": "Slå Charge on Solar fra",
+          "de": "Charge on Solar ausschalten",
+          "es": "Desactivar Charge on Solar",
+          "fr": "Désactiver Charge on Solar",
+          "it": "Disattiva Charge on Solar",
+          "no": "Slå av Charge on Solar",
+          "sv": "Slå av Charge on Solar",
+          "pl": "Wyłącz Charge on Solar",
+          "ru": "Выключить Charge on Solar",
+          "ko": "Charge on Solar 끄기",
+          "ar": "إيقاف Charge on Solar"
+        },
+        "titleFormatted": {
+          "en": "Turn off Charge on Solar on [[device]]",
+          "nl": "Schakel Charge on Solar uit op [[device]]",
+          "da": "Slå Charge on Solar fra på [[device]]",
+          "de": "Charge on Solar auf [[device]] ausschalten",
+          "es": "Desactiva Charge on Solar en [[device]]",
+          "fr": "Désactive Charge on Solar sur [[device]]",
+          "it": "Disattiva Charge on Solar su [[device]]",
+          "no": "Slå av Charge on Solar på [[device]]",
+          "sv": "Slå av Charge on Solar på [[device]]",
+          "pl": "Wyłącz Charge on Solar na [[device]]",
+          "ru": "Выключить Charge on Solar на [[device]]",
+          "ko": "[[device]]에서 Charge on Solar 끄기",
+          "ar": "إيقاف Charge on Solar على [[device]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=charge_limit",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          }
+        ],
+        "id": "disable_charge_on_solar"
+      },
+      {
+        "title": {
           "en": "Disable scheduled charging",
           "nl": "Geplande lading uitschakelen",
           "da": "Deaktiver planlagt opladning",
@@ -7174,6 +7229,86 @@
           }
         ],
         "id": "dispatch_battery_discharge"
+      },
+      {
+        "title": {
+          "en": "Turn on Charge on Solar",
+          "nl": "Charge on Solar inschakelen",
+          "da": "Slå Charge on Solar til",
+          "de": "Charge on Solar einschalten",
+          "es": "Activar Charge on Solar",
+          "fr": "Activer Charge on Solar",
+          "it": "Attiva Charge on Solar",
+          "no": "Slå på Charge on Solar",
+          "sv": "Slå på Charge on Solar",
+          "pl": "Włącz Charge on Solar",
+          "ru": "Включить Charge on Solar",
+          "ko": "Charge on Solar 켜기",
+          "ar": "تشغيل Charge on Solar"
+        },
+        "titleFormatted": {
+          "en": "Turn on Charge on Solar on [[device]] with a lower limit of [[lower_limit]]%",
+          "nl": "Schakel Charge on Solar in op [[device]] met een ondergrens van [[lower_limit]]%",
+          "da": "Slå Charge on Solar til på [[device]] med en nedre grænse på [[lower_limit]]%",
+          "de": "Charge on Solar auf [[device]] mit einer Untergrenze von [[lower_limit]]% einschalten",
+          "es": "Activa Charge on Solar en [[device]] con un límite inferior de [[lower_limit]]%",
+          "fr": "Active Charge on Solar sur [[device]] avec une limite inférieure de [[lower_limit]]%",
+          "it": "Attiva Charge on Solar su [[device]] con un limite inferiore del [[lower_limit]]%",
+          "no": "Slå på Charge on Solar på [[device]] med en nedre grense på [[lower_limit]]%",
+          "sv": "Slå på Charge on Solar på [[device]] med en nedre gräns på [[lower_limit]]%",
+          "pl": "Włącz Charge on Solar na [[device]] z dolnym limitem [[lower_limit]]%",
+          "ru": "Включить Charge on Solar на [[device]] с нижним пределом [[lower_limit]]%",
+          "ko": "[[device]]에서 하한 [[lower_limit]]%로 Charge on Solar 켜기",
+          "ar": "تشغيل Charge on Solar على [[device]] بحد أدنى [[lower_limit]]%"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=charge_limit",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "جهاز"
+            }
+          },
+          {
+            "type": "range",
+            "name": "lower_limit",
+            "title": {
+              "en": "Lower limit",
+              "nl": "Ondergrens",
+              "da": "Nedre grænse",
+              "de": "Untergrenze",
+              "es": "Límite inferior",
+              "fr": "Limite inférieure",
+              "it": "Limite inferiore",
+              "no": "Nedre grense",
+              "sv": "Nedre gräns",
+              "pl": "Dolny limit",
+              "ru": "Нижний предел",
+              "ko": "하한",
+              "ar": "الحد الأدنى"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "labelMultiplier": 1,
+            "labelDecimals": 0
+          }
+        ],
+        "id": "enable_charge_on_solar"
       },
       {
         "title": {

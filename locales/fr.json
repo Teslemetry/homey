@@ -4,6 +4,7 @@
     "invalid_refresh_token": "Jeton de rafraîchissement invalide. Veuillez vous ré-authentifier.",
     "energy_site_not_found": "Site énergétique introuvable.",
     "vehicle_not_found": "Véhicule introuvable.",
+    "charge_limit_unknown": "La limite de charge de la voiture n'est pas encore connue, Charge on Solar ne peut donc pas être réglé.",
     "wall_connector_not_found": "Wall Connector introuvable.",
     "subscription_required": "Abonnement requis. Veuillez vérifier votre abonnement Teslemetry.",
     "vehicle_access_required": "Ce véhicule n'a plus accès à Teslemetry. Veuillez vérifier votre abonnement Teslemetry.",

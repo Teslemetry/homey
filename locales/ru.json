@@ -4,6 +4,7 @@
     "invalid_refresh_token": "Неверный токен обновления. Пожалуйста, повторно аутентифицируйтесь.",
     "energy_site_not_found": "Энергосистема не найдена.",
     "vehicle_not_found": "Транспортное средство не найдено.",
+    "charge_limit_unknown": "Предел зарядки автомобиля ещё неизвестен, поэтому Charge on Solar нельзя настроить.",
     "wall_connector_not_found": "Wall Connector не найден.",
     "subscription_required": "Требуется подписка. Пожалуйста, проверьте вашу подписку на Teslemetry.",
     "vehicle_access_required": "Это транспортное средство больше не имеет доступа к Teslemetry. Пожалуйста, проверьте вашу подписку на Teslemetry.",

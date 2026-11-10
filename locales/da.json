@@ -4,6 +4,7 @@
     "invalid_refresh_token": "Ugyldigt fornyelsestoken. Venligst godkend igen.",
     "energy_site_not_found": "Energianlæg ikke fundet.",
     "vehicle_not_found": "Køretøj ikke fundet.",
+    "charge_limit_unknown": "Bilens opladningsgrænse er endnu ikke kendt, så Charge on Solar kan ikke indstilles.",
     "wall_connector_not_found": "Wall Connector ikke fundet.",
     "subscription_required": "Abonnement kræves. Venligst tjek dit Teslemetry abonnement.",
     "vehicle_access_required": "Dette køretøj har ikke længere adgang til Teslemetry. Venligst tjek dit Teslemetry abonnement.",

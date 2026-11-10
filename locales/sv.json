@@ -4,6 +4,7 @@
     "invalid_refresh_token": "Ogiltig uppdateringstoken. Vänligen autentisera om.",
     "energy_site_not_found": "Energianläggning hittades inte.",
     "vehicle_not_found": "Fordon hittades inte.",
+    "charge_limit_unknown": "Bilens laddgräns är ännu inte känd, så Charge on Solar kan inte ställas in.",
     "wall_connector_not_found": "Wall Connector hittades inte.",
     "subscription_required": "Prenumeration krävs. Vänligen kontrollera din Teslemetry-prenumeration.",
     "vehicle_access_required": "Detta fordon har inte längre åtkomst till Teslemetry. Vänligen kontrollera din Teslemetry-prenumeration.",

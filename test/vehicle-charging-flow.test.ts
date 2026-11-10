@@ -49,8 +49,16 @@ function createDeviceStub(capabilities: Record<string, unknown> = {}) {
         setClimateKeeperMode: recordApiCall("setClimateKeeperMode"),
         setSeatHeater: recordApiCall("setSeatHeater"),
         setSeatCooler: recordApiCall("setSeatCooler"),
+        chargeOnSolar: recordApiCall("chargeOnSolar"),
       },
       sse: { cache: { data: {} } },
+    },
+    store: {} as Record<string, unknown>,
+    getStoreValue(key: string) {
+      return this.store[key];
+    },
+    async setStoreValue(key: string, value: unknown) {
+      this.store[key] = value;
     },
     getName: () => "Test Vehicle",
     log: () => {},
@@ -334,6 +342,44 @@ test("flowSetChargeLimit calls the SDK setChargeLimit command with a rounded per
   await stub.flowSetChargeLimit(80.4);
 
   assert.deepEqual(apiCalls, [{ method: "setChargeLimit", args: [80] }]);
+});
+
+test("turning Charge on Solar on sends the lower limit with the car's charge limit as the upper limit", async () => {
+  const { stub, apiCalls } = createDeviceStub({ charge_limit: 0.8 });
+
+  await stub.flowEnableChargeOnSolar(30);
+
+  assert.deepEqual(apiCalls, [{ method: "chargeOnSolar", args: [true, 30, 80] }]);
+});
+
+test("Charge on Solar caps the lower limit at the car's charge limit", async () => {
+  const { stub, apiCalls } = createDeviceStub({ charge_limit: 0.7 });
+
+  await stub.flowEnableChargeOnSolar(90);
+
+  assert.deepEqual(apiCalls, [{ method: "chargeOnSolar", args: [true, 70, 70] }]);
+});
+
+test("turning Charge on Solar off resends the lower limit last sent", async () => {
+  const { stub, apiCalls } = createDeviceStub({ charge_limit: 0.8 });
+
+  await stub.flowDisableChargeOnSolar();
+  await stub.flowEnableChargeOnSolar(40);
+  await stub.flowDisableChargeOnSolar();
+
+  assert.deepEqual(apiCalls, [
+    { method: "chargeOnSolar", args: [false, 20, 80] },
+    { method: "chargeOnSolar", args: [true, 40, 80] },
+    { method: "chargeOnSolar", args: [false, 40, 80] },
+  ]);
+});
+
+test("Charge on Solar is not sent while the car's charge limit is unknown", async () => {
+  const { stub, apiCalls } = createDeviceStub({});
+  stub.homey.__ = (key: string) => key;
+
+  await assert.rejects(stub.flowEnableChargeOnSolar(30), /charge_limit_unknown/);
+  assert.deepEqual(apiCalls, []);
 });
 
 test("flowSetChargingAmps calls the SDK setChargingAmps command", async () => {
