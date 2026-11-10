@@ -4,6 +4,7 @@
     "invalid_refresh_token": "رمز التحديث غير صالح. يرجى إعادة المصادقة.",
     "energy_site_not_found": "لم يتم العثور على موقع الطاقة.",
     "vehicle_not_found": "لم يتم العثور على السيارة.",
+    "charge_limit_unknown": "حد الشحن للسيارة غير معروف بعد، لذا لا يمكن ضبط Charge on Solar.",
     "wall_connector_not_found": "لم يتم العثور على Wall Connector.",
     "subscription_required": "مطلوب اشتراك. يرجى التحقق من اشتراك Teslemetry الخاص بك.",
     "vehicle_access_required": "لم يعد لهذه السيارة وصول إلى Teslemetry. يرجى التحقق من اشتراك Teslemetry الخاص بك.",

@@ -231,6 +231,9 @@ const TPMS_WHEEL_FIELDS = [
 ] as const;
 
 const CHARGE_SESSION_STORE_KEY = "meter_power_charge_session";
+/** The lower limit last sent, which turning Charge on Solar off sends again. */
+const CHARGE_ON_SOLAR_LOWER_LIMIT_STORE_KEY = "charge_on_solar_lower_limit";
+const CHARGE_ON_SOLAR_LOWER_LIMIT_DEFAULT = 20;
 
 interface ChargeSessionState {
   session: number;
@@ -2334,6 +2337,34 @@ export default class VehicleDevice extends TeslemetryDevice {
     await this.vehicleAction(
       this.sendChargeLimit(Math.round(percentage)),
     );
+  }
+
+  public async flowEnableChargeOnSolar(lowerLimit: number): Promise<void> {
+    await this.sendChargeOnSolar(true, Math.round(lowerLimit));
+  }
+
+  public async flowDisableChargeOnSolar(): Promise<void> {
+    const stored = this.getStoreValue(CHARGE_ON_SOLAR_LOWER_LIMIT_STORE_KEY) as unknown;
+    await this.sendChargeOnSolar(
+      false,
+      typeof stored === "number" ? stored : CHARGE_ON_SOLAR_LOWER_LIMIT_DEFAULT,
+    );
+  }
+
+  /**
+   * The car takes all three settings in every command, and reads a missing
+   * one as 0, so the upper limit is always the car's own charge limit and the
+   * lower limit never exceeds it.
+   */
+  private async sendChargeOnSolar(enabled: boolean, lowerLimit: number): Promise<void> {
+    const chargeLimit = this.getCapabilityValue("charge_limit") as number | null;
+    if (typeof chargeLimit !== "number") {
+      throw new Error(this.homey.__("error.charge_limit_unknown"));
+    }
+    const upper = Math.round(chargeLimit * 100);
+    const lower = Math.min(lowerLimit, upper);
+    await this.vehicleAction(this.vehicle.api.chargeOnSolar(enabled, lower, upper));
+    await this.setStoreValue(CHARGE_ON_SOLAR_LOWER_LIMIT_STORE_KEY, lower);
   }
 
   public async flowSetChargingAmps(amps: number): Promise<void> {
