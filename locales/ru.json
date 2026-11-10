@@ -20,7 +20,9 @@
     "frunk_cannot_close": "Передний багажник нельзя закрыть удалённо. Закройте его вручную.",
     "command_no_result": "Команда не вернула результат.",
     "request_failed": "Запрос к Teslemetry не выполнен.",
-    "product_silent": "Нет свежих данных от Tesla."
+    "product_silent": "Нет свежих данных от Tesla.",
+    "energy_site_not_paired": "Teslemetry не сопряжён с этим Powerwall и не может отправить эту команду. Выполните сопряжение в консоли Teslemetry или включите локальное подключение этого Powerwall.",
+    "dispatch_out_of_range": "Powerwall отклонил эту мощность: она больше, чем Powerwall может заряжать или разряжать. Попробуйте меньшую мощность."
   },
   "warning": {
     "no_data_since": "Нет данных с __time__"

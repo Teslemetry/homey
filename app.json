@@ -6928,6 +6928,294 @@
       },
       {
         "title": {
+          "en": "Charge battery at a set power",
+          "nl": "Batterij laden met een vast vermogen",
+          "da": "Oplad batteriet med en fast effekt",
+          "de": "Batterie mit fester Leistung laden",
+          "es": "Cargar la batería a una potencia fija",
+          "fr": "Charger la batterie à une puissance fixe",
+          "it": "Carica la batteria a potenza fissa",
+          "no": "Lad batteriet med fast effekt",
+          "sv": "Ladda batteriet med fast effekt",
+          "pl": "Ładuj baterię ze stałą mocą",
+          "ru": "Заряжать батарею с заданной мощностью",
+          "ko": "설정 전력으로 배터리 충전",
+          "ar": "شحن البطارية بقدرة محددة"
+        },
+        "titleFormatted": {
+          "en": "Charge [[device]] at [[power]] W for [[duration]] minutes",
+          "nl": "Laad [[device]] met [[power]] W gedurende [[duration]] minuten",
+          "da": "Oplad [[device]] med [[power]] W i [[duration]] minutter",
+          "de": "[[device]] [[duration]] Minuten lang mit [[power]] W laden",
+          "es": "Cargar [[device]] a [[power]] W durante [[duration]] minutos",
+          "fr": "Charger [[device]] à [[power]] W pendant [[duration]] minutes",
+          "it": "Carica [[device]] a [[power]] W per [[duration]] minuti",
+          "no": "Lad [[device]] med [[power]] W i [[duration]] minutter",
+          "sv": "Ladda [[device]] med [[power]] W i [[duration]] minuter",
+          "pl": "Ładuj [[device]] z mocą [[power]] W przez [[duration]] min",
+          "ru": "Заряжать [[device]] с мощностью [[power]] Вт в течение [[duration]] мин",
+          "ko": "[[device]]을(를) [[power]] W로 [[duration]]분 동안 충전",
+          "ar": "شحن [[device]] بقدرة [[power]] واط لمدة [[duration]] دقيقة"
+        },
+        "hint": {
+          "en": "Charges the Powerwall at this power for this long. When the time is up, the Powerwall returns to normal operation by itself. A new charge or discharge replaces the one running.",
+          "nl": "Laadt de Powerwall met dit vermogen gedurende deze tijd. Als de tijd om is, keert de Powerwall vanzelf terug naar normaal gebruik. Een nieuwe laad- of ontlaadopdracht vervangt de lopende.",
+          "da": "Oplader Powerwall med denne effekt i så lang tid. Når tiden er gået, vender Powerwall selv tilbage til normal drift. En ny opladning eller afladning erstatter den igangværende.",
+          "de": "Lädt die Powerwall so lange mit dieser Leistung. Wenn die Zeit abgelaufen ist, kehrt die Powerwall von selbst zum normalen Betrieb zurück. Ein neues Laden oder Entladen ersetzt das laufende.",
+          "es": "Carga el Powerwall a esta potencia durante este tiempo. Cuando termina el tiempo, el Powerwall vuelve solo a su funcionamiento normal. Una nueva carga o descarga sustituye a la que esté en curso.",
+          "fr": "Charge le Powerwall à cette puissance pendant cette durée. À la fin de la durée, le Powerwall reprend de lui-même son fonctionnement normal. Une nouvelle charge ou décharge remplace celle en cours.",
+          "it": "Carica il Powerwall a questa potenza per questo tempo. Allo scadere del tempo, il Powerwall torna da solo al funzionamento normale. Una nuova carica o scarica sostituisce quella in corso.",
+          "no": "Lader Powerwall med denne effekten så lenge. Når tiden er ute, går Powerwall tilbake til normal drift av seg selv. En ny lading eller utlading erstatter den som pågår.",
+          "sv": "Laddar Powerwall med den här effekten så länge. När tiden är slut återgår Powerwall av sig själv till normal drift. En ny laddning eller urladdning ersätter den pågående.",
+          "pl": "Ładuje Powerwall z tą mocą przez ten czas. Po upływie czasu Powerwall sam wraca do normalnej pracy. Nowe ładowanie lub rozładowanie zastępuje trwające.",
+          "ru": "Заряжает Powerwall с этой мощностью в течение этого времени. По истечении времени Powerwall сам возвращается к обычной работе. Новая зарядка или разрядка заменяет текущую.",
+          "ko": "이 전력으로 이 시간 동안 Powerwall을 충전합니다. 시간이 끝나면 Powerwall은 자동으로 정상 작동으로 돌아갑니다. 새 충전 또는 방전은 진행 중인 것을 대체합니다.",
+          "ar": "يشحن Powerwall بهذه القدرة طوال هذه المدة. عند انتهاء المدة يعود Powerwall إلى التشغيل العادي من تلقاء نفسه. يحل الشحن أو التفريغ الجديد محل الجاري."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=battery_dispatch",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
+            }
+          },
+          {
+            "type": "number",
+            "name": "power",
+            "title": {
+              "en": "Power",
+              "nl": "Vermogen",
+              "da": "Effekt",
+              "de": "Leistung",
+              "es": "Potencia",
+              "fr": "Puissance",
+              "it": "Potenza",
+              "no": "Effekt",
+              "sv": "Effekt",
+              "pl": "Moc",
+              "ru": "Мощность",
+              "ko": "전력",
+              "ar": "القدرة"
+            },
+            "placeholder": {
+              "en": "Watts",
+              "nl": "Watt",
+              "da": "Watt",
+              "de": "Watt",
+              "es": "Vatios",
+              "fr": "Watts",
+              "it": "Watt",
+              "no": "Watt",
+              "sv": "Watt",
+              "pl": "Waty",
+              "ru": "Ватты",
+              "ko": "와트",
+              "ar": "واط"
+            },
+            "min": 1,
+            "max": 100000,
+            "step": 1
+          },
+          {
+            "type": "number",
+            "name": "duration",
+            "title": {
+              "en": "Duration",
+              "nl": "Duur",
+              "da": "Varighed",
+              "de": "Dauer",
+              "es": "Duración",
+              "fr": "Durée",
+              "it": "Durata",
+              "no": "Varighet",
+              "sv": "Varaktighet",
+              "pl": "Czas trwania",
+              "ru": "Длительность",
+              "ko": "지속 시간",
+              "ar": "المدة"
+            },
+            "placeholder": {
+              "en": "Minutes",
+              "nl": "Minuten",
+              "da": "Minutter",
+              "de": "Minuten",
+              "es": "Minutos",
+              "fr": "Minutes",
+              "it": "Minuti",
+              "no": "Minutter",
+              "sv": "Minuter",
+              "pl": "Minuty",
+              "ru": "Минуты",
+              "ko": "분",
+              "ar": "دقائق"
+            },
+            "min": 1,
+            "max": 1440,
+            "step": 1
+          }
+        ],
+        "id": "dispatch_battery_charge"
+      },
+      {
+        "title": {
+          "en": "Discharge battery at a set power",
+          "nl": "Batterij ontladen met een vast vermogen",
+          "da": "Aflad batteriet med en fast effekt",
+          "de": "Batterie mit fester Leistung entladen",
+          "es": "Descargar la batería a una potencia fija",
+          "fr": "Décharger la batterie à une puissance fixe",
+          "it": "Scarica la batteria a potenza fissa",
+          "no": "Lad ut batteriet med fast effekt",
+          "sv": "Ladda ur batteriet med fast effekt",
+          "pl": "Rozładuj baterię ze stałą mocą",
+          "ru": "Разряжать батарею с заданной мощностью",
+          "ko": "설정 전력으로 배터리 방전",
+          "ar": "تفريغ البطارية بقدرة محددة"
+        },
+        "titleFormatted": {
+          "en": "Discharge [[device]] at [[power]] W for [[duration]] minutes",
+          "nl": "Ontlaad [[device]] met [[power]] W gedurende [[duration]] minuten",
+          "da": "Aflad [[device]] med [[power]] W i [[duration]] minutter",
+          "de": "[[device]] [[duration]] Minuten lang mit [[power]] W entladen",
+          "es": "Descargar [[device]] a [[power]] W durante [[duration]] minutos",
+          "fr": "Décharger [[device]] à [[power]] W pendant [[duration]] minutes",
+          "it": "Scarica [[device]] a [[power]] W per [[duration]] minuti",
+          "no": "Lad ut [[device]] med [[power]] W i [[duration]] minutter",
+          "sv": "Ladda ur [[device]] med [[power]] W i [[duration]] minuter",
+          "pl": "Rozładuj [[device]] z mocą [[power]] W przez [[duration]] min",
+          "ru": "Разряжать [[device]] с мощностью [[power]] Вт в течение [[duration]] мин",
+          "ko": "[[device]]을(를) [[power]] W로 [[duration]]분 동안 방전",
+          "ar": "تفريغ [[device]] بقدرة [[power]] واط لمدة [[duration]] دقيقة"
+        },
+        "hint": {
+          "en": "Discharges the Powerwall at this power for this long. When the time is up, the Powerwall returns to normal operation by itself. A new charge or discharge replaces the one running. It can discharge below the backup reserve, and export to the grid whatever the export setting.",
+          "nl": "Ontlaadt de Powerwall met dit vermogen gedurende deze tijd. Als de tijd om is, keert de Powerwall vanzelf terug naar normaal gebruik. Een nieuwe laad- of ontlaadopdracht vervangt de lopende. Dit kan ontladen tot onder de back-upreserve en terugleveren aan het net, ongeacht de exportinstelling.",
+          "da": "Aflader Powerwall med denne effekt i så lang tid. Når tiden er gået, vender Powerwall selv tilbage til normal drift. En ny opladning eller afladning erstatter den igangværende. Den kan aflade under backupreserven og eksportere til nettet uanset eksportindstillingen.",
+          "de": "Entlädt die Powerwall so lange mit dieser Leistung. Wenn die Zeit abgelaufen ist, kehrt die Powerwall von selbst zum normalen Betrieb zurück. Ein neues Laden oder Entladen ersetzt das laufende. Sie kann unter die Backup-Reserve entladen und unabhängig von der Exporteinstellung ins Netz einspeisen.",
+          "es": "Descarga el Powerwall a esta potencia durante este tiempo. Cuando termina el tiempo, el Powerwall vuelve solo a su funcionamiento normal. Una nueva carga o descarga sustituye a la que esté en curso. Puede descargar por debajo de la reserva de respaldo y exportar a la red sea cual sea el ajuste de exportación.",
+          "fr": "Décharge le Powerwall à cette puissance pendant cette durée. À la fin de la durée, le Powerwall reprend de lui-même son fonctionnement normal. Une nouvelle charge ou décharge remplace celle en cours. Il peut se décharger sous la réserve de secours et exporter vers le réseau quel que soit le réglage d'export.",
+          "it": "Scarica il Powerwall a questa potenza per questo tempo. Allo scadere del tempo, il Powerwall torna da solo al funzionamento normale. Una nuova carica o scarica sostituisce quella in corso. Può scaricarsi sotto la riserva di backup ed esportare in rete qualunque sia l'impostazione di esportazione.",
+          "no": "Lader ut Powerwall med denne effekten så lenge. Når tiden er ute, går Powerwall tilbake til normal drift av seg selv. En ny lading eller utlading erstatter den som pågår. Den kan lade ut under backupreserven og eksportere til nettet uansett eksportinnstillingen.",
+          "sv": "Laddar ur Powerwall med den här effekten så länge. När tiden är slut återgår Powerwall av sig själv till normal drift. En ny laddning eller urladdning ersätter den pågående. Den kan laddas ur under backupreserven och exportera till nätet oavsett exportinställningen.",
+          "pl": "Rozładowuje Powerwall z tą mocą przez ten czas. Po upływie czasu Powerwall sam wraca do normalnej pracy. Nowe ładowanie lub rozładowanie zastępuje trwające. Może rozładować się poniżej rezerwy zapasowej i oddawać energię do sieci niezależnie od ustawienia eksportu.",
+          "ru": "Разряжает Powerwall с этой мощностью в течение этого времени. По истечении времени Powerwall сам возвращается к обычной работе. Новая зарядка или разрядка заменяет текущую. Он может разрядиться ниже резерва и отдавать энергию в сеть независимо от настройки экспорта.",
+          "ko": "이 전력으로 이 시간 동안 Powerwall을 방전합니다. 시간이 끝나면 Powerwall은 자동으로 정상 작동으로 돌아갑니다. 새 충전 또는 방전은 진행 중인 것을 대체합니다. 백업 예비량 아래로 방전할 수 있으며, 내보내기 설정과 관계없이 그리드로 내보낼 수 있습니다.",
+          "ar": "يفرّغ Powerwall بهذه القدرة طوال هذه المدة. عند انتهاء المدة يعود Powerwall إلى التشغيل العادي من تلقاء نفسه. يحل الشحن أو التفريغ الجديد محل الجاري. قد يفرّغ إلى ما دون احتياطي النسخ الاحتياطي ويصدّر إلى الشبكة أيًا كان إعداد التصدير."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=battery_dispatch",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
+            }
+          },
+          {
+            "type": "number",
+            "name": "power",
+            "title": {
+              "en": "Power",
+              "nl": "Vermogen",
+              "da": "Effekt",
+              "de": "Leistung",
+              "es": "Potencia",
+              "fr": "Puissance",
+              "it": "Potenza",
+              "no": "Effekt",
+              "sv": "Effekt",
+              "pl": "Moc",
+              "ru": "Мощность",
+              "ko": "전력",
+              "ar": "القدرة"
+            },
+            "placeholder": {
+              "en": "Watts",
+              "nl": "Watt",
+              "da": "Watt",
+              "de": "Watt",
+              "es": "Vatios",
+              "fr": "Watts",
+              "it": "Watt",
+              "no": "Watt",
+              "sv": "Watt",
+              "pl": "Waty",
+              "ru": "Ватты",
+              "ko": "와트",
+              "ar": "واط"
+            },
+            "min": 1,
+            "max": 100000,
+            "step": 1
+          },
+          {
+            "type": "number",
+            "name": "duration",
+            "title": {
+              "en": "Duration",
+              "nl": "Duur",
+              "da": "Varighed",
+              "de": "Dauer",
+              "es": "Duración",
+              "fr": "Durée",
+              "it": "Durata",
+              "no": "Varighet",
+              "sv": "Varaktighet",
+              "pl": "Czas trwania",
+              "ru": "Длительность",
+              "ko": "지속 시간",
+              "ar": "المدة"
+            },
+            "placeholder": {
+              "en": "Minutes",
+              "nl": "Minuten",
+              "da": "Minutter",
+              "de": "Minuten",
+              "es": "Minutos",
+              "fr": "Minutes",
+              "it": "Minuti",
+              "no": "Minutter",
+              "sv": "Minuter",
+              "pl": "Minuty",
+              "ru": "Минуты",
+              "ko": "분",
+              "ar": "دقائق"
+            },
+            "min": 1,
+            "max": 1440,
+            "step": 1
+          }
+        ],
+        "id": "dispatch_battery_discharge"
+      },
+      {
+        "title": {
           "en": "Enable scheduled charging",
           "nl": "Geplande lading inschakelen",
           "da": "Aktiver planlagt opladning",
@@ -7637,6 +7925,76 @@
           }
         ],
         "id": "remove_precondition_schedule"
+      },
+      {
+        "title": {
+          "en": "Resume normal battery operation",
+          "nl": "Normaal batterijgebruik hervatten",
+          "da": "Genoptag normal batteridrift",
+          "de": "Normalen Batteriebetrieb fortsetzen",
+          "es": "Reanudar el funcionamiento normal de la batería",
+          "fr": "Reprendre le fonctionnement normal de la batterie",
+          "it": "Riprendi il funzionamento normale della batteria",
+          "no": "Gjenoppta normal batteridrift",
+          "sv": "Återuppta normal batteridrift",
+          "pl": "Wznów normalną pracę baterii",
+          "ru": "Вернуть батарею к обычной работе",
+          "ko": "배터리 정상 작동 재개",
+          "ar": "استئناف التشغيل العادي للبطارية"
+        },
+        "titleFormatted": {
+          "en": "Resume normal operation of [[device]]",
+          "nl": "Normaal gebruik van [[device]] hervatten",
+          "da": "Genoptag normal drift af [[device]]",
+          "de": "Normalen Betrieb von [[device]] fortsetzen",
+          "es": "Reanudar el funcionamiento normal de [[device]]",
+          "fr": "Reprendre le fonctionnement normal de [[device]]",
+          "it": "Riprendi il funzionamento normale di [[device]]",
+          "no": "Gjenoppta normal drift av [[device]]",
+          "sv": "Återuppta normal drift för [[device]]",
+          "pl": "Wznów normalną pracę [[device]]",
+          "ru": "Вернуть [[device]] к обычной работе",
+          "ko": "[[device]] 정상 작동 재개",
+          "ar": "استئناف التشغيل العادي لـ[[device]]"
+        },
+        "hint": {
+          "en": "Ends a charge or discharge early and returns the Powerwall to normal operation.",
+          "nl": "Beëindigt een laad- of ontlaadopdracht vroegtijdig en zet de Powerwall terug op normaal gebruik.",
+          "da": "Afslutter en opladning eller afladning før tid og sætter Powerwall tilbage til normal drift.",
+          "de": "Beendet ein Laden oder Entladen vorzeitig und setzt die Powerwall in den normalen Betrieb zurück.",
+          "es": "Termina antes de tiempo una carga o descarga y devuelve el Powerwall a su funcionamiento normal.",
+          "fr": "Met fin plus tôt à une charge ou décharge et remet le Powerwall en fonctionnement normal.",
+          "it": "Termina in anticipo una carica o scarica e riporta il Powerwall al funzionamento normale.",
+          "no": "Avslutter en lading eller utlading før tiden og setter Powerwall tilbake til normal drift.",
+          "sv": "Avslutar en laddning eller urladdning i förtid och återställer Powerwall till normal drift.",
+          "pl": "Kończy ładowanie lub rozładowanie przed czasem i przywraca Powerwall do normalnej pracy.",
+          "ru": "Досрочно завершает зарядку или разрядку и возвращает Powerwall к обычной работе.",
+          "ko": "충전 또는 방전을 일찍 끝내고 Powerwall을 정상 작동으로 되돌립니다.",
+          "ar": "ينهي الشحن أو التفريغ مبكرًا ويعيد Powerwall إلى التشغيل العادي."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "capabilities=battery_dispatch",
+            "title": {
+              "en": "Device",
+              "nl": "Apparaat",
+              "da": "Enhed",
+              "de": "Gerät",
+              "es": "Dispositivo",
+              "fr": "Appareil",
+              "it": "Dispositivo",
+              "no": "Enhet",
+              "sv": "Enhet",
+              "pl": "Urządzenie",
+              "ru": "Устройство",
+              "ko": "장치",
+              "ar": "الجهاز"
+            }
+          }
+        ],
+        "id": "resume_battery_operation"
       },
       {
         "title": {
@@ -10124,7 +10482,8 @@
         "meter_power.charged",
         "meter_power.discharged",
         "battery_charged_today",
-        "battery_discharged_today"
+        "battery_discharged_today",
+        "battery_dispatch"
       ],
       "capabilitiesOptions": {
         "meter_power.charged": {
@@ -12291,6 +12650,28 @@
       },
       "decimals": 2,
       "insights": true
+    },
+    "battery_dispatch": {
+      "type": "boolean",
+      "title": {
+        "en": "Battery dispatch",
+        "nl": "Batterijsturing",
+        "da": "Batteristyring",
+        "de": "Batteriesteuerung",
+        "es": "Control de la batería",
+        "fr": "Pilotage de la batterie",
+        "it": "Controllo della batteria",
+        "no": "Batteristyring",
+        "sv": "Batteristyrning",
+        "pl": "Sterowanie baterią",
+        "ru": "Управление батареей",
+        "ko": "배터리 제어",
+        "ar": "التحكم في البطارية"
+      },
+      "getable": false,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
     },
     "cellular_connected": {
       "icon": "/assets/capabilities/cellular_connected.svg",

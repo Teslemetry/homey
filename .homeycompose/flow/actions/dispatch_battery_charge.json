@@ -1,0 +1,143 @@
+{
+  "title": {
+    "en": "Charge battery at a set power",
+    "nl": "Batterij laden met een vast vermogen",
+    "da": "Oplad batteriet med en fast effekt",
+    "de": "Batterie mit fester Leistung laden",
+    "es": "Cargar la batería a una potencia fija",
+    "fr": "Charger la batterie à une puissance fixe",
+    "it": "Carica la batteria a potenza fissa",
+    "no": "Lad batteriet med fast effekt",
+    "sv": "Ladda batteriet med fast effekt",
+    "pl": "Ładuj baterię ze stałą mocą",
+    "ru": "Заряжать батарею с заданной мощностью",
+    "ko": "설정 전력으로 배터리 충전",
+    "ar": "شحن البطارية بقدرة محددة"
+  },
+  "titleFormatted": {
+    "en": "Charge [[device]] at [[power]] W for [[duration]] minutes",
+    "nl": "Laad [[device]] met [[power]] W gedurende [[duration]] minuten",
+    "da": "Oplad [[device]] med [[power]] W i [[duration]] minutter",
+    "de": "[[device]] [[duration]] Minuten lang mit [[power]] W laden",
+    "es": "Cargar [[device]] a [[power]] W durante [[duration]] minutos",
+    "fr": "Charger [[device]] à [[power]] W pendant [[duration]] minutes",
+    "it": "Carica [[device]] a [[power]] W per [[duration]] minuti",
+    "no": "Lad [[device]] med [[power]] W i [[duration]] minutter",
+    "sv": "Ladda [[device]] med [[power]] W i [[duration]] minuter",
+    "pl": "Ładuj [[device]] z mocą [[power]] W przez [[duration]] min",
+    "ru": "Заряжать [[device]] с мощностью [[power]] Вт в течение [[duration]] мин",
+    "ko": "[[device]]을(를) [[power]] W로 [[duration]]분 동안 충전",
+    "ar": "شحن [[device]] بقدرة [[power]] واط لمدة [[duration]] دقيقة"
+  },
+  "hint": {
+    "en": "Charges the Powerwall at this power for this long. When the time is up, the Powerwall returns to normal operation by itself. A new charge or discharge replaces the one running.",
+    "nl": "Laadt de Powerwall met dit vermogen gedurende deze tijd. Als de tijd om is, keert de Powerwall vanzelf terug naar normaal gebruik. Een nieuwe laad- of ontlaadopdracht vervangt de lopende.",
+    "da": "Oplader Powerwall med denne effekt i så lang tid. Når tiden er gået, vender Powerwall selv tilbage til normal drift. En ny opladning eller afladning erstatter den igangværende.",
+    "de": "Lädt die Powerwall so lange mit dieser Leistung. Wenn die Zeit abgelaufen ist, kehrt die Powerwall von selbst zum normalen Betrieb zurück. Ein neues Laden oder Entladen ersetzt das laufende.",
+    "es": "Carga el Powerwall a esta potencia durante este tiempo. Cuando termina el tiempo, el Powerwall vuelve solo a su funcionamiento normal. Una nueva carga o descarga sustituye a la que esté en curso.",
+    "fr": "Charge le Powerwall à cette puissance pendant cette durée. À la fin de la durée, le Powerwall reprend de lui-même son fonctionnement normal. Une nouvelle charge ou décharge remplace celle en cours.",
+    "it": "Carica il Powerwall a questa potenza per questo tempo. Allo scadere del tempo, il Powerwall torna da solo al funzionamento normale. Una nuova carica o scarica sostituisce quella in corso.",
+    "no": "Lader Powerwall med denne effekten så lenge. Når tiden er ute, går Powerwall tilbake til normal drift av seg selv. En ny lading eller utlading erstatter den som pågår.",
+    "sv": "Laddar Powerwall med den här effekten så länge. När tiden är slut återgår Powerwall av sig själv till normal drift. En ny laddning eller urladdning ersätter den pågående.",
+    "pl": "Ładuje Powerwall z tą mocą przez ten czas. Po upływie czasu Powerwall sam wraca do normalnej pracy. Nowe ładowanie lub rozładowanie zastępuje trwające.",
+    "ru": "Заряжает Powerwall с этой мощностью в течение этого времени. По истечении времени Powerwall сам возвращается к обычной работе. Новая зарядка или разрядка заменяет текущую.",
+    "ko": "이 전력으로 이 시간 동안 Powerwall을 충전합니다. 시간이 끝나면 Powerwall은 자동으로 정상 작동으로 돌아갑니다. 새 충전 또는 방전은 진행 중인 것을 대체합니다.",
+    "ar": "يشحن Powerwall بهذه القدرة طوال هذه المدة. عند انتهاء المدة يعود Powerwall إلى التشغيل العادي من تلقاء نفسه. يحل الشحن أو التفريغ الجديد محل الجاري."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=battery_dispatch",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
+      }
+    },
+    {
+      "type": "number",
+      "name": "power",
+      "title": {
+        "en": "Power",
+        "nl": "Vermogen",
+        "da": "Effekt",
+        "de": "Leistung",
+        "es": "Potencia",
+        "fr": "Puissance",
+        "it": "Potenza",
+        "no": "Effekt",
+        "sv": "Effekt",
+        "pl": "Moc",
+        "ru": "Мощность",
+        "ko": "전력",
+        "ar": "القدرة"
+      },
+      "placeholder": {
+        "en": "Watts",
+        "nl": "Watt",
+        "da": "Watt",
+        "de": "Watt",
+        "es": "Vatios",
+        "fr": "Watts",
+        "it": "Watt",
+        "no": "Watt",
+        "sv": "Watt",
+        "pl": "Waty",
+        "ru": "Ватты",
+        "ko": "와트",
+        "ar": "واط"
+      },
+      "min": 1,
+      "max": 100000,
+      "step": 1
+    },
+    {
+      "type": "number",
+      "name": "duration",
+      "title": {
+        "en": "Duration",
+        "nl": "Duur",
+        "da": "Varighed",
+        "de": "Dauer",
+        "es": "Duración",
+        "fr": "Durée",
+        "it": "Durata",
+        "no": "Varighet",
+        "sv": "Varaktighet",
+        "pl": "Czas trwania",
+        "ru": "Длительность",
+        "ko": "지속 시간",
+        "ar": "المدة"
+      },
+      "placeholder": {
+        "en": "Minutes",
+        "nl": "Minuten",
+        "da": "Minutter",
+        "de": "Minuten",
+        "es": "Minutos",
+        "fr": "Minutes",
+        "it": "Minuti",
+        "no": "Minutter",
+        "sv": "Minuter",
+        "pl": "Minuty",
+        "ru": "Минуты",
+        "ko": "분",
+        "ar": "دقائق"
+      },
+      "min": 1,
+      "max": 1440,
+      "step": 1
+    }
+  ]
+}

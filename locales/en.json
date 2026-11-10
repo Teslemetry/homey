@@ -20,7 +20,9 @@
     "frunk_cannot_close": "The frunk can't be closed remotely. Close it by hand.",
     "command_no_result": "Command had no result.",
     "request_failed": "Teslemetry request failed.",
-    "product_silent": "No recent data from Tesla."
+    "product_silent": "No recent data from Tesla.",
+    "energy_site_not_paired": "Teslemetry is not paired with this Powerwall, so it cannot send this command. Pair it in the Teslemetry console, or turn on this Powerwall's local connection.",
+    "dispatch_out_of_range": "The Powerwall refused this power: it is more than the Powerwall can charge or discharge. Try a lower power."
   },
   "warning": {
     "no_data_since": "No data since __time__"

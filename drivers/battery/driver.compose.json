@@ -36,7 +36,8 @@
     "meter_power.charged",
     "meter_power.discharged",
     "battery_charged_today",
-    "battery_discharged_today"
+    "battery_discharged_today",
+    "battery_dispatch"
   ],
   "capabilitiesOptions": {
     "meter_power.charged": {

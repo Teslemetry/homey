@@ -13,14 +13,17 @@ export interface LocalGateway {
 }
 
 /**
- * Backup reserve, operation mode and grid import/export, local first and on
- * the cloud when the gateway is unhealthy or unreachable. Every other command
- * has no local mapping and stays on the app's own cloud client.
+ * Backup reserve, operation mode, grid import/export and battery dispatch,
+ * local first and on the cloud when the gateway is unhealthy or unreachable.
+ * Every other command has no local mapping and stays on the app's own cloud
+ * client.
  */
 export interface LocalPowerwallCommands {
   backup(percent: number): Promise<unknown>;
   operation(mode: string): Promise<unknown>;
   grid_import_export(disallowChargeFromGrid: boolean | null, exportRule: string | null): Promise<unknown>;
+  dispatch_battery_power(powerWatts: number, durationSeconds: number): Promise<unknown>;
+  resume_battery_operation(): Promise<unknown>;
 }
 
 /** What a Powerwall, Gateway or Solar device needs from its live_status source. */
@@ -141,6 +144,26 @@ export class LocalPowerwallSite extends EventEmitter implements LocalPowerwallCo
   grid_import_export(disallowChargeFromGrid: boolean | null, exportRule: string | null): Promise<unknown> {
     return this.router.grid_import_export(disallowChargeFromGrid, exportRule);
   }
+
+  dispatch_battery_power(powerWatts: number, durationSeconds: number): Promise<unknown> {
+    return this.router.dispatch_battery_power(powerWatts, durationSeconds).catch(this.explainDispatchRefusal);
+  }
+
+  resume_battery_operation(): Promise<unknown> {
+    return this.router.resume_battery_operation().catch(this.explainDispatchRefusal);
+  }
+
+  /** The gateway's OUT_OF_RANGE (gRPC status 11) and the cloud's not-paired refusal, in words. */
+  private explainDispatchRefusal = (error: unknown): never => {
+    const { code, data } = (error ?? {}) as { code?: unknown; data?: { error?: unknown } };
+    if (error instanceof Error && error.name === "PowerwallCommandError" && code === 11) {
+      throw new Error(this.app.homey.__("error.dispatch_out_of_range"));
+    }
+    if (data?.error === "energy_site_not_paired") {
+      throw new Error(this.app.homey.__("error.energy_site_not_paired"));
+    }
+    throw error;
+  };
 
   /**
    * The cloud's site_info document with the gateway's backup reserve and

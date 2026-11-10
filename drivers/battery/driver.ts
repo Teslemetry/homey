@@ -45,6 +45,13 @@ export function hasKnownComponents(
   );
 }
 
+/**
+ * Present only while battery dispatch can reach the Powerwall, so the
+ * dispatch Flow cards that filter on it are offered only then. Hidden from
+ * the device UI.
+ */
+export const DISPATCH_CAPABILITY = "battery_dispatch";
+
 export function isComponentGatedCapability(capability: string): boolean {
   return capability in COMPONENT_GATES;
 }
@@ -75,9 +82,12 @@ export default class PowerwallDriver extends TeslemetryDriver {
               id: site.id,
             },
             class: "battery",
+            // No local link exists before pairing, so only the cloud can dispatch.
             capabilities: (this.manifest.capabilities as string[]).filter(
               (capability) =>
-                isPowerwallCapabilitySupported(capability, components),
+                capability === DISPATCH_CAPABILITY
+                  ? site.metadata.paired === true
+                  : isPowerwallCapabilitySupported(capability, components),
             ),
           },
         ];

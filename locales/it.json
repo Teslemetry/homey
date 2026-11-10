@@ -20,7 +20,9 @@
     "frunk_cannot_close": "Il bagagliaio anteriore non può essere chiuso da remoto. Chiudilo a mano.",
     "command_no_result": "Il comando non ha restituito alcun risultato.",
     "request_failed": "Richiesta a Teslemetry non riuscita.",
-    "product_silent": "Nessun dato recente da Tesla."
+    "product_silent": "Nessun dato recente da Tesla.",
+    "energy_site_not_paired": "Teslemetry non è associato a questo Powerwall, quindi non può inviare questo comando. Associalo nella console di Teslemetry o attiva la connessione locale di questo Powerwall.",
+    "dispatch_out_of_range": "Il Powerwall ha rifiutato questa potenza: è superiore a quella che può caricare o scaricare. Prova una potenza inferiore."
   },
   "warning": {
     "no_data_since": "Nessun dato dalle __time__"

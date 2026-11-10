@@ -62,12 +62,13 @@ function pair<T extends { onPairListDevices(): Promise<unknown[]> }>(
   Driver: new () => T,
   manifestId: string,
   components: Record<string, unknown>,
+  metadata: Record<string, unknown> = { access: true, paired: true },
 ) {
   // Numeric site id, as on the wire and in EnergyDetails.
   const site = {
     id: 2533979794926773,
     name: "Moorinya",
-    metadata: { access: true },
+    metadata,
     api: { getSiteInfo: async () => ({ response: { components } }) },
   };
   const driver = Object.assign(new Driver(), {
@@ -184,6 +185,7 @@ class FakeEnergySiteStream extends EventEmitter {
 function createDevice(
   initialCapabilities: string[],
   siteInfoDocument: Record<string, unknown> | undefined,
+  metadata: Record<string, unknown> = { access: true, paired: true },
 ) {
   const capabilities = new Set(initialCapabilities);
   const added: string[] = [];
@@ -205,7 +207,7 @@ function createDevice(
     homey: {
       app: {
         products: {
-          energySites: { "2533979794926773": { id: 2533979794926773, api, sse, metadata: { access: true } } },
+          energySites: { "2533979794926773": { id: 2533979794926773, api, sse, metadata } },
         },
       },
       __: (key: string) => key,
@@ -374,5 +376,58 @@ test("commands still go through on a site that supports them, and while componen
     await capabilityListeners.allow_export("never");
     await device.flowSetAllowExport("pv_only");
     assert.deepEqual(apiCalls, ["setStormMode", "gridImportExport", "gridImportExport"]);
+  }
+});
+
+const DISPATCH_CARDS = [
+  "actions:dispatch_battery_charge",
+  "actions:dispatch_battery_discharge",
+  "actions:resume_battery_operation",
+];
+
+test("dispatch cards are offered at pairing only for a Powerwall Teslemetry is paired with", async () => {
+  for (const [paired, offered] of [[true, true], [false, false], [null, false], [undefined, false]] as const) {
+    const [candidate] = await pair(PowerwallDriver, "battery", REAL_PW3_COMPONENTS, { access: true, paired });
+
+    assert.equal(candidate.capabilities!.includes("battery_dispatch"), offered, String(paired));
+    const cards = visibleBatteryCards(candidate.capabilities!);
+    for (const card of DISPATCH_CARDS) assert.equal(cards.includes(card), offered, `${card} ${paired}`);
+  }
+});
+
+test("an already-paired Powerwall gains or loses the dispatch cards as cloud pairing or its local link changes", async () => {
+  const unpaired = { access: true, paired: null };
+  const { device, added, removed } = createDevice(BATTERY_MANIFEST.capabilities, undefined, unpaired);
+  await device.ensureCapabilities();
+  assert.deepEqual(removed, ["battery_dispatch"], "neither paired nor enrolled");
+
+  // Turning on the local connection rebinds the device.
+  const link = Object.assign(new FakeEnergySiteStream(), { attach: () => link, healthy: true });
+  device.homey.app.localPowerwallSites = new Map([["2533979794926773", link]]);
+  device.rebindProduct();
+  await device.capabilityReconcile;
+  assert.deepEqual(added, ["battery_dispatch"]);
+
+  device.homey.app.localPowerwallSites = new Map();
+  device.rebindProduct();
+  await device.capabilityReconcile;
+  assert.deepEqual(removed, ["battery_dispatch", "battery_dispatch"]);
+
+  // A new Products generation reporting the gateway paired.
+  device.homey.app.products.energySites["2533979794926773"].metadata = { access: true, paired: true };
+  device.rebindProduct();
+  await device.capabilityReconcile;
+  assert.deepEqual(added, ["battery_dispatch", "battery_dispatch"]);
+});
+
+test("the dispatch cards stay as they are while there is no Products generation to say", async () => {
+  for (const initial of [BATTERY_MANIFEST.capabilities, withoutGated().filter((cap: string) => cap !== "battery_dispatch")]) {
+    const { device, added, removed } = createDevice(initial, undefined);
+    device.homey.app.products = undefined;
+
+    await device.ensureCapabilities();
+
+    assert.deepEqual(added.filter((cap: string) => cap === "battery_dispatch"), []);
+    assert.deepEqual(removed.filter((cap: string) => cap === "battery_dispatch"), []);
   }
 });

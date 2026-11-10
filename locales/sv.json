@@ -20,7 +20,9 @@
     "frunk_cannot_close": "Frunken kan inte stängas på distans. Stäng den för hand.",
     "command_no_result": "Kommandot gav inget resultat.",
     "request_failed": "Teslemetry-begäran misslyckades.",
-    "product_silent": "Inga nya data från Tesla."
+    "product_silent": "Inga nya data från Tesla.",
+    "energy_site_not_paired": "Teslemetry är inte parkopplat med den här Powerwall och kan därför inte skicka kommandot. Parkoppla den i Teslemetry-konsolen eller slå på den lokala anslutningen för den här Powerwall.",
+    "dispatch_out_of_range": "Powerwall avvisade den här effekten: den är högre än Powerwall kan ladda eller ladda ur med. Prova en lägre effekt."
   },
   "warning": {
     "no_data_since": "Inga data sedan __time__"
