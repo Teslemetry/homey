@@ -10505,9 +10505,6 @@
         "ar": "باور وول"
       },
       "class": "battery",
-      "ui": {
-        "quickAction": false
-      },
       "capabilities": [
         "measure_battery",
         "measure_power",
@@ -10562,6 +10559,7 @@
           }
         },
         "onoff.charge_grid": {
+          "uiQuickAction": false,
           "title": {
             "en": "Charge From Grid",
             "nl": "Laden van Net",
@@ -10579,6 +10577,7 @@
           }
         },
         "onoff.storm": {
+          "uiQuickAction": false,
           "title": {
             "en": "Storm Watch",
             "nl": "Storm Waarschuwing",
@@ -10812,9 +10811,6 @@
         "ar": "بوابة الطاقة"
       },
       "class": "sensor",
-      "ui": {
-        "quickAction": false
-      },
       "capabilities": [
         "measure_power",
         "measure_power.load",
@@ -11052,9 +11048,6 @@
         "ar": "اللوح الشمسي"
       },
       "class": "solarpanel",
-      "ui": {
-        "quickAction": false
-      },
       "capabilities": [
         "measure_power",
         "meter_power",
@@ -11130,9 +11123,6 @@
         "ar": "مركبة تسلا"
       },
       "class": "car",
-      "ui": {
-        "quickAction": false
-      },
       "energy": {
         "electricCar": true
       },
@@ -11243,6 +11233,9 @@
         "measure_distance.home"
       ],
       "capabilitiesOptions": {
+        "speaker_playing": {
+          "uiQuickAction": false
+        },
         "target_temperature": {
           "min": 15,
           "max": 28,
@@ -11360,6 +11353,7 @@
           }
         },
         "onoff.charge_port": {
+          "uiQuickAction": false,
           "title": {
             "en": "Charge Port Door",
             "nl": "Laadpoortdeur",
@@ -11394,6 +11388,7 @@
           }
         },
         "onoff.sentry": {
+          "uiQuickAction": false,
           "title": {
             "en": "Sentry Mode",
             "nl": "Bewakingsmodus",
@@ -11463,6 +11458,7 @@
           }
         },
         "onoff.frunk": {
+          "uiQuickAction": false,
           "title": {
             "en": "Frunk",
             "nl": "Frunk",
@@ -11480,6 +11476,7 @@
           }
         },
         "onoff.trunk": {
+          "uiQuickAction": false,
           "title": {
             "en": "Trunk",
             "nl": "Kofferbak",
@@ -11565,6 +11562,7 @@
           }
         },
         "button.flash": {
+          "uiQuickAction": false,
           "title": {
             "en": "Flash Lights",
             "nl": "Koplampen Knipperen",
@@ -11582,6 +11580,7 @@
           }
         },
         "button.honk": {
+          "uiQuickAction": false,
           "title": {
             "en": "Honk Horn",
             "nl": "Toeter",
@@ -11599,6 +11598,7 @@
           }
         },
         "button.keyless": {
+          "uiQuickAction": false,
           "title": {
             "en": "Keyless Driving",
             "nl": "Sleutellos Rijden",
@@ -11616,6 +11616,7 @@
           }
         },
         "button.homelink": {
+          "uiQuickAction": false,
           "title": {
             "en": "HomeLink",
             "nl": "HomeLink",
@@ -11633,6 +11634,7 @@
           }
         },
         "button.wakeup": {
+          "uiQuickAction": false,
           "title": {
             "en": "Wake Up",
             "nl": "Wakker worden",
@@ -11650,6 +11652,7 @@
           }
         },
         "button.bioweapon": {
+          "uiQuickAction": false,
           "title": {
             "en": "Activate Bioweapon Defense Mode",
             "nl": "Activeer Biologische Wapens Verdedigingsmodus",
@@ -11888,6 +11891,7 @@
           }
         },
         "onoff.guest_mode": {
+          "uiQuickAction": false,
           "title": {
             "en": "Guest Mode",
             "nl": "Gastmodus",
@@ -11905,6 +11909,7 @@
           }
         },
         "onoff.auto_seat_climate_left": {
+          "uiQuickAction": false,
           "title": {
             "en": "Auto Seat Climate (Front Left)",
             "nl": "Automatische Stoelklimaat (Voor Links)",
@@ -11922,6 +11927,7 @@
           }
         },
         "onoff.auto_seat_climate_right": {
+          "uiQuickAction": false,
           "title": {
             "en": "Auto Seat Climate (Front Right)",
             "nl": "Automatische Stoelklimaat (Voor Rechts)",
@@ -11939,6 +11945,7 @@
           }
         },
         "onoff.auto_steering_wheel_heat": {
+          "uiQuickAction": false,
           "title": {
             "en": "Auto Steering Wheel Heat",
             "nl": "Automatische Stuurwielverwarming",
@@ -12495,9 +12502,6 @@
         "en": "Tesla Wall Connector"
       },
       "class": "evcharger",
-      "ui": {
-        "quickAction": false
-      },
       "capabilities": [
         "evcharger_charging_state",
         "measure_power",

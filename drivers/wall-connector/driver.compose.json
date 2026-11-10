@@ -3,11 +3,7 @@
     "en": "Tesla Wall Connector"
   },
   "class": "evcharger",
-  "$extends": ["teslemetry"
-  ],
-  "ui": {
-    "quickAction": false
-  },
+  "$extends": ["teslemetry"],
   "capabilities": [
     "evcharger_charging_state",
     "measure_power",
