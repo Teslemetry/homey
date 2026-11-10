@@ -403,7 +403,7 @@ test("an already-paired Powerwall gains or loses the dispatch cards as cloud pai
 
   // Turning on the local connection rebinds the device.
   const link = Object.assign(new FakeEnergySiteStream(), { attach: () => link, healthy: true });
-  device.homey.app.localPowerwallSites = new Map([["2533979794926773", link]]);
+  device.homey.app.localPowerwallSites = new Map([[device.getSiteId(), link]]);
   device.rebindProduct();
   await device.capabilityReconcile;
   assert.deepEqual(added, ["battery_dispatch"]);
@@ -414,7 +414,7 @@ test("an already-paired Powerwall gains or loses the dispatch cards as cloud pai
   assert.deepEqual(removed, ["battery_dispatch", "battery_dispatch"]);
 
   // A new Products generation reporting the gateway paired.
-  device.homey.app.products.energySites["2533979794926773"].metadata = { access: true, paired: true };
+  device.homey.app.products.energySites[device.getSiteId()].metadata = { access: true, paired: true };
   device.rebindProduct();
   await device.capabilityReconcile;
   assert.deepEqual(added, ["battery_dispatch", "battery_dispatch"]);
