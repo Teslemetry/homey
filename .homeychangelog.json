@@ -106,5 +106,8 @@
   },
   "1.7.1": {
     "en": "Bluetooth: Homey now tells whether your car is nearby from its Bluetooth signal alone, and never connects to the car just to check. While Homey hears the car it stays available when your internet drops, and its commands go over Bluetooth first. Homey also closes its Bluetooth connection 30 seconds after a command, so it no longer holds one of the car's Bluetooth slots."
+  },
+  "1.8.0": {
+    "en": "New Powerwall Flow cards: charge or discharge the battery at a set power for a set number of minutes, and resume normal operation early. The Powerwall returns to normal by itself when the time is up, and a discharge can go below the backup reserve and export to the grid whatever your export setting. With \"Connect over the local network\" on, these commands go straight to your gateway, and otherwise through Teslemetry. The cards appear for a Powerwall Homey can reach either way: turn on the local connection, or pair Teslemetry with your Powerwall in the Teslemetry console."
   }
 }
