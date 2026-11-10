@@ -4,5 +4,7 @@
 class Device {}
 class Driver {}
 class App {}
+// The real SDK sets the app.json manifest; tests that need cards pass their own.
+App.prototype.manifest = {};
 
 export default { Device, Driver, App };

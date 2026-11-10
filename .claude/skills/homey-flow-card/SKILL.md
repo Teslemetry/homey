@@ -46,8 +46,10 @@ args beyond `device`.
     `node_modules/homey-lib/assets/capability/capabilities/<cap>.json`
     (`windowcoverings_closed` gives `close`/`open`/`toggle`, so
     `windowcoverings_closed.tonneau_close`).
-  - Homey wires these cards itself when the id follows this pattern. Do not
-    add a `.trigger()` call or a run listener for them.
+  - Homey fires the `_true`/`_false` triggers itself: do not add a
+    `.trigger()` call for them. Conditions and actions are not auto-wired;
+    `app.ts` registers them from the manifest, so a new card that follows
+    this pattern needs no listener of its own.
 - Never create `.homeycompose/capabilities/<cap>.<sub>.json`: `.` is reserved
   in a capability name and fails validation.
 - Simple change trigger: `<capability>_changed`, token name equal to the
@@ -66,7 +68,7 @@ immediately before each `.trigger(this, ...)`.
 | Numeric threshold | Write the value with `updateWithThresholdTriggers(cap, value, "<prefix>_above", "<prefix>_below", tokenName)` and add `this.registerThresholdCards("<prefix>", cap, argName)` in `app.ts`. |
 | One signal to several named cards | Track the previous raw value in a private field (not `getCapabilityValue()`), then `this.homey.flow.getDeviceTriggerCard(id).trigger(this, tokens).catch(this.error)`. Examples: `VehicleDevice.handleDetailedChargeState`, `GatewayDevice.triggerFlow`. |
 | Base `alarm_*` capability | Nothing. Homey fires `<cap>_true`/`_false` itself; a manual fire double-runs every flow. For a custom token or clearer name, add a separate explicitly fired card. |
-| Subcapability | Nothing beyond the card definition (see step 2). |
+| Subcapability `_true`/`_false` | Nothing beyond the card definition (see step 2). |
 
 ## 4. Wire condition and action listeners in `app.ts`
 

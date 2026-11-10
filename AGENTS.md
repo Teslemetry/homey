@@ -47,7 +47,8 @@ Use the `homey-flow-card` skill for any Flow card change.
 
 - Homey does **not** generate flow cards for subcapabilities
   (`alarm_generic.off_grid`, `onoff.charge_grid`). Define them in
-  `drivers/<type>/driver.flow.compose.json`.
+  `drivers/<type>/driver.flow.compose.json`. Homey auto-wires only their
+  `_true`/`_false` triggers; `app.ts` registers the conditions and actions.
 - Card ids: `<capability>.<sub>_<state>`. Boolean triggers use `_true`/`_false`;
   on/off actions use `_on`/`_off`/`_toggle`. For other boolean capabilities,
   `<action>` must be one of the base capability's own `$flow.actions` ids -
