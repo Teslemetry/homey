@@ -207,7 +207,7 @@ function createDevice(
     homey: {
       app: {
         products: {
-          energySites: { "2533979794926773": { id: 2533979794926773, api, sse, metadata } },
+          energySites: { "2533979794926773": { id: 2533979794926773, api, sse, metadata: { access: true } } },
         },
       },
       __: (key: string) => key,
@@ -240,6 +240,7 @@ function createDevice(
     log: () => {},
     error: () => {},
   });
+  device.homey.app.products.energySites[device.getSiteId()].metadata = metadata;
   return { device, added, removed, apiCalls, capabilityListeners };
 }
 
