@@ -18,9 +18,6 @@
   "$extends": [
     "teslemetry"
   ],
-  "ui": {
-    "quickAction": false
-  },
   "capabilities": [
     "measure_power",
     "measure_power.load",
