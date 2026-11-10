@@ -206,6 +206,25 @@
       }
     },
     {
+      "id": "onoff.storm",
+      "$filter": "capabilities=onoff.storm",
+      "title": {
+        "en": "Storm watch is !{{enabled|disabled}}",
+        "nl": "Stormwaarschuwing is !{{ingeschakeld|uitgeschakeld}}",
+        "da": "Stormvagt er !{{aktiveret|deaktiveret}}",
+        "de": "Sturmüberwachung ist !{{aktiviert|deaktiviert}}",
+        "es": "La alerta de tormenta está !{{habilitada|deshabilitada}}",
+        "fr": "La veille tempête est !{{activée|désactivée}}",
+        "it": "Il monitoraggio delle tempeste è !{{abilitato|disabilitato}}",
+        "no": "Stormvarsling er !{{aktivert|deaktivert}}",
+        "sv": "Stormbevakning är !{{aktiverad|inaktiverad}}",
+        "pl": "Nadzór burzowy jest !{{włączony|wyłączony}}",
+        "ru": "Штормовое наблюдение !{{включено|отключено}}",
+        "ko": "폭풍 감시가 !{{활성화됨|비활성화됨}}",
+        "ar": "مراقبة العاصفة !{{ممكّنة|معطّلة}}"
+      }
+    },
+    {
       "id": "alarm_generic.storm",
       "title": {
         "en": "Storm watch alert is !{{active|inactive}}",

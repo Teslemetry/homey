@@ -670,8 +670,39 @@ export default class TeslemetryApp extends Homey.App {
         );
     }
 
-    // driver_seat_occupied is a custom boolean capability, so unlike an
-    // alarm_* subcapability it gets no auto-wired is/isn't condition.
+    // Homey fires subcapability _true/_false triggers itself, but their
+    // condition and action cards stay "not registered" without a listener.
+    // Actions go through the capability listener, so routing and errors match
+    // a device-tile command.
+    const subcapabilityAction = /^(\w+\.\w+)_(on|off|toggle|open|close)$/;
+    const flowManifest = this.manifest.flow ?? {};
+    for (const { id } of flowManifest.conditions ?? []) {
+      if (!id.includes('.')) continue;
+      this.homey.flow
+        .getConditionCard(id)
+        .registerRunListener(
+          async (args: { device?: TeslemetryDevice }) =>
+            args.device?.getCapabilityValue(id) === true,
+        );
+    }
+    for (const { id } of flowManifest.actions ?? []) {
+      const match = subcapabilityAction.exec(id);
+      if (!match) continue;
+      const [, capability, verb] = match;
+      this.homey.flow
+        .getActionCard(id)
+        .registerRunListener(async (args: { device?: TeslemetryDevice }) => {
+          const device = this.requireFlowDevice(args.device);
+          const value =
+            verb === 'toggle'
+              ? device.getCapabilityValue(capability) !== true
+              : verb === 'on' || verb === 'close';
+          await device.triggerCapabilityListener(capability, value);
+        });
+    }
+
+    // driver_seat_occupied is a custom boolean capability, not a
+    // subcapability, so it has its own condition card.
     this.homey.flow
       .getConditionCard('driver_seat_occupied')
       .registerRunListener(async (args: { device?: VehicleDevice }) => {
