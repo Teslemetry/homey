@@ -265,7 +265,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
   protected getExpectedCapabilities(): string[] {
     const current = new Set(this.getCapabilities());
     const components = this.siteComponents();
-    const dispatch = this.dispatchReachable();
+    const dispatch = this.gatewayCommandsReachable();
     return super.getExpectedCapabilities().filter((capability) => {
       if (capability === DISPATCH_CAPABILITY) return dispatch ?? current.has(capability);
       return (
@@ -275,40 +275,6 @@ export default class PowerwallDevice extends TeslemetryDevice {
           : current.has(capability))
       );
     });
-  }
-
-  /**
-   * Whether battery dispatch can reach this Powerwall: through its site's
-   * local link, or through the cloud once Teslemetry's key is verified on the
-   * gateway (`paired`). Undefined while neither is known.
-   */
-  private dispatchReachable(): boolean | undefined {
-    if (this.localCommands()) return true;
-    const site = this.homey.app.products?.energySites?.[this.getSiteId()];
-    return site ? site.metadata.paired === true : undefined;
-  }
-
-  /** The in-flight ensureCapabilities() after init, if any. */
-  private capabilityReconcile: Promise<void> | undefined;
-
-  /**
-   * ensureCapabilities() at onInit usually runs before the stream has
-   * delivered site_info or the local link has started, so a gated capability
-   * is neither added nor removed yet. Re-run it once the gated set disagrees.
-   */
-  private reconcileCapabilities(): void {
-    if (this.capabilityReconcile) return;
-    const current = this.getCapabilities();
-    const expected = this.getExpectedCapabilities();
-    const differs =
-      current.some((cap) => !expected.includes(cap)) ||
-      expected.some((cap) => !current.includes(cap));
-    if (!differs) return;
-    this.capabilityReconcile = this.ensureCapabilities()
-      .catch(this.error)
-      .finally(() => {
-        this.capabilityReconcile = undefined;
-      });
   }
 
   /** Read from homey.app.products, since ensureCapabilities() runs before bindSite(). */

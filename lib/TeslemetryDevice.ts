@@ -390,6 +390,43 @@ export default class TeslemetryDevice extends Homey.Device {
     return this.driver.manifest.capabilities || [];
   }
 
+  /**
+   * Whether a command the gateway only takes signed can reach this energy
+   * site: through its local Powerwall link, or through the cloud once
+   * Teslemetry's key is verified on the gateway (`paired`). Undefined while
+   * neither is known.
+   */
+  protected gatewayCommandsReachable(): boolean | undefined {
+    const siteId = this.getSiteId();
+    if (siteId === undefined) return undefined;
+    if (this.homey.app.localPowerwallSites?.get(siteId)) return true;
+    const site = this.homey.app.products?.energySites?.[siteId];
+    return site ? site.metadata.paired === true : undefined;
+  }
+
+  /** The in-flight ensureCapabilities() after init, if any. */
+  private capabilityReconcile: Promise<void> | undefined;
+
+  /**
+   * ensureCapabilities() at onInit usually runs before the stream has
+   * delivered site_info or the local link has started, so a gated capability
+   * is neither added nor removed yet. Re-run it once the gated set disagrees.
+   */
+  protected reconcileCapabilities(): void {
+    if (this.capabilityReconcile) return;
+    const current = this.getCapabilities();
+    const expected = this.getExpectedCapabilities();
+    const differs =
+      current.some((cap) => !expected.includes(cap)) ||
+      expected.some((cap) => !current.includes(cap));
+    if (!differs) return;
+    this.capabilityReconcile = this.ensureCapabilities()
+      .catch(this.error)
+      .finally(() => {
+        this.capabilityReconcile = undefined;
+      });
+  }
+
   public async ensureCapabilities() {
     const driverCapabilities = this.getExpectedCapabilities();
     const deviceCapabilities = this.getCapabilities();

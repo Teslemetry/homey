@@ -78,6 +78,10 @@ export class PowerwallEnergySite {
     return this.#command("resume_battery_operation", args);
   }
 
+  set_island_mode(...args) {
+    return this.#command("set_island_mode", args);
+  }
+
   async #command(name, args) {
     fakeGateway.commands.push([name, ...args]);
     await fakeGateway.command(name, args);

@@ -22,7 +22,11 @@
     "request_failed": "La solicitud a Teslemetry ha fallado.",
     "product_silent": "No hay datos recientes de Tesla.",
     "energy_site_not_paired": "Teslemetry no está emparejado con este Powerwall, así que no puede enviar este comando. Emparéjalo en la consola de Teslemetry o activa la conexión local de este Powerwall.",
-    "dispatch_out_of_range": "El Powerwall rechazó esta potencia: es mayor de la que puede cargar o descargar. Prueba con una potencia menor."
+    "dispatch_out_of_range": "El Powerwall rechazó esta potencia: es mayor de la que puede cargar o descargar. Prueba con una potencia menor.",
+    "island_not_ready_for_islanding": "El Powerwall se negó: ahora no está listo para desconectarse de la red. Inténtalo más tarde.",
+    "island_load_drop_expected": "El Powerwall se negó: la casa consume más potencia de la que puede suministrar sin la red. Reduce el consumo e inténtalo de nuevo.",
+    "island_low_energy": "El Powerwall se negó: su carga es demasiado baja para desconectarse de la red.",
+    "island_excessive_solar": "El Powerwall se negó: la energía solar produce más potencia de la que puede absorber sin la red. Inténtalo de nuevo cuando la producción solar sea menor."
   },
   "warning": {
     "no_data_since": "Sin datos desde las __time__"

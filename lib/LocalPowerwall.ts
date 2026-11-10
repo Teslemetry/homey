@@ -13,8 +13,8 @@ export interface LocalGateway {
 }
 
 /**
- * Backup reserve, operation mode, grid import/export and battery dispatch,
- * local first and on the cloud when the gateway is unhealthy or unreachable.
+ * Backup reserve, operation mode, grid import/export, battery dispatch and
+ * island mode, local first and on the cloud when the gateway is unhealthy or unreachable.
  * Every other command has no local mapping and stays on the app's own cloud
  * client.
  */
@@ -24,6 +24,7 @@ export interface LocalPowerwallCommands {
   grid_import_export(disallowChargeFromGrid: boolean | null, exportRule: string | null): Promise<unknown>;
   dispatch_battery_power(powerWatts: number, durationSeconds: number): Promise<unknown>;
   resume_battery_operation(): Promise<unknown>;
+  set_island_mode(mode: 1 | 6, force?: boolean): Promise<unknown>;
 }
 
 /** What a Powerwall, Gateway or Solar device needs from its live_status source. */
@@ -35,6 +36,23 @@ export interface LiveStatusSource {
 export function isLocalGateway(value: unknown): value is LocalGateway {
   const gateway = value as Partial<LocalGateway> | null;
   return typeof gateway?.host === "string" && typeof gateway.password === "string";
+}
+
+/** `TEGSetIslandModeResult`'s refusals, in enum order from 2. */
+const ISLAND_REFUSALS = ["not_ready_for_islanding", "load_drop_expected", "low_energy", "excessive_solar"];
+
+/**
+ * The `error.island_*` locale key for a gateway's refusal to change island
+ * mode, given the result's enum number or name: a JSON route may carry either.
+ */
+export function islandRefusal(result: unknown): string | undefined {
+  const refusal =
+    typeof result === "number"
+      ? ISLAND_REFUSALS[result - 2]
+      : ISLAND_REFUSALS.find(
+          (name) => result === `TEG_SET_ISLAND_MODE_RESULT_REJECTED_${name.toUpperCase()}`,
+        );
+  return refusal && `error.island_${refusal}`;
 }
 
 /** A device's refusal resolves as `{ response: { result: false } }` instead of throwing. */
@@ -159,6 +177,29 @@ export class LocalPowerwallSite extends EventEmitter implements LocalPowerwallCo
     if (error instanceof Error && error.name === "PowerwallCommandError" && code === 11) {
       throw new Error(this.app.homey.__("error.dispatch_out_of_range"));
     }
+    if (data?.error === "energy_site_not_paired") {
+      throw new Error(this.app.homey.__("error.energy_site_not_paired"));
+    }
+    throw error;
+  };
+
+  /** 6 opens the grid contactor and 1 closes it. */
+  set_island_mode(mode: 1 | 6, force?: boolean): Promise<unknown> {
+    return this.router.set_island_mode(mode, force).catch(this.explainIslandRefusal);
+  }
+
+  /**
+   * The gateway's refusal, in words. Locally it is a PowerwallCommandError
+   * whose `status_message` names the result; the cloud fallback rejects with
+   * the name as `data.message`.
+   */
+  private explainIslandRefusal = (error: unknown): never => {
+    const { status_message, data } = (error ?? {}) as {
+      status_message?: unknown;
+      data?: { error?: unknown; message?: unknown };
+    };
+    const key = islandRefusal(status_message) ?? islandRefusal(data?.message);
+    if (key) throw new Error(this.app.homey.__(key));
     if (data?.error === "energy_site_not_paired") {
       throw new Error(this.app.homey.__("error.energy_site_not_paired"));
     }

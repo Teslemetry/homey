@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import TeslemetryApp from "../.homeybuild/app.js";
 import GatewayDevice from "../.homeybuild/drivers/gateway/device.js";
 import PowerwallDevice from "../.homeybuild/drivers/battery/device.js";
-import { LocalPowerwallSite } from "../.homeybuild/lib/LocalPowerwall.js";
+import { islandRefusal, LocalPowerwallSite } from "../.homeybuild/lib/LocalPowerwall.js";
 import toError from "../.homeybuild/lib/toError.js";
 import {
   fakeGateway,
@@ -415,6 +415,7 @@ async function createEnrolledPowerwall(gatewayAnswers: boolean) {
     grid_import_export: async (...args: unknown[]) => cloudCalls.push(["grid_import_export", ...args]),
     dispatch_battery_power: async (...args: unknown[]) => cloudCalls.push(["dispatch_battery_power", ...args]),
     resume_battery_operation: async (...args: unknown[]) => cloudCalls.push(["resume_battery_operation", ...args]),
+    set_island_mode: async (...args: unknown[]) => cloudCalls.push(["set_island_mode", ...args]),
   } as never;
   const site = await LocalPowerwallSite.start(app as never, SITE_ID, GATEWAY, KEY_PEM);
   fakeGateway.liveStatus = gatewayAnswers
@@ -772,4 +773,125 @@ test("a notification that fails ends the background registration quietly, and th
   await notifying;
   for (let i = 0; i < 5; i++) await new Promise((resolve) => setImmediate(resolve));
   await assert.rejects(device.onSettings(enable()), { message: "local_powerwall.approve" });
+});
+
+/** A Gateway device on an enrolled site whose gateway has answered (or not) one poll. */
+async function createEnrolledGateway(gatewayAnswers: boolean) {
+  const { device: powerwall, cloudCalls, site } = await createEnrolledPowerwall(gatewayAnswers);
+  const device = Object.assign(Object.create(GatewayDevice.prototype), {
+    homey: powerwall.homey,
+    site: {
+      api: {
+        setIslandMode: async (...args: unknown[]) => {
+          cloudCalls.push(["teslemetry-api", "setIslandMode", ...args]);
+          return { response: { result: 1 } };
+        },
+      },
+    },
+    getData: () => ({ id: SITE_ID }),
+    getName: () => "Gateway",
+    log: () => {},
+    error: () => {},
+  });
+  return { device, cloudCalls, site };
+}
+
+test("an enrolled site's Gateway goes off-grid and reconnects through its gateway", async () => {
+  const { device, cloudCalls, site } = await createEnrolledGateway(true);
+
+  await device.flowSetIslandMode(true);
+  await device.flowSetIslandMode(false);
+
+  assert.deepEqual(fakeGateway.commands, [
+    ["set_island_mode", 6, true],
+    ["set_island_mode", 1, undefined],
+  ]);
+  assert.deepEqual(cloudCalls, []);
+  site.stop();
+});
+
+test("an island command to a gateway that is not answering goes to the cloud", async () => {
+  const { device, cloudCalls, site } = await createEnrolledGateway(false);
+
+  await device.flowSetIslandMode(true);
+
+  assert.deepEqual(fakeGateway.commands, []);
+  assert.deepEqual(cloudCalls, [["set_island_mode", 6, true]]);
+  site.stop();
+});
+
+test("an island command on a site without a local link goes to the Teslemetry client", async () => {
+  const { device, cloudCalls, site } = await createEnrolledGateway(true);
+  device.homey.app.localPowerwallSites = undefined;
+
+  await device.flowSetIslandMode(true);
+  await device.flowSetIslandMode(false);
+
+  assert.deepEqual(cloudCalls, [
+    ["teslemetry-api", "setIslandMode", 6, true],
+    ["teslemetry-api", "setIslandMode", 1, undefined],
+  ]);
+  assert.deepEqual(fakeGateway.commands, []);
+  site.stop();
+});
+
+test("the gateway's refusal to go off-grid says why, and is not retried on the cloud", async () => {
+  const { device, cloudCalls, site } = await createEnrolledGateway(true);
+  fakeGateway.command = async () => {
+    throw new PowerwallCommandError("set_island_mode_request", 4, "TEG_SET_ISLAND_MODE_RESULT_REJECTED_LOW_ENERGY");
+  };
+
+  await assert.rejects(device.flowSetIslandMode(true), { message: "error.island_low_energy" });
+  assert.deepEqual(cloudCalls, []);
+
+  // The same number as a gRPC status is not a refusal reason.
+  fakeGateway.command = async () => {
+    throw new PowerwallCommandError("set_island_mode_request", 4, "DEADLINE_EXCEEDED");
+  };
+  await assert.rejects(device.flowSetIslandMode(true), PowerwallCommandError);
+  site.stop();
+});
+
+test("a cloud fallback's island refusal says why, or to pair the gateway", async () => {
+  const { device, site } = await createEnrolledGateway(false);
+  const cloud = fakeCloud.site as Record<string, unknown>;
+
+  cloud.set_island_mode = async () => {
+    throw new TeslaFleetError({ code: 5, message: "TEG_SET_ISLAND_MODE_RESULT_REJECTED_EXCESSIVE_SOLAR" }, 540);
+  };
+  await assert.rejects(device.flowSetIslandMode(true), { message: "error.island_excessive_solar" });
+
+  cloud.set_island_mode = async () => {
+    throw new TeslaFleetError({ error: "energy_site_not_paired" }, 409);
+  };
+  await assert.rejects(device.flowSetIslandMode(true), { message: "error.energy_site_not_paired" });
+  site.stop();
+});
+
+test("a refusal the Teslemetry client resolves with fails the card with the reason", async () => {
+  const { device, site } = await createEnrolledGateway(true);
+  device.homey.app.localPowerwallSites = undefined;
+
+  for (const [result, message] of [
+    [2, "error.island_not_ready_for_islanding"],
+    ["TEG_SET_ISLAND_MODE_RESULT_REJECTED_LOAD_DROP_EXPECTED", "error.island_load_drop_expected"],
+  ] as const) {
+    device.site.api.setIslandMode = async () => ({ response: { result } });
+    await assert.rejects(device.flowSetIslandMode(true), { message });
+  }
+
+  for (const response of [{ result: "TEG_SET_ISLAND_MODE_RESULT_ACCEPTED" }, { request_id: "1" }, undefined]) {
+    device.site.api.setIslandMode = async () => ({ response });
+    await device.flowSetIslandMode(true);
+  }
+  site.stop();
+});
+
+test("every island refusal has its message", () => {
+  const en = JSON.parse(readFileSync(new URL("../locales/en.json", import.meta.url), "utf8"));
+  for (const result of [2, 3, 4, 5]) {
+    const key = islandRefusal(result);
+    assert.ok(key && en.error[key.slice("error.".length)], String(result));
+  }
+  for (const result of [0, 1, 6, undefined, "OUT_OF_RANGE"]) assert.equal(islandRefusal(result), undefined);
 });

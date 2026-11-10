@@ -22,7 +22,11 @@
     "request_failed": "فشل طلب Teslemetry.",
     "product_silent": "لا توجد بيانات حديثة من Tesla.",
     "energy_site_not_paired": "Teslemetry غير مقترن بجهاز Powerwall هذا، لذا لا يمكنه إرسال هذا الأمر. أقرنه من لوحة تحكم Teslemetry، أو شغّل الاتصال المحلي لجهاز Powerwall هذا.",
-    "dispatch_out_of_range": "رفض Powerwall هذه القدرة: فهي أكبر مما يستطيع شحنه أو تفريغه. جرّب قدرة أقل."
+    "dispatch_out_of_range": "رفض Powerwall هذه القدرة: فهي أكبر مما يستطيع شحنه أو تفريغه. جرّب قدرة أقل.",
+    "island_not_ready_for_islanding": "رفض Powerwall: ليس جاهزًا للانفصال عن الشبكة الآن. حاول مرة أخرى لاحقًا.",
+    "island_load_drop_expected": "رفض Powerwall: المنزل يستهلك قدرة أكبر مما يستطيع توفيره دون الشبكة. قلّل الاستهلاك وحاول مرة أخرى.",
+    "island_low_energy": "رفض Powerwall: شحنه منخفض جدًا للانفصال عن الشبكة.",
+    "island_excessive_solar": "رفض Powerwall: الطاقة الشمسية تنتج قدرة أكبر مما يستطيع استيعابه دون الشبكة. حاول مرة أخرى عندما ينخفض إنتاج الطاقة الشمسية."
   },
   "warning": {
     "no_data_since": "لا توجد بيانات منذ __time__"

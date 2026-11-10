@@ -32,7 +32,8 @@
     "meter_power.exported",
     "grid_imported_today",
     "grid_exported_today",
-    "home_usage_today"
+    "home_usage_today",
+    "island_control"
   ],
   "capabilitiesOptions": {
     "meter_power.imported": {

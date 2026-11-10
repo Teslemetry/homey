@@ -22,7 +22,11 @@
     "request_failed": "Teslemetry-anmodningen mislykkedes.",
     "product_silent": "Ingen nye data fra Tesla.",
     "energy_site_not_paired": "Teslemetry er ikke parret med denne Powerwall og kan derfor ikke sende denne kommando. Par den i Teslemetry-konsollen, eller slå denne Powerwalls lokale forbindelse til.",
-    "dispatch_out_of_range": "Powerwall afviste denne effekt: den er højere, end Powerwall kan oplade eller aflade med. Prøv en lavere effekt."
+    "dispatch_out_of_range": "Powerwall afviste denne effekt: den er højere, end Powerwall kan oplade eller aflade med. Prøv en lavere effekt.",
+    "island_not_ready_for_islanding": "Powerwall afviste: den er ikke klar til at gå off-grid lige nu. Prøv igen senere.",
+    "island_load_drop_expected": "Powerwall afviste: hjemmet bruger mere effekt, end den kan levere off-grid. Brug mindre strøm, og prøv igen.",
+    "island_low_energy": "Powerwall afviste: opladningen er for lav til at gå off-grid.",
+    "island_excessive_solar": "Powerwall afviste: solcellerne producerer mere effekt, end den kan optage off-grid. Prøv igen, når solproduktionen er lavere."
   },
   "warning": {
     "no_data_since": "Ingen data siden __time__"

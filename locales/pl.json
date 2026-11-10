@@ -22,7 +22,11 @@
     "request_failed": "Żądanie do Teslemetry nie powiodło się.",
     "product_silent": "Brak aktualnych danych z Tesli.",
     "energy_site_not_paired": "Teslemetry nie jest sparowane z tym Powerwallem, więc nie może wysłać tego polecenia. Sparuj go w konsoli Teslemetry albo włącz połączenie lokalne tego Powerwalla.",
-    "dispatch_out_of_range": "Powerwall odrzucił tę moc: jest większa, niż Powerwall może ładować lub rozładowywać. Spróbuj mniejszej mocy."
+    "dispatch_out_of_range": "Powerwall odrzucił tę moc: jest większa, niż Powerwall może ładować lub rozładowywać. Spróbuj mniejszej mocy.",
+    "island_not_ready_for_islanding": "Powerwall odmówił: nie jest teraz gotowy do odłączenia od sieci. Spróbuj ponownie później.",
+    "island_load_drop_expected": "Powerwall odmówił: dom pobiera więcej mocy, niż może on dostarczyć bez sieci. Zmniejsz zużycie i spróbuj ponownie.",
+    "island_low_energy": "Powerwall odmówił: poziom naładowania jest zbyt niski, aby odłączyć się od sieci.",
+    "island_excessive_solar": "Powerwall odmówił: fotowoltaika wytwarza więcej mocy, niż może on przyjąć bez sieci. Spróbuj ponownie, gdy produkcja będzie niższa."
   },
   "warning": {
     "no_data_since": "Brak danych od __time__"

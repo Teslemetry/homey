@@ -322,3 +322,14 @@ test("the charge and discharge cards send signed watts and seconds, and resume s
     ["resume"],
   ]);
 });
+
+test("the go off-grid and reconnect cards ask the Gateway to open and close the grid contactor", async () => {
+  const { actionListeners } = createAppStub();
+  const calls: unknown[] = [];
+  const device = { flowSetIslandMode: async (offGrid: unknown) => { calls.push(offGrid); } };
+
+  await actionListeners["go_off_grid"]({ device });
+  await actionListeners["reconnect_grid"]({ device });
+
+  assert.deepEqual(calls, [true, false]);
+});

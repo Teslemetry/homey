@@ -595,6 +595,18 @@ export default class TeslemetryApp extends Homey.App {
         await this.requireFlowDevice(args.device).flowResumeBatteryOperation();
       });
 
+    this.homey.flow
+      .getActionCard('go_off_grid')
+      .registerRunListener(async (args: { device?: GatewayDevice }) => {
+        await this.requireFlowDevice(args.device).flowSetIslandMode(true);
+      });
+
+    this.homey.flow
+      .getActionCard('reconnect_grid')
+      .registerRunListener(async (args: { device?: GatewayDevice }) => {
+        await this.requireFlowDevice(args.device).flowSetIslandMode(false);
+      });
+
     // Condition cards
     this.homey.flow
       .getConditionCard('operation_mode_is')
