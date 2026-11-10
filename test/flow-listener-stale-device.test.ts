@@ -303,3 +303,22 @@ test("battery_below's trigger predicate evaluates normally when the device is li
 
   assert.equal(result, true);
 });
+
+test("the charge and discharge cards send signed watts and seconds, and resume sends nothing else", async () => {
+  const { actionListeners } = createAppStub();
+  const calls: unknown[][] = [];
+  const device = {
+    flowDispatchBatteryPower: async (...args: unknown[]) => { calls.push(["dispatch", ...args]); },
+    flowResumeBatteryOperation: async (...args: unknown[]) => { calls.push(["resume", ...args]); },
+  };
+
+  await actionListeners["dispatch_battery_charge"]({ device, power: 5000, duration: 30 });
+  await actionListeners["dispatch_battery_discharge"]({ device, power: 3000, duration: 1440 });
+  await actionListeners["resume_battery_operation"]({ device });
+
+  assert.deepEqual(calls, [
+    ["dispatch", -5000, 1800],
+    ["dispatch", 3000, 86400],
+    ["resume"],
+  ]);
+});

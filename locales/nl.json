@@ -20,7 +20,9 @@
     "frunk_cannot_close": "De frunk kan niet op afstand worden gesloten. Sluit hem met de hand.",
     "command_no_result": "Het commando gaf geen resultaat.",
     "request_failed": "Teslemetry-verzoek mislukt.",
-    "product_silent": "Geen recente gegevens van Tesla."
+    "product_silent": "Geen recente gegevens van Tesla.",
+    "energy_site_not_paired": "Teslemetry is niet gekoppeld aan deze Powerwall en kan deze opdracht dus niet versturen. Koppel hem in de Teslemetry-console, of zet de lokale verbinding van deze Powerwall aan.",
+    "dispatch_out_of_range": "De Powerwall weigerde dit vermogen: het is meer dan de Powerwall kan laden of ontladen. Probeer een lager vermogen."
   },
   "warning": {
     "no_data_since": "Geen gegevens sinds __time__"

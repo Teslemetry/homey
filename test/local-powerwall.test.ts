@@ -2,11 +2,13 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
 import { generateKeyPairSync } from "node:crypto";
+import { readFileSync } from "node:fs";
 // Imports the built output; see device-oninit-no-product.test.ts for why.
 import TeslemetryApp from "../.homeybuild/app.js";
 import GatewayDevice from "../.homeybuild/drivers/gateway/device.js";
 import PowerwallDevice from "../.homeybuild/drivers/battery/device.js";
 import { LocalPowerwallSite } from "../.homeybuild/lib/LocalPowerwall.js";
+import toError from "../.homeybuild/lib/toError.js";
 import {
   fakeGateway,
   PowerwallAuthenticationError,
@@ -18,6 +20,7 @@ import {
   AuthorizedClientState,
   EnergyGatewayUnreachable,
   fakeCloud,
+  TeslaFleetError,
 } from "./support/tesla-fleet-api-stub.js";
 
 const SITE_ID = "1689169815425134";
@@ -78,7 +81,11 @@ function createIntervals() {
 function createFeed() {
   const timers = createIntervals();
   const app = {
-    homey: { setInterval: timers.setInterval, clearInterval: timers.clearInterval },
+    homey: {
+      setInterval: timers.setInterval,
+      clearInterval: timers.clearInterval,
+      __: (key: string) => key,
+    },
     handleLocalPowerwallRead: () => {},
     handleLocalPowerwallLost: () => {},
     oauth: { getAccessToken: async () => "token" },
@@ -406,6 +413,8 @@ async function createEnrolledPowerwall(gatewayAnswers: boolean) {
     backup: async (...args: unknown[]) => cloudCalls.push(["backup", ...args]),
     operation: async (...args: unknown[]) => cloudCalls.push(["operation", ...args]),
     grid_import_export: async (...args: unknown[]) => cloudCalls.push(["grid_import_export", ...args]),
+    dispatch_battery_power: async (...args: unknown[]) => cloudCalls.push(["dispatch_battery_power", ...args]),
+    resume_battery_operation: async (...args: unknown[]) => cloudCalls.push(["resume_battery_operation", ...args]),
   } as never;
   const site = await LocalPowerwallSite.start(app as never, SITE_ID, GATEWAY, KEY_PEM);
   fakeGateway.liveStatus = gatewayAnswers
@@ -469,6 +478,90 @@ test("a command the gateway refuses is not retried on the cloud", async () => {
   await assert.rejects(device.flowSetBackupReserve(30), PowerwallCommandError);
   assert.deepEqual(fakeGateway.commands, [["backup", 30]]);
   assert.deepEqual(cloudCalls, []);
+  site.stop();
+});
+
+test("an enrolled Powerwall dispatches and resumes its battery through its gateway", async () => {
+  const { device, cloudCalls, site } = await createEnrolledPowerwall(true);
+
+  await device.flowDispatchBatteryPower(-5000, 1800);
+  await device.flowResumeBatteryOperation();
+
+  assert.deepEqual(fakeGateway.commands, [
+    ["dispatch_battery_power", -5000, 1800],
+    ["resume_battery_operation"],
+  ]);
+  assert.deepEqual(cloudCalls, []);
+  site.stop();
+});
+
+test("a dispatch to a gateway that is not answering goes to the cloud", async () => {
+  const { device, cloudCalls, site } = await createEnrolledPowerwall(false);
+
+  await device.flowDispatchBatteryPower(3000, 60);
+  await device.flowResumeBatteryOperation();
+
+  assert.deepEqual(fakeGateway.commands, []);
+  assert.deepEqual(cloudCalls, [["dispatch_battery_power", 3000, 60], ["resume_battery_operation"]]);
+  site.stop();
+});
+
+test("a dispatch on a site without a local link goes to the Teslemetry client", async () => {
+  const { device, cloudCalls, site } = await createEnrolledPowerwall(true);
+  device.homey.app.localPowerwallSites = undefined;
+
+  await device.flowDispatchBatteryPower(3000, 60);
+  await device.flowResumeBatteryOperation();
+
+  assert.deepEqual(cloudCalls, [
+    ["teslemetry-api", "dispatchBatteryPower"],
+    ["teslemetry-api", "resumeBatteryOperation"],
+  ]);
+  assert.deepEqual(fakeGateway.commands, []);
+  site.stop();
+});
+
+test("a cloud fallback the gateway is not paired for says to pair it or use the local connection", async () => {
+  const { device, site } = await createEnrolledPowerwall(false);
+  const notPaired = new TeslaFleetError(
+    { error: "energy_site_not_paired", error_description: "Teslemetry's key is not paired" },
+    409,
+  );
+  (fakeCloud.site as Record<string, unknown>).dispatch_battery_power = async () => {
+    throw notPaired;
+  };
+  (fakeCloud.site as Record<string, unknown>).resume_battery_operation = async () => {
+    throw notPaired;
+  };
+
+  await assert.rejects(device.flowDispatchBatteryPower(3000, 60), { message: "error.energy_site_not_paired" });
+  await assert.rejects(device.flowResumeBatteryOperation(), { message: "error.energy_site_not_paired" });
+  site.stop();
+});
+
+test("the Teslemetry client's refusal for a gateway it is not paired with says to pair it", () => {
+  const en = JSON.parse(readFileSync(new URL("../locales/en.json", import.meta.url), "utf8"));
+  // The SDK rejects with the api's parsed error body, not an Error.
+  const error = toError(
+    { error: "energy_site_not_paired", error_description: "Energy site is not paired" },
+    (key: string) => key.split(".").reduce((node, part) => node?.[part], en) ?? key,
+  );
+  assert.equal(error.message, en.error.energy_site_not_paired);
+});
+
+test("a power the gateway refuses as out of range says so, and is not retried on the cloud", async () => {
+  const { device, cloudCalls, site } = await createEnrolledPowerwall(true);
+  fakeGateway.command = async () => {
+    throw new PowerwallCommandError("dispatch_battery_power_request", 11, "OUT_OF_RANGE");
+  };
+
+  await assert.rejects(device.flowDispatchBatteryPower(-20000, 60), { message: "error.dispatch_out_of_range" });
+  assert.deepEqual(cloudCalls, []);
+
+  fakeGateway.command = async () => {
+    throw new PowerwallCommandError("dispatch_battery_power_request", 3, "INVALID_ARGUMENT");
+  };
+  await assert.rejects(device.flowDispatchBatteryPower(-20000, 60), PowerwallCommandError);
   site.stop();
 });
 

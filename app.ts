@@ -566,6 +566,35 @@ export default class TeslemetryApp extends Homey.App {
         },
       );
 
+    // The cards take positive watts and minutes; the api takes signed watts and seconds.
+    this.homey.flow
+      .getActionCard('dispatch_battery_charge')
+      .registerRunListener(
+        async (args: { device?: PowerwallDevice; power: number; duration: number }) => {
+          await this.requireFlowDevice(args.device).flowDispatchBatteryPower(
+            -args.power,
+            Math.round(args.duration * 60),
+          );
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('dispatch_battery_discharge')
+      .registerRunListener(
+        async (args: { device?: PowerwallDevice; power: number; duration: number }) => {
+          await this.requireFlowDevice(args.device).flowDispatchBatteryPower(
+            args.power,
+            Math.round(args.duration * 60),
+          );
+        },
+      );
+
+    this.homey.flow
+      .getActionCard('resume_battery_operation')
+      .registerRunListener(async (args: { device?: PowerwallDevice }) => {
+        await this.requireFlowDevice(args.device).flowResumeBatteryOperation();
+      });
+
     // Condition cards
     this.homey.flow
       .getConditionCard('operation_mode_is')

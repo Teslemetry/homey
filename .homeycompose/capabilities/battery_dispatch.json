@@ -1,0 +1,22 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Battery dispatch",
+    "nl": "Batterijsturing",
+    "da": "Batteristyring",
+    "de": "Batteriesteuerung",
+    "es": "Control de la batería",
+    "fr": "Pilotage de la batterie",
+    "it": "Controllo della batteria",
+    "no": "Batteristyring",
+    "sv": "Batteristyrning",
+    "pl": "Sterowanie baterią",
+    "ru": "Управление батареей",
+    "ko": "배터리 제어",
+    "ar": "التحكم في البطارية"
+  },
+  "getable": false,
+  "setable": false,
+  "uiComponent": null,
+  "insights": false
+}

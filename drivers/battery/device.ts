@@ -9,6 +9,7 @@ import {
 import TeslemetryDevice from "../../lib/TeslemetryDevice.js";
 import { isEnergySiteEligible } from "../../lib/TeslemetryDriver.js";
 import {
+  DISPATCH_CAPABILITY,
   hasKnownComponents,
   isComponentGatedCapability,
   isPowerwallCapabilitySupported,
@@ -201,6 +202,8 @@ export default class PowerwallDevice extends TeslemetryDevice {
   public rebindProduct(): void {
     this.unbindProduct();
     this.resolveAndBindSite();
+    // A rebind follows a new Products generation or a local link starting or stopping.
+    this.reconcileCapabilities();
   }
 
   /** See TeslemetryDevice.unbindProduct(). */
@@ -262,29 +265,39 @@ export default class PowerwallDevice extends TeslemetryDevice {
   protected getExpectedCapabilities(): string[] {
     const current = new Set(this.getCapabilities());
     const components = this.siteComponents();
-    return super
-      .getExpectedCapabilities()
-      .filter(
-        (capability) =>
-          !isComponentGatedCapability(capability) ||
-          (hasKnownComponents(components)
-            ? isPowerwallCapabilitySupported(capability, components)
-            : current.has(capability)),
+    const dispatch = this.dispatchReachable();
+    return super.getExpectedCapabilities().filter((capability) => {
+      if (capability === DISPATCH_CAPABILITY) return dispatch ?? current.has(capability);
+      return (
+        !isComponentGatedCapability(capability) ||
+        (hasKnownComponents(components)
+          ? isPowerwallCapabilitySupported(capability, components)
+          : current.has(capability))
       );
+    });
   }
 
-  /** The in-flight site_info-driven ensureCapabilities(), if any. */
+  /**
+   * Whether battery dispatch can reach this Powerwall: through its site's
+   * local link, or through the cloud once Teslemetry's key is verified on the
+   * gateway (`paired`). Undefined while neither is known.
+   */
+  private dispatchReachable(): boolean | undefined {
+    if (this.localCommands()) return true;
+    const site = this.homey.app.products?.energySites?.[this.getSiteId()];
+    return site ? site.metadata.paired === true : undefined;
+  }
+
+  /** The in-flight ensureCapabilities() after init, if any. */
   private capabilityReconcile: Promise<void> | undefined;
 
   /**
    * ensureCapabilities() at onInit usually runs before the stream has
-   * delivered site_info, so the components are unknown and nothing is
-   * removed. Re-run it once a site_info makes the gated set disagree.
+   * delivered site_info or the local link has started, so a gated capability
+   * is neither added nor removed yet. Re-run it once the gated set disagrees.
    */
-  private reconcileGatedCapabilities(): void {
-    if (this.capabilityReconcile || !hasKnownComponents(this.siteComponents())) {
-      return;
-    }
+  private reconcileCapabilities(): void {
+    if (this.capabilityReconcile) return;
     const current = this.getCapabilities();
     const expected = this.getExpectedCapabilities();
     const differs =
@@ -354,7 +367,7 @@ export default class PowerwallDevice extends TeslemetryDevice {
       const data = info.siteInfoDocument as SiteInfoDocument | undefined;
       if (!data) return;
 
-      this.reconcileGatedCapabilities();
+      this.reconcileCapabilities();
       this.update(
         "backup_reserve",
         data.backup_reserve_percent !== undefined
@@ -643,8 +656,8 @@ export default class PowerwallDevice extends TeslemetryDevice {
 
   /**
    * The site's local Powerwall link once enrolled, which routes backup
-   * reserve, operation mode and grid import/export local first. Everything
-   * else stays on `this.site.api`.
+   * reserve, operation mode, grid import/export and battery dispatch local
+   * first. Everything else stays on `this.site.api`.
    */
   private localCommands() {
     return this.homey.app.localPowerwallSites?.get(this.getSiteId());
@@ -717,5 +730,27 @@ export default class PowerwallDevice extends TeslemetryDevice {
   ): Promise<void> {
     this.log(`Setting operation mode to ${mode}`);
     await this.action(this.sendOperationMode(mode));
+  }
+
+  /** Positive `powerWatts` discharges and negative charges, as the api takes it. */
+  public async flowDispatchBatteryPower(
+    powerWatts: number,
+    durationSeconds: number,
+  ): Promise<void> {
+    this.log(`Dispatching battery at ${powerWatts} W for ${durationSeconds} s`);
+    const local = this.localCommands();
+    await this.action(
+      local
+        ? local.dispatch_battery_power(powerWatts, durationSeconds)
+        : this.site.api.dispatchBatteryPower(powerWatts, durationSeconds),
+    );
+  }
+
+  public async flowResumeBatteryOperation(): Promise<void> {
+    this.log("Resuming normal battery operation");
+    const local = this.localCommands();
+    await this.action(
+      local ? local.resume_battery_operation() : this.site.api.resumeBatteryOperation(),
+    );
   }
 }

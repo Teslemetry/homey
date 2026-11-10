@@ -1,0 +1,69 @@
+{
+  "title": {
+    "en": "Resume normal battery operation",
+    "nl": "Normaal batterijgebruik hervatten",
+    "da": "Genoptag normal batteridrift",
+    "de": "Normalen Batteriebetrieb fortsetzen",
+    "es": "Reanudar el funcionamiento normal de la batería",
+    "fr": "Reprendre le fonctionnement normal de la batterie",
+    "it": "Riprendi il funzionamento normale della batteria",
+    "no": "Gjenoppta normal batteridrift",
+    "sv": "Återuppta normal batteridrift",
+    "pl": "Wznów normalną pracę baterii",
+    "ru": "Вернуть батарею к обычной работе",
+    "ko": "배터리 정상 작동 재개",
+    "ar": "استئناف التشغيل العادي للبطارية"
+  },
+  "titleFormatted": {
+    "en": "Resume normal operation of [[device]]",
+    "nl": "Normaal gebruik van [[device]] hervatten",
+    "da": "Genoptag normal drift af [[device]]",
+    "de": "Normalen Betrieb von [[device]] fortsetzen",
+    "es": "Reanudar el funcionamiento normal de [[device]]",
+    "fr": "Reprendre le fonctionnement normal de [[device]]",
+    "it": "Riprendi il funzionamento normale di [[device]]",
+    "no": "Gjenoppta normal drift av [[device]]",
+    "sv": "Återuppta normal drift för [[device]]",
+    "pl": "Wznów normalną pracę [[device]]",
+    "ru": "Вернуть [[device]] к обычной работе",
+    "ko": "[[device]] 정상 작동 재개",
+    "ar": "استئناف التشغيل العادي لـ[[device]]"
+  },
+  "hint": {
+    "en": "Ends a charge or discharge early and returns the Powerwall to normal operation.",
+    "nl": "Beëindigt een laad- of ontlaadopdracht vroegtijdig en zet de Powerwall terug op normaal gebruik.",
+    "da": "Afslutter en opladning eller afladning før tid og sætter Powerwall tilbage til normal drift.",
+    "de": "Beendet ein Laden oder Entladen vorzeitig und setzt die Powerwall in den normalen Betrieb zurück.",
+    "es": "Termina antes de tiempo una carga o descarga y devuelve el Powerwall a su funcionamiento normal.",
+    "fr": "Met fin plus tôt à une charge ou décharge et remet le Powerwall en fonctionnement normal.",
+    "it": "Termina in anticipo una carica o scarica e riporta il Powerwall al funzionamento normale.",
+    "no": "Avslutter en lading eller utlading før tiden og setter Powerwall tilbake til normal drift.",
+    "sv": "Avslutar en laddning eller urladdning i förtid och återställer Powerwall till normal drift.",
+    "pl": "Kończy ładowanie lub rozładowanie przed czasem i przywraca Powerwall do normalnej pracy.",
+    "ru": "Досрочно завершает зарядку или разрядку и возвращает Powerwall к обычной работе.",
+    "ko": "충전 또는 방전을 일찍 끝내고 Powerwall을 정상 작동으로 되돌립니다.",
+    "ar": "ينهي الشحن أو التفريغ مبكرًا ويعيد Powerwall إلى التشغيل العادي."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "capabilities=battery_dispatch",
+      "title": {
+        "en": "Device",
+        "nl": "Apparaat",
+        "da": "Enhed",
+        "de": "Gerät",
+        "es": "Dispositivo",
+        "fr": "Appareil",
+        "it": "Dispositivo",
+        "no": "Enhet",
+        "sv": "Enhet",
+        "pl": "Urządzenie",
+        "ru": "Устройство",
+        "ko": "장치",
+        "ar": "الجهاز"
+      }
+    }
+  ]
+}

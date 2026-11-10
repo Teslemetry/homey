@@ -70,6 +70,14 @@ export class PowerwallEnergySite {
     return this.#command("grid_import_export", args);
   }
 
+  dispatch_battery_power(...args) {
+    return this.#command("dispatch_battery_power", args);
+  }
+
+  resume_battery_operation(...args) {
+    return this.#command("resume_battery_operation", args);
+  }
+
   async #command(name, args) {
     fakeGateway.commands.push([name, ...args]);
     await fakeGateway.command(name, args);

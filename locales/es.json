@@ -20,7 +20,9 @@
     "frunk_cannot_close": "El maletero delantero no se puede cerrar a distancia. Ciérralo a mano.",
     "command_no_result": "El comando no devolvió ningún resultado.",
     "request_failed": "La solicitud a Teslemetry ha fallado.",
-    "product_silent": "No hay datos recientes de Tesla."
+    "product_silent": "No hay datos recientes de Tesla.",
+    "energy_site_not_paired": "Teslemetry no está emparejado con este Powerwall, así que no puede enviar este comando. Emparéjalo en la consola de Teslemetry o activa la conexión local de este Powerwall.",
+    "dispatch_out_of_range": "El Powerwall rechazó esta potencia: es mayor de la que puede cargar o descargar. Prueba con una potencia menor."
   },
   "warning": {
     "no_data_since": "Sin datos desde las __time__"

@@ -20,7 +20,9 @@
     "frunk_cannot_close": "Przedniego bagażnika nie można zamknąć zdalnie. Zamknij go ręcznie.",
     "command_no_result": "Polecenie nie zwróciło wyniku.",
     "request_failed": "Żądanie do Teslemetry nie powiodło się.",
-    "product_silent": "Brak aktualnych danych z Tesli."
+    "product_silent": "Brak aktualnych danych z Tesli.",
+    "energy_site_not_paired": "Teslemetry nie jest sparowane z tym Powerwallem, więc nie może wysłać tego polecenia. Sparuj go w konsoli Teslemetry albo włącz połączenie lokalne tego Powerwalla.",
+    "dispatch_out_of_range": "Powerwall odrzucił tę moc: jest większa, niż Powerwall może ładować lub rozładowywać. Spróbuj mniejszej mocy."
   },
   "warning": {
     "no_data_since": "Brak danych od __time__"
