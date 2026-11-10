@@ -213,6 +213,22 @@ test("GatewayDevice's live_status handler fires grid and load power thresholds i
   assert.equal(capabilities["measure_power.load"], 80);
 });
 
+test("GatewayDevice rounds load power to whole watts", async () => {
+  const { stub, sse, capabilities } = createDeviceStub({
+    "alarm_generic.off_grid": undefined,
+    "alarm_generic.island": undefined,
+    measure_power: 100,
+    "measure_power.load": 50,
+  });
+  await stub.onInit();
+
+  getListener(sse, "live_status")({
+    live_status: { grid_power: 200, load_power: 2012.5000000000002 },
+  });
+
+  assert.equal(capabilities["measure_power.load"], 2013);
+});
+
 test("GatewayDevice's live_status handler wires generator_power only when site_info reports a generator", async () => {
   const { stub, sse, capabilities } = createDeviceStub(
     {
