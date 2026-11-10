@@ -195,9 +195,13 @@ export default class GatewayDevice extends TeslemetryDevice {
         "grid_power_below",
         "power",
       );
+      // The gateway derives load from its other meters, so it carries float
+      // noise (2012.5000000000002); the other power values are whole watts.
       this.updateWithThresholdTriggers(
         "measure_power.load",
-        data.load_power,
+        typeof data.load_power === "number"
+          ? Math.round(data.load_power)
+          : data.load_power,
         "load_power_above",
         "load_power_below",
         "power",
