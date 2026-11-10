@@ -4371,57 +4371,6 @@
             "filter": "driver_id=vehicle"
           }
         ]
-      },
-      {
-        "id": "alarm_generic.fault_true",
-        "title": {
-          "en": "A fault has been detected"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=wall-connector"
-          }
-        ]
-      },
-      {
-        "id": "alarm_generic.fault_false",
-        "title": {
-          "en": "The fault has cleared"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=wall-connector"
-          }
-        ]
-      },
-      {
-        "id": "wall_connector_fault_code",
-        "title": {
-          "en": "A fault code has been reported"
-        },
-        "tokens": [
-          {
-            "name": "code",
-            "type": "number",
-            "title": {
-              "en": "Fault code"
-            },
-            "example": {
-              "en": "3"
-            }
-          }
-        ],
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=wall-connector"
-          }
-        ]
       }
     ],
     "conditions": [
@@ -6512,19 +6461,6 @@
             "type": "device",
             "name": "device",
             "filter": "driver_id=vehicle"
-          }
-        ]
-      },
-      {
-        "id": "alarm_generic.fault",
-        "title": {
-          "en": "There !{{is|isn't}} a fault"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=wall-connector"
           }
         ]
       }
@@ -12566,16 +12502,8 @@
         "evcharger_charging_state",
         "measure_power",
         "meter_power",
-        "connected_vehicle",
-        "alarm_generic.fault"
+        "connected_vehicle"
       ],
-      "capabilitiesOptions": {
-        "alarm_generic.fault": {
-          "title": {
-            "en": "Fault"
-          }
-        }
-      },
       "energy": {
         "evCharger": true,
         "meterPowerImportedCapability": "meter_power"
